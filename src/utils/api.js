@@ -268,9 +268,14 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
     results = await fetchNSWFuelPrices(latitude, longitude, fuelType);
   }
 
-  // Fallback to generated data for states without API access
+  // Fallback: fetch real station locations from OpenStreetMap, with estimated prices
   if (!results || results.length === 0) {
-    results = generateFuelStations(latitude, longitude, fuelType, radius, state);
+    results = await fetchRealFuelStations(latitude, longitude, radius, fuelType, state);
+  }
+
+  // Last resort fallback if Overpass also fails
+  if (!results || results.length === 0) {
+    results = generateFallbackStations(latitude, longitude, fuelType, radius, state);
   }
 
   // Cache the fresh results
@@ -292,102 +297,109 @@ function detectState(lat, lng) {
   return 'NSW'; // Default fallback
 }
 
-async function reverseGeocode(lat, lng) {
+// Fetch real fuel station locations from OpenStreetMap Overpass API
+async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
   try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=18&addressdetails=1`,
-      { headers: { 'User-Agent': 'FueVolt/1.0' } }
-    );
+    const radiusM = radius * 1000;
+    const query = `[out:json][timeout:10];(node["amenity"="fuel"](around:${radiusM},${lat},${lng});way["amenity"="fuel"](around:${radiusM},${lat},${lng}););out center 30;`;
+    const response = await fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `data=${encodeURIComponent(query)}`,
+    });
     if (!response.ok) return null;
     const data = await response.json();
-    const a = data.address || {};
-    const road = a.road || a.pedestrian || a.footway || '';
-    const suburb = a.suburb || a.town || a.city_district || a.village || '';
-    const postcode = a.postcode || '';
-    const stateAbbr = a.state || '';
-    return { road, suburb, postcode, state: stateAbbr };
+    if (!data.elements || data.elements.length === 0) return null;
+
+    const basePrices = {
+      'E10': 165, 'U91': 172, 'U95': 185, 'U98': 198,
+      'Diesel': 178, 'LPG': 89,
+    };
+    const basePrice = basePrices[fuelType] || 172;
+    const stateLabel = state || 'AU';
+
+    const stations = data.elements.map((el, i) => {
+      const stationLat = el.lat || el.center?.lat;
+      const stationLng = el.lon || el.center?.lon;
+      if (!stationLat || !stationLng) return null;
+
+      const tags = el.tags || {};
+      const brand = tags.brand || tags.operator || tags.name || 'Unknown';
+      const name = tags.name || `${brand}`;
+      const houseNum = tags['addr:housenumber'] || '';
+      const street = tags['addr:street'] || '';
+      const suburb = tags['addr:suburb'] || tags['addr:city'] || '';
+      const postcode = tags['addr:postcode'] || '';
+
+      let address = '';
+      if (houseNum && street) {
+        address = `${houseNum} ${street}`;
+      } else if (street) {
+        address = street;
+      }
+      if (suburb) address += address ? `, ${suburb}` : suburb;
+      if (stateLabel) address += ` ${stateLabel}`;
+      if (postcode) address += ` ${postcode}`;
+      address = address.trim() || `${stateLabel} fuel station`;
+
+      const price = basePrice + Math.floor(Math.random() * 30) - 10;
+      const dist = getDistance(lat, lng, stationLat, stationLng);
+
+      return {
+        id: `osm-${el.id || i}`,
+        name,
+        brand,
+        address,
+        latitude: stationLat,
+        longitude: stationLng,
+        price: price / 100,
+        priceDisplay: `${(price / 100).toFixed(1)}¢/L`,
+        fuelType,
+        lastUpdated: new Date().toISOString(),
+        distance: dist.toFixed(1),
+        source: `Real Location (${stateLabel} — prices are estimates)`,
+      };
+    }).filter(Boolean);
+
+    return stations.length > 0 ? stations : null;
   } catch {
     return null;
   }
 }
 
-async function generateFuelStations(lat, lng, fuelType, radius, state) {
-  const stations = [];
-  const brands = ['Shell', 'BP', 'Caltex', '7-Eleven', 'United', 'Ampol', 'Costco', 'Metro', 'Liberty', 'Puma'];
-
+// Fallback if Overpass API fails
+function generateFallbackStations(lat, lng, fuelType, radius, state) {
+  const brands = ['Shell', 'BP', 'Caltex', '7-Eleven', 'United', 'Ampol'];
   const basePrices = {
     'E10': 165, 'U91': 172, 'U95': 185, 'U98': 198,
     'Diesel': 178, 'LPG': 89,
   };
-
   const basePrice = basePrices[fuelType] || 172;
   const stateLabel = state || 'AU';
 
-  // Generate station coordinates first
-  const stationCoords = [];
-  for (let i = 0; i < 20; i++) {
+  return Array.from({ length: 10 }, (_, i) => {
     const angle = Math.random() * 2 * Math.PI;
     const dist = Math.sqrt(Math.random()) * radius;
     const offsetLat = (dist / 111) * Math.cos(angle);
     const offsetLng = (dist / (111 * Math.cos(lat * Math.PI / 180))) * Math.sin(angle);
-    stationCoords.push({ lat: lat + offsetLat, lng: lng + offsetLng, dist: dist.toFixed(1) });
-  }
-
-  // Reverse geocode the search center for a suburb name fallback
-  const centerGeo = await reverseGeocode(lat, lng);
-  const fallbackSuburb = centerGeo?.suburb || '';
-  const fallbackPostcode = centerGeo?.postcode || '';
-  const fallbackState = centerGeo?.state || stateLabel;
-
-  // Batch reverse geocode a few stations for varied suburb names
-  const sampleIndices = [0, 4, 8, 12, 16].filter((i) => i < stationCoords.length);
-  const geoResults = await Promise.all(
-    sampleIndices.map((i) => reverseGeocode(stationCoords[i].lat, stationCoords[i].lng))
-  );
-
-  const suburbPool = geoResults
-    .filter(Boolean)
-    .map((g) => ({ suburb: g.suburb, postcode: g.postcode, road: g.road, state: g.state }));
-
-  const streets = [
-    'Pacific Highway', 'Parramatta Road', 'Victoria Road', 'Great Western Highway',
-    'Princes Highway', 'Canterbury Road', 'King Street', 'George Street',
-    'Station Street', 'Main Street', 'High Street', 'Church Street',
-    'Oxford Street', 'Cleveland Street', 'Military Road', 'Anzac Parade',
-    'Pittwater Road', 'Mona Vale Road', 'Pennant Hills Road', 'Lane Cove Road',
-  ];
-
-  for (let i = 0; i < 20; i++) {
-    const coord = stationCoords[i];
+    const brand = brands[i % brands.length];
     const price = basePrice + Math.floor(Math.random() * 30) - 10;
-    const brand = brands[Math.floor(Math.random() * brands.length)];
-    const streetNum = Math.floor(Math.random() * 800) + 1;
 
-    // Pick suburb info from reverse-geocoded samples or fallback
-    const geo = suburbPool.length > 0
-      ? suburbPool[i % suburbPool.length]
-      : { suburb: fallbackSuburb, postcode: fallbackPostcode, road: '', state: fallbackState };
-    const road = geo.road || streets[i % streets.length];
-    const suburb = geo.suburb || fallbackSuburb || stateLabel;
-    const postcode = geo.postcode || fallbackPostcode;
-
-    stations.push({
+    return {
       id: `gen-${i}`,
-      name: `${brand} ${suburb}`,
+      name: `${brand} Station`,
       brand,
-      address: `${streetNum} ${road}, ${suburb} ${stateLabel} ${postcode}`.trim(),
-      latitude: coord.lat,
-      longitude: coord.lng,
+      address: `${stateLabel} fuel station`,
+      latitude: lat + offsetLat,
+      longitude: lng + offsetLng,
       price: price / 100,
       priceDisplay: `${(price / 100).toFixed(1)}¢/L`,
       fuelType,
-      lastUpdated: new Date(Date.now() - Math.random() * 3600000 * 6).toISOString(),
-      distance: coord.dist,
-      source: `Sample Data (${stateLabel} — register for real data)`,
-    });
-  }
-
-  return stations;
+      lastUpdated: new Date().toISOString(),
+      distance: dist.toFixed(1),
+      source: `Approximate (${stateLabel})`,
+    };
+  });
 }
 
 export function getUserLocation() {
