@@ -1,29 +1,10 @@
 #!/bin/bash
 # Build and deploy script for FueVolt
-# Restores the Vite dev entry point before building, then copies built files to repo root
+# Builds the app and copies output to repo root for Hostinger deployment
+# Note: vite.config.js has a dev-entry-point plugin that transforms
+# the production index.html back to source entry during development
 
 set -e
-
-# Restore the Vite dev entry point (production builds overwrite index.html)
-cat > index.html << 'DEVHTML'
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FueVolt — Australian EV & Fuel Price Finder</title>
-    <meta name="description" content="Find cheap fuel prices and EV charging stations across Australia" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
-DEVHTML
 
 # Build with Vite
 npx vite build

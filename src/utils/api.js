@@ -22,7 +22,38 @@ export async function fetchEVStations({ latitude, longitude, distance = 10, maxr
   return response.json();
 }
 
+const AU_CITIES = {
+  sydney: { lat: -33.8688, lng: 151.2093, name: 'Sydney, NSW' },
+  melbourne: { lat: -37.8136, lng: 144.9631, name: 'Melbourne, VIC' },
+  brisbane: { lat: -27.4698, lng: 153.0251, name: 'Brisbane, QLD' },
+  perth: { lat: -31.9505, lng: 115.8605, name: 'Perth, WA' },
+  adelaide: { lat: -34.9285, lng: 138.6007, name: 'Adelaide, SA' },
+  canberra: { lat: -35.2809, lng: 149.1300, name: 'Canberra, ACT' },
+  hobart: { lat: -42.8821, lng: 147.3272, name: 'Hobart, TAS' },
+  darwin: { lat: -12.4634, lng: 130.8456, name: 'Darwin, NT' },
+  'gold coast': { lat: -28.0167, lng: 153.4000, name: 'Gold Coast, QLD' },
+  newcastle: { lat: -32.9283, lng: 151.7817, name: 'Newcastle, NSW' },
+  wollongong: { lat: -34.4248, lng: 150.8931, name: 'Wollongong, NSW' },
+  geelong: { lat: -38.1499, lng: 144.3617, name: 'Geelong, VIC' },
+  cairns: { lat: -16.9186, lng: 145.7781, name: 'Cairns, QLD' },
+  townsville: { lat: -19.2590, lng: 146.8169, name: 'Townsville, QLD' },
+  parramatta: { lat: -33.8151, lng: 151.0011, name: 'Parramatta, NSW' },
+  penrith: { lat: -33.7507, lng: 150.6944, name: 'Penrith, NSW' },
+  liverpool: { lat: -33.9200, lng: 150.9236, name: 'Liverpool, NSW' },
+  bondi: { lat: -33.8914, lng: 151.2743, name: 'Bondi, NSW' },
+  manly: { lat: -33.7969, lng: 151.2844, name: 'Manly, NSW' },
+  cronulla: { lat: -34.0587, lng: 151.1515, name: 'Cronulla, NSW' },
+  chatswood: { lat: -33.7969, lng: 151.1832, name: 'Chatswood, NSW' },
+  surry_hills: { lat: -33.8830, lng: 151.2113, name: 'Surry Hills, NSW' },
+};
+
 export async function geocodeLocation(query) {
+  const key = query.trim().toLowerCase();
+  const local = AU_CITIES[key];
+  if (local) {
+    return { latitude: local.lat, longitude: local.lng, displayName: local.name };
+  }
+
   const params = new URLSearchParams({
     q: `${query}, Australia`,
     format: 'json',
@@ -113,11 +144,14 @@ async function getNSWToken() {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${credentials}`,
-        'Content-Type': 'application/json',
+        'Content-Length': '0',
       },
+      body: '',
     });
     if (!response.ok) return null;
-    const data = await response.json();
+    const text = await response.text();
+    if (!text) return null;
+    const data = JSON.parse(text);
     return data.access_token;
   } catch {
     return null;
@@ -247,7 +281,6 @@ function getDistance(lat1, lng1, lat2, lng2) {
 export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', radius = 10 }) {
   const state = detectState(latitude, longitude);
   const cacheKey = getCacheKey(state, fuelType, latitude, longitude);
-
   // Check cache first — serves cached data within the 6-hour window
   const cached = getCachedPrices(cacheKey);
   if (cached) {
@@ -275,7 +308,7 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
 
   // Last resort fallback if Overpass also fails
   if (!results || results.length === 0) {
-    results = generateFallbackStations(latitude, longitude, fuelType, radius, state);
+    results = await generateFallbackStations(latitude, longitude, fuelType, radius, state);
   }
 
   // Cache the fresh results
@@ -295,6 +328,70 @@ function detectState(lat, lng) {
   if (lat > -26 && lat < -11 && lng > 129 && lng < 138) return 'NT';
   if (lat > -35.9 && lat < -35.1 && lng > 148.7 && lng < 149.4) return 'ACT';
   return 'NSW'; // Default fallback
+}
+
+const AU_STATE_ABBR = {
+  'New South Wales': 'NSW', 'Victoria': 'VIC', 'Queensland': 'QLD',
+  'Western Australia': 'WA', 'South Australia': 'SA', 'Tasmania': 'TAS',
+  'Northern Territory': 'NT', 'Australian Capital Territory': 'ACT',
+};
+
+// --- Permanent address cache (persists across sessions) ---
+const ADDR_CACHE_KEY = 'fuevolt_address_cache';
+
+function getAddressCache() {
+  try {
+    return JSON.parse(localStorage.getItem(ADDR_CACHE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function setAddressCache(cache) {
+  try { localStorage.setItem(ADDR_CACHE_KEY, JSON.stringify(cache)); } catch {}
+}
+
+function coordKey(lat, lng) {
+  return `${lat.toFixed(4)},${lng.toFixed(4)}`;
+}
+
+// Reverse geocode a single coordinate to get a street address
+async function reverseGeocode(lat, lng) {
+  try {
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lon: lng.toString(),
+      format: 'json',
+      zoom: '18',
+      addressdetails: '1',
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?${params}`, {
+      headers: { 'User-Agent': 'FueVolt/1.0' },
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (!data.address) return null;
+    const a = data.address;
+    const road = a.road || a.pedestrian || a.footway || '';
+    const houseNumber = a.house_number || '';
+    const suburb = a.suburb || a.neighbourhood || a.town || a.city || '';
+    const postcode = a.postcode || '';
+    const stateAbbr = AU_STATE_ABBR[a.state] || a.state || '';
+    return { road, houseNumber, suburb, postcode, state: stateAbbr };
+  } catch {
+    return null;
+  }
+}
+
+function formatGeoAddress(geo) {
+  let addr = '';
+  if (geo.houseNumber && geo.road) {
+    addr = `${geo.houseNumber} ${geo.road}`;
+  } else if (geo.road) {
+    addr = geo.road;
+  }
+  if (geo.suburb) addr += addr ? `, ${geo.suburb}` : geo.suburb;
+  if (geo.state) addr += ` ${geo.state}`;
+  if (geo.postcode) addr += ` ${geo.postcode}`;
+  return addr.trim();
 }
 
 // Fetch real fuel station locations from OpenStreetMap Overpass API
@@ -332,6 +429,7 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
       const postcode = tags['addr:postcode'] || '';
 
       let address = '';
+      let needsGeocode = false;
       if (houseNum && street) {
         address = `${houseNum} ${street}`;
       } else if (street) {
@@ -340,7 +438,10 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
       if (suburb) address += address ? `, ${suburb}` : suburb;
       if (stateLabel) address += ` ${stateLabel}`;
       if (postcode) address += ` ${postcode}`;
-      address = address.trim() || `${stateLabel} fuel station`;
+      if (!street && !suburb) {
+        address = stateLabel;
+        needsGeocode = true;
+      }
 
       const price = basePrice + Math.floor(Math.random() * 30) - 10;
       const dist = getDistance(lat, lng, stationLat, stationLng);
@@ -358,17 +459,23 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
         lastUpdated: new Date().toISOString(),
         distance: dist.toFixed(1),
         source: `Real Location (${stateLabel} — prices are estimates)`,
+        _needsGeocode: needsGeocode,
       };
     }).filter(Boolean);
 
-    return stations.length > 0 ? stations : null;
+    if (stations.length === 0) return null;
+
+    // Apply any cached addresses immediately
+    applyCachedAddresses(stations);
+
+    return stations;
   } catch {
     return null;
   }
 }
 
 // Fallback if Overpass API fails
-function generateFallbackStations(lat, lng, fuelType, radius, state) {
+async function generateFallbackStations(lat, lng, fuelType, radius, state) {
   const brands = ['Shell', 'BP', 'Caltex', '7-Eleven', 'United', 'Ampol'];
   const basePrices = {
     'E10': 165, 'U91': 172, 'U95': 185, 'U98': 198,
@@ -377,7 +484,7 @@ function generateFallbackStations(lat, lng, fuelType, radius, state) {
   const basePrice = basePrices[fuelType] || 172;
   const stateLabel = state || 'AU';
 
-  return Array.from({ length: 10 }, (_, i) => {
+  const stations = Array.from({ length: 10 }, (_, i) => {
     const angle = Math.random() * 2 * Math.PI;
     const dist = Math.sqrt(Math.random()) * radius;
     const offsetLat = (dist / 111) * Math.cos(angle);
@@ -389,7 +496,8 @@ function generateFallbackStations(lat, lng, fuelType, radius, state) {
       id: `gen-${i}`,
       name: `${brand} Station`,
       brand,
-      address: `${stateLabel} fuel station`,
+      address: stateLabel,
+      _needsGeocode: true,
       latitude: lat + offsetLat,
       longitude: lng + offsetLng,
       price: price / 100,
@@ -400,6 +508,71 @@ function generateFallbackStations(lat, lng, fuelType, radius, state) {
       source: `Approximate (${stateLabel})`,
     };
   });
+
+  applyCachedAddresses(stations);
+  return stations;
+}
+
+// Apply only cached addresses (no API calls)
+function applyCachedAddresses(stations) {
+  const addrCache = getAddressCache();
+  stations.forEach((s) => {
+    if (!s._needsGeocode) return;
+    const key = coordKey(s.latitude, s.longitude);
+    if (addrCache[key]) {
+      s.address = addrCache[key];
+      delete s._needsGeocode;
+    }
+  });
+}
+
+// Background geocode: resolves addresses one at a time and calls onUpdate after each.
+export async function geocodeStationAddresses(stations, onUpdate) {
+  const addrCache = getAddressCache();
+  const needsGeocode = stations.filter((s) => s._needsGeocode);
+  if (needsGeocode.length === 0) return;
+
+  let hitApi = false;
+  let consecutiveFails = 0;
+
+  for (let i = 0; i < needsGeocode.length; i++) {
+    const station = needsGeocode[i];
+    const key = coordKey(station.latitude, station.longitude);
+
+    if (addrCache[key]) {
+      station.address = addrCache[key];
+      delete station._needsGeocode;
+      continue;
+    }
+
+    if (consecutiveFails >= 3) {
+      delete station._needsGeocode;
+      continue;
+    }
+
+    if (hitApi) {
+      await new Promise((r) => setTimeout(r, 1100));
+    }
+
+    const geo = await reverseGeocode(station.latitude, station.longitude);
+    hitApi = true;
+
+    if (geo) {
+      consecutiveFails = 0;
+      const addr = formatGeoAddress(geo);
+      if (addr) {
+        station.address = addr;
+        addrCache[key] = addr;
+        if (onUpdate) onUpdate([...stations]);
+      }
+    } else {
+      consecutiveFails++;
+    }
+    delete station._needsGeocode;
+  }
+
+  setAddressCache(addrCache);
+  if (onUpdate) onUpdate([...stations]);
 }
 
 export function getUserLocation() {

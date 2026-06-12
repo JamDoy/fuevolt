@@ -4,7 +4,7 @@ import StationMap from '../components/StationMap';
 import FuelStationCard from '../components/FuelStationCard';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
-import { fetchFuelPrices, geocodeLocation, getUserLocation } from '../utils/api';
+import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -36,6 +36,8 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
       setStations(data);
       setMapCenter([lat, lng]);
       setSearchCoords({ lat, lng });
+      // Resolve missing addresses in background (non-blocking)
+      geocodeStationAddresses(data, (updated) => setStations(updated));
     } catch (err) {
       setError(err.message);
     } finally {
