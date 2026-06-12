@@ -37,3 +37,4 @@ Upload the `dist/` folder to your Hostinger shared hosting `public_html` directo
 ## Environment
 
 No environment variables required for basic operation. The Open Charge Map API key is embedded in the client code.
+
