@@ -47,6 +47,50 @@ export async function geocodeLocation(query) {
   };
 }
 
+// --- Fuel price cache (4 refreshes per day = every 6 hours) ---
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+
+function getCacheKey(state, fuelType, lat, lng) {
+  // Snap coordinates to ~11km grid so nearby searches share the cache
+  const gridLat = (Math.round(lat * 10) / 10).toFixed(1);
+  const gridLng = (Math.round(lng * 10) / 10).toFixed(1);
+  return `fuevolt_fuel_${state}_${fuelType}_${gridLat}_${gridLng}`;
+}
+
+function getCachedPrices(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const cached = JSON.parse(raw);
+    if (Date.now() - cached.timestamp > CACHE_TTL_MS) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return cached;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedPrices(key, stations) {
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      timestamp: Date.now(),
+      stations,
+    }));
+  } catch {
+    // localStorage full or unavailable — ignore
+  }
+}
+
+function formatCacheAge(timestamp) {
+  const mins = Math.floor((Date.now() - timestamp) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  return `${hrs}h ${mins % 60}m ago`;
+}
+
 // Fuel type mapping for various APIs
 const FUEL_TYPE_MAP = {
   'E10': { nsw: 'E10', wa: '2' },
@@ -57,10 +101,10 @@ const FUEL_TYPE_MAP = {
   'LPG': { nsw: 'LPG', wa: '5' },
 };
 
-// NSW Fuel API (also covers TAS) — uses trial key with 5 calls/min limit
+// NSW Fuel API (also covers TAS) — registered Motor API (2,500 calls/month)
 const NSW_API_BASE = 'https://api.onegov.nsw.gov.au';
-const NSW_API_KEY = '1MYSRAx5yvqHUZc6VGtxix6oMA2qgfRT';
-const NSW_API_SECRET = 'BMvWacw15Et8uFGF';
+const NSW_API_KEY = 'dwAE4MpeaMhNhZFsnzZesHKiQmG3e87z';
+const NSW_API_SECRET = 'jrcoqUqm4WoxNMgW';
 
 async function getNSWToken() {
   try {
@@ -119,7 +163,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType) {
         id: `nsw-${p.stationcode}-${i}`,
         name: station.name || 'Unknown Station',
         brand: station.brand || 'Unknown',
-        address: `${station.address || ''}, ${station.suburb || ''} ${station.state || 'NSW'} ${station.postcode || ''}`.trim(),
+        address: [station.address, station.suburb, `${station.state || 'NSW'} ${station.postcode || ''}`].filter(Boolean).join(', ').trim(),
         latitude: station.location?.latitude || latitude,
         longitude: station.location?.longitude || longitude,
         price: p.price / 100,
@@ -201,12 +245,23 @@ function getDistance(lat1, lng1, lat2, lng2) {
 }
 
 export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', radius = 10 }) {
-  // Determine which state the coordinates are in based on rough bounds
   const state = detectState(latitude, longitude);
+  const cacheKey = getCacheKey(state, fuelType, latitude, longitude);
 
+  // Check cache first — serves cached data within the 6-hour window
+  const cached = getCachedPrices(cacheKey);
+  if (cached) {
+    const age = formatCacheAge(cached.timestamp);
+    const results = cached.stations.map((s) => ({
+      ...s,
+      source: s.source.replace(/ \(updated .*\)$/, '') + ` (updated ${age})`,
+    }));
+    return results.sort((a, b) => a.price - b.price);
+  }
+
+  // Cache miss or expired — fetch fresh data from API
   let results = null;
 
-  // Try real APIs first based on state
   if (state === 'WA') {
     results = await fetchWAFuelPrices(latitude, longitude, fuelType);
   } else if (state === 'NSW' || state === 'TAS') {
@@ -217,6 +272,9 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
   if (!results || results.length === 0) {
     results = generateFuelStations(latitude, longitude, fuelType, radius, state);
   }
+
+  // Cache the fresh results
+  setCachedPrices(cacheKey, results);
 
   return results.sort((a, b) => a.price - b.price);
 }
@@ -234,7 +292,26 @@ function detectState(lat, lng) {
   return 'NSW'; // Default fallback
 }
 
-function generateFuelStations(lat, lng, fuelType, radius, state) {
+async function reverseGeocode(lat, lng) {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=18&addressdetails=1`,
+      { headers: { 'User-Agent': 'FueVolt/1.0' } }
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    const a = data.address || {};
+    const road = a.road || a.pedestrian || a.footway || '';
+    const suburb = a.suburb || a.town || a.city_district || a.village || '';
+    const postcode = a.postcode || '';
+    const stateAbbr = a.state || '';
+    return { road, suburb, postcode, state: stateAbbr };
+  } catch {
+    return null;
+  }
+}
+
+async function generateFuelStations(lat, lng, fuelType, radius, state) {
   const stations = [];
   const brands = ['Shell', 'BP', 'Caltex', '7-Eleven', 'United', 'Ampol', 'Costco', 'Metro', 'Liberty', 'Puma'];
 
@@ -246,24 +323,66 @@ function generateFuelStations(lat, lng, fuelType, radius, state) {
   const basePrice = basePrices[fuelType] || 172;
   const stateLabel = state || 'AU';
 
+  // Generate station coordinates first
+  const stationCoords = [];
   for (let i = 0; i < 20; i++) {
-    const offsetLat = (Math.random() - 0.5) * (radius / 55);
-    const offsetLng = (Math.random() - 0.5) * (radius / 55);
+    const angle = Math.random() * 2 * Math.PI;
+    const dist = Math.sqrt(Math.random()) * radius;
+    const offsetLat = (dist / 111) * Math.cos(angle);
+    const offsetLng = (dist / (111 * Math.cos(lat * Math.PI / 180))) * Math.sin(angle);
+    stationCoords.push({ lat: lat + offsetLat, lng: lng + offsetLng, dist: dist.toFixed(1) });
+  }
+
+  // Reverse geocode the search center for a suburb name fallback
+  const centerGeo = await reverseGeocode(lat, lng);
+  const fallbackSuburb = centerGeo?.suburb || '';
+  const fallbackPostcode = centerGeo?.postcode || '';
+  const fallbackState = centerGeo?.state || stateLabel;
+
+  // Batch reverse geocode a few stations for varied suburb names
+  const sampleIndices = [0, 4, 8, 12, 16].filter((i) => i < stationCoords.length);
+  const geoResults = await Promise.all(
+    sampleIndices.map((i) => reverseGeocode(stationCoords[i].lat, stationCoords[i].lng))
+  );
+
+  const suburbPool = geoResults
+    .filter(Boolean)
+    .map((g) => ({ suburb: g.suburb, postcode: g.postcode, road: g.road, state: g.state }));
+
+  const streets = [
+    'Pacific Highway', 'Parramatta Road', 'Victoria Road', 'Great Western Highway',
+    'Princes Highway', 'Canterbury Road', 'King Street', 'George Street',
+    'Station Street', 'Main Street', 'High Street', 'Church Street',
+    'Oxford Street', 'Cleveland Street', 'Military Road', 'Anzac Parade',
+    'Pittwater Road', 'Mona Vale Road', 'Pennant Hills Road', 'Lane Cove Road',
+  ];
+
+  for (let i = 0; i < 20; i++) {
+    const coord = stationCoords[i];
     const price = basePrice + Math.floor(Math.random() * 30) - 10;
     const brand = brands[Math.floor(Math.random() * brands.length)];
+    const streetNum = Math.floor(Math.random() * 800) + 1;
+
+    // Pick suburb info from reverse-geocoded samples or fallback
+    const geo = suburbPool.length > 0
+      ? suburbPool[i % suburbPool.length]
+      : { suburb: fallbackSuburb, postcode: fallbackPostcode, road: '', state: fallbackState };
+    const road = geo.road || streets[i % streets.length];
+    const suburb = geo.suburb || fallbackSuburb || stateLabel;
+    const postcode = geo.postcode || fallbackPostcode;
 
     stations.push({
       id: `gen-${i}`,
-      name: `${brand} Station`,
+      name: `${brand} ${suburb}`,
       brand,
-      address: `${Math.floor(Math.random() * 500) + 1} Main Road, ${stateLabel}`,
-      latitude: lat + offsetLat,
-      longitude: lng + offsetLng,
+      address: `${streetNum} ${road}, ${suburb} ${stateLabel} ${postcode}`.trim(),
+      latitude: coord.lat,
+      longitude: coord.lng,
       price: price / 100,
       priceDisplay: `${(price / 100).toFixed(1)}¢/L`,
       fuelType,
       lastUpdated: new Date(Date.now() - Math.random() * 3600000 * 6).toISOString(),
-      distance: (Math.random() * radius).toFixed(1),
+      distance: coord.dist,
       source: `Sample Data (${stateLabel} — register for real data)`,
     });
   }

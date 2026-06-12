@@ -86,7 +86,7 @@ export default function StationMap({
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapUpdater center={mapCenter} />
         {stations.map((station) => {
@@ -109,18 +109,20 @@ export default function StationMap({
               }}
             >
               <Popup>
-                <div>
-                  <strong style={{ color: '#FFD700' }}>
+                <div style={{ color: '#1a1a1a' }}>
+                  <strong style={{ color: '#0D2B5E' }}>
                     {type === 'ev' ? station.AddressInfo?.Title : station.name}
                   </strong>
                   <br />
-                  {type === 'ev'
-                    ? station.AddressInfo?.AddressLine1
-                    : station.address}
+                  <span style={{ fontSize: '12px' }}>
+                    {type === 'ev'
+                      ? station.AddressInfo?.AddressLine1
+                      : station.address}
+                  </span>
                   {type === 'fuel' && (
                     <>
                       <br />
-                      <span style={{ color: '#2ECC71', fontWeight: 'bold' }}>
+                      <span style={{ color: '#16a34a', fontWeight: 'bold' }}>
                         {(station.price * 100).toFixed(1)}¢/L
                       </span>
                     </>
