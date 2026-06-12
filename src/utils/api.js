@@ -47,6 +47,50 @@ export async function geocodeLocation(query) {
   };
 }
 
+// --- Fuel price cache (4 refreshes per day = every 6 hours) ---
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+
+function getCacheKey(state, fuelType, lat, lng) {
+  // Snap coordinates to ~11km grid so nearby searches share the cache
+  const gridLat = (Math.round(lat * 10) / 10).toFixed(1);
+  const gridLng = (Math.round(lng * 10) / 10).toFixed(1);
+  return `fuevolt_fuel_${state}_${fuelType}_${gridLat}_${gridLng}`;
+}
+
+function getCachedPrices(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const cached = JSON.parse(raw);
+    if (Date.now() - cached.timestamp > CACHE_TTL_MS) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return cached;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedPrices(key, stations) {
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      timestamp: Date.now(),
+      stations,
+    }));
+  } catch {
+    // localStorage full or unavailable — ignore
+  }
+}
+
+function formatCacheAge(timestamp) {
+  const mins = Math.floor((Date.now() - timestamp) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  return `${hrs}h ${mins % 60}m ago`;
+}
+
 // Fuel type mapping for various APIs
 const FUEL_TYPE_MAP = {
   'E10': { nsw: 'E10', wa: '2' },
@@ -201,12 +245,23 @@ function getDistance(lat1, lng1, lat2, lng2) {
 }
 
 export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', radius = 10 }) {
-  // Determine which state the coordinates are in based on rough bounds
   const state = detectState(latitude, longitude);
+  const cacheKey = getCacheKey(state, fuelType, latitude, longitude);
 
+  // Check cache first — serves cached data within the 6-hour window
+  const cached = getCachedPrices(cacheKey);
+  if (cached) {
+    const age = formatCacheAge(cached.timestamp);
+    const results = cached.stations.map((s) => ({
+      ...s,
+      source: s.source.replace(/ \(updated .*\)$/, '') + ` (updated ${age})`,
+    }));
+    return results.sort((a, b) => a.price - b.price);
+  }
+
+  // Cache miss or expired — fetch fresh data from API
   let results = null;
 
-  // Try real APIs first based on state
   if (state === 'WA') {
     results = await fetchWAFuelPrices(latitude, longitude, fuelType);
   } else if (state === 'NSW' || state === 'TAS') {
@@ -217,6 +272,9 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
   if (!results || results.length === 0) {
     results = generateFuelStations(latitude, longitude, fuelType, radius, state);
   }
+
+  // Cache the fresh results
+  setCachedPrices(cacheKey, results);
 
   return results.sort((a, b) => a.price - b.price);
 }
