@@ -57,10 +57,10 @@ const FUEL_TYPE_MAP = {
   'LPG': { nsw: 'LPG', wa: '5' },
 };
 
-// NSW Fuel API (also covers TAS) — uses trial key with 5 calls/min limit
+// NSW Fuel API (also covers TAS) — registered Motor API (2,500 calls/month)
 const NSW_API_BASE = 'https://api.onegov.nsw.gov.au';
-const NSW_API_KEY = '1MYSRAx5yvqHUZc6VGtxix6oMA2qgfRT';
-const NSW_API_SECRET = 'BMvWacw15Et8uFGF';
+const NSW_API_KEY = 'dwAE4MpeaMhNhZFsnzZesHKiQmG3e87z';
+const NSW_API_SECRET = 'jrcoqUqm4WoxNMgW';
 
 async function getNSWToken() {
   try {
