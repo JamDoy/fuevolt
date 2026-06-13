@@ -4,10 +4,12 @@ import Header from './components/Header';
 import LandingPage from './pages/LandingPage';
 import EVChargingPage from './pages/EVChargingPage';
 import FuelPricePage from './pages/FuelPricePage';
+import FuelStationDetailPage from './pages/FuelStationDetailPage';
 
 function AppContent() {
   const [view, setView] = useState('landing');
   const [initialFuelType, setInitialFuelType] = useState('U91');
+  const [detailStation, setDetailStation] = useState(null);
   const { theme } = useTheme();
 
   const handleSelect = (option) => {
@@ -22,7 +24,19 @@ function AppContent() {
     }
   };
 
-  const handleBack = () => setView('landing');
+  const handleBack = () => {
+    if (view === 'station-detail') {
+      setView('fuel');
+      setDetailStation(null);
+    } else {
+      setView('landing');
+    }
+  };
+
+  const handleStationDetail = (station) => {
+    setDetailStation(station);
+    setView('station-detail');
+  };
 
   return (
     <div className="min-h-screen">
@@ -33,12 +47,24 @@ function AppContent() {
         onViewChange={(v) => {
           if (v === 'fuel') setInitialFuelType('U91');
           setView(v);
+          setDetailStation(null);
         }}
       />
       <main>
         {view === 'landing' && <LandingPage onSelect={handleSelect} />}
         {view === 'ev' && <EVChargingPage />}
-        {view === 'fuel' && <FuelPricePage initialFuelType={initialFuelType} />}
+        {view === 'fuel' && (
+          <FuelPricePage
+            initialFuelType={initialFuelType}
+            onStationDetail={handleStationDetail}
+          />
+        )}
+        {view === 'station-detail' && detailStation && (
+          <FuelStationDetailPage
+            station={detailStation}
+            onBack={handleBack}
+          />
+        )}
       </main>
       <footer className="text-center py-6 px-4 mt-8">
         <p className="text-xs" style={{ color: theme.footerText }}>
