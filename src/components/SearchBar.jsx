@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function SearchBar({ onSearch, onUseLocation, loading, placeholder }) {
   const [query, setQuery] = useState('');
+  const { theme } = useTheme();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,7 +16,8 @@ export default function SearchBar({ onSearch, onUseLocation, loading, placeholde
     <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full">
       <div className="relative flex-1">
         <svg
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+          className="absolute left-4 top-1/2 -translate-y-1/2"
+          style={{ color: theme.textSecondary }}
           width="18"
           height="18"
           fill="none"
@@ -29,19 +32,19 @@ export default function SearchBar({ onSearch, onUseLocation, loading, placeholde
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder || 'Search suburb, city or postcode...'}
-          className="w-full pl-11 pr-4 py-3 rounded-xl text-white text-sm focus:outline-none"
+          className="w-full pl-11 pr-4 py-3 rounded-xl text-sm focus:outline-none"
           style={{
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.15)',
-            backdropFilter: 'blur(12px)',
+            background: theme.inputBg,
+            border: `1px solid ${theme.inputBorder}`,
+            color: theme.inputText,
             transition: 'all 0.25s ease',
           }}
           onFocus={(e) => {
-            e.target.style.borderColor = '#FFD700';
-            e.target.style.boxShadow = '0 0 12px rgba(255,215,0,0.15)';
+            e.target.style.borderColor = theme.inputFocusBorder;
+            e.target.style.boxShadow = `0 0 12px ${theme.mode === 'dark' ? 'rgba(255,215,0,0.15)' : 'rgba(200,151,31,0.12)'}`;
           }}
           onBlur={(e) => {
-            e.target.style.borderColor = 'rgba(255,255,255,0.15)';
+            e.target.style.borderColor = theme.inputBorder;
             e.target.style.boxShadow = 'none';
           }}
         />
@@ -80,7 +83,7 @@ export default function SearchBar({ onSearch, onUseLocation, loading, placeholde
             e.target.style.boxShadow = 'none';
           }}
         >
-          📍 Use My Location
+          &#x1F4CD; Use My Location
         </button>
       </div>
     </form>

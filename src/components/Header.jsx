@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const TABS = [
-  { id: 'fuel', label: 'Fuel Prices', icon: '⛽' },
-  { id: 'ev', label: 'EV Charging', icon: '⚡' },
+  { id: 'fuel', label: 'Fuel Prices', icon: '\u26FD' },
+  { id: 'ev', label: 'EV Charging', icon: '\u26A1' },
 ];
 
 export default function Header({ showBack, onBack, view, onViewChange }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { theme, toggle } = useTheme();
 
   return (
     <header
@@ -41,7 +43,7 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
             style={{ background: 'none', border: 'none' }}
           >
             <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold logo-charge-icon"
               style={{
                 background: 'linear-gradient(135deg, #C8971F, #FFD700)',
                 color: '#0D2B5E',
@@ -49,13 +51,13 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
             >
               FV
             </div>
-            <span className="text-xl font-bold text-white tracking-tight">
-              Fue<span style={{ color: '#FFD700' }}>Volt</span>
+            <span className="text-xl font-bold tracking-tight logo-charge" style={{ color: '#FFFFFF' }}>
+              Fue<span className="logo-charge-volt" style={{ color: '#FFD700' }}>Volt</span>
             </span>
           </button>
         </div>
 
-        {/* Desktop Tabs — only show when not on landing */}
+        {/* Center: Desktop Tabs */}
         {showBack && (
           <nav className="hidden md:flex items-center gap-2">
             {TABS.map((tab) => (
@@ -84,22 +86,56 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
           </nav>
         )}
 
-        {/* Mobile menu button — only when not on landing */}
-        {showBack && (
+        {/* Right: Theme toggle + Mobile menu */}
+        <div className="flex items-center gap-2">
+          {/* Theme toggle */}
           <button
-            className="md:hidden text-white p-2 cursor-pointer"
-            style={{ background: 'none', border: 'none' }}
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={toggle}
+            className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer"
+            style={{
+              background: 'rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              color: '#FFD700',
+              transition: 'all 0.25s ease',
+            }}
+            title={theme.mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
-              {menuOpen ? (
-                <path d="M6 6l12 12M6 18L18 6" />
-              ) : (
-                <path d="M3 6h18M3 12h18M3 18h18" />
-              )}
-            </svg>
+            {theme.mode === 'dark' ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            )}
           </button>
-        )}
+
+          {/* Mobile menu button */}
+          {showBack && (
+            <button
+              className="md:hidden text-white p-2 cursor-pointer"
+              style={{ background: 'none', border: 'none' }}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                {menuOpen ? (
+                  <path d="M6 6l12 12M6 18L18 6" />
+                ) : (
+                  <path d="M3 6h18M3 12h18M3 18h18" />
+                )}
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Mobile dropdown */}

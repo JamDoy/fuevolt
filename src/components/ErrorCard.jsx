@@ -1,16 +1,20 @@
+import { useTheme } from '../contexts/ThemeContext';
+
 export default function ErrorCard({ message, onRetry }) {
+  const { theme } = useTheme();
+
   return (
     <div
       className="rounded-2xl p-6 text-center"
       style={{
-        background: '#0D2B5E',
-        border: '1px solid rgba(255, 100, 100, 0.3)',
-        boxShadow: '0 0 20px rgba(255, 100, 100, 0.05) inset',
+        background: theme.cardBg,
+        border: `1px solid ${theme.errorBorder}`,
+        boxShadow: theme.errorGlow,
       }}
     >
-      <div className="text-3xl mb-3">😕</div>
-      <h3 className="text-lg font-semibold text-white mb-2">Something went wrong</h3>
-      <p className="text-sm text-gray-400 mb-4">{message}</p>
+      <div className="text-3xl mb-3">&#x1F615;</div>
+      <h3 className="text-lg font-semibold mb-2" style={{ color: theme.text }}>Something went wrong</h3>
+      <p className="text-sm mb-4" style={{ color: theme.textSecondary }}>{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}

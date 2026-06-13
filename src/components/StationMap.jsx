@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Fix Leaflet default icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -61,6 +62,7 @@ export default function StationMap({
   onStationSelect,
   type = 'ev',
 }) {
+  const { theme } = useTheme();
   const defaultCenter = [-33.8688, 151.2093]; // Sydney
   const mapCenter = center || defaultCenter;
 
@@ -77,7 +79,7 @@ export default function StationMap({
   };
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,215,0,0.2)' }}>
+    <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${theme.mapBorder}` }}>
       <MapContainer
         center={mapCenter}
         zoom={13}

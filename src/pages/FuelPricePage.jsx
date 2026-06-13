@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import StationMap from '../components/StationMap';
 import FuelStationCard from '../components/FuelStationCard';
@@ -23,6 +24,7 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
   const [selectedStation, setSelectedStation] = useState(null);
   const [fuelType, setFuelType] = useState(initialFuelType);
   const [searchCoords, setSearchCoords] = useState(null);
+  const { theme } = useTheme();
 
   const doSearch = useCallback(async (lat, lng, type) => {
     setLoading(true);
@@ -36,7 +38,6 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
       setStations(data);
       setMapCenter([lat, lng]);
       setSearchCoords({ lat, lng });
-      // Resolve missing addresses in background (non-blocking)
       geocodeStationAddresses(data, (updated) => setStations(updated));
     } catch (err) {
       setError(err.message);
@@ -89,10 +90,10 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
       {/* Hero */}
       <div className="text-center mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#FFD700' }}>
-          ⛽ Compare Fuel Prices
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
+          &#x26FD; Compare Fuel Prices
         </h1>
-        <p className="text-sm text-gray-400 mt-1">
+        <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Find the cheapest fuel near you across Australia
         </p>
       </div>
@@ -109,13 +110,13 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
               border: 'none',
               ...(fuelType === ft.id
                 ? {
-                    background: 'linear-gradient(135deg, #2ECC71, #27AE60)',
+                    background: `linear-gradient(135deg, ${theme.green}, ${theme.greenDark})`,
                     color: '#FFFFFF',
-                    boxShadow: '0 0 12px rgba(46, 204, 113, 0.3)',
+                    boxShadow: `0 0 12px ${theme.mode === 'dark' ? 'rgba(46, 204, 113, 0.3)' : 'rgba(39, 174, 96, 0.25)'}`,
                   }
                 : {
-                    background: 'rgba(255,255,255,0.08)',
-                    color: '#9CA3AF',
+                    background: theme.chipBg,
+                    color: theme.chipText,
                   }),
             }}
           >
@@ -138,55 +139,55 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
           <div
             className="rounded-2xl p-4 text-center"
             style={{
-              background: '#0D2B5E',
-              border: '1px solid rgba(46,204,113,0.3)',
-              boxShadow: '0 0 12px rgba(46,204,113,0.08) inset',
+              background: theme.cardBg,
+              border: `1px solid ${theme.mode === 'dark' ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)'}`,
+              boxShadow: theme.mode === 'dark' ? '0 0 12px rgba(46,204,113,0.08) inset' : '0 2px 8px rgba(0,0,0,0.04)',
             }}
           >
-            <p className="text-xs text-gray-400 mb-1">Cheapest</p>
-            <p className="text-2xl font-bold" style={{ color: '#2ECC71' }}>
-              {cheapest ? (cheapest.price * 100).toFixed(1) : '—'}
-              <span className="text-xs text-gray-400 ml-0.5">¢/L</span>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Cheapest</p>
+            <p className="text-2xl font-bold" style={{ color: theme.green }}>
+              {cheapest ? (cheapest.price * 100).toFixed(1) : '\u2014'}
+              <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
             </p>
             {cheapest && (
-              <p className="text-[10px] text-gray-500 mt-1 truncate">{cheapest.name}</p>
+              <p className="text-[10px] mt-1 truncate" style={{ color: theme.textMuted }}>{cheapest.name}</p>
             )}
           </div>
           <div
             className="rounded-2xl p-4 text-center"
             style={{
-              background: '#0D2B5E',
-              border: '1px solid rgba(255,215,0,0.2)',
+              background: theme.cardBg,
+              border: `1px solid ${theme.cardBorder}`,
             }}
           >
-            <p className="text-xs text-gray-400 mb-1">Average</p>
-            <p className="text-2xl font-bold" style={{ color: '#FFD700' }}>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Average</p>
+            <p className="text-2xl font-bold" style={{ color: theme.gold }}>
               {(avgPrice * 100).toFixed(1)}
-              <span className="text-xs text-gray-400 ml-0.5">¢/L</span>
+              <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
             </p>
           </div>
           <div
             className="rounded-2xl p-4 text-center"
             style={{
-              background: '#0D2B5E',
-              border: '1px solid rgba(255,215,0,0.2)',
+              background: theme.cardBg,
+              border: `1px solid ${theme.cardBorder}`,
             }}
           >
-            <p className="text-xs text-gray-400 mb-1">You Could Save</p>
-            <p className="text-2xl font-bold" style={{ color: '#2ECC71' }}>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>You Could Save</p>
+            <p className="text-2xl font-bold" style={{ color: theme.green }}>
               {savings}
-              <span className="text-xs text-gray-400 ml-0.5">¢/L</span>
+              <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
             </p>
           </div>
           <div
             className="rounded-2xl p-4 text-center col-span-2 sm:col-span-1"
             style={{
-              background: '#0D2B5E',
-              border: '1px solid rgba(255,215,0,0.2)',
+              background: theme.cardBg,
+              border: `1px solid ${theme.cardBorder}`,
             }}
           >
-            <p className="text-xs text-gray-400 mb-1">Stations Found</p>
-            <p className="text-2xl font-bold text-white">{stations.length}</p>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Stations Found</p>
+            <p className="text-2xl font-bold" style={{ color: theme.text }}>{stations.length}</p>
           </div>
         </div>
       )}
@@ -237,11 +238,11 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
       {/* Empty state */}
       {!loading && !error && stations.length === 0 && (
         <div className="text-center py-16">
-          <div className="text-5xl mb-4">⛽</div>
-          <h3 className="text-lg font-semibold text-white mb-1">
+          <div className="text-5xl mb-4">&#x26FD;</div>
+          <h3 className="text-lg font-semibold mb-1" style={{ color: theme.text }}>
             Find cheap fuel near you
           </h3>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm" style={{ color: theme.textSecondary }}>
             Select a fuel type and search your location to compare prices
           </p>
         </div>

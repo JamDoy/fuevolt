@@ -195,8 +195,8 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType) {
       const station = stationMap[p.stationcode] || {};
       return {
         id: `nsw-${p.stationcode}-${i}`,
-        name: station.name || 'Unknown Station',
-        brand: station.brand || 'Unknown',
+        name: station.name || (station.brand ? `${station.brand} Station` : 'Fuel Station'),
+        brand: station.brand || 'Independent',
         address: [station.address, station.suburb, `${station.state || 'NSW'} ${station.postcode || ''}`].filter(Boolean).join(', ').trim(),
         latitude: station.location?.latitude || latitude,
         longitude: station.location?.longitude || longitude,
@@ -421,8 +421,9 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
       if (!stationLat || !stationLng) return null;
 
       const tags = el.tags || {};
-      const brand = tags.brand || tags.operator || tags.name || 'Unknown';
-      const name = tags.name || `${brand}`;
+      const brand = tags.brand || tags.operator || '';
+      const rawName = tags.name || '';
+      const name = rawName || brand || 'Fuel Station';
       const houseNum = tags['addr:housenumber'] || '';
       const street = tags['addr:street'] || '';
       const suburb = tags['addr:suburb'] || tags['addr:city'] || '';
@@ -449,8 +450,9 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
       return {
         id: `osm-${el.id || i}`,
         name,
-        brand,
+        brand: brand || 'Independent',
         address,
+        _hasRealName: !!(rawName || brand),
         latitude: stationLat,
         longitude: stationLng,
         price: price / 100,
@@ -563,6 +565,10 @@ export async function geocodeStationAddresses(stations, onUpdate) {
       if (addr) {
         station.address = addr;
         addrCache[key] = addr;
+        // Improve generic station names with suburb
+        if (!station._hasRealName && geo.suburb) {
+          station.name = `Fuel Station, ${geo.suburb}`;
+        }
         if (onUpdate) onUpdate([...stations]);
       }
     } else {

@@ -1,7 +1,11 @@
+import { useTheme } from '../contexts/ThemeContext';
+
 export default function FilterChips({ filters, activeFilters, onToggle, label }) {
+  const { theme } = useTheme();
+
   return (
     <div className="flex flex-wrap gap-2 items-center">
-      {label && <span className="text-xs text-gray-400 mr-1">{label}</span>}
+      {label && <span className="text-xs mr-1" style={{ color: theme.textSecondary }}>{label}</span>}
       {filters.map((filter) => {
         const isActive = activeFilters.includes(filter);
         return (
@@ -14,14 +18,14 @@ export default function FilterChips({ filters, activeFilters, onToggle, label })
               border: '1px solid',
               ...(isActive
                 ? {
-                    background: 'linear-gradient(135deg, #2ECC71, #27AE60)',
-                    borderColor: '#2ECC71',
+                    background: `linear-gradient(135deg, ${theme.green}, ${theme.greenDark})`,
+                    borderColor: theme.green,
                     color: '#FFFFFF',
                   }
                 : {
-                    background: 'rgba(255,255,255,0.06)',
-                    borderColor: 'rgba(255,255,255,0.15)',
-                    color: '#9CA3AF',
+                    background: theme.chipBg,
+                    borderColor: theme.chipBorder,
+                    color: theme.chipText,
                   }),
             }}
           >
