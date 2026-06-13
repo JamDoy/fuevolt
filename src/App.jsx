@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import Header from './components/Header';
 import LandingPage from './pages/LandingPage';
 import EVChargingPage from './pages/EVChargingPage';
 import FuelPricePage from './pages/FuelPricePage';
 
-export default function App() {
+function AppContent() {
   const [view, setView] = useState('landing');
   const [initialFuelType, setInitialFuelType] = useState('U91');
+  const { theme } = useTheme();
 
   const handleSelect = (option) => {
     if (option === 'petrol') {
@@ -39,13 +41,21 @@ export default function App() {
         {view === 'fuel' && <FuelPricePage initialFuelType={initialFuelType} />}
       </main>
       <footer className="text-center py-6 px-4 mt-8">
-        <p className="text-xs text-gray-500">
-          © {new Date().getFullYear()} FueVolt — Australian EV & Fuel Price Finder
+        <p className="text-xs" style={{ color: theme.footerText }}>
+          &copy; {new Date().getFullYear()} FueVolt &mdash; Australian EV & Fuel Price Finder
         </p>
-        <p className="text-[10px] text-gray-600 mt-1">
-          EV data powered by Open Charge Map • Fuel prices from government APIs
+        <p className="text-[10px] mt-1" style={{ color: theme.footerSubtext }}>
+          EV data powered by Open Charge Map &bull; Fuel prices from government APIs
         </p>
       </footer>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }

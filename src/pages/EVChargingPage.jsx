@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import FilterChips from '../components/FilterChips';
 import StationMap from '../components/StationMap';
@@ -20,6 +21,7 @@ export default function EVChargingPage() {
   const [detailStation, setDetailStation] = useState(null);
   const [connectorFilters, setConnectorFilters] = useState([]);
   const [statusFilters, setStatusFilters] = useState([]);
+  const { theme } = useTheme();
 
   const doSearch = useCallback(async (lat, lng) => {
     setLoading(true);
@@ -92,10 +94,10 @@ export default function EVChargingPage() {
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
       {/* Hero Section */}
       <div className="text-center mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#FFD700' }}>
-          ⚡ Find EV Charging Stations
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
+          &#x26A1; Find EV Charging Stations
         </h1>
-        <p className="text-sm text-gray-400 mt-1">
+        <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Search thousands of EV charging points across Australia
         </p>
       </div>
@@ -140,7 +142,7 @@ export default function EVChargingPage() {
 
       {/* Results Count */}
       {!loading && stations.length > 0 && (
-        <p className="text-xs text-gray-400">
+        <p className="text-xs" style={{ color: theme.textSecondary }}>
           Showing {filtered.length} of {stations.length} stations
         </p>
       )}
@@ -184,11 +186,11 @@ export default function EVChargingPage() {
       {/* Empty state */}
       {!loading && !error && stations.length === 0 && (
         <div className="text-center py-16">
-          <div className="text-5xl mb-4">🔌</div>
-          <h3 className="text-lg font-semibold text-white mb-1">
+          <div className="text-5xl mb-4">&#x1F50C;</div>
+          <h3 className="text-lg font-semibold mb-1" style={{ color: theme.text }}>
             Find EV chargers near you
           </h3>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm" style={{ color: theme.textSecondary }}>
             Search for a location or use your current position to get started
           </p>
         </div>

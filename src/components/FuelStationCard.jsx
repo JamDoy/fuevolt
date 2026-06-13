@@ -1,14 +1,16 @@
+import { useTheme } from '../contexts/ThemeContext';
+
 export default function FuelStationCard({ station, isSelected, onClick, rank }) {
+  const { theme } = useTheme();
+
   return (
     <div
       onClick={onClick}
       className="rounded-2xl p-4 cursor-pointer"
       style={{
-        background: '#0D2B5E',
-        border: isSelected ? '1px solid #2ECC71' : '1px solid rgba(255,215,0,0.2)',
-        boxShadow: isSelected
-          ? '0 0 20px rgba(46,204,113,0.15) inset'
-          : '0 0 12px rgba(26,111,219,0.08) inset',
+        background: theme.cardBg,
+        border: isSelected ? `1px solid ${theme.cardBorderActive}` : `1px solid ${theme.cardBorder}`,
+        boxShadow: isSelected ? theme.cardGlow : theme.cardGlowDefault,
         transition: 'all 0.25s ease',
       }}
     >
@@ -19,26 +21,26 @@ export default function FuelStationCard({ station, isSelected, onClick, rank }) 
               className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
               style={{
                 background: rank === 0
-                  ? 'linear-gradient(135deg, #2ECC71, #27AE60)'
+                  ? `linear-gradient(135deg, ${theme.green}, ${theme.greenDark})`
                   : rank < 3
-                    ? 'rgba(46,204,113,0.15)'
-                    : 'rgba(255,255,255,0.06)',
-                color: rank < 3 ? '#2ECC71' : '#9CA3AF',
+                    ? `${theme.mode === 'dark' ? 'rgba(46,204,113,0.15)' : 'rgba(39,174,96,0.1)'}`
+                    : theme.chipBg,
+                color: rank < 3 ? theme.green : theme.textSecondary,
               }}
             >
               {rank + 1}
             </span>
           )}
           <div>
-            <h3 className="text-sm font-semibold" style={{ color: '#FFD700' }}>
+            <h3 className="text-sm font-semibold" style={{ color: theme.gold }}>
               {station.name}
             </h3>
             <span
               className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mt-1"
               style={{
-                background: 'rgba(255,215,0,0.1)',
-                color: '#FFD700',
-                border: '1px solid rgba(255,215,0,0.3)',
+                background: theme.brandBadgeBg,
+                color: theme.gold,
+                border: `1px solid ${theme.brandBadgeBorder}`,
               }}
             >
               {station.brand}
@@ -46,16 +48,16 @@ export default function FuelStationCard({ station, isSelected, onClick, rank }) 
           </div>
         </div>
         <div className="text-right">
-          <span className="text-lg font-bold" style={{ color: '#2ECC71' }}>
+          <span className="text-lg font-bold" style={{ color: theme.green }}>
             {(station.price * 100).toFixed(1)}
           </span>
-          <span className="text-xs text-gray-400 ml-0.5">¢/L</span>
+          <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
         </div>
       </div>
 
-      <p className="text-xs text-gray-400 mb-2">{station.address}</p>
+      <p className="text-xs mb-2" style={{ color: theme.textSecondary }}>{station.address}</p>
 
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex items-center justify-between text-xs" style={{ color: theme.textMuted }}>
         <span>{station.distance} km away</span>
         <span>
           Updated {new Date(station.lastUpdated).toLocaleTimeString('en-AU', {
@@ -66,8 +68,8 @@ export default function FuelStationCard({ station, isSelected, onClick, rank }) 
       </div>
 
       {station.source && (
-        <div className="mt-2 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <span className="text-[10px] text-gray-600">{station.source}</span>
+        <div className="mt-2 pt-2" style={{ borderTop: `1px solid ${theme.divider}` }}>
+          <span className="text-[10px]" style={{ color: theme.textMuted }}>{station.source}</span>
         </div>
       )}
     </div>
