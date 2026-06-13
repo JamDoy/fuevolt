@@ -1,8 +1,6 @@
 -- FueVolt Corrections Database Schema
 -- Run this in your Hostinger MySQL database (phpMyAdmin or CLI)
-
-CREATE DATABASE IF NOT EXISTS fuevolt CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE fuevolt;
+-- Database: fuevolt_db (already created on Hostinger)
 
 CREATE TABLE IF NOT EXISTS corrections (
     id INT AUTO_INCREMENT PRIMARY KEY,
