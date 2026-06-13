@@ -1,6 +1,6 @@
 import { useTheme } from '../contexts/ThemeContext';
 
-export default function FuelStationCard({ station, isSelected, onClick, rank }) {
+export default function FuelStationCard({ station, isSelected, onClick, onDetail, rank }) {
   const { theme } = useTheme();
 
   return (
@@ -67,11 +67,25 @@ export default function FuelStationCard({ station, isSelected, onClick, rank }) 
         </span>
       </div>
 
-      {station.source && (
-        <div className="mt-2 pt-2" style={{ borderTop: `1px solid ${theme.divider}` }}>
+      <div className="mt-2 pt-2 flex items-center justify-between" style={{ borderTop: `1px solid ${theme.divider}` }}>
+        {station.source && (
           <span className="text-[10px]" style={{ color: theme.textMuted }}>{station.source}</span>
-        </div>
-      )}
+        )}
+        {onDetail && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onDetail(); }}
+            className="px-3 py-1 rounded-lg text-[11px] font-semibold cursor-pointer"
+            style={{
+              background: `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`,
+              color: '#0D2B5E',
+              border: 'none',
+              transition: 'all 0.25s ease',
+            }}
+          >
+            View Details &rarr;
+          </button>
+        )}
+      </div>
     </div>
   );
 }

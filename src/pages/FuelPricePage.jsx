@@ -16,7 +16,7 @@ const FUEL_TYPES = [
   { id: 'LPG', label: 'LPG' },
 ];
 
-export default function FuelPricePage({ initialFuelType = 'U91' }) {
+export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail }) {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -198,6 +198,7 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
         center={mapCenter}
         selectedStation={selectedStation}
         onStationSelect={setSelectedStation}
+        onStationDetail={onStationDetail}
         type="fuel"
       />
 
@@ -230,6 +231,7 @@ export default function FuelPricePage({ initialFuelType = 'U91' }) {
               rank={i}
               isSelected={selectedStation?.id === station.id}
               onClick={() => setSelectedStation(station)}
+              onDetail={() => onStationDetail && onStationDetail(station)}
             />
           ))}
         </div>

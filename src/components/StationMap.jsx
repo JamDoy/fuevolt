@@ -60,6 +60,7 @@ export default function StationMap({
   center,
   selectedStation,
   onStationSelect,
+  onStationDetail,
   type = 'ev',
 }) {
   const { theme } = useTheme();
@@ -127,6 +128,27 @@ export default function StationMap({
                       <span style={{ color: '#16a34a', fontWeight: 'bold' }}>
                         {(station.price * 100).toFixed(1)}¢/L
                       </span>
+                      {onStationDetail && (
+                        <>
+                          <br />
+                          <button
+                            onClick={() => onStationDetail(station)}
+                            style={{
+                              marginTop: '6px',
+                              padding: '4px 10px',
+                              background: 'linear-gradient(135deg, #C8971F, #FFD700)',
+                              color: '#0D2B5E',
+                              border: 'none',
+                              borderRadius: '6px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            View Details
+                          </button>
+                        </>
+                      )}
                     </>
                   )}
                 </div>
