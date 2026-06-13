@@ -20,11 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Database configuration — update these for your Hostinger MySQL instance
-$DB_HOST = getenv('FUEVOLT_DB_HOST') ?: 'localhost';
-$DB_NAME = getenv('FUEVOLT_DB_NAME') ?: 'fuevolt';
-$DB_USER = getenv('FUEVOLT_DB_USER') ?: 'fuevolt_user';
-$DB_PASS = getenv('FUEVOLT_DB_PASS') ?: '';
+// Database configuration for Hostinger MySQL
+$DB_HOST = 'localhost';
+$DB_NAME = 'fuevolt_db';
+$DB_USER = 'fuevolt_user';
+$DB_PASS = 'Carlow87?';
 
 function getDB() {
     global $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS;
