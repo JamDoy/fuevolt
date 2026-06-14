@@ -36,6 +36,9 @@ const DARK = {
   brandBadgeBg: 'rgba(255,215,0,0.1)',
   brandBadgeBorder: 'rgba(255,215,0,0.3)',
   mapBorder: 'rgba(255,215,0,0.2)',
+  heading: '#FFD700',
+  subtext: '#9CA3AF',
+  accent: '#FFD700',
   footerText: '#6B7280',
   footerSubtext: '#4B5563',
 };
@@ -76,6 +79,9 @@ const LIGHT = {
   brandBadgeBg: 'rgba(200,151,31,0.1)',
   brandBadgeBorder: 'rgba(200,151,31,0.3)',
   mapBorder: 'rgba(13,43,94,0.12)',
+  heading: '#0D2B5E',
+  subtext: '#6B7280',
+  accent: '#C8971F',
   footerText: '#9CA3AF',
   footerSubtext: '#D1D5DB',
 };

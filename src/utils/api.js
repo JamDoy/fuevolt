@@ -428,6 +428,7 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
       const street = tags['addr:street'] || '';
       const suburb = tags['addr:suburb'] || tags['addr:city'] || '';
       const postcode = tags['addr:postcode'] || '';
+      const openingHours = tags['opening_hours'] || null;
 
       let address = '';
       let needsGeocode = false;
@@ -452,6 +453,7 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
         name,
         brand: brand || 'Independent',
         address,
+        openingHours,
         _hasRealName: !!(rawName || brand),
         latitude: stationLat,
         longitude: stationLng,
