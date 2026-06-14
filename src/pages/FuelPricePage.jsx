@@ -5,6 +5,7 @@ import StationMap from '../components/StationMap';
 import FuelStationCard from '../components/FuelStationCard';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
+import SavingsCalculator from '../components/SavingsCalculator';
 import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
 
 const FUEL_TYPES = [
@@ -235,6 +236,14 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
             />
           ))}
         </div>
+      )}
+
+      {/* Savings Calculator */}
+      {!loading && stations.length > 0 && cheapest && (
+        <SavingsCalculator
+          cheapest={cheapest.price * 100}
+          average={avgPrice * 100}
+        />
       )}
 
       {/* Empty state */}
