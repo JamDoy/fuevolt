@@ -17,7 +17,7 @@ const FUEL_TYPES = [
   { id: 'LPG', label: 'LPG' },
 ];
 
-export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail }) {
+export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail, onSwitchToEV }) {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -244,6 +244,34 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
           cheapest={cheapest.price * 100}
           average={avgPrice * 100}
         />
+      )}
+
+      {/* EV Cross-Promotion Banner */}
+      {!loading && stations.length > 0 && (
+        <div
+          className="rounded-2xl p-5 cursor-pointer"
+          onClick={onSwitchToEV}
+          style={{
+            background: theme.mode === 'dark' ? 'rgba(46,204,113,0.06)' : 'rgba(39,174,96,0.04)',
+            border: `1px solid ${theme.mode === 'dark' ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
+            transition: 'all 0.25s ease',
+          }}
+        >
+          <div className="flex items-center gap-4">
+            <span className="text-3xl">⚡</span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold" style={{ color: theme.green }}>
+                Switch to Electric?
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>
+                There are EV charging stations near this area. Save up to 60% on fuel costs by going electric.
+              </p>
+            </div>
+            <span className="text-sm font-semibold" style={{ color: theme.green }}>
+              Find Chargers →
+            </span>
+          </div>
+        </div>
       )}
 
       {/* Empty state */}

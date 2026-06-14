@@ -68,11 +68,17 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                 style={{
                   transition: 'all 0.25s ease',
                   ...(view === tab.id
-                    ? {
-                        background: 'linear-gradient(135deg, #2ECC71, #27AE60)',
-                        color: '#FFFFFF',
-                        boxShadow: '0 0 12px rgba(46, 204, 113, 0.3)',
-                      }
+                    ? (tab.id === 'ev'
+                        ? {
+                            background: 'linear-gradient(135deg, #2ECC71, #27AE60)',
+                            color: '#FFFFFF',
+                            boxShadow: '0 0 12px rgba(46, 204, 113, 0.3)',
+                          }
+                        : {
+                            background: 'linear-gradient(135deg, #C8971F, #FFD700)',
+                            color: '#0D2B5E',
+                            boxShadow: '0 0 12px rgba(255, 215, 0, 0.3)',
+                          })
                     : {
                         background: 'rgba(255,255,255,0.1)',
                         color: '#FFFFFF',
@@ -152,10 +158,9 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
               style={{
                 transition: 'all 0.25s ease',
                 ...(view === tab.id
-                  ? {
-                      background: 'linear-gradient(135deg, #2ECC71, #27AE60)',
-                      color: '#FFFFFF',
-                    }
+                  ? (tab.id === 'ev'
+                      ? { background: 'linear-gradient(135deg, #2ECC71, #27AE60)', color: '#FFFFFF' }
+                      : { background: 'linear-gradient(135deg, #C8971F, #FFD700)', color: '#0D2B5E' })
                   : {
                       background: 'rgba(255,255,255,0.08)',
                       color: '#FFFFFF',
