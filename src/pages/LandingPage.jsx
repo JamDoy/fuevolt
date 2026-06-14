@@ -1,47 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
-const OPTIONS = [
-  {
-    id: 'petrol',
-    label: 'Petrol',
-    sublabel: 'Find cheapest petrol near you',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="10" width="24" height="30" rx="3" stroke="#FFD700" strokeWidth="2.5" fill="none" />
-        <rect x="12" y="14" width="16" height="10" rx="2" fill="rgba(255,215,0,0.15)" stroke="#FFD700" strokeWidth="1.5" />
-        <path d="M32 18h6a2 2 0 012 2v14a3 3 0 01-3 3h0a3 3 0 01-3-3V22" stroke="#FFD700" strokeWidth="2" />
-        <circle cx="38" cy="16" r="2" fill="#FFD700" />
-        <rect x="17" y="30" width="6" height="6" rx="1" fill="#2ECC71" />
-      </svg>
-    ),
-  },
-  {
-    id: 'diesel',
-    label: 'Diesel',
-    sublabel: 'Compare diesel prices nearby',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="10" width="24" height="30" rx="3" stroke="#60A5FA" strokeWidth="2.5" fill="none" />
-        <rect x="12" y="14" width="16" height="10" rx="2" fill="rgba(96,165,250,0.15)" stroke="#60A5FA" strokeWidth="1.5" />
-        <path d="M32 18h6a2 2 0 012 2v14a3 3 0 01-3 3h0a3 3 0 01-3-3V22" stroke="#60A5FA" strokeWidth="2" />
-        <circle cx="38" cy="16" r="2" fill="#60A5FA" />
-        <rect x="17" y="30" width="6" height="6" rx="1" fill="#FFD700" />
-      </svg>
-    ),
-  },
-  {
-    id: 'ev',
-    label: 'EV Charging',
-    sublabel: 'Locate charging stations',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-        <path d="M20 8l-8 18h10l-4 14 14-20H22l6-12H20z" fill="rgba(46,204,113,0.15)" stroke="#2ECC71" strokeWidth="2.5" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-];
-
 export default function LandingPage({ onSelect }) {
   const [hovered, setHovered] = useState(null);
   const { theme } = useTheme();
@@ -50,70 +9,221 @@ export default function LandingPage({ onSelect }) {
   return (
     <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center px-4 py-12">
       {/* Hero */}
-      <div className="text-center mb-12 animate-fade-in">
+      <div className="text-center mb-10 animate-fade-in">
         <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-3">
           <span style={{ color: theme.text }}>Find the </span>
           <span style={{ color: theme.gold }}>cheapest fuel</span>
+          <span style={{ color: theme.text }}> & </span>
+          <span style={{ color: theme.green }}>charge</span>
         </h1>
-        <p className="text-base sm:text-lg max-w-md mx-auto" style={{ color: theme.textSecondary }}>
-          Compare real-time fuel prices across Australian service stations
+        <p className="text-base sm:text-lg max-w-lg mx-auto" style={{ color: theme.textSecondary }}>
+          Compare real-time fuel prices and locate EV charging stations across Australia
         </p>
       </div>
 
-      {/* Selection Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl animate-slide-up">
-        {OPTIONS.map((opt) => (
-          <button
-            key={opt.id}
-            onClick={() => onSelect(opt.id)}
-            onMouseEnter={() => setHovered(opt.id)}
-            onMouseLeave={() => setHovered(null)}
-            className="group relative flex flex-col items-center gap-4 p-8 rounded-3xl cursor-pointer border"
+      {/* 50/50 Split — Fuel vs EV */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl animate-slide-up">
+        {/* Fuel Panel */}
+        <div
+          onMouseEnter={() => setHovered('fuel')}
+          onMouseLeave={() => setHovered(null)}
+          className="relative rounded-3xl p-8 overflow-hidden"
+          style={{
+            background: isDark ? theme.cardBg : theme.cardBg,
+            border: hovered === 'fuel'
+              ? `2px solid ${theme.gold}`
+              : `1px solid ${theme.cardBorder}`,
+            boxShadow: hovered === 'fuel'
+              ? (isDark
+                  ? '0 0 50px rgba(255,215,0,0.12), 0 20px 60px rgba(0,0,0,0.4)'
+                  : '0 0 40px rgba(200,151,31,0.15), 0 20px 40px rgba(0,0,0,0.1)')
+              : (isDark
+                  ? '0 4px 20px rgba(0,0,0,0.3)'
+                  : '0 2px 12px rgba(0,0,0,0.06)'),
+            transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+            transform: hovered === 'fuel' ? 'translateY(-4px)' : 'translateY(0)',
+          }}
+        >
+          {/* Background accent */}
+          <div
+            className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10"
             style={{
-              background: isDark
-                ? theme.cardBg
-                : theme.cardBg,
-              borderColor: hovered === opt.id
-                ? (isDark ? 'rgba(255,215,0,0.5)' : 'rgba(200,151,31,0.5)')
-                : theme.cardBorder,
-              boxShadow: hovered === opt.id
-                ? (isDark
-                    ? '0 0 40px rgba(255,215,0,0.08), 0 20px 60px rgba(0,0,0,0.3)'
-                    : '0 0 40px rgba(200,151,31,0.1), 0 20px 40px rgba(0,0,0,0.08)')
-                : (isDark
-                    ? '0 4px 20px rgba(0,0,0,0.2)'
-                    : '0 2px 12px rgba(0,0,0,0.06)'),
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              transform: hovered === opt.id ? 'translateY(-4px)' : 'translateY(0)',
+              background: `radial-gradient(circle, ${theme.gold} 0%, transparent 70%)`,
+              transform: 'translate(30%, -30%)',
             }}
-          >
+          />
+          <div className="relative z-10">
+            {/* Icon */}
             <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center"
+              className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
               style={{
-                background: theme.glassBg,
-                border: `1px solid ${theme.glassBorder}`,
+                background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)',
+                border: `1px solid ${isDark ? 'rgba(255,215,0,0.25)' : 'rgba(200,151,31,0.2)'}`,
               }}
             >
-              {opt.icon}
+              <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+                <rect x="8" y="10" width="24" height="30" rx="3" stroke={theme.gold} strokeWidth="2.5" fill="none" />
+                <rect x="12" y="14" width="16" height="10" rx="2" fill={isDark ? 'rgba(255,215,0,0.15)' : 'rgba(200,151,31,0.12)'} stroke={theme.gold} strokeWidth="1.5" />
+                <path d="M32 18h6a2 2 0 012 2v14a3 3 0 01-3 3h0a3 3 0 01-3-3V22" stroke={theme.gold} strokeWidth="2" />
+                <circle cx="38" cy="16" r="2" fill={theme.gold} />
+              </svg>
             </div>
-            <div className="text-center">
-              <h3 className="text-lg font-bold mb-1" style={{ color: theme.text }}>{opt.label}</h3>
-              <p className="text-xs" style={{ color: theme.textSecondary }}>{opt.sublabel}</p>
+
+            <h2 className="text-2xl font-bold mb-2" style={{ color: theme.gold }}>
+              Fuel Prices
+            </h2>
+            <p className="text-sm mb-6" style={{ color: theme.textSecondary }}>
+              Compare petrol & diesel prices from government APIs. Find the cheapest station near you and save money every fill-up.
+            </p>
+
+            {/* Fuel type quick-select */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {['Petrol', 'Diesel', 'E10', 'LPG'].map((t) => (
+                <span
+                  key={t}
+                  className="px-3 py-1 rounded-full text-xs font-medium"
+                  style={{
+                    background: isDark ? 'rgba(255,215,0,0.08)' : 'rgba(200,151,31,0.06)',
+                    color: theme.gold,
+                    border: `1px solid ${isDark ? 'rgba(255,215,0,0.2)' : 'rgba(200,151,31,0.15)'}`,
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
             </div>
-            <div
-              className="mt-2 px-4 py-2 rounded-xl text-xs font-semibold"
+
+            <button
+              onClick={() => onSelect('petrol')}
+              className="w-full px-6 py-3 rounded-2xl text-sm font-bold cursor-pointer"
               style={{
-                background: hovered === opt.id
-                  ? 'linear-gradient(135deg, #C8971F, #FFD700)'
-                  : theme.chipBg,
-                color: hovered === opt.id ? '#0D2B5E' : theme.chipText,
-                transition: 'all 0.3s ease',
+                background: `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`,
+                color: '#0D2B5E',
+                boxShadow: isDark ? '0 4px 20px rgba(255,215,0,0.2)' : '0 4px 15px rgba(200,151,31,0.25)',
+                transition: 'all 0.25s ease',
+                border: 'none',
               }}
             >
-              Search &rarr;
+              Find Cheap Fuel →
+            </button>
+          </div>
+        </div>
+
+        {/* EV Panel */}
+        <div
+          onMouseEnter={() => setHovered('ev')}
+          onMouseLeave={() => setHovered(null)}
+          className="relative rounded-3xl p-8 overflow-hidden"
+          style={{
+            background: isDark ? theme.cardBg : theme.cardBg,
+            border: hovered === 'ev'
+              ? `2px solid ${theme.green}`
+              : `1px solid ${theme.cardBorder}`,
+            boxShadow: hovered === 'ev'
+              ? (isDark
+                  ? '0 0 50px rgba(46,204,113,0.12), 0 20px 60px rgba(0,0,0,0.4)'
+                  : '0 0 40px rgba(39,174,96,0.15), 0 20px 40px rgba(0,0,0,0.1)')
+              : (isDark
+                  ? '0 4px 20px rgba(0,0,0,0.3)'
+                  : '0 2px 12px rgba(0,0,0,0.06)'),
+            transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+            transform: hovered === 'ev' ? 'translateY(-4px)' : 'translateY(0)',
+          }}
+        >
+          {/* Background accent */}
+          <div
+            className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10"
+            style={{
+              background: `radial-gradient(circle, ${theme.green} 0%, transparent 70%)`,
+              transform: 'translate(30%, -30%)',
+            }}
+          />
+          <div className="relative z-10">
+            {/* Icon */}
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+              style={{
+                background: isDark ? 'rgba(46,204,113,0.1)' : 'rgba(39,174,96,0.08)',
+                border: `1px solid ${isDark ? 'rgba(46,204,113,0.25)' : 'rgba(39,174,96,0.2)'}`,
+              }}
+            >
+              <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+                <path d="M20 8l-8 18h10l-4 14 14-20H22l6-12H20z" fill={isDark ? 'rgba(46,204,113,0.15)' : 'rgba(39,174,96,0.12)'} stroke={theme.green} strokeWidth="2.5" strokeLinejoin="round" />
+              </svg>
             </div>
-          </button>
-        ))}
+
+            <h2 className="text-2xl font-bold mb-2" style={{ color: theme.green }}>
+              EV Charging
+            </h2>
+            <p className="text-sm mb-6" style={{ color: theme.textSecondary }}>
+              Locate thousands of charging points. Filter by connector type, speed, and availability. Go electric with confidence.
+            </p>
+
+            {/* Connector type quick-select */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {['Type 2', 'CCS', 'CHAdeMO', 'Tesla'].map((t) => (
+                <span
+                  key={t}
+                  className="px-3 py-1 rounded-full text-xs font-medium"
+                  style={{
+                    background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.06)',
+                    color: theme.green,
+                    border: `1px solid ${isDark ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            <button
+              onClick={() => onSelect('ev')}
+              className="w-full px-6 py-3 rounded-2xl text-sm font-bold cursor-pointer"
+              style={{
+                background: `linear-gradient(135deg, ${theme.greenDark}, ${theme.green})`,
+                color: '#FFFFFF',
+                boxShadow: isDark ? '0 4px 20px rgba(46,204,113,0.2)' : '0 4px 15px rgba(39,174,96,0.25)',
+                transition: 'all 0.25s ease',
+                border: 'none',
+              }}
+            >
+              Find EV Chargers →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Fuel vs EV Cost Comparison Widget */}
+      <div
+        className="w-full max-w-4xl mt-10 rounded-2xl p-6 animate-slide-up"
+        style={{
+          background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(13,43,94,0.02)',
+          border: `1px solid ${theme.cardBorder}`,
+          animationDelay: '0.2s',
+        }}
+      >
+        <h3 className="text-center text-sm font-bold mb-4" style={{ color: theme.text }}>
+          💡 Fuel vs Electric — Weekly Cost Comparison
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="text-center p-4 rounded-xl" style={{ background: isDark ? 'rgba(255,215,0,0.05)' : 'rgba(200,151,31,0.04)' }}>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Avg Petrol Cost</p>
+            <p className="text-2xl font-bold" style={{ color: theme.gold }}>$65</p>
+            <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>Based on 300km/week</p>
+          </div>
+          <div className="text-center p-4 rounded-xl flex flex-col items-center justify-center">
+            <div className="text-2xl mb-1">→</div>
+            <p className="text-xs font-semibold" style={{ color: theme.green }}>Save ~60%</p>
+          </div>
+          <div className="text-center p-4 rounded-xl" style={{ background: isDark ? 'rgba(46,204,113,0.05)' : 'rgba(39,174,96,0.04)' }}>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Avg EV Charge Cost</p>
+            <p className="text-2xl font-bold" style={{ color: theme.green }}>$25</p>
+            <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>Based on 300km/week</p>
+          </div>
+        </div>
+        <p className="text-[10px] text-center mt-3" style={{ color: theme.textMuted }}>
+          Estimates based on avg fuel price 175¢/L at 8L/100km vs avg EV charging at 45¢/kWh at 15kWh/100km
+        </p>
       </div>
 
       {/* Footer tagline */}

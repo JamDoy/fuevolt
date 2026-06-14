@@ -62,6 +62,7 @@ function AppContent() {
           <FuelPricePage
             initialFuelType={initialFuelType}
             onStationDetail={handleStationDetail}
+            onSwitchToEV={() => setView('ev')}
           />
         )}
         {view === 'station-detail' && detailStation && (

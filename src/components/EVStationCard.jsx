@@ -1,25 +1,89 @@
+import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import StatusBadge from './StatusBadge';
+import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
 
 export default function EVStationCard({ station, isSelected, onClick }) {
   const { theme } = useTheme();
+  const isDark = theme.mode === 'dark';
+  const [fav, setFav] = useState(() => isFavourite(`ev-${station.ID}`));
+  const [visible, setVisible] = useState(false);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.1 }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const toggleFav = (e) => {
+    e.stopPropagation();
+    const id = `ev-${station.ID}`;
+    if (fav) {
+      removeFavourite(id);
+      setFav(false);
+    } else {
+      addFavourite({ id, name: station.AddressInfo?.Title, type: 'ev' });
+      setFav(true);
+    }
+  };
+
+  const maxPower = station.Connections
+    ? Math.max(...station.Connections.map((c) => c.PowerKW || 0))
+    : 0;
+
+  const speedLabel = maxPower >= 50 ? 'Ultra-Rapid' : maxPower >= 7 ? 'Fast' : 'Slow';
+  const speedColor = maxPower >= 50 ? theme.gold : maxPower >= 7 ? theme.green : theme.textMuted;
 
   return (
     <div
+      ref={cardRef}
       onClick={onClick}
       className="rounded-2xl p-4 cursor-pointer"
       style={{
         background: theme.cardBg,
-        border: isSelected ? `1px solid ${theme.cardBorderActive}` : `1px solid ${theme.cardBorder}`,
-        boxShadow: isSelected ? theme.cardGlow : theme.cardGlowDefault,
-        transition: 'all 0.25s ease',
+        border: isSelected
+          ? `2px solid ${theme.green}`
+          : `1px solid ${isDark ? 'rgba(46,204,113,0.15)' : theme.cardBorder}`,
+        boxShadow: isSelected
+          ? (isDark ? '0 0 20px rgba(46,204,113,0.15) inset' : '0 0 12px rgba(39,174,96,0.1) inset')
+          : theme.cardGlowDefault,
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(20px)',
       }}
     >
       <div className="flex items-start justify-between mb-2">
-        <h3 className="text-sm font-semibold" style={{ color: theme.gold }}>
-          {station.AddressInfo?.Title || 'Unknown Station'}
-        </h3>
-        <StatusBadge status={station.StatusType?.Title || 'Unknown'} />
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          {/* EV icon badge */}
+          <span
+            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+            style={{
+              background: isDark ? 'rgba(46,204,113,0.15)' : 'rgba(39,174,96,0.1)',
+              color: theme.green,
+              border: `1px solid ${isDark ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)'}`,
+            }}
+          >
+            ⚡
+          </span>
+          <h3 className="text-sm font-semibold truncate" style={{ color: theme.green }}>
+            {station.AddressInfo?.Title || 'EV Station'}
+          </h3>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleFav}
+            className="text-lg leading-none cursor-pointer"
+            title={fav ? 'Remove from favourites' : 'Add to favourites'}
+            style={{ color: fav ? '#2ECC71' : theme.textMuted, border: 'none', background: 'none' }}
+          >
+            {fav ? '★' : '☆'}
+          </button>
+          <StatusBadge status={station.StatusType?.Title || 'Unknown'} />
+        </div>
       </div>
 
       <p className="text-xs mb-2" style={{ color: theme.textSecondary }}>
@@ -31,9 +95,27 @@ export default function EVStationCard({ station, isSelected, onClick }) {
 
       {station.OperatorInfo?.Title && (
         <p className="text-xs mb-2" style={{ color: theme.textMuted }}>
-          &#x1F50C; {station.OperatorInfo.Title}
+          🔌 {station.OperatorInfo.Title}
         </p>
       )}
+
+      {/* Speed indicator */}
+      <div className="flex items-center gap-2 mb-2">
+        <span
+          className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+          style={{
+            background: maxPower >= 50
+              ? (isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)')
+              : (isDark ? 'rgba(46,204,113,0.1)' : 'rgba(39,174,96,0.06)'),
+            color: speedColor,
+            border: `1px solid ${maxPower >= 50
+              ? (isDark ? 'rgba(255,215,0,0.3)' : 'rgba(200,151,31,0.2)')
+              : (isDark ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)')}`,
+          }}
+        >
+          {speedLabel} • {maxPower}kW
+        </span>
+      </div>
 
       <div className="flex flex-wrap gap-1.5 mb-2">
         {station.Connections?.slice(0, 3).map((conn, i) => (
@@ -41,14 +123,12 @@ export default function EVStationCard({ station, isSelected, onClick }) {
             key={i}
             className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
             style={{
-              background: conn.PowerKW >= 50
-                ? theme.brandBadgeBg
-                : (theme.mode === 'dark' ? 'rgba(26,111,219,0.15)' : 'rgba(26,111,219,0.08)'),
-              color: conn.PowerKW >= 50 ? theme.gold : '#60A5FA',
-              border: `1px solid ${conn.PowerKW >= 50 ? theme.brandBadgeBorder : (theme.mode === 'dark' ? 'rgba(26,111,219,0.3)' : 'rgba(26,111,219,0.2)')}`,
+              background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.05)',
+              color: theme.green,
+              border: `1px solid ${isDark ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
             }}
           >
-            {conn.ConnectionType?.Title || 'Unknown'} {conn.PowerKW ? `\u2022 ${conn.PowerKW}kW` : ''}
+            {conn.ConnectionType?.Title || 'Unknown'} {conn.PowerKW ? `• ${conn.PowerKW}kW` : ''}
           </span>
         ))}
       </div>
