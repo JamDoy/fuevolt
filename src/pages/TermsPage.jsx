@@ -13,7 +13,16 @@ export default function TermsPage() {
       </Section>
 
       <Section title="2. Service Description" theme={theme}>
-        <p>FueVolt is a fuel price comparison and EV charging station finder for Australia. The app aggregates publicly available data from government fuel price APIs, OpenStreetMap, and Open Charge Map to help users find and compare fuel prices and charging stations near them.</p>
+        <p>FueVolt is a fuel price comparison and EV charging station finder for Australia. The app aggregates publicly available data from government fuel price APIs, OpenStreetMap, and Open Charge Map to help users find and compare fuel prices and EV charging stations near them.</p>
+        <p className="mt-2">Key features include:</p>
+        <ul className="list-disc pl-6 mt-1 space-y-1">
+          <li>Real-time fuel price comparison from official government sources</li>
+          <li>EV charging station finder with connector type and speed filters</li>
+          <li>EV charge cost estimator (estimates based on average Australian rates)</li>
+          <li>Fuel vs EV weekly cost comparison</li>
+          <li>Favourite stations (saved locally on your device)</li>
+          <li>Community correction system for station information</li>
+        </ul>
       </Section>
 
       <Section title="3. Data Accuracy & Disclaimer" theme={theme}>
@@ -24,6 +33,7 @@ export default function TermsPage() {
         </ul>
         <p className="mt-2"><strong>Station locations and details</strong> are sourced from OpenStreetMap (openstreetmap.org), a collaborative mapping project maintained by volunteers worldwide.</p>
         <p className="mt-2"><strong>EV charging station data</strong> is sourced from Open Charge Map (openchargemap.org), an open-source registry of charging infrastructure.</p>
+        <p className="mt-2"><strong>EV charging cost estimates</strong> provided by the app's cost estimator are approximate calculations based on average Australian electricity rates (45¢/kWh for public charging, 25¢/kWh for home charging). Actual costs vary significantly by provider, time of day, location, and individual electricity plans. These estimates should not be relied upon for financial planning.</p>
         <p className="mt-2 font-semibold">Important:</p>
         <ul className="list-disc pl-6 mt-1 space-y-1">
           <li>Prices may not reflect the current pump price at the time of your visit. Prices are updated periodically and may be delayed.</li>
