@@ -16,14 +16,16 @@ export default function PrivacyPolicyPage() {
         <h4 className="font-semibold mt-3 mb-1">Location Data</h4>
         <p>When you use "Use My Location" or GPS-based features, we access your device's location to find nearby fuel stations and EV chargers. This data is processed locally on your device and is not stored on our servers.</p>
 
+        <h4 className="font-semibold mt-3 mb-1">Favourites & Preferences</h4>
+        <p>When you save fuel stations or EV chargers as favourites, or use the EV charge cost estimator, this data is stored locally on your device using localStorage. It is never transmitted to any server.</p>
+
         <h4 className="font-semibold mt-3 mb-1">Usage Data</h4>
         <p>We may collect anonymous usage statistics such as pages viewed, search queries, and app interactions to improve our service. This data cannot be used to personally identify you.</p>
 
         <h4 className="font-semibold mt-3 mb-1">Advertising Data</h4>
         <p>We use Google AdMob to display advertisements. AdMob may collect device identifiers, IP addresses, and usage data to serve relevant ads. Please refer to <a href="https://policies.google.com/privacy" className="underline" style={{ color: theme.accent }}>Google's Privacy Policy</a> for details on their data practices.</p>
 
-        <h4 className="font-semibold mt-3 mb-1">Community Corrections</h4>
-        <p>If you submit a correction to station information, we store the correction content anonymously. We do not collect your name, email, or any personal identifiers with corrections.</p>
+
       </Section>
 
       <Section title="3. Data Sources" theme={theme}>
@@ -41,15 +43,18 @@ export default function PrivacyPolicyPage() {
       <Section title="4. How We Use Your Information" theme={theme}>
         <ul className="list-disc pl-6 space-y-1">
           <li>To display nearby fuel stations and EV chargers based on your location</li>
+          <li>To filter EV stations by connector type (Type 2, CCS, CHAdeMO, Tesla) and charging speed</li>
+          <li>To calculate EV charging cost estimates based on your battery size and charge level inputs</li>
+          <li>To save your favourite stations locally for quick access</li>
           <li>To serve relevant advertisements via Google AdMob</li>
           <li>To improve app performance and user experience</li>
-          <li>To process anonymous community corrections to station data</li>
+
         </ul>
       </Section>
 
       <Section title="5. Data Storage & Security" theme={theme}>
         <p>Search results and fuel prices are cached locally on your device (via localStorage) to reduce API calls and improve performance. This cached data is stored only on your device and is not transmitted to our servers.</p>
-        <p className="mt-2">Community corrections are stored in a secure database hosted on our web server. No personal information is associated with these corrections.</p>
+
       </Section>
 
       <Section title="6. Third-Party Services" theme={theme}>

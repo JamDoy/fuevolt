@@ -4,7 +4,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
 import { fetchStationDetails, fetchAllFuelPricesForStation } from '../utils/stationDetails';
-import CorrectionForm from '../components/CorrectionForm';
 import AmenityRow from '../components/AmenityRow';
 
 const goldPin = new L.DivIcon({
@@ -33,9 +32,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
   const [allPrices, setAllPrices] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [loadingPrices, setLoadingPrices] = useState(true);
-  const [showCorrectionForm, setShowCorrectionForm] = useState(false);
-  const [corrections, setCorrections] = useState([]);
-  const [loadingCorrections, setLoadingCorrections] = useState(true);
+
 
   useEffect(() => {
     let cancelled = false;
@@ -65,37 +62,12 @@ export default function FuelStationDetailPage({ station, onBack }) {
     return () => { cancelled = true; };
   }, [station]);
 
-  useEffect(() => {
-    let cancelled = false;
-    async function loadCorrections() {
-      setLoadingCorrections(true);
-      try {
-        const res = await fetch(`/api/corrections.php?station_id=${encodeURIComponent(station.id)}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (!cancelled) setCorrections(data.corrections || []);
-        }
-      } catch { /* API not available yet */ }
-      if (!cancelled) setLoadingCorrections(false);
-    }
-    loadCorrections();
-    return () => { cancelled = true; };
-  }, [station.id]);
+
 
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`;
   const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${station.latitude},${station.longitude}`;
 
-  const getVerifiedValue = (fieldName) => {
-    const verified = corrections.find(c => c.field_name === fieldName && c.confirmed_count >= 3);
-    if (verified) return { value: verified.corrected_value, verified: true };
-    return null;
-  };
 
-  const getPendingCorrection = (fieldName) => {
-    const pending = corrections.find(c => c.field_name === fieldName && c.confirmed_count < 3);
-    if (pending) return pending;
-    return null;
-  };
 
   const isGovSource = station.source && (station.source.includes('NSW Government') || station.source.includes('WA FuelWatch'));
 
@@ -178,7 +150,6 @@ export default function FuelStationDetailPage({ station, onBack }) {
           Location
         </h2>
         <p className="text-sm mb-3" style={{ color: theme.text }}>{station.address}</p>
-        <CorrectionIndicator field="address" corrections={corrections} theme={theme} />
         <div className="flex flex-wrap gap-2">
           <a
             href={directionsUrl}
@@ -235,7 +206,6 @@ export default function FuelStationDetailPage({ station, onBack }) {
                 {phone || 'Not available from free sources'}
               </span>
             </div>
-            <CorrectionIndicator field="phone" corrections={corrections} theme={theme} />
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-lg">&#128339;</span>
@@ -248,7 +218,6 @@ export default function FuelStationDetailPage({ station, onBack }) {
                   Not available from free sources
                 </p>
               )}
-              <CorrectionIndicator field="opening_hours" corrections={corrections} theme={theme} />
             </div>
           </div>
         )}
@@ -287,7 +256,6 @@ export default function FuelStationDetailPage({ station, onBack }) {
                   priceData={priceData}
                   isGovSource={isGovSource}
                   theme={theme}
-                  corrections={corrections}
                 />
               );
             })}
@@ -349,16 +317,15 @@ export default function FuelStationDetailPage({ station, onBack }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <AmenityRow label="Toilets" value={amenities.toilets} theme={theme} correction={getVerifiedValue('amenity_toilets')} />
-            <AmenityRow label="Car Wash" value={amenities.car_wash} theme={theme} correction={getVerifiedValue('amenity_car_wash')} />
-            <AmenityRow label="Tyre Pressure / Air Pump" value={amenities.air_pump} theme={theme} correction={getVerifiedValue('amenity_air_pump')} />
-            <AmenityRow label="Convenience Store" value={amenities.shop} theme={theme} correction={getVerifiedValue('amenity_shop')} />
-            <AmenityRow label="ATM" value={amenities.atm} theme={theme} correction={getVerifiedValue('amenity_atm')} />
-            <AmenityRow label="EV Charging" value={amenities.ev_charging} theme={theme} correction={getVerifiedValue('amenity_ev_charging')} />
-            <AmenityRow label="Disability Access" value={amenities.wheelchair} theme={theme} correction={getVerifiedValue('amenity_wheelchair')} />
+            <AmenityRow label="Toilets" value={amenities.toilets} theme={theme} />
+            <AmenityRow label="Car Wash" value={amenities.car_wash} theme={theme} />
+            <AmenityRow label="Tyre Pressure / Air Pump" value={amenities.air_pump} theme={theme} />
+            <AmenityRow label="Convenience Store" value={amenities.shop} theme={theme} />
+            <AmenityRow label="ATM" value={amenities.atm} theme={theme} />
+            <AmenityRow label="EV Charging" value={amenities.ev_charging} theme={theme} />
+            <AmenityRow label="Disability Access" value={amenities.wheelchair} theme={theme} />
           </div>
         )}
-        <CorrectionIndicator field="amenities" corrections={corrections} theme={theme} />
       </div>
 
       {/* Reviews placeholder */}
@@ -387,39 +354,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
         </a>
       </div>
 
-      {/* Suggest a Correction */}
-      <div
-        className="rounded-2xl p-5"
-        style={{
-          background: theme.cardBg,
-          border: `1px solid ${theme.cardBorder}`,
-          backdropFilter: 'blur(12px)',
-        }}
-      >
-        {!showCorrectionForm ? (
-          <button
-            onClick={() => setShowCorrectionForm(true)}
-            className="w-full px-4 py-3 rounded-xl text-sm font-semibold cursor-pointer"
-            style={{
-              background: `linear-gradient(135deg, ${theme.green}, ${theme.greenDark})`,
-              color: '#FFFFFF',
-              border: 'none',
-              transition: 'all 0.25s ease',
-            }}
-          >
-            &#9998; Suggest a Correction
-          </button>
-        ) : (
-          <CorrectionForm
-            station={station}
-            onClose={() => setShowCorrectionForm(false)}
-            onSubmitted={(newCorrection) => {
-              setCorrections(prev => [...prev, newCorrection]);
-              setShowCorrectionForm(false);
-            }}
-          />
-        )}
-      </div>
+
 
       <style>{`
         @keyframes fadeSlideIn {
@@ -431,10 +366,8 @@ export default function FuelStationDetailPage({ station, onBack }) {
   );
 }
 
-function FuelPriceTile({ code, label, priceData, isGovSource, theme, corrections }) {
-  const verified = corrections.find(c => c.field_name === `price_${code}` && c.confirmed_count >= 3);
-  const pending = corrections.find(c => c.field_name === `price_${code}` && c.confirmed_count < 3);
-  const displayPrice = verified ? parseFloat(verified.corrected_value) : priceData?.price;
+function FuelPriceTile({ code, label, priceData, isGovSource, theme }) {
+  const displayPrice = priceData?.price;
 
   return (
     <div
@@ -456,56 +389,18 @@ function FuelPriceTile({ code, label, priceData, isGovSource, theme, corrections
               {new Date(priceData.lastUpdated).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
             </p>
           )}
-          {verified && <VerifiedBadge theme={theme} />}
-          {!isGovSource && !verified && (
+          {!isGovSource && (
             <p className="text-[9px] mt-1 italic" style={{ color: theme.textMuted }}>estimate</p>
           )}
         </>
       ) : (
         <p className="text-xs mt-1" style={{ color: theme.textMuted }}>Not currently available</p>
       )}
-      {pending && <PendingBadge count={pending.confirmed_count} theme={theme} />}
     </div>
   );
 }
 
-function CorrectionIndicator({ field, corrections, theme }) {
-  const pending = corrections.find(c => c.field_name === field && c.confirmed_count < 3);
-  const verified = corrections.find(c => c.field_name === field && c.confirmed_count >= 3);
-  if (verified) return <VerifiedBadge theme={theme} />;
-  if (pending) return <PendingBadge count={pending.confirmed_count} theme={theme} />;
-  return null;
-}
 
-function VerifiedBadge({ theme }) {
-  return (
-    <span
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold mt-1"
-      style={{
-        background: `rgba(46,204,113,0.15)`,
-        color: theme.green,
-        border: `1px solid rgba(46,204,113,0.3)`,
-      }}
-    >
-      &#10003; Community verified
-    </span>
-  );
-}
-
-function PendingBadge({ count, theme }) {
-  return (
-    <span
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] mt-1"
-      style={{
-        background: theme.chipBg,
-        color: theme.textMuted,
-        border: `1px solid ${theme.chipBorder}`,
-      }}
-    >
-      Correction pending ({count}/3 confirmed)
-    </span>
-  );
-}
 
 function OpeningHoursDisplay({ hours, todayDay, theme }) {
   if (typeof hours === 'string') {
