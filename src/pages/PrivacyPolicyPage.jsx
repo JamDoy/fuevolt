@@ -25,8 +25,7 @@ export default function PrivacyPolicyPage() {
         <h4 className="font-semibold mt-3 mb-1">Advertising Data</h4>
         <p>We use Google AdMob to display advertisements. AdMob may collect device identifiers, IP addresses, and usage data to serve relevant ads. Please refer to <a href="https://policies.google.com/privacy" className="underline" style={{ color: theme.accent }}>Google's Privacy Policy</a> for details on their data practices.</p>
 
-        <h4 className="font-semibold mt-3 mb-1">Community Corrections</h4>
-        <p>If you submit a correction to station information, we store the correction content anonymously. We do not collect your name, email, or any personal identifiers with corrections.</p>
+
       </Section>
 
       <Section title="3. Data Sources" theme={theme}>
@@ -49,13 +48,13 @@ export default function PrivacyPolicyPage() {
           <li>To save your favourite stations locally for quick access</li>
           <li>To serve relevant advertisements via Google AdMob</li>
           <li>To improve app performance and user experience</li>
-          <li>To process anonymous community corrections to station data</li>
+
         </ul>
       </Section>
 
       <Section title="5. Data Storage & Security" theme={theme}>
         <p>Search results and fuel prices are cached locally on your device (via localStorage) to reduce API calls and improve performance. This cached data is stored only on your device and is not transmitted to our servers.</p>
-        <p className="mt-2">Community corrections are stored in a secure database hosted on our web server. No personal information is associated with these corrections.</p>
+
       </Section>
 
       <Section title="6. Third-Party Services" theme={theme}>

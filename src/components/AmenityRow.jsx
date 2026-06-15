@@ -1,9 +1,9 @@
 import { useTheme } from '../contexts/ThemeContext';
 
-export default function AmenityRow({ label, value, correction }) {
+export default function AmenityRow({ label, value }) {
   const { theme } = useTheme();
 
-  const displayValue = correction?.value || value;
+  const displayValue = value;
 
   let icon, color, text;
   if (displayValue === 'yes') {
@@ -37,14 +37,6 @@ export default function AmenityRow({ label, value, correction }) {
           {icon}
         </span>
         <span className="text-xs font-semibold" style={{ color }}>{text}</span>
-        {correction?.verified && (
-          <span
-            className="text-[9px] px-1.5 py-0.5 rounded-full"
-            style={{ background: 'rgba(46,204,113,0.15)', color: theme.green }}
-          >
-            verified
-          </span>
-        )}
       </div>
     </div>
   );
