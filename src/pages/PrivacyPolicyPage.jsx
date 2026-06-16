@@ -32,12 +32,13 @@ export default function PrivacyPolicyPage() {
         <p>FueVolt aggregates publicly available data from the following sources:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li><strong>NSW Government</strong> — Fuel prices via the NSW Motor API (api.nsw.gov.au)</li>
+          <li><strong>QLD Government</strong> — Fuel prices via the QLD Fuel Pricing Direct API (fuelpricesqld.com.au)</li>
           <li><strong>WA Government</strong> — Fuel prices via FuelWatch (fuelwatch.wa.gov.au)</li>
           <li><strong>OpenStreetMap</strong> — Station locations, names, addresses, and opening hours via the Overpass API</li>
           <li><strong>Open Charge Map</strong> — EV charging station locations and details (openchargemap.org)</li>
           <li><strong>Nominatim (OpenStreetMap)</strong> — Reverse geocoding for address resolution</li>
         </ul>
-        <p className="mt-2">Fuel prices displayed are sourced directly from official government APIs where available. For states without a registered API (QLD, VIC, SA, NT), prices are clearly labelled as estimates. We do not guarantee the accuracy of third-party data.</p>
+        <p className="mt-2">Fuel prices displayed are sourced directly from official government APIs where available. For states without a registered API (VIC, SA, NT), prices are clearly labelled as estimates. We do not guarantee the accuracy of third-party data.</p>
       </Section>
 
       <Section title="4. How We Use Your Information" theme={theme}>
