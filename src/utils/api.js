@@ -124,13 +124,109 @@ function formatCacheAge(timestamp) {
 
 // Fuel type mapping for various APIs
 const FUEL_TYPE_MAP = {
-  'E10': { nsw: 'E10', wa: '2' },
-  'U91': { nsw: 'U91', wa: '1' },
-  'U95': { nsw: 'P95', wa: '4' },
-  'U98': { nsw: 'P98', wa: '6' },
-  'Diesel': { nsw: 'DL', wa: '4' },
-  'LPG': { nsw: 'LPG', wa: '5' },
+  'E10': { nsw: 'E10', wa: '2', qld: 12 },
+  'U91': { nsw: 'U91', wa: '1', qld: 2 },
+  'U95': { nsw: 'P95', wa: '4', qld: 5 },
+  'U98': { nsw: 'P98', wa: '6', qld: 8 },
+  'Diesel': { nsw: 'DL', wa: '4', qld: 3 },
+  'LPG': { nsw: 'LPG', wa: '5', qld: 4 },
 };
+
+// QLD Fuel Pricing Direct API
+const QLD_API_BASE = 'https://fppdirectapi-prod.fuelpricesqld.com.au';
+const QLD_API_TOKEN = '3702baa0-61e3-4796-a011-45128c1e91fd';
+
+const QLD_BRAND_MAP = {
+  2: 'Caltex', 5: 'BP', 7: 'Budget', 12: 'Independent', 16: 'Mobil',
+  20: 'Shell', 23: 'United', 27: 'Unbranded', 51: 'Apco', 57: 'Metro Fuel',
+  65: 'Petrogas', 72: 'Gull', 86: 'Liberty', 87: 'AM/PM', 105: 'Better Choice',
+  110: 'Freedom Fuels', 111: 'Coles Express', 113: '7-Eleven', 114: 'Astron',
+  115: 'Prime Petroleum', 167: 'Speedway', 169: 'On the Run', 2301: 'Choice',
+  4896: 'Mogas', 5094: 'Puma Energy', 2031031: 'Costco', 2418945: 'Endeavour',
+  2418994: 'Pacific Petroleum', 2418995: 'Vibe', 2419007: 'Lowes',
+  2419008: 'Westside', 2459022: 'FuelXpress', 3421028: 'X Convenience',
+  3421066: 'Ampol', 3421073: 'EG Ampol', 3421075: 'IOR', 3421183: 'U-Go',
+  3421193: 'Reddy Express', 3421230: 'SOLO',
+};
+
+async function fetchQLDFuelPrices(latitude, longitude, fuelType) {
+  try {
+    const qldFuelId = FUEL_TYPE_MAP[fuelType]?.qld || 2;
+
+    // Try direct API first (works in Android/Capacitor), fall back to proxy
+    let sitesData, pricesData;
+    try {
+      const headers = { 'Authorization': `FPDAPI SubscriberToken=${QLD_API_TOKEN}` };
+      const [sitesRes, pricesRes] = await Promise.all([
+        fetch(`${QLD_API_BASE}/Subscriber/GetFullSiteDetails?countryId=21&geoRegionLevel=3&geoRegionId=1`, { headers }),
+        fetch(`${QLD_API_BASE}/Price/GetSitesPrices?countryId=21&geoRegionLevel=3&geoRegionId=1`, { headers }),
+      ]);
+      if (!sitesRes.ok || !pricesRes.ok) throw new Error('Direct API failed');
+      sitesData = await sitesRes.json();
+      pricesData = await pricesRes.json();
+    } catch {
+      // CORS blocked — use server-side proxy
+      const [sitesRes, pricesRes] = await Promise.all([
+        fetch(`/api/qld-fuel.php?endpoint=GetFullSiteDetails&geoRegionLevel=3&geoRegionId=1`),
+        fetch(`/api/qld-fuel.php?endpoint=GetSitesPrices&geoRegionLevel=3&geoRegionId=1`),
+      ]);
+      if (!sitesRes.ok || !pricesRes.ok) return null;
+      sitesData = await sitesRes.json();
+      pricesData = await pricesRes.json();
+    }
+
+    if (!sitesData?.S || !pricesData?.SitePrices) return null;
+
+    // Build site lookup
+    const siteMap = {};
+    sitesData.S.forEach((s) => {
+      siteMap[s.S] = s;
+    });
+
+    // Filter prices for requested fuel type and build station list
+    const priceMap = {};
+    pricesData.SitePrices.forEach((p) => {
+      if (p.FuelId === qldFuelId && p.Price > 0 && p.Price < 9000) {
+        priceMap[p.SiteId] = p;
+      }
+    });
+
+    const stations = [];
+    for (const [siteId, priceEntry] of Object.entries(priceMap)) {
+      const site = siteMap[parseInt(siteId)];
+      if (!site || !site.Lat || !site.Lng) continue;
+
+      const dist = getDistance(latitude, longitude, site.Lat, site.Lng);
+      if (dist > 30) continue;
+
+      const brand = QLD_BRAND_MAP[site.B] || 'Independent';
+      const price = priceEntry.Price / 10;
+
+      stations.push({
+        id: `qld-${siteId}`,
+        name: site.N || `${brand} Station`,
+        brand,
+        address: `${site.A || ''}, QLD ${site.P || ''}`.trim(),
+        latitude: site.Lat,
+        longitude: site.Lng,
+        price: price / 100,
+        priceDisplay: `${price.toFixed(1)}¢/L`,
+        fuelType,
+        lastUpdated: priceEntry.TransactionDateUtc || new Date().toISOString(),
+        distance: dist.toFixed(1),
+        source: 'QLD Government',
+      });
+    }
+
+    if (stations.length === 0) return null;
+
+    return stations
+      .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance))
+      .slice(0, 30);
+  } catch {
+    return null;
+  }
+}
 
 // NSW Fuel API (also covers TAS) — registered Motor API (2,500 calls/month)
 const NSW_API_BASE = 'https://api.onegov.nsw.gov.au';
@@ -295,7 +391,9 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
   // Cache miss or expired — fetch fresh data from API
   let results = null;
 
-  if (state === 'WA') {
+  if (state === 'QLD') {
+    results = await fetchQLDFuelPrices(latitude, longitude, fuelType);
+  } else if (state === 'WA') {
     results = await fetchWAFuelPrices(latitude, longitude, fuelType);
   } else if (state === 'NSW' || state === 'TAS') {
     results = await fetchNSWFuelPrices(latitude, longitude, fuelType);
