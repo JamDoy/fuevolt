@@ -9,6 +9,7 @@ import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import EVCostEstimator from '../components/EVCostEstimator';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
+import { fetchEVAvailability, reverseGeocode } from '../utils/tomtom';
 
 const CONNECTOR_FILTERS = ['Type 2', 'CCS', 'CHAdeMO', 'Tesla', 'Type 1'];
 const SPEED_FILTERS = [
@@ -26,6 +27,8 @@ export default function EVChargingPage() {
   const [detailStation, setDetailStation] = useState(null);
   const [connectorFilters, setConnectorFilters] = useState([]);
   const [speedFilters, setSpeedFilters] = useState([]);
+  const [evAvailability, setEvAvailability] = useState({});
+  const [locationName, setLocationName] = useState('');
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
 
@@ -36,6 +39,21 @@ export default function EVChargingPage() {
       const data = await fetchEVStations({ latitude: lat, longitude: lng });
       setStations(data);
       setMapCenter([lat, lng]);
+
+      // Reverse geocode to show suburb name
+      reverseGeocode(lat, lng).then((loc) => {
+        if (loc?.suburb) setLocationName(loc.suburb);
+      }).catch(() => {});
+
+      // Fetch EV availability for visible stations (batch up to 10 to stay in budget)
+      const stationsWithUUID = data.filter((s) => s.UUID).slice(0, 10);
+      stationsWithUUID.forEach((s) => {
+        fetchEVAvailability(s.UUID).then((avail) => {
+          if (avail) {
+            setEvAvailability((prev) => ({ ...prev, [s.ID]: avail }));
+          }
+        }).catch(() => {});
+      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -194,6 +212,13 @@ export default function EVChargingPage() {
         </div>
       )}
 
+      {/* Location Name */}
+      {locationName && !loading && stations.length > 0 && (
+        <p className="text-sm font-medium" style={{ color: theme.text }}>
+          Showing chargers near <span style={{ color: theme.green }}>{locationName}</span>
+        </p>
+      )}
+
       {/* Map */}
       <StationMap
         stations={filtered}
@@ -204,6 +229,7 @@ export default function EVChargingPage() {
           setDetailStation(s);
         }}
         type="ev"
+        evAvailability={evAvailability}
       />
 
       {/* Results Count */}
@@ -245,6 +271,7 @@ export default function EVChargingPage() {
                 setSelectedStation(station);
                 setDetailStation(station);
               }}
+              availability={evAvailability[station.ID] || null}
             />
           ))}
         </div>

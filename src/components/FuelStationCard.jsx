@@ -2,17 +2,20 @@ import { useRef, useEffect, useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { getBrandStyle, formatOpeningHours } from '../utils/brandLogos';
 import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
+import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
 
-export default function FuelStationCard({ station, isSelected, onClick, onDetail, rank }) {
+export default function FuelStationCard({ station, isSelected, onClick, onDetail, rank, sortBy }) {
   const { theme } = useTheme();
   const cardRef = useRef(null);
   const [visible, setVisible] = useState(false);
   const [fav, setFav] = useState(false);
+  const [hasGeofence, setHasGeofence] = useState(false);
   const brandStyle = getBrandStyle(station.brand);
   const hours = formatOpeningHours(station.openingHours);
 
   useEffect(() => {
     setFav(isFavourite(station.id));
+    setHasGeofence(getSavedGeofences().some((f) => f.id === station.id));
   }, [station.id]);
 
   useEffect(() => {
@@ -96,14 +99,33 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
             </span>
             <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
           </div>
-          <button
-            onClick={toggleFav}
-            className="text-lg leading-none"
-            title={fav ? 'Remove from favourites' : 'Add to favourites'}
-            style={{ color: fav ? '#FFD700' : theme.textMuted }}
-          >
-            {fav ? '★' : '☆'}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (hasGeofence) {
+                  removeGeofence(station.id);
+                  setHasGeofence(false);
+                } else {
+                  saveGeofence({ id: station.id, name: station.name, latitude: station.latitude, longitude: station.longitude, type: 'fuel' });
+                  setHasGeofence(true);
+                }
+              }}
+              className="text-sm leading-none"
+              title={hasGeofence ? 'Remove alert' : 'Alert when nearby'}
+              style={{ color: hasGeofence ? theme.gold : theme.textMuted, background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              {hasGeofence ? '\uD83D\uDD14' : '\uD83D\uDD15'}
+            </button>
+            <button
+              onClick={toggleFav}
+              className="text-lg leading-none"
+              title={fav ? 'Remove from favourites' : 'Add to favourites'}
+              style={{ color: fav ? '#FFD700' : theme.textMuted, background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              {fav ? '\u2605' : '\u2606'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -117,7 +139,23 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
       )}
 
       <div className="flex items-center justify-between text-xs" style={{ color: theme.textMuted }}>
-        <span>{station.distance} km away</span>
+        <div className="flex items-center gap-2">
+          <span>{station.distance} km away</span>
+          {station.driveTime != null && (
+            <span
+              className="px-1.5 py-0.5 rounded text-[10px] font-medium"
+              style={{
+                background: sortBy === 'driveTime'
+                  ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`
+                  : theme.chipBg,
+                color: sortBy === 'driveTime' ? '#0D2B5E' : theme.textSecondary,
+              }}
+            >
+              {station.driveTime} min drive
+              {station.trafficDelay > 0 && ` (+${station.trafficDelay} traffic)`}
+            </span>
+          )}
+        </div>
         <span>
           Updated {new Date(station.lastUpdated).toLocaleTimeString('en-AU', {
             hour: '2-digit',

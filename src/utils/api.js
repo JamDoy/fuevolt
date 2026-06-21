@@ -1,3 +1,5 @@
+import { geocode as tomtomGeocode } from './tomtom';
+
 const OCM_API_KEY = '1ce3a80b-61c0-40e2-97ed-45e81462eac9';
 const OCM_BASE_URL = 'https://api.openchargemap.io/v3/poi/';
 
@@ -54,28 +56,29 @@ export async function geocodeLocation(query) {
     return { latitude: local.lat, longitude: local.lng, displayName: local.name };
   }
 
-  const params = new URLSearchParams({
-    q: `${query}, Australia`,
-    format: 'json',
-    limit: '1',
-    countrycodes: 'au',
-  });
-
-  const response = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, {
-    headers: { 'User-Agent': 'FueVolt/1.0' },
-  });
-  if (!response.ok) {
-    throw new Error('Geocoding failed');
+  // Use TomTom Geocoding API
+  try {
+    return await tomtomGeocode(query);
+  } catch {
+    // Fallback to Nominatim if TomTom fails
+    const params = new URLSearchParams({
+      q: `${query}, Australia`,
+      format: 'json',
+      limit: '1',
+      countrycodes: 'au',
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, {
+      headers: { 'User-Agent': 'FueVolt/1.0' },
+    });
+    if (!response.ok) throw new Error('Geocoding failed');
+    const results = await response.json();
+    if (results.length === 0) throw new Error('Location not found');
+    return {
+      latitude: parseFloat(results[0].lat),
+      longitude: parseFloat(results[0].lon),
+      displayName: results[0].display_name,
+    };
   }
-  const results = await response.json();
-  if (results.length === 0) {
-    throw new Error('Location not found');
-  }
-  return {
-    latitude: parseFloat(results[0].lat),
-    longitude: parseFloat(results[0].lon),
-    displayName: results[0].display_name,
-  };
 }
 
 // --- Fuel price cache (4 refreshes per day = every 6 hours) ---

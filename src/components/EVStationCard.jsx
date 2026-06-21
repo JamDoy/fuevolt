@@ -2,11 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import StatusBadge from './StatusBadge';
 import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
+import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
 
-export default function EVStationCard({ station, isSelected, onClick }) {
+export default function EVStationCard({ station, isSelected, onClick, availability }) {
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
   const [fav, setFav] = useState(() => isFavourite(`ev-${station.ID}`));
+  const [hasGeofence, setHasGeofence] = useState(() => getSavedGeofences().some((f) => f.id === `ev-${station.ID}`));
   const [visible, setVisible] = useState(false);
   const cardRef = useRef(null);
 
@@ -73,14 +75,38 @@ export default function EVStationCard({ station, isSelected, onClick }) {
             {station.AddressInfo?.Title || 'EV Station'}
           </h3>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const id = `ev-${station.ID}`;
+              if (hasGeofence) {
+                removeGeofence(id);
+                setHasGeofence(false);
+              } else {
+                saveGeofence({
+                  id,
+                  name: station.AddressInfo?.Title || 'EV Station',
+                  latitude: station.AddressInfo?.Latitude,
+                  longitude: station.AddressInfo?.Longitude,
+                  type: 'ev',
+                });
+                setHasGeofence(true);
+              }
+            }}
+            className="text-sm leading-none cursor-pointer"
+            title={hasGeofence ? 'Remove alert' : 'Alert when nearby'}
+            style={{ color: hasGeofence ? theme.green : theme.textMuted, border: 'none', background: 'none' }}
+          >
+            {hasGeofence ? '\uD83D\uDD14' : '\uD83D\uDD15'}
+          </button>
           <button
             onClick={toggleFav}
             className="text-lg leading-none cursor-pointer"
             title={fav ? 'Remove from favourites' : 'Add to favourites'}
             style={{ color: fav ? '#2ECC71' : theme.textMuted, border: 'none', background: 'none' }}
           >
-            {fav ? '★' : '☆'}
+            {fav ? '\u2605' : '\u2606'}
           </button>
           <StatusBadge status={station.StatusType?.Title || 'Unknown'} />
         </div>
@@ -99,8 +125,8 @@ export default function EVStationCard({ station, isSelected, onClick }) {
         </p>
       )}
 
-      {/* Speed indicator */}
-      <div className="flex items-center gap-2 mb-2">
+      {/* Speed indicator + Availability */}
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
         <span
           className="px-2 py-0.5 rounded-full text-[10px] font-bold"
           style={{
@@ -113,8 +139,27 @@ export default function EVStationCard({ station, isSelected, onClick }) {
               : (isDark ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)')}`,
           }}
         >
-          {speedLabel} • {maxPower}kW
+          {speedLabel} {'\u2022'} {maxPower}kW
         </span>
+        {availability && (
+          <span
+            className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+            style={{
+              background: availability.available > 0
+                ? (isDark ? 'rgba(46,204,113,0.15)' : 'rgba(39,174,96,0.1)')
+                : (isDark ? 'rgba(231,76,60,0.15)' : 'rgba(231,76,60,0.1)'),
+              color: availability.available > 0 ? theme.green : '#E74C3C',
+              border: `1px solid ${availability.available > 0
+                ? (isDark ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)')
+                : (isDark ? 'rgba(231,76,60,0.3)' : 'rgba(231,76,60,0.2)')}`,
+            }}
+          >
+            {availability.available > 0
+              ? `${availability.available}/${availability.total} Available`
+              : 'All In Use'}
+            {availability.outOfService > 0 && ` | ${availability.outOfService} Offline`}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-2">
