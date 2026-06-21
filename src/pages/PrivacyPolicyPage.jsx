@@ -37,6 +37,7 @@ export default function PrivacyPolicyPage() {
           <li><strong>OpenStreetMap</strong> — Station locations, names, addresses, and opening hours via the Overpass API</li>
           <li><strong>Open Charge Map</strong> — EV charging station locations and details (openchargemap.org)</li>
           <li><strong>Nominatim (OpenStreetMap)</strong> — Reverse geocoding for address resolution</li>
+          <li><strong>TomTom</strong> — Map display tiles, geocoding, routing, traffic data, and EV charger availability (tomtom.com)</li>
         </ul>
         <p className="mt-2">Fuel prices displayed are sourced directly from official government APIs where available. For states without a registered API (VIC, SA, NT), prices are clearly labelled as estimates. We do not guarantee the accuracy of third-party data.</p>
       </Section>
@@ -47,9 +48,12 @@ export default function PrivacyPolicyPage() {
           <li>To filter EV stations by connector type (Type 2, CCS, CHAdeMO, Tesla) and charging speed</li>
           <li>To calculate EV charging cost estimates based on your battery size and charge level inputs</li>
           <li>To save your favourite stations locally for quick access</li>
+          <li>To plan trips with live traffic and route optimization</li>
+          <li>To show real-time EV charger availability</li>
+          <li>To sort fuel stations by actual drive time using live traffic data</li>
+          <li>To send geofence-based alerts when near saved stations</li>
           <li>To serve relevant advertisements via Google AdMob</li>
           <li>To improve app performance and user experience</li>
-
         </ul>
       </Section>
 
@@ -64,6 +68,7 @@ export default function PrivacyPolicyPage() {
           <li><strong>Google AdMob</strong> — Advertising (subject to Google's Privacy Policy)</li>
           <li><strong>OpenStreetMap / Nominatim</strong> — Mapping and geocoding (subject to OSM's Privacy Policy)</li>
           <li><strong>Open Charge Map</strong> — EV station data (subject to OCM's terms)</li>
+          <li><strong>TomTom</strong> — Maps, routing, geocoding, traffic, and EV availability (subject to TomTom's Privacy Policy)</li>
         </ul>
       </Section>
 

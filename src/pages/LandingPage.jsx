@@ -193,6 +193,45 @@ export default function LandingPage({ onSelect }) {
         </div>
       </div>
 
+      {/* Trip Planner Card */}
+      <div
+        onClick={() => onSelect('trip')}
+        onMouseEnter={() => setHovered('trip')}
+        onMouseLeave={() => setHovered(null)}
+        className="w-full max-w-4xl rounded-2xl p-6 cursor-pointer animate-slide-up"
+        style={{
+          background: theme.cardBg,
+          border: hovered === 'trip'
+            ? `2px solid ${theme.gold}`
+            : `1px solid ${theme.cardBorder}`,
+          boxShadow: hovered === 'trip'
+            ? (isDark ? '0 0 30px rgba(255,215,0,0.1)' : '0 0 20px rgba(200,151,31,0.1)')
+            : theme.mode === 'dark' ? '0 4px 20px rgba(0,0,0,0.3)' : '0 2px 12px rgba(0,0,0,0.06)',
+          transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: hovered === 'trip' ? 'translateY(-2px)' : 'translateY(0)',
+          animationDelay: '0.1s',
+        }}
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+            style={{
+              background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)',
+              border: `1px solid ${isDark ? 'rgba(255,215,0,0.25)' : 'rgba(200,151,31,0.2)'}`,
+            }}
+          >
+            {'\uD83D\uDDFA'}
+          </div>
+          <div className="flex-1">
+            <h3 className="text-base font-bold" style={{ color: theme.gold }}>Trip Planner</h3>
+            <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>
+              Plan your route with fuel stops and EV chargers. Live traffic, EV battery forecast, and drive time estimates powered by TomTom.
+            </p>
+          </div>
+          <span className="text-sm font-semibold hidden sm:block" style={{ color: theme.gold }}>Plan Trip →</span>
+        </div>
+      </div>
+
       {/* Fuel vs EV Cost Comparison Widget */}
       <div
         className="w-full max-w-4xl mt-10 rounded-2xl p-6 animate-slide-up"
@@ -228,7 +267,7 @@ export default function LandingPage({ onSelect }) {
 
       {/* Footer tagline */}
       <p className="text-xs mt-10 text-center" style={{ color: theme.textMuted }}>
-        Real-time data from NSW, WA & more &bull; EV data from Open Charge Map
+        Maps by TomTom &bull; Fuel data from NSW, QLD, WA &bull; EV data from Open Charge Map
       </p>
     </div>
   );

@@ -4,6 +4,8 @@ import { useTheme } from '../contexts/ThemeContext';
 const TABS = [
   { id: 'fuel', label: 'Fuel Prices', icon: '\u26FD' },
   { id: 'ev', label: 'EV Charging', icon: '\u26A1' },
+  { id: 'trip', label: 'Trip Planner', icon: '\uD83D\uDDFA' },
+  { id: 'notifications', label: 'Alerts', icon: '\uD83D\uDD14' },
 ];
 
 export default function Header({ showBack, onBack, view, onViewChange }) {
@@ -69,20 +71,9 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                   transition: 'all 0.25s ease',
                   ...(view === tab.id
                     ? (tab.id === 'ev'
-                        ? {
-                            background: 'linear-gradient(135deg, #2ECC71, #27AE60)',
-                            color: '#FFFFFF',
-                            boxShadow: '0 0 12px rgba(46, 204, 113, 0.3)',
-                          }
-                        : {
-                            background: 'linear-gradient(135deg, #C8971F, #FFD700)',
-                            color: '#0D2B5E',
-                            boxShadow: '0 0 12px rgba(255, 215, 0, 0.3)',
-                          })
-                    : {
-                        background: 'rgba(255,255,255,0.1)',
-                        color: '#FFFFFF',
-                      }),
+                        ? { background: 'linear-gradient(135deg, #2ECC71, #27AE60)', color: '#FFFFFF', boxShadow: '0 0 12px rgba(46, 204, 113, 0.3)' }
+                        : { background: 'linear-gradient(135deg, #C8971F, #FFD700)', color: '#0D2B5E', boxShadow: '0 0 12px rgba(255, 215, 0, 0.3)' })
+                    : { background: 'rgba(255,255,255,0.1)', color: '#FFFFFF' }),
                 }}
               >
                 <span className="mr-1.5">{tab.icon}</span>

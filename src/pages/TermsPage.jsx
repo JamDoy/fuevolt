@@ -17,11 +17,13 @@ export default function TermsPage() {
         <p className="mt-2">Key features include:</p>
         <ul className="list-disc pl-6 mt-1 space-y-1">
           <li>Real-time fuel price comparison from official government sources</li>
-          <li>EV charging station finder with connector type and speed filters</li>
+          <li>EV charging station finder with connector type, speed filters, and real-time availability</li>
           <li>EV charge cost estimator (estimates based on average Australian rates)</li>
           <li>Fuel vs EV weekly cost comparison</li>
+          <li>Trip planner with live traffic, fuel stops, and EV routing</li>
+          <li>Drive time sorting using real-time traffic data</li>
+          <li>Geofence alerts when near saved stations</li>
           <li>Favourite stations (saved locally on your device)</li>
-
         </ul>
       </Section>
 
@@ -29,6 +31,7 @@ export default function TermsPage() {
         <p><strong>Fuel prices</strong> are sourced from official Australian state and territory government APIs where available, including:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>New South Wales — NSW Government Motor API (api.nsw.gov.au)</li>
+          <li>Queensland — QLD Fuel Pricing Direct API (fuelpricesqld.com.au)</li>
           <li>Western Australia — FuelWatch (fuelwatch.wa.gov.au)</li>
         </ul>
         <p className="mt-2"><strong>Station locations and details</strong> are sourced from OpenStreetMap (openstreetmap.org), a collaborative mapping project maintained by volunteers worldwide.</p>
@@ -60,6 +63,7 @@ export default function TermsPage() {
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>OpenStreetMap data — Open Database License (ODbL)</li>
           <li>Open Charge Map data — Creative Commons Attribution-ShareAlike 4.0</li>
+          <li>TomTom — Maps, routing, traffic data used under TomTom API terms</li>
           <li>Government fuel price data — used under public access terms of the respective state/territory APIs</li>
         </ul>
       </Section>

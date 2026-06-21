@@ -7,6 +7,7 @@ import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import SavingsCalculator from '../components/SavingsCalculator';
 import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
+import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -25,6 +26,8 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
   const [selectedStation, setSelectedStation] = useState(null);
   const [fuelType, setFuelType] = useState(initialFuelType);
   const [searchCoords, setSearchCoords] = useState(null);
+  const [sortBy, setSortBy] = useState('price');
+  const [locationName, setLocationName] = useState('');
   const { theme } = useTheme();
 
   const doSearch = useCallback(async (lat, lng, type) => {
@@ -40,6 +43,24 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
       setMapCenter([lat, lng]);
       setSearchCoords({ lat, lng });
       geocodeStationAddresses(data, (updated) => setStations(updated));
+
+      // Reverse geocode to show suburb name
+      reverseGeocode(lat, lng).then((loc) => {
+        if (loc?.suburb) setLocationName(loc.suburb);
+      }).catch(() => {});
+
+      // Fetch drive times in background
+      getDriveTimes(lat, lng, data).then((times) => {
+        if (!times) return;
+        setStations((prev) =>
+          prev.map((s, i) => ({
+            ...s,
+            driveTime: times[i]?.driveTimeMin || null,
+            driveDistance: times[i]?.distanceKm || null,
+            trafficDelay: times[i]?.trafficDelayMin || null,
+          }))
+        );
+      }).catch(() => {});
     } catch (err) {
       setError(err.message);
     } finally {
@@ -78,11 +99,26 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
     }
   };
 
-  const cheapest = stations.length > 0 ? stations[0] : null;
+  const sortedStations = [...stations].sort((a, b) => {
+    if (sortBy === 'driveTime') {
+      if (a.driveTime == null && b.driveTime == null) return a.price - b.price;
+      if (a.driveTime == null) return 1;
+      if (b.driveTime == null) return -1;
+      return a.driveTime - b.driveTime;
+    }
+    if (sortBy === 'distance') return parseFloat(a.distance || 999) - parseFloat(b.distance || 999);
+    return a.price - b.price;
+  });
+
+  const cheapest = stations.length > 0
+    ? stations.reduce((min, s) => (s.price < min.price ? s : min), stations[0])
+    : null;
   const avgPrice = stations.length > 0
     ? stations.reduce((sum, s) => sum + s.price, 0) / stations.length
     : 0;
-  const expensive = stations.length > 0 ? stations[stations.length - 1] : null;
+  const expensive = stations.length > 0
+    ? stations.reduce((max, s) => (s.price > max.price ? s : max), stations[0])
+    : null;
   const savings = cheapest && expensive
     ? ((expensive.price - cheapest.price) * 100).toFixed(1)
     : '0';
@@ -133,6 +169,40 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
         loading={loading}
         placeholder="Search suburb, city or postcode..."
       />
+
+      {/* Location + Sort Controls */}
+      {stations.length > 0 && !loading && (
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          {locationName && (
+            <p className="text-sm font-medium" style={{ color: theme.text }}>
+              Showing results near <span style={{ color: theme.gold }}>{locationName}</span>
+            </p>
+          )}
+          <div className="flex gap-1.5 ml-auto">
+            {[
+              { id: 'price', label: 'Price' },
+              { id: 'driveTime', label: 'Drive Time' },
+              { id: 'distance', label: 'Distance' },
+            ].map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setSortBy(s.id)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer"
+                style={{
+                  background: sortBy === s.id
+                    ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`
+                    : theme.chipBg,
+                  color: sortBy === s.id ? '#0D2B5E' : theme.chipText,
+                  border: 'none',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Price Summary */}
       {stations.length > 0 && !loading && (
@@ -223,9 +293,9 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
       )}
 
       {/* Station Cards */}
-      {!loading && stations.length > 0 && (
+      {!loading && sortedStations.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {stations.map((station, i) => (
+          {sortedStations.map((station, i) => (
             <FuelStationCard
               key={station.id}
               station={station}
@@ -233,6 +303,7 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
               isSelected={selectedStation?.id === station.id}
               onClick={() => setSelectedStation(station)}
               onDetail={() => onStationDetail && onStationDetail(station)}
+              sortBy={sortBy}
             />
           ))}
         </div>

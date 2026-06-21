@@ -5,6 +5,8 @@ import LandingPage from './pages/LandingPage';
 import EVChargingPage from './pages/EVChargingPage';
 import FuelPricePage from './pages/FuelPricePage';
 import FuelStationDetailPage from './pages/FuelStationDetailPage';
+import TripPlannerPage from './pages/TripPlannerPage';
+import NotificationsPage from './pages/NotificationsPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 
@@ -21,6 +23,8 @@ function AppContent() {
     } else if (option === 'diesel') {
       setInitialFuelType('Diesel');
       setView('fuel');
+    } else if (option === 'trip') {
+      setView('trip');
     } else {
       setView('ev');
     }
@@ -71,6 +75,8 @@ function AppContent() {
             onBack={handleBack}
           />
         )}
+        {view === 'trip' && <TripPlannerPage />}
+        {view === 'notifications' && <NotificationsPage />}
         {view === 'privacy' && <PrivacyPolicyPage />}
         {view === 'terms' && <TermsPage />}
       </main>
@@ -79,7 +85,7 @@ function AppContent() {
           &copy; {new Date().getFullYear()} FueVolt &mdash; Australian EV & Fuel Price Finder
         </p>
         <p className="text-[10px] mt-1" style={{ color: theme.footerSubtext }}>
-          EV data powered by Open Charge Map &bull; Fuel prices from government APIs
+          Maps & routing by TomTom &bull; EV data by Open Charge Map &bull; Fuel prices from government APIs
         </p>
         <div className="flex justify-center gap-4 mt-2">
           <button
