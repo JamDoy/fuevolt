@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import Header from './components/Header';
 import LandingPage from './pages/LandingPage';
@@ -9,24 +9,73 @@ import TripPlannerPage from './pages/TripPlannerPage';
 import NotificationsPage from './pages/NotificationsPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
+import { updatePageMeta, POPULAR_SUBURBS } from './utils/seo';
+
+function parseRoute() {
+  const hash = window.location.hash.replace('#', '');
+  if (!hash || hash === '/') return { view: 'landing', suburb: null };
+
+  const parts = hash.split('/').filter(Boolean);
+  if (parts[0] === 'fuel-prices') {
+    const suburb = parts[1] ? POPULAR_SUBURBS.fuel.find((s) => s.slug === parts[1]) : null;
+    return { view: 'fuel', suburb };
+  }
+  if (parts[0] === 'ev-charging') {
+    const suburb = parts[1] ? POPULAR_SUBURBS.ev.find((s) => s.slug === parts[1]) : null;
+    return { view: 'ev', suburb };
+  }
+  if (parts[0] === 'trip-planner') return { view: 'trip', suburb: null };
+  if (parts[0] === 'alerts') return { view: 'notifications', suburb: null };
+  if (parts[0] === 'privacy') return { view: 'privacy', suburb: null };
+  if (parts[0] === 'terms') return { view: 'terms', suburb: null };
+  return { view: 'landing', suburb: null };
+}
+
+function setRoute(path) {
+  window.history.pushState(null, '', `#${path}`);
+}
 
 function AppContent() {
-  const [view, setView] = useState('landing');
+  const parsed = parseRoute();
+  const [view, setView] = useState(parsed.view);
   const [initialFuelType, setInitialFuelType] = useState('U91');
   const [detailStation, setDetailStation] = useState(null);
+  const [initialSuburb, setInitialSuburb] = useState(parsed.suburb);
   const { theme } = useTheme();
+
+  const navigate = useCallback((newView, path) => {
+    setView(newView);
+    setRoute(path || '/');
+    updatePageMeta(newView);
+  }, []);
+
+  useEffect(() => {
+    updatePageMeta(view);
+
+    const handlePop = () => {
+      const p = parseRoute();
+      setView(p.view);
+      setInitialSuburb(p.suburb);
+      updatePageMeta(p.view);
+    };
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, [view]);
 
   const handleSelect = (option) => {
     if (option === 'petrol') {
       setInitialFuelType('U91');
-      setView('fuel');
+      setInitialSuburb(null);
+      navigate('fuel', '/fuel-prices');
     } else if (option === 'diesel') {
       setInitialFuelType('Diesel');
-      setView('fuel');
+      setInitialSuburb(null);
+      navigate('fuel', '/fuel-prices');
     } else if (option === 'trip') {
-      setView('trip');
+      navigate('trip', '/trip-planner');
     } else {
-      setView('ev');
+      setInitialSuburb(null);
+      navigate('ev', '/ev-charging');
     }
   };
 
@@ -34,10 +83,10 @@ function AppContent() {
     if (view === 'station-detail') {
       setView('fuel');
       setDetailStation(null);
-    } else if (view === 'privacy' || view === 'terms') {
-      setView('landing');
+      setRoute('/fuel-prices');
     } else {
-      setView('landing');
+      setDetailStation(null);
+      navigate('landing', '/');
     }
   };
 
@@ -53,20 +102,22 @@ function AppContent() {
         onBack={handleBack}
         view={view}
         onViewChange={(v) => {
-          if (v === 'fuel') setInitialFuelType('U91');
-          setView(v);
+          if (v === 'fuel') { setInitialFuelType('U91'); setInitialSuburb(null); }
           setDetailStation(null);
+          const paths = { fuel: '/fuel-prices', ev: '/ev-charging', trip: '/trip-planner', notifications: '/alerts' };
+          navigate(v, paths[v] || '/');
         }}
-        onHome={() => { setView('landing'); setDetailStation(null); }}
+        onHome={() => { setDetailStation(null); navigate('landing', '/'); }}
       />
       <main>
         {view === 'landing' && <LandingPage onSelect={handleSelect} />}
-        {view === 'ev' && <EVChargingPage />}
+        {view === 'ev' && <EVChargingPage initialSuburb={initialSuburb} />}
         {view === 'fuel' && (
           <FuelPricePage
             initialFuelType={initialFuelType}
             onStationDetail={handleStationDetail}
-            onSwitchToEV={() => setView('ev')}
+            onSwitchToEV={() => navigate('ev', '/ev-charging')}
+            initialSuburb={initialSuburb}
           />
         )}
         {view === 'station-detail' && detailStation && (
@@ -85,23 +136,76 @@ function AppContent() {
           &copy; {new Date().getFullYear()} FueVolt &mdash; Australian EV & Fuel Price Finder
         </p>
         <p className="text-[10px] mt-1" style={{ color: theme.footerSubtext }}>
-          Maps & routing by TomTom &bull; EV data by Open Charge Map &bull; Fuel prices from government APIs
+          Maps & routing by TomTom &bull; EV data by Open Charge Map &bull; Fuel prices from government APIs (NSW, VIC, QLD, WA)
         </p>
         <div className="flex justify-center gap-4 mt-2">
           <button
-            onClick={() => setView('privacy')}
+            onClick={() => navigate('privacy', '/privacy')}
             className="text-[10px] underline cursor-pointer"
-            style={{ color: theme.footerSubtext }}
+            style={{ color: theme.footerSubtext, background: 'none', border: 'none' }}
           >
             Privacy Policy
           </button>
           <button
-            onClick={() => setView('terms')}
+            onClick={() => navigate('terms', '/terms')}
             className="text-[10px] underline cursor-pointer"
-            style={{ color: theme.footerSubtext }}
+            style={{ color: theme.footerSubtext, background: 'none', border: 'none' }}
           >
             Terms of Service
           </button>
+        </div>
+
+        {/* SEO: Popular suburb links */}
+        <div className="mt-4 max-w-4xl mx-auto">
+          <p className="text-[10px] mb-1" style={{ color: theme.footerSubtext }}>Fuel prices in:</p>
+          <div className="flex flex-wrap justify-center gap-x-2 gap-y-0.5">
+            {POPULAR_SUBURBS.fuel.slice(0, 10).map((s) => (
+              <a
+                key={s.slug}
+                href={`#/fuel-prices/${s.slug}`}
+                className="text-[10px] hover:underline"
+                style={{ color: theme.footerSubtext }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setInitialFuelType('U91');
+                  setInitialSuburb(s);
+                  setDetailStation(null);
+                  navigate('fuel', `/fuel-prices/${s.slug}`);
+                  updatePageMeta('fuel', {
+                    title: `Fuel Prices in ${s.name} — Cheapest Petrol Today | FueVolt`,
+                    description: `Compare petrol, diesel and LPG prices near ${s.name}. Live data from government APIs. Find the cheapest fuel station today.`,
+                    url: `https://fuevolt.com/fuel-prices/${s.slug}`,
+                  });
+                }}
+              >
+                {s.name}
+              </a>
+            ))}
+          </div>
+          <p className="text-[10px] mt-2 mb-1" style={{ color: theme.footerSubtext }}>EV charging in:</p>
+          <div className="flex flex-wrap justify-center gap-x-2 gap-y-0.5">
+            {POPULAR_SUBURBS.ev.map((s) => (
+              <a
+                key={s.slug}
+                href={`#/ev-charging/${s.slug}`}
+                className="text-[10px] hover:underline"
+                style={{ color: theme.footerSubtext }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setInitialSuburb(s);
+                  setDetailStation(null);
+                  navigate('ev', `/ev-charging/${s.slug}`);
+                  updatePageMeta('ev', {
+                    title: `EV Charging Stations in ${s.name} — Find Chargers | FueVolt`,
+                    description: `Find EV charging stations near ${s.name}. Filter by connector type and charging speed. Real-time availability.`,
+                    url: `https://fuevolt.com/ev-charging/${s.slug}`,
+                  });
+                }}
+              >
+                {s.name}
+              </a>
+            ))}
+          </div>
         </div>
       </footer>
     </div>

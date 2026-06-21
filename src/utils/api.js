@@ -127,12 +127,12 @@ function formatCacheAge(timestamp) {
 
 // Fuel type mapping for various APIs
 const FUEL_TYPE_MAP = {
-  'E10': { nsw: 'E10', wa: '2', qld: 12 },
-  'U91': { nsw: 'U91', wa: '1', qld: 2 },
-  'U95': { nsw: 'P95', wa: '4', qld: 5 },
-  'U98': { nsw: 'P98', wa: '6', qld: 8 },
-  'Diesel': { nsw: 'DL', wa: '4', qld: 3 },
-  'LPG': { nsw: 'LPG', wa: '5', qld: 4 },
+  'E10': { nsw: 'E10', wa: '2', qld: 12, vic: 'E10' },
+  'U91': { nsw: 'U91', wa: '1', qld: 2, vic: 'U91' },
+  'U95': { nsw: 'P95', wa: '4', qld: 5, vic: 'P95' },
+  'U98': { nsw: 'P98', wa: '6', qld: 8, vic: 'P98' },
+  'Diesel': { nsw: 'DL', wa: '4', qld: 3, vic: 'DSL' },
+  'LPG': { nsw: 'LPG', wa: '5', qld: 4, vic: 'LPG' },
 };
 
 // QLD Fuel Pricing Direct API
@@ -312,6 +312,74 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType) {
   }
 }
 
+// VIC Fair Fuel Open Data API (Service Victoria / Servo Saver)
+const VIC_API_BASE = 'https://api.fuel.service.vic.gov.au/open-data/v1';
+const VIC_CONSUMER_ID = '306d44cdce3e09a9a61135cbe7e5eff1';
+
+async function fetchVICFuelPrices(latitude, longitude, fuelType) {
+  try {
+    const vicFuelCode = FUEL_TYPE_MAP[fuelType]?.vic || 'U91';
+    const txnId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+    const response = await fetch(`${VIC_API_BASE}/fuel/prices`, {
+      headers: {
+        'x-consumer-id': VIC_CONSUMER_ID,
+        'x-transactionid': txnId,
+        'User-Agent': 'FueVolt/1.0',
+      },
+    });
+
+    if (!response.ok) return null;
+    const data = await response.json();
+
+    if (!data.fuelPriceDetails) return null;
+
+    const stations = [];
+    for (const entry of data.fuelPriceDetails) {
+      const fs = entry.fuelStation;
+      if (!fs?.location?.latitude || !fs?.location?.longitude) continue;
+
+      const fuelPrice = entry.fuelPrices?.find((fp) => fp.fuelType === vicFuelCode && fp.isAvailable);
+      if (!fuelPrice) continue;
+
+      const dist = getDistance(latitude, longitude, fs.location.latitude, fs.location.longitude);
+      if (dist > 30) continue;
+
+      stations.push({
+        id: `vic-${fs.id}`,
+        name: fs.name || 'Fuel Station',
+        brand: fs.name?.split(' ').pop() || 'Independent',
+        address: fs.address || '',
+        latitude: fs.location.latitude,
+        longitude: fs.location.longitude,
+        price: fuelPrice.price / 100,
+        priceDisplay: `${fuelPrice.price.toFixed(1)}¢/L`,
+        fuelType,
+        lastUpdated: fuelPrice.updatedAt || entry.updatedAt || new Date().toISOString(),
+        distance: dist.toFixed(1),
+        source: 'VIC Government',
+        openingHours: formatVICOpeningHours(fs.openingHours),
+      });
+    }
+
+    if (stations.length === 0) return null;
+    return stations.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)).slice(0, 30);
+  } catch {
+    return null;
+  }
+}
+
+function formatVICOpeningHours(hours) {
+  if (!hours) return null;
+  const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  const today = days[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
+  const todayHours = hours[today];
+  if (!todayHours) return null;
+  if (todayHours.state === 'openAllDay') return '24 hours';
+  if (todayHours.state === 'closed') return 'Closed today';
+  return `${todayHours.from} - ${todayHours.to}`;
+}
+
 // WA FuelWatch RSS feed — completely free, no auth required
 async function fetchWAFuelPrices(latitude, longitude, fuelType) {
   try {
@@ -396,6 +464,8 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
 
   if (state === 'QLD') {
     results = await fetchQLDFuelPrices(latitude, longitude, fuelType);
+  } else if (state === 'VIC') {
+    results = await fetchVICFuelPrices(latitude, longitude, fuelType);
   } else if (state === 'WA') {
     results = await fetchWAFuelPrices(latitude, longitude, fuelType);
   } else if (state === 'NSW' || state === 'TAS') {

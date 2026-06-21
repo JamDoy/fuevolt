@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import FilterChips from '../components/FilterChips';
@@ -10,6 +10,7 @@ import ErrorCard from '../components/ErrorCard';
 import EVCostEstimator from '../components/EVCostEstimator';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
 import { fetchEVAvailability, reverseGeocode } from '../utils/tomtom';
+import { injectEVStationSchema } from '../utils/seo';
 
 const CONNECTOR_FILTERS = ['Type 2', 'CCS', 'CHAdeMO', 'Tesla', 'Type 1'];
 const SPEED_FILTERS = [
@@ -18,7 +19,7 @@ const SPEED_FILTERS = [
   { id: 'ultra', label: '50kW+ (Ultra-Rapid)', min: 50 },
 ];
 
-export default function EVChargingPage() {
+export default function EVChargingPage({ initialSuburb }) {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -32,6 +33,14 @@ export default function EVChargingPage() {
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
 
+  // Auto-search if initialSuburb is set (from suburb-specific URL)
+  useEffect(() => {
+    if (initialSuburb?.lat && initialSuburb?.lng) {
+      doSearch(initialSuburb.lat, initialSuburb.lng);
+      setLocationName(initialSuburb.name);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const doSearch = useCallback(async (lat, lng) => {
     setLoading(true);
     setError(null);
@@ -39,6 +48,9 @@ export default function EVChargingPage() {
       const data = await fetchEVStations({ latitude: lat, longitude: lng });
       setStations(data);
       setMapCenter([lat, lng]);
+
+      // Inject structured data for SEO
+      injectEVStationSchema(data, locationName || null);
 
       // Reverse geocode to show suburb name
       reverseGeocode(lat, lng).then((loc) => {

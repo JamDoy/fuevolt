@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import StationMap from '../components/StationMap';
@@ -8,6 +8,7 @@ import ErrorCard from '../components/ErrorCard';
 import SavingsCalculator from '../components/SavingsCalculator';
 import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
+import { injectFuelStationSchema } from '../utils/seo';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -18,7 +19,7 @@ const FUEL_TYPES = [
   { id: 'LPG', label: 'LPG' },
 ];
 
-export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail, onSwitchToEV }) {
+export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail, onSwitchToEV, initialSuburb }) {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,6 +30,14 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
   const [sortBy, setSortBy] = useState('price');
   const [locationName, setLocationName] = useState('');
   const { theme } = useTheme();
+
+  // Auto-search if initialSuburb is set (from suburb-specific URL)
+  useEffect(() => {
+    if (initialSuburb?.lat && initialSuburb?.lng) {
+      doSearch(initialSuburb.lat, initialSuburb.lng, fuelType);
+      setLocationName(initialSuburb.name);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const doSearch = useCallback(async (lat, lng, type) => {
     setLoading(true);
@@ -43,6 +52,9 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
       setMapCenter([lat, lng]);
       setSearchCoords({ lat, lng });
       geocodeStationAddresses(data, (updated) => setStations(updated));
+
+      // Inject structured data for SEO
+      injectFuelStationSchema(data, locationName || null);
 
       // Reverse geocode to show suburb name
       reverseGeocode(lat, lng).then((loc) => {
