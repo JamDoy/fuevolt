@@ -32,6 +32,7 @@ export default function TermsPage() {
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>New South Wales — NSW Government Motor API (api.nsw.gov.au)</li>
           <li>Queensland — QLD Fuel Pricing Direct API (fuelpricesqld.com.au)</li>
+          <li>Victoria — Fair Fuel Open Data API / Servo Saver (service.vic.gov.au)</li>
           <li>Western Australia — FuelWatch (fuelwatch.wa.gov.au)</li>
         </ul>
         <p className="mt-2"><strong>Station locations and details</strong> are sourced from OpenStreetMap (openstreetmap.org), a collaborative mapping project maintained by volunteers worldwide.</p>

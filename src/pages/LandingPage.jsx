@@ -267,7 +267,7 @@ export default function LandingPage({ onSelect }) {
 
       {/* Footer tagline */}
       <p className="text-xs mt-10 text-center" style={{ color: theme.textMuted }}>
-        Maps by TomTom &bull; Fuel data from NSW, QLD, WA &bull; EV data from Open Charge Map
+        Maps by TomTom &bull; Fuel data from NSW, VIC, QLD, WA &bull; EV data from Open Charge Map
       </p>
     </div>
   );
