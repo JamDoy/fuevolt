@@ -2,8 +2,9 @@ import { useState, useCallback } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import StationMap from '../components/StationMap';
 import ShimmerCard from '../components/ShimmerCard';
+import LocationInput from '../components/LocationInput';
 import { geocodeLocation } from '../utils/api';
-import { calculateRoute, calculateEVRoute, searchFuelStations } from '../utils/tomtom';
+import { calculateRoute, calculateEVRoute, searchAlongRoute } from '../utils/tomtom';
 
 export default function TripPlannerPage() {
   const { theme } = useTheme();
@@ -15,11 +16,14 @@ export default function TripPlannerPage() {
   const [error, setError] = useState(null);
   const [route, setRoute] = useState(null);
   const [evRoute, setEvRoute] = useState(null);
-  const [stopsAlongRoute, setStopsAlongRoute] = useState([]);
+  const [fuelStops, setFuelStops] = useState([]);
+  const [evStops, setEvStops] = useState([]);
+  const [chargingPlan, setChargingPlan] = useState([]);
   const [mapCenter, setMapCenter] = useState(null);
   const [batteryKWh, setBatteryKWh] = useState(60);
   const [currentCharge, setCurrentCharge] = useState(80);
   const [consumption, setConsumption] = useState(15);
+  const [vehicleRange, setVehicleRange] = useState(400);
 
   const handlePlanTrip = useCallback(async () => {
     if (!startQuery.trim() || !endQuery.trim()) {
@@ -30,7 +34,9 @@ export default function TripPlannerPage() {
     setError(null);
     setRoute(null);
     setEvRoute(null);
-    setStopsAlongRoute([]);
+    setFuelStops([]);
+    setEvStops([]);
+    setChargingPlan([]);
 
     try {
       const [startGeo, endGeo] = await Promise.all([
@@ -42,41 +48,52 @@ export default function TripPlannerPage() {
       const midLng = (startGeo.longitude + endGeo.longitude) / 2;
       setMapCenter([midLat, midLng]);
 
+      const routeData = await calculateRoute(
+        startGeo.latitude, startGeo.longitude,
+        endGeo.latitude, endGeo.longitude
+      );
+      setRoute(routeData);
+
       if (mode === 'ev') {
+        const currentChargeKWh = batteryKWh * currentCharge / 100;
         const ev = await calculateEVRoute(
           startGeo.latitude, startGeo.longitude,
           endGeo.latitude, endGeo.longitude,
-          { batteryCapacityKWh: batteryKWh, currentChargeKWh: batteryKWh * currentCharge / 100, consumptionKWhPer100km: consumption }
+          { batteryCapacityKWh: batteryKWh, currentChargeKWh, consumptionKWhPer100km: consumption }
         );
         if (ev) setEvRoute(ev);
 
-        const routeData = await calculateRoute(
-          startGeo.latitude, startGeo.longitude,
-          endGeo.latitude, endGeo.longitude
-        );
-        setRoute(routeData);
-      } else {
-        const routeData = await calculateRoute(
-          startGeo.latitude, startGeo.longitude,
-          endGeo.latitude, endGeo.longitude
-        );
-        setRoute(routeData);
+        // Search for EV chargers along the route
+        if (routeData.points && routeData.points.length > 1) {
+          const chargers = await searchAlongRoute(routeData.points, '7309', 25);
+          setEvStops(chargers);
 
-        // Find fuel stations near the midpoint of the route
-        const stops = await searchFuelStations(midLat, midLng, 5000);
-        setStopsAlongRoute(stops.slice(0, 10));
+          // Build charging plan based on vehicle range
+          const distKm = parseFloat(routeData.distanceKm);
+          const rangeKm = vehicleRange * (currentCharge / 100);
+          if (distKm > rangeKm) {
+            const plan = buildChargingPlan(routeData.points, chargers, rangeKm, vehicleRange, distKm);
+            setChargingPlan(plan);
+          }
+        }
+      } else {
+        // Search for fuel stations along the route
+        if (routeData.points && routeData.points.length > 1) {
+          const stations = await searchAlongRoute(routeData.points, '7311', 25);
+          setFuelStops(stations);
+        }
       }
     } catch (err) {
       setError(err.message || 'Failed to plan route');
     } finally {
       setLoading(false);
     }
-  }, [startQuery, endQuery, mode, batteryKWh, currentCharge, consumption]);
+  }, [startQuery, endQuery, mode, batteryKWh, currentCharge, consumption, vehicleRange]);
 
   const routePoints = route?.points || evRoute?.points || null;
 
-  // Convert fuel stops to map-compatible format
-  const mapStops = stopsAlongRoute.map((s) => ({
+  // Convert stops to map-compatible format
+  const mapStops = (mode === 'ev' ? evStops : fuelStops).map((s) => ({
     id: s.id,
     name: s.name,
     address: s.address,
@@ -85,6 +102,19 @@ export default function TripPlannerPage() {
     price: 0,
     distance: s.distance,
   }));
+
+  // Charging plan markers
+  const chargingMarkers = chargingPlan.map((stop) => ({
+    id: `charge-${stop.index}`,
+    name: stop.name,
+    address: stop.address,
+    latitude: stop.latitude,
+    longitude: stop.longitude,
+    price: 0,
+    distance: stop.distanceAlongRoute,
+  }));
+
+  const allMapStops = [...mapStops, ...chargingMarkers.filter((cm) => !mapStops.some((ms) => ms.id === cm.id))];
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
@@ -130,45 +160,23 @@ export default function TripPlannerPage() {
         }}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-semibold mb-1" style={{ color: theme.textSecondary }}>Start</label>
-            <input
-              type="text"
-              value={startQuery}
-              onChange={(e) => setStartQuery(e.target.value)}
-              placeholder="e.g. Sydney CBD"
-              className="w-full px-4 py-2.5 rounded-xl text-sm"
-              style={{
-                background: theme.inputBg,
-                border: `1px solid ${theme.inputBorder}`,
-                color: theme.inputText,
-                outline: 'none',
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && handlePlanTrip()}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold mb-1" style={{ color: theme.textSecondary }}>End</label>
-            <input
-              type="text"
-              value={endQuery}
-              onChange={(e) => setEndQuery(e.target.value)}
-              placeholder="e.g. Melbourne"
-              className="w-full px-4 py-2.5 rounded-xl text-sm"
-              style={{
-                background: theme.inputBg,
-                border: `1px solid ${theme.inputBorder}`,
-                color: theme.inputText,
-                outline: 'none',
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && handlePlanTrip()}
-            />
-          </div>
+          <LocationInput
+            label="Start"
+            value={startQuery}
+            onChange={setStartQuery}
+            placeholder="e.g. Sydney CBD"
+          />
+          <LocationInput
+            label="End"
+            value={endQuery}
+            onChange={setEndQuery}
+            placeholder="e.g. Melbourne"
+          />
         </div>
 
         {/* EV specific inputs */}
         {mode === 'ev' && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
               <label className="block text-[10px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Battery (kWh)</label>
               <input
@@ -199,6 +207,31 @@ export default function TripPlannerPage() {
                 style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
               />
             </div>
+            <div>
+              <label className="block text-[10px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Range (km)</label>
+              <input
+                type="number"
+                value={vehicleRange}
+                onChange={(e) => setVehicleRange(Number(e.target.value))}
+                className="w-full px-3 py-2 rounded-lg text-sm"
+                style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Fuel vehicle range input */}
+        {mode === 'car' && (
+          <div className="flex items-center gap-3">
+            <label className="text-xs font-semibold whitespace-nowrap" style={{ color: theme.textSecondary }}>Tank Range (km)</label>
+            <input
+              type="number"
+              value={vehicleRange}
+              onChange={(e) => setVehicleRange(Number(e.target.value))}
+              className="w-24 px-3 py-2 rounded-lg text-sm"
+              style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
+            />
+            <span className="text-[10px]" style={{ color: theme.textMuted }}>Used to suggest fuel stops on long trips</span>
           </div>
         )}
 
@@ -261,8 +294,10 @@ export default function TripPlannerPage() {
             </p>
           </div>
           <div className="rounded-2xl p-4 text-center col-span-2 sm:col-span-1" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Stops Found</p>
-            <p className="text-2xl font-bold" style={{ color: theme.text }}>{stopsAlongRoute.length}</p>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>{mode === 'ev' ? 'Chargers Found' : 'Fuel Stops'}</p>
+            <p className="text-2xl font-bold" style={{ color: theme.text }}>
+              {mode === 'ev' ? evStops.length : fuelStops.length}
+            </p>
           </div>
         </div>
       )}
@@ -328,10 +363,42 @@ export default function TripPlannerPage() {
         </div>
       )}
 
+      {/* Charging plan for EV */}
+      {chargingPlan.length > 0 && !loading && (
+        <div>
+          <h3 className="text-sm font-semibold mb-3" style={{ color: theme.green }}>
+            Recommended Charging Stops
+          </h3>
+          <div className="space-y-2">
+            {chargingPlan.map((stop, i) => (
+              <div
+                key={stop.index}
+                className="rounded-xl p-4 flex items-start gap-3"
+                style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
+              >
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold"
+                  style={{ background: theme.green, color: '#fff' }}
+                >
+                  {i + 1}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold" style={{ color: theme.green }}>{stop.name}</p>
+                  <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>{stop.address}</p>
+                  <p className="text-xs mt-1" style={{ color: theme.textMuted }}>
+                    ~{stop.distanceAlongRoute} km into trip &bull; Charge here before continuing
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Map */}
-      {(route || evRoute) && (
+      {(route || evRoute) && !loading && (
         <StationMap
-          stations={mapStops}
+          stations={allMapStops}
           center={mapCenter}
           selectedStation={null}
           onStationSelect={() => {}}
@@ -342,11 +409,11 @@ export default function TripPlannerPage() {
       )}
 
       {/* Fuel stops along route */}
-      {stopsAlongRoute.length > 0 && !loading && (
+      {fuelStops.length > 0 && mode === 'car' && !loading && (
         <div>
           <h3 className="text-sm font-semibold mb-3" style={{ color: theme.gold }}>Fuel Stations Along Route</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {stopsAlongRoute.map((stop) => (
+            {fuelStops.map((stop) => (
               <div
                 key={stop.id}
                 className="rounded-xl p-3"
@@ -359,7 +426,25 @@ export default function TripPlannerPage() {
                   </span>
                 )}
                 <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
-                <p className="text-xs mt-0.5" style={{ color: theme.textMuted }}>{stop.distance} km from route midpoint</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* EV chargers along route */}
+      {evStops.length > 0 && mode === 'ev' && !loading && (
+        <div>
+          <h3 className="text-sm font-semibold mb-3" style={{ color: theme.green }}>EV Chargers Along Route</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {evStops.map((stop) => (
+              <div
+                key={stop.id}
+                className="rounded-xl p-3"
+                style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
+              >
+                <p className="text-sm font-semibold" style={{ color: theme.green }}>{stop.name}</p>
+                <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
               </div>
             ))}
           </div>
@@ -380,4 +465,67 @@ export default function TripPlannerPage() {
       )}
     </div>
   );
+}
+
+function buildChargingPlan(routePoints, chargers, currentRangeKm, fullRangeKm, totalDistKm) {
+  if (!chargers.length || !routePoints.length) return [];
+
+  const plan = [];
+  let remainingRange = currentRangeKm;
+  let distanceCovered = 0;
+  const pointDistances = computePointDistances(routePoints);
+  const totalRouteDist = pointDistances[pointDistances.length - 1] || totalDistKm;
+
+  // Find charging stops when range gets low (below 15%)
+  const lowThreshold = fullRangeKm * 0.15;
+  let stopIdx = 0;
+
+  for (let i = 1; i < routePoints.length; i++) {
+    const segDist = haversine(routePoints[i - 1], routePoints[i]);
+    distanceCovered += segDist;
+    remainingRange -= segDist;
+
+    if (remainingRange < lowThreshold && stopIdx < 5) {
+      // Find nearest charger to current position
+      const [lat, lng] = routePoints[i];
+      let nearest = null;
+      let nearestDist = Infinity;
+      for (const c of chargers) {
+        const d = haversine([lat, lng], [c.latitude, c.longitude]);
+        if (d < nearestDist && !plan.some((p) => p.id === c.id)) {
+          nearestDist = d;
+          nearest = c;
+        }
+      }
+      if (nearest) {
+        plan.push({
+          ...nearest,
+          index: stopIdx,
+          distanceAlongRoute: Math.round(distanceCovered),
+        });
+        stopIdx++;
+        remainingRange = fullRangeKm * 0.8; // assume charge to 80%
+      }
+    }
+  }
+
+  return plan;
+}
+
+function computePointDistances(points) {
+  const distances = [0];
+  for (let i = 1; i < points.length; i++) {
+    distances.push(distances[i - 1] + haversine(points[i - 1], points[i]));
+  }
+  return distances;
+}
+
+function haversine(p1, p2) {
+  const R = 6371;
+  const dLat = (p2[0] - p1[0]) * Math.PI / 180;
+  const dLng = (p2[1] - p1[1]) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(p1[0] * Math.PI / 180) * Math.cos(p2[0] * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
