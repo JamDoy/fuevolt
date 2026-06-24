@@ -9,6 +9,8 @@ import TripPlannerPage from './pages/TripPlannerPage';
 import NotificationsPage from './pages/NotificationsPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
+import ArticlesPage from './pages/ArticlesPage';
+import ArticleDetailPage from './pages/ArticleDetailPage';
 import { updatePageMeta, POPULAR_SUBURBS } from './utils/seo';
 
 function parseRoute() {
@@ -26,6 +28,10 @@ function parseRoute() {
   }
   if (parts[0] === 'trip-planner') return { view: 'trip', suburb: null };
   if (parts[0] === 'alerts') return { view: 'notifications', suburb: null };
+  if (parts[0] === 'guides') {
+    if (parts[1]) return { view: 'article-detail', suburb: null, articleSlug: parts[1] };
+    return { view: 'articles', suburb: null };
+  }
   if (parts[0] === 'privacy') return { view: 'privacy', suburb: null };
   if (parts[0] === 'terms') return { view: 'terms', suburb: null };
   return { view: 'landing', suburb: null };
@@ -41,6 +47,7 @@ function AppContent() {
   const [initialFuelType, setInitialFuelType] = useState('U91');
   const [detailStation, setDetailStation] = useState(null);
   const [initialSuburb, setInitialSuburb] = useState(parsed.suburb);
+  const [articleSlug, setArticleSlug] = useState(parsed.articleSlug || null);
   const { theme } = useTheme();
 
   const navigate = useCallback((newView, path) => {
@@ -56,6 +63,7 @@ function AppContent() {
       const p = parseRoute();
       setView(p.view);
       setInitialSuburb(p.suburb);
+      if (p.articleSlug) setArticleSlug(p.articleSlug);
       updatePageMeta(p.view);
     };
     window.addEventListener('popstate', handlePop);
@@ -84,6 +92,9 @@ function AppContent() {
       setView('fuel');
       setDetailStation(null);
       setRoute('/fuel-prices');
+    } else if (view === 'article-detail') {
+      setArticleSlug(null);
+      navigate('articles', '/guides');
     } else {
       setDetailStation(null);
       navigate('landing', '/');
@@ -104,13 +115,25 @@ function AppContent() {
         onViewChange={(v) => {
           if (v === 'fuel') { setInitialFuelType('U91'); setInitialSuburb(null); }
           setDetailStation(null);
-          const paths = { fuel: '/fuel-prices', ev: '/ev-charging', trip: '/trip-planner', notifications: '/alerts' };
+          const paths = { fuel: '/fuel-prices', ev: '/ev-charging', trip: '/trip-planner', notifications: '/alerts', articles: '/guides' };
           navigate(v, paths[v] || '/');
         }}
         onHome={() => { setDetailStation(null); navigate('landing', '/'); }}
       />
       <main>
-        {view === 'landing' && <LandingPage onSelect={handleSelect} />}
+        {view === 'landing' && (
+          <LandingPage
+            onSelect={handleSelect}
+            onArticle={(slug) => {
+              if (slug) {
+                setArticleSlug(slug);
+                navigate('article-detail', `/guides/${slug}`);
+              } else {
+                navigate('articles', '/guides');
+              }
+            }}
+          />
+        )}
         {view === 'ev' && <EVChargingPage initialSuburb={initialSuburb} />}
         {view === 'fuel' && (
           <FuelPricePage
@@ -128,6 +151,20 @@ function AppContent() {
         )}
         {view === 'trip' && <TripPlannerPage />}
         {view === 'notifications' && <NotificationsPage />}
+        {view === 'articles' && (
+          <ArticlesPage
+            onArticle={(slug) => {
+              setArticleSlug(slug);
+              navigate('article-detail', `/guides/${slug}`);
+            }}
+          />
+        )}
+        {view === 'article-detail' && articleSlug && (
+          <ArticleDetailPage
+            slug={articleSlug}
+            onBack={() => { setArticleSlug(null); navigate('articles', '/guides'); }}
+          />
+        )}
         {view === 'privacy' && <PrivacyPolicyPage />}
         {view === 'terms' && <TermsPage />}
       </main>

@@ -35,6 +35,20 @@
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
+  <!-- Guides & Articles -->
+  <url><loc>https://fuevolt.com/guides</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://fuevolt.com/guides/fuel-types-explained</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/ev-charging-connector-types-australia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/how-fuel-price-cycles-work-australia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/petrol-vs-diesel-vs-electric-comparison</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/understanding-octane-ratings</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/australian-road-trip-fuel-planning-tips</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/ev-home-charging-setup-guide-australia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/overcoming-ev-range-anxiety</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/tips-to-save-money-on-fuel-australia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/electric-vs-hybrid-vs-plug-in-hybrid</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/australian-fuel-excise-tax-explained</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fuevolt.com/guides/ev-battery-health-and-longevity-tips</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <!-- Fuel Prices by City -->
   <url><loc>https://fuevolt.com/fuel-prices/sydney</loc><changefreq>hourly</changefreq><priority>0.8</priority></url>
   <url><loc>https://fuevolt.com/fuel-prices/melbourne</loc><changefreq>hourly</changefreq><priority>0.8</priority></url>

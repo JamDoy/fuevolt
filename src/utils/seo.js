@@ -36,6 +36,16 @@ const PAGE_META = {
     description: 'Terms of Service for using FueVolt — Australian fuel price comparison and EV charging station finder app.',
     path: '/terms',
   },
+  articles: {
+    title: 'Guides & Articles — Fuel, EV Charging & Driving Tips | FueVolt',
+    description: 'Expert guides on fuel types, EV charging connectors, octane ratings, saving money on fuel, and road trip planning in Australia.',
+    path: '/guides',
+  },
+  'article-detail': {
+    title: 'Guide | FueVolt',
+    description: 'In-depth guide from FueVolt on fuel, EV charging, and driving in Australia.',
+    path: '/guides',
+  },
 };
 
 export function updatePageMeta(view, extra) {

@@ -5,6 +5,7 @@ const TABS = [
   { id: 'fuel', label: 'Fuel Prices', icon: '\u26FD' },
   { id: 'ev', label: 'EV Charging', icon: '\u26A1' },
   { id: 'trip', label: 'Trip Planner', icon: '\uD83D\uDDFA' },
+  { id: 'articles', label: 'Guides', icon: '\uD83D\uDCDA' },
   { id: 'notifications', label: 'Alerts', icon: '\uD83D\uDD14' },
 ];
 
