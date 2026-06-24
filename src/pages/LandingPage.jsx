@@ -1,7 +1,44 @@
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import LatestNews from '../components/LatestNews';
 
-export default function LandingPage({ onSelect }) {
+const FEATURED_ARTICLES = [
+  { slug: 'fuel-types-explained', title: 'Fuel Types Explained: E10, U91, U95, U98, Diesel', category: 'Fuel Guide', readTime: '6 min' },
+  { slug: 'ev-charging-connector-types-australia', title: 'EV Charging Connectors: Type 2, CCS, CHAdeMO', category: 'EV Guide', readTime: '6 min' },
+  { slug: 'tips-to-save-money-on-fuel-australia', title: '10 Tips to Save Money on Fuel', category: 'Tips', readTime: '6 min' },
+  { slug: 'petrol-vs-diesel-vs-electric-comparison', title: 'Petrol vs Diesel vs Electric: Cost Comparison', category: 'Comparison', readTime: '7 min' },
+];
+
+function FeaturedArticles({ theme, isDark, onArticle }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {FEATURED_ARTICLES.map((a) => (
+        <button
+          key={a.slug}
+          onClick={() => onArticle && onArticle(a.slug)}
+          className="text-left rounded-xl p-4 transition-all hover:scale-[1.01] cursor-pointer"
+          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder || theme.border}` }}
+        >
+          <span
+            className="inline-block px-2 py-0.5 rounded-full text-[9px] font-semibold mb-2"
+            style={{
+              background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)',
+              color: theme.gold,
+            }}
+          >
+            {a.category}
+          </span>
+          <h3 className="text-xs font-semibold leading-snug" style={{ color: theme.heading || theme.text }}>
+            {a.title}
+          </h3>
+          <span className="text-[9px] mt-1 block" style={{ color: theme.textMuted }}>{a.readTime} read</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export default function LandingPage({ onSelect, onArticle }) {
   const [hovered, setHovered] = useState(null);
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
@@ -263,6 +300,26 @@ export default function LandingPage({ onSelect }) {
         <p className="text-[10px] text-center mt-3" style={{ color: theme.textMuted }}>
           Estimates based on avg fuel price 175¢/L at 8L/100km vs avg EV charging at 45¢/kWh at 15kWh/100km
         </p>
+      </div>
+
+      {/* Featured Articles */}
+      <div className="w-full max-w-4xl mt-10 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold" style={{ color: theme.heading || theme.text }}>Guides & Articles</h2>
+          <button
+            onClick={() => onArticle && onArticle()}
+            className="text-xs font-medium hover:underline cursor-pointer"
+            style={{ color: theme.accent || theme.gold, background: 'none', border: 'none' }}
+          >
+            View all →
+          </button>
+        </div>
+        <FeaturedArticles theme={theme} isDark={isDark} onArticle={onArticle} />
+      </div>
+
+      {/* Latest News (RSS) */}
+      <div className="w-full max-w-4xl animate-slide-up" style={{ animationDelay: '0.4s' }}>
+        <LatestNews />
       </div>
 
       {/* Footer tagline */}

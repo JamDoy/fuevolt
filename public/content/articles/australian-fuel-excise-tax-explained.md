@@ -1,0 +1,44 @@
+---
+title: "Australian Fuel Excise Tax Explained: Where Your Fuel Money Goes"
+description: "How much tax is included in every litre of fuel you buy in Australia, what it funds, and how it has changed over time."
+category: "Fuel Guide"
+readTime: "5 min read"
+---
+
+Every time you fill up your car in Australia, a significant portion of what you pay goes straight to the federal government as fuel excise. Understanding this tax helps explain why fuel costs what it does and why prices can only drop so far.
+
+## What Is Fuel Excise?
+
+Fuel excise is a flat-rate tax applied to every litre of petrol, diesel and LPG sold in Australia. As of 2025, the excise rate is approximately 50 cents per litre for petrol and diesel. LPG attracts a lower rate of around 15 cents per litre. On top of the excise, GST (10 per cent) is charged on the total price including the excise — effectively a tax on a tax.
+
+For a litre of petrol priced at 170 cents, the breakdown is roughly: 50 cents excise, about 15 cents GST, 70 to 80 cents for the crude oil and refining cost, and 25 to 35 cents for the retailer's margin, transport and distribution.
+
+## How Is It Set?
+
+The fuel excise rate is set by the federal government and indexed to the Consumer Price Index (CPI) twice a year, in February and August. This means the excise increases automatically with inflation, typically by 1 to 2 cents per litre each year. The government does not need to pass new legislation for these increases — they happen automatically.
+
+## What Does It Fund?
+
+Fuel excise revenue goes into the federal government's consolidated revenue — it is not hypothecated (earmarked) specifically for roads. However, the government allocates significant funding to road infrastructure through separate budget processes. In 2024-25, fuel excise raised approximately $18 billion for the federal budget.
+
+Historically, fuel excise was directly linked to road funding, but this formal link was severed in the 1950s. Today, the fuel excise is simply a general revenue measure, similar to income tax or company tax.
+
+## The 2022 Excise Cut
+
+During the cost-of-living pressures of 2022, the Morrison government temporarily halved the fuel excise from 44.2 cents to 22.1 cents per litre for six months (March to September 2022). This was one of the largest temporary tax cuts in Australian history and was estimated to save the average household $700 over the six-month period. When the cut expired, prices jumped as the full excise was restored.
+
+## EV Road User Charges
+
+As more Australians switch to electric vehicles, fuel excise revenue is declining. EVs do not buy petrol, so they contribute nothing through this mechanism. To address this gap, Victoria introduced a road user charge for EVs at 2.8 cents per kilometre, and other states have considered similar measures.
+
+This creates an interesting policy tension: the government wants to encourage EV adoption for environmental reasons but also needs to replace the revenue that EVs erode from fuel excise.
+
+## International Comparison
+
+Australia's fuel excise is moderate by global standards. European countries like the UK, Germany and France levy significantly higher fuel taxes, often exceeding $1 per litre equivalent. The United States, by contrast, has very low federal and state fuel taxes, contributing to its much cheaper pump prices.
+
+## Impact on Pump Prices
+
+Because fuel excise is a fixed amount per litre rather than a percentage, it has a greater proportional impact when crude oil prices are low. When crude drops and the base cost of fuel falls, the excise becomes a larger share of the total price, putting a floor on how cheap fuel can get.
+
+Understanding the tax component helps set realistic expectations about fuel prices. Even if global oil prices collapsed, Australian pump prices would not drop below about 70 to 80 cents per litre due to excise plus GST alone.
