@@ -45,6 +45,86 @@ export async function reverseGeocode(lat, lng) {
   };
 }
 
+// --- Autocomplete / Typeahead Search ---
+export async function autocompleteSearch(query) {
+  if (!query || query.length < 2) return [];
+  const params = new URLSearchParams({
+    key: TOMTOM_KEY,
+    typeahead: 'true',
+    limit: '5',
+    countrySet: 'AU',
+    language: 'en-AU',
+  });
+  try {
+    const res = await fetch(`${BASE}/search/2/search/${encodeURIComponent(query)}.json?${params}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.results || []).map((r) => ({
+      label: r.address?.freeformAddress || r.poi?.name || query,
+      latitude: r.position?.lat,
+      longitude: r.position?.lon,
+      type: r.type,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// --- Search along route (fuel stations / EV chargers near route points) ---
+export async function searchAlongRoute(routePoints, category = '7311', maxResults = 20) {
+  if (!routePoints || routePoints.length < 2) return [];
+
+  // Sample points along the route at regular intervals
+  const totalPoints = routePoints.length;
+  const sampleCount = Math.min(8, Math.ceil(totalPoints / 30));
+  const step = Math.max(1, Math.floor(totalPoints / (sampleCount + 1)));
+  const sampleIndices = [];
+  for (let i = step; i < totalPoints - 1; i += step) {
+    sampleIndices.push(i);
+    if (sampleIndices.length >= sampleCount) break;
+  }
+
+  const seen = new Set();
+  const allResults = [];
+
+  for (const idx of sampleIndices) {
+    const [lat, lng] = routePoints[idx];
+    const params = new URLSearchParams({
+      key: TOMTOM_KEY,
+      lat: lat.toString(),
+      lon: lng.toString(),
+      radius: '10000',
+      categorySet: category,
+      limit: '10',
+    });
+    try {
+      const res = await fetch(`${BASE}/search/2/nearbySearch/.json?${params}`);
+      if (!res.ok) continue;
+      const data = await res.json();
+      for (const r of (data.results || [])) {
+        if (seen.has(r.id)) continue;
+        seen.add(r.id);
+        allResults.push({
+          id: r.id,
+          name: r.poi?.name || 'Station',
+          brand: r.poi?.brands?.[0]?.name || '',
+          address: r.address?.freeformAddress || '',
+          latitude: r.position?.lat,
+          longitude: r.position?.lon,
+          phone: r.poi?.phone || '',
+          categories: r.poi?.categories || [],
+          distance: r.dist ? (r.dist / 1000).toFixed(1) : '—',
+          chargingParkId: r.dataSources?.chargingAvailability?.id || null,
+        });
+      }
+    } catch {
+      // continue with next sample point
+    }
+  }
+
+  return allResults.slice(0, maxResults);
+}
+
 // --- Search (fuel stations via TomTom POI search) ---
 export async function searchFuelStations(lat, lng, radius = 10000) {
   const params = new URLSearchParams({
@@ -54,7 +134,6 @@ export async function searchFuelStations(lat, lng, radius = 10000) {
     radius: radius.toString(),
     categorySet: '7311',
     limit: '50',
-    view: 'AU',
   });
   const res = await fetch(`${BASE}/search/2/nearbySearch/.json?${params}`);
   if (!res.ok) return [];

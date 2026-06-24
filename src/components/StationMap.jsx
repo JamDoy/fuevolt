@@ -62,11 +62,16 @@ const evOfflineIcon = new L.DivIcon({
   iconSize: [28, 40], iconAnchor: [14, 40], popupAnchor: [0, -40],
 });
 
-function MapUpdater({ center }) {
+function MapUpdater({ center, routePoints }) {
   const map = useMap();
   useEffect(() => {
-    if (center) map.setView(center, 13);
-  }, [center, map]);
+    if (routePoints && routePoints.length > 1) {
+      const bounds = L.latLngBounds(routePoints);
+      map.fitBounds(bounds, { padding: [40, 40] });
+    } else if (center) {
+      map.setView(center, 13);
+    }
+  }, [center, routePoints, map]);
   return null;
 }
 
@@ -154,7 +159,7 @@ export default function StationMap({
           />
         )}
 
-        <MapUpdater center={mapCenter} />
+        <MapUpdater center={mapCenter} routePoints={routePoints} />
 
         {/* Route line */}
         {routePoints && routePoints.length > 1 && (
