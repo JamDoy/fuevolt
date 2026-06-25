@@ -1,10 +1,8 @@
 const TOMTOM_KEY = 'ifJYQYlpFE1PVrOY9yhoXrjxN2UPN4Kd';
 const BASE = 'https://api.tomtom.com';
 
-// --- Tile URLs (Map Display API) ---
-export const TOMTOM_TILE_URL = `https://api.tomtom.com/map/1/tile/basic/main/{z}/{x}/{y}.png?key=${TOMTOM_KEY}&tileSize=512`;
-export const TOMTOM_TRAFFIC_FLOW_URL = `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${TOMTOM_KEY}&tileSize=512`;
-export const TOMTOM_TRAFFIC_INCIDENTS_URL = `https://api.tomtom.com/traffic/map/4/tile/incidents/s1/{z}/{x}/{y}.png?key=${TOMTOM_KEY}&tileSize=512`;
+// Note: TomTom Map Display tile API quota exhausted (403). Using OpenStreetMap tiles instead.
+// TomTom Search, Routing, and Geocoding APIs still active below.
 
 // --- Geocoding ---
 export async function geocode(query) {
