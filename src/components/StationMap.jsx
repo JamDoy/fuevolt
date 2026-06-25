@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
-import { TOMTOM_TILE_URL, TOMTOM_TRAFFIC_FLOW_URL, TOMTOM_TRAFFIC_INCIDENTS_URL } from '../utils/tomtom';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -87,7 +86,6 @@ export default function StationMap({
   evAvailability = {},
 }) {
   const { theme } = useTheme();
-  const [trafficOn, setTrafficOn] = useState(showTraffic);
   const defaultCenter = [-33.8688, 151.2093];
   const mapCenter = center || defaultCenter;
 
@@ -111,53 +109,17 @@ export default function StationMap({
 
   return (
     <div className="rounded-2xl overflow-hidden relative" style={{ border: `1px solid ${theme.mapBorder}` }}>
-      {/* Traffic Toggle */}
-      <button
-        onClick={() => setTrafficOn((t) => !t)}
-        className="absolute top-3 right-3 z-[1000] px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer"
-        style={{
-          background: trafficOn ? 'rgba(46,204,113,0.9)' : 'rgba(13,43,94,0.85)',
-          color: '#fff',
-          border: 'none',
-          backdropFilter: 'blur(4px)',
-        }}
-      >
-        {trafficOn ? 'Traffic ON' : 'Traffic OFF'}
-      </button>
-
       <MapContainer
         center={mapCenter}
         zoom={13}
         style={{ height: '400px', width: '100%' }}
         scrollWheelZoom={true}
       >
-        {/* TomTom Map Tiles */}
+        {/* OpenStreetMap Tiles (free, no API key required) */}
         <TileLayer
-          attribution='&copy; <a href="https://www.tomtom.com">TomTom</a>'
-          url={TOMTOM_TILE_URL}
-          tileSize={512}
-          zoomOffset={-1}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-
-        {/* Traffic Flow Overlay */}
-        {trafficOn && (
-          <TileLayer
-            url={TOMTOM_TRAFFIC_FLOW_URL}
-            tileSize={512}
-            zoomOffset={-1}
-            opacity={0.7}
-          />
-        )}
-
-        {/* Traffic Incidents Overlay */}
-        {trafficOn && (
-          <TileLayer
-            url={TOMTOM_TRAFFIC_INCIDENTS_URL}
-            tileSize={512}
-            zoomOffset={-1}
-            opacity={0.8}
-          />
-        )}
 
         <MapUpdater center={mapCenter} routePoints={routePoints} />
 
