@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import StationMap from '../components/StationMap';
 import ShimmerCard from '../components/ShimmerCard';
 import LocationInput from '../components/LocationInput';
 import { geocodeLocation } from '../utils/api';
+import useAutoLocation from '../hooks/useAutoLocation';
 import { calculateRoute, calculateEVRoute, searchAlongRoute } from '../utils/tomtom';
 
 export default function TripPlannerPage() {
@@ -24,6 +25,14 @@ export default function TripPlannerPage() {
   const [currentCharge, setCurrentCharge] = useState(80);
   const [consumption, setConsumption] = useState(15);
   const [vehicleRange, setVehicleRange] = useState(400);
+  const autoLocation = useAutoLocation();
+
+  // Default map to user's location if permission already granted
+  useEffect(() => {
+    if (autoLocation && !mapCenter) {
+      setMapCenter([autoLocation.latitude, autoLocation.longitude]);
+    }
+  }, [autoLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePlanTrip = useCallback(async () => {
     if (!startQuery.trim() || !endQuery.trim()) {
