@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -71,11 +71,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
 
   const isGovSource = station.source && (station.source.includes('NSW Government') || station.source.includes('WA FuelWatch'));
 
-  const openingHours = details?.opening_hours || null;
-  const phone = details?.phone || null;
   const amenities = details?.amenities || {};
-
-  const todayDay = new Date().toLocaleDateString('en-AU', { weekday: 'long' });
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6" style={{ animation: 'fadeSlideIn 0.35s ease' }}>
@@ -181,46 +177,33 @@ export default function FuelStationDetailPage({ station, onBack }) {
         </div>
       </div>
 
-      {/* Contact Info */}
+      {/* Map — moved up to sit below location */}
       <div
-        className="rounded-2xl p-5"
+        className="rounded-2xl overflow-hidden"
         style={{
-          background: theme.cardBg,
-          border: `1px solid ${theme.cardBorder}`,
-          backdropFilter: 'blur(12px)',
+          border: `1px solid ${theme.mapBorder}`,
         }}
       >
-        <h2 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: theme.gold }}>
-          Contact & Hours
-        </h2>
-        {loadingDetails ? (
-          <div className="space-y-2">
-            <ShimmerLine theme={theme} width="60%" />
-            <ShimmerLine theme={theme} width="80%" />
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <span className="text-lg">&#128222;</span>
-              <span className="text-sm" style={{ color: theme.text }}>
-                {phone || 'Not available from free sources'}
-              </span>
-            </div>
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-lg">&#128339;</span>
-                <span className="text-sm font-semibold" style={{ color: theme.text }}>Opening Hours</span>
+        <MapContainer
+          center={[station.latitude, station.longitude]}
+          zoom={16}
+          style={{ height: '300px', width: '100%' }}
+          scrollWheelZoom={true}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={[station.latitude, station.longitude]} icon={goldPin}>
+            <Popup>
+              <div style={{ color: '#1a1a1a' }}>
+                <strong style={{ color: '#0D2B5E' }}>{station.name}</strong>
+                <br />
+                <span style={{ fontSize: '12px' }}>{station.address}</span>
               </div>
-              {openingHours ? (
-                <OpeningHoursDisplay hours={openingHours} todayDay={todayDay} theme={theme} />
-              ) : (
-                <p className="text-sm ml-8" style={{ color: theme.textMuted }}>
-                  Not available from free sources
-                </p>
-              )}
-            </div>
-          </div>
-        )}
+            </Popup>
+          </Marker>
+        </MapContainer>
       </div>
 
       {/* Fuel Prices — All Types */}
@@ -266,35 +249,6 @@ export default function FuelStationDetailPage({ station, onBack }) {
             ⚠️ Price not currently available from official sources. Government fuel API not registered for this state.
           </p>
         )}
-      </div>
-
-      {/* Map */}
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{
-          border: `1px solid ${theme.mapBorder}`,
-        }}
-      >
-        <MapContainer
-          center={[station.latitude, station.longitude]}
-          zoom={16}
-          style={{ height: '300px', width: '100%' }}
-          scrollWheelZoom={true}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker position={[station.latitude, station.longitude]} icon={goldPin}>
-            <Popup>
-              <div style={{ color: '#1a1a1a' }}>
-                <strong style={{ color: '#0D2B5E' }}>{station.name}</strong>
-                <br />
-                <span style={{ fontSize: '12px' }}>{station.address}</span>
-              </div>
-            </Popup>
-          </Marker>
-        </MapContainer>
       </div>
 
       {/* Amenities */}
@@ -366,7 +320,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
   );
 }
 
-function FuelPriceTile({ code, label, priceData, isGovSource, theme }) {
+function FuelPriceTile({ label, priceData, isGovSource, theme }) {
   const displayPrice = priceData?.price;
 
   return (
@@ -401,36 +355,6 @@ function FuelPriceTile({ code, label, priceData, isGovSource, theme }) {
 }
 
 
-
-function OpeningHoursDisplay({ hours, todayDay, theme }) {
-  if (typeof hours === 'string') {
-    if (hours === '24/7') {
-      return <p className="text-sm ml-8 font-semibold" style={{ color: theme.green }}>Open 24/7</p>;
-    }
-    return <p className="text-sm ml-8" style={{ color: theme.text }}>{hours}</p>;
-  }
-  if (Array.isArray(hours)) {
-    return (
-      <div className="ml-8 space-y-1">
-        {hours.map((h, i) => (
-          <div
-            key={i}
-            className="flex justify-between text-sm px-2 py-1 rounded"
-            style={{
-              background: h.day === todayDay ? `rgba(255,215,0,0.08)` : 'transparent',
-              color: h.day === todayDay ? theme.gold : theme.text,
-              fontWeight: h.day === todayDay ? '600' : '400',
-            }}
-          >
-            <span>{h.day}</span>
-            <span>{h.hours}</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  return <p className="text-sm ml-8" style={{ color: theme.textMuted }}>Not available from free sources</p>;
-}
 
 function ShimmerLine({ theme, width = '100%' }) {
   return (

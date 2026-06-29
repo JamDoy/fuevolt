@@ -41,6 +41,11 @@ const PAGE_META = {
     description: 'Expert guides on fuel types, EV charging connectors, octane ratings, saving money on fuel, and road trip planning in Australia.',
     path: '/guides',
   },
+  calculator: {
+    title: 'EV vs Fuel Calculator — Compare Running Costs | FueVolt',
+    description: 'Calculate how much you could save by switching from petrol or diesel to an electric vehicle. Compare weekly and annual fuel vs EV charging costs.',
+    path: '/ev-vs-fuel',
+  },
   'article-detail': {
     title: 'Guide | FueVolt',
     description: 'In-depth guide from FueVolt on fuel, EV charging, and driving in Australia.',

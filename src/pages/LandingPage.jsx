@@ -269,37 +269,51 @@ export default function LandingPage({ onSelect, onArticle }) {
         </div>
       </div>
 
-      {/* Fuel vs EV Cost Comparison Widget */}
+      {/* EV vs Fuel Calculator Card */}
       <div
-        className="w-full max-w-4xl mt-10 rounded-2xl p-6 animate-slide-up"
+        onClick={() => onSelect('calculator')}
+        onMouseEnter={() => setHovered('calculator')}
+        onMouseLeave={() => setHovered(null)}
+        className="w-full max-w-4xl mt-6 rounded-2xl p-6 cursor-pointer animate-slide-up"
         style={{
-          background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(13,43,94,0.02)',
-          border: `1px solid ${theme.cardBorder}`,
-          animationDelay: '0.2s',
+          background: isDark
+            ? 'linear-gradient(135deg, rgba(255,215,0,0.04), rgba(46,204,113,0.04))'
+            : 'linear-gradient(135deg, rgba(200,151,31,0.03), rgba(39,174,96,0.03))',
+          border: hovered === 'calculator'
+            ? `2px solid ${theme.green}`
+            : `1px solid ${theme.cardBorder}`,
+          boxShadow: hovered === 'calculator'
+            ? (isDark ? '0 0 30px rgba(46,204,113,0.1)' : '0 0 20px rgba(39,174,96,0.1)')
+            : isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 2px 12px rgba(0,0,0,0.06)',
+          transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: hovered === 'calculator' ? 'translateY(-2px)' : 'translateY(0)',
+          animationDelay: '0.15s',
         }}
       >
-        <h3 className="text-center text-sm font-bold mb-4" style={{ color: theme.text }}>
-          💡 Fuel vs Electric — Weekly Cost Comparison
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="text-center p-4 rounded-xl" style={{ background: isDark ? 'rgba(255,215,0,0.05)' : 'rgba(200,151,31,0.04)' }}>
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Avg Petrol Cost</p>
-            <p className="text-2xl font-bold" style={{ color: theme.gold }}>$65</p>
-            <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>Based on 300km/week</p>
+        <div className="flex items-center gap-4">
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+            style={{
+              background: isDark
+                ? 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(46,204,113,0.1))'
+                : 'linear-gradient(135deg, rgba(200,151,31,0.08), rgba(39,174,96,0.08))',
+              border: `1px solid ${isDark ? 'rgba(46,204,113,0.25)' : 'rgba(39,174,96,0.2)'}`,
+            }}
+          >
+            {'\uD83D\uDCA1'}
           </div>
-          <div className="text-center p-4 rounded-xl flex flex-col items-center justify-center">
-            <div className="text-2xl mb-1">→</div>
-            <p className="text-xs font-semibold" style={{ color: theme.green }}>Save ~60%</p>
+          <div className="flex-1">
+            <h3 className="text-base font-bold">
+              <span style={{ color: theme.gold }}>Fuel</span>
+              <span style={{ color: theme.textSecondary }}> vs </span>
+              <span style={{ color: theme.green }}>Electric</span>
+            </h3>
+            <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>
+              Calculate how much you could save by switching to an EV. Basic and advanced calculators with vehicle type, electricity costs, and CO2 savings.
+            </p>
           </div>
-          <div className="text-center p-4 rounded-xl" style={{ background: isDark ? 'rgba(46,204,113,0.05)' : 'rgba(39,174,96,0.04)' }}>
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Avg EV Charge Cost</p>
-            <p className="text-2xl font-bold" style={{ color: theme.green }}>$25</p>
-            <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>Based on 300km/week</p>
-          </div>
+          <span className="text-sm font-semibold hidden sm:block" style={{ color: theme.green }}>Calculate Savings →</span>
         </div>
-        <p className="text-[10px] text-center mt-3" style={{ color: theme.textMuted }}>
-          Estimates based on avg fuel price 175¢/L at 8L/100km vs avg EV charging at 45¢/kWh at 15kWh/100km
-        </p>
       </div>
 
       {/* Featured Articles */}
