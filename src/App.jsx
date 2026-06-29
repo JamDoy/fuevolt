@@ -6,6 +6,7 @@ import EVChargingPage from './pages/EVChargingPage';
 import FuelPricePage from './pages/FuelPricePage';
 import FuelStationDetailPage from './pages/FuelStationDetailPage';
 import TripPlannerPage from './pages/TripPlannerPage';
+import EVvsFuelPage from './pages/EVvsFuelPage';
 import NotificationsPage from './pages/NotificationsPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
@@ -27,6 +28,7 @@ function parseRoute() {
     return { view: 'ev', suburb };
   }
   if (parts[0] === 'trip-planner') return { view: 'trip', suburb: null };
+  if (parts[0] === 'ev-vs-fuel') return { view: 'calculator', suburb: null };
   if (parts[0] === 'alerts') return { view: 'notifications', suburb: null };
   if (parts[0] === 'guides') {
     if (parts[1]) return { view: 'article-detail', suburb: null, articleSlug: parts[1] };
@@ -54,6 +56,7 @@ function AppContent() {
     setView(newView);
     setRoute(path || '/');
     updatePageMeta(newView);
+    window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
@@ -65,6 +68,7 @@ function AppContent() {
       setInitialSuburb(p.suburb);
       if (p.articleSlug) setArticleSlug(p.articleSlug);
       updatePageMeta(p.view);
+      window.scrollTo(0, 0);
     };
     window.addEventListener('popstate', handlePop);
     return () => window.removeEventListener('popstate', handlePop);
@@ -81,6 +85,8 @@ function AppContent() {
       navigate('fuel', '/fuel-prices');
     } else if (option === 'trip') {
       navigate('trip', '/trip-planner');
+    } else if (option === 'calculator') {
+      navigate('calculator', '/ev-vs-fuel');
     } else {
       setInitialSuburb(null);
       navigate('ev', '/ev-charging');
@@ -104,6 +110,7 @@ function AppContent() {
   const handleStationDetail = (station) => {
     setDetailStation(station);
     setView('station-detail');
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -115,7 +122,7 @@ function AppContent() {
         onViewChange={(v) => {
           if (v === 'fuel') { setInitialFuelType('U91'); setInitialSuburb(null); }
           setDetailStation(null);
-          const paths = { fuel: '/fuel-prices', ev: '/ev-charging', trip: '/trip-planner', notifications: '/alerts', articles: '/guides' };
+          const paths = { fuel: '/fuel-prices', ev: '/ev-charging', trip: '/trip-planner', calculator: '/ev-vs-fuel', notifications: '/alerts', articles: '/guides' };
           navigate(v, paths[v] || '/');
         }}
         onHome={() => { setDetailStation(null); navigate('landing', '/'); }}
@@ -150,6 +157,7 @@ function AppContent() {
           />
         )}
         {view === 'trip' && <TripPlannerPage />}
+        {view === 'calculator' && <EVvsFuelPage />}
         {view === 'notifications' && <NotificationsPage />}
         {view === 'articles' && (
           <ArticlesPage

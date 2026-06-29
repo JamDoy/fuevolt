@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fuevolt-v1.6';
+const CACHE_NAME = 'fuevolt-v1.7';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
