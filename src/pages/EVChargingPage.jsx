@@ -9,6 +9,7 @@ import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import EVCostEstimator from '../components/EVCostEstimator';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
+import useAutoLocation from '../hooks/useAutoLocation';
 import { fetchEVAvailability, reverseGeocode } from '../utils/tomtom';
 import { injectEVStationSchema } from '../utils/seo';
 
@@ -32,6 +33,7 @@ export default function EVChargingPage({ initialSuburb }) {
   const [locationName, setLocationName] = useState('');
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
+  const autoLocation = useAutoLocation();
 
   // Auto-search if initialSuburb is set (from suburb-specific URL)
   useEffect(() => {
@@ -40,6 +42,13 @@ export default function EVChargingPage({ initialSuburb }) {
       setLocationName(initialSuburb.name);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-search at user's location if permission already granted
+  useEffect(() => {
+    if (autoLocation && !initialSuburb && !mapCenter) {
+      doSearch(autoLocation.latitude, autoLocation.longitude);
+    }
+  }, [autoLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const doSearch = useCallback(async (lat, lng) => {
     setLoading(true);

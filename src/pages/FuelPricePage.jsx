@@ -7,6 +7,7 @@ import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import SavingsCalculator from '../components/SavingsCalculator';
 import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
+import useAutoLocation from '../hooks/useAutoLocation';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
 import { injectFuelStationSchema } from '../utils/seo';
 
@@ -30,6 +31,7 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
   const [sortBy, setSortBy] = useState('price');
   const [locationName, setLocationName] = useState('');
   const { theme } = useTheme();
+  const autoLocation = useAutoLocation();
 
   // Auto-search if initialSuburb is set (from suburb-specific URL)
   useEffect(() => {
@@ -38,6 +40,13 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
       setLocationName(initialSuburb.name);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-search at user's location if permission already granted
+  useEffect(() => {
+    if (autoLocation && !initialSuburb && !mapCenter) {
+      doSearch(autoLocation.latitude, autoLocation.longitude, fuelType);
+    }
+  }, [autoLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const doSearch = useCallback(async (lat, lng, type) => {
     setLoading(true);
