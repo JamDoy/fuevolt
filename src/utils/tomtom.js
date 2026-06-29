@@ -231,7 +231,7 @@ export async function calculateEVRoute(startLat, startLng, endLat, endLng, evOpt
 
   try {
     const res = await fetch(
-      `${BASE}/routing/1/calculateRoute/${startLat},${startLng}:${endLat},${endLng}/json?key=${TOMTOM_KEY}&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=0,${consumption}:100,${consumption}&currentChargeInkWh=${currentCharge}&maxChargeInkWh=${battery}&minChargeAtDestinationInkWh=${battery * 0.1}&traffic=true&routeType=fastest`
+      `${BASE}/routing/1/calculateRoute/${startLat},${startLng}:${endLat},${endLng}/json?key=${TOMTOM_KEY}&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=0,${consumption}:100,${consumption}&currentChargeInkWh=${currentCharge}&maxChargeInkWh=${battery}&traffic=true&routeType=fastest`
     );
     if (!res.ok) throw new Error('EV route calculation failed');
     const data = await res.json();
