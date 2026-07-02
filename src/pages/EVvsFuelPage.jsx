@@ -21,32 +21,34 @@ export default function EVvsFuelPage() {
   const [mode, setMode] = useState('basic');
 
   // Basic mode
-  const [weeklyFuelCost, setWeeklyFuelCost] = useState(65);
+  const [weeklyFuelCost, setWeeklyFuelCost] = useState('65');
 
   // Advanced mode
-  const [kmPerWeek, setKmPerWeek] = useState(300);
+  const [kmPerWeek, setKmPerWeek] = useState('300');
   const [vehicleType, setVehicleType] = useState('sedan');
-  const [fuelPrice, setFuelPrice] = useState(DEFAULT_FUEL_PRICE);
-  const [electricityPrice, setElectricityPrice] = useState(DEFAULT_ELECTRICITY_PRICE);
-  const [publicChargePrice, setPublicChargePrice] = useState(DEFAULT_PUBLIC_CHARGE_PRICE);
-  const [homeChargePercent, setHomeChargePercent] = useState(80);
+  const [fuelPrice, setFuelPrice] = useState(String(DEFAULT_FUEL_PRICE));
+  const [electricityPrice, setElectricityPrice] = useState(String(DEFAULT_ELECTRICITY_PRICE));
+  const [publicChargePrice, setPublicChargePrice] = useState(String(DEFAULT_PUBLIC_CHARGE_PRICE));
+  const [homeChargePercent, setHomeChargePercent] = useState('80');
   const [fuelType, setFuelType] = useState('petrol');
 
   const vehicle = VEHICLE_TYPES.find(v => v.id === vehicleType) || VEHICLE_TYPES[1];
   const fuelConsumption = fuelType === 'diesel' ? vehicle.fuelConsumption * 0.85 : vehicle.fuelConsumption;
 
-  // Basic calculation
-  const basicEVCost = weeklyFuelCost * 0.4;
-  const basicSavingWeekly = weeklyFuelCost - basicEVCost;
-  const basicSavingYearly = basicSavingWeekly * 52;
+  const numWeeklyFuelCost = Number(weeklyFuelCost) || 0;
+  const numKmPerWeek = Number(kmPerWeek) || 0;
+  const numFuelPrice = Number(fuelPrice) || 0;
+  const numElectricityPrice = Number(electricityPrice) || 0;
+  const numPublicChargePrice = Number(publicChargePrice) || 0;
+  const numHomeChargePercent = Number(homeChargePercent) || 0;
 
   // Advanced calculation
-  const litresPerWeek = (kmPerWeek * fuelConsumption) / 100;
-  const advFuelCostWeekly = litresPerWeek * fuelPrice;
-  const kwhPerWeek = (kmPerWeek * vehicle.evConsumption) / 100;
-  const homeKwh = kwhPerWeek * (homeChargePercent / 100);
-  const publicKwh = kwhPerWeek * ((100 - homeChargePercent) / 100);
-  const advEVCostWeekly = (homeKwh * electricityPrice) + (publicKwh * publicChargePrice);
+  const litresPerWeek = (numKmPerWeek * fuelConsumption) / 100;
+  const advFuelCostWeekly = litresPerWeek * numFuelPrice;
+  const kwhPerWeek = (numKmPerWeek * vehicle.evConsumption) / 100;
+  const homeKwh = kwhPerWeek * (numHomeChargePercent / 100);
+  const publicKwh = kwhPerWeek * ((100 - numHomeChargePercent) / 100);
+  const advEVCostWeekly = (homeKwh * numElectricityPrice) + (publicKwh * numPublicChargePrice);
   const advSavingWeekly = advFuelCostWeekly - advEVCostWeekly;
   const advSavingYearly = advSavingWeekly * 52;
   const savingPercent = advFuelCostWeekly > 0 ? ((advSavingWeekly / advFuelCostWeekly) * 100).toFixed(0) : 0;
@@ -119,7 +121,7 @@ export default function EVvsFuelPage() {
           <input
             type="number"
             value={weeklyFuelCost}
-            onChange={(e) => setWeeklyFuelCost(Math.max(0, Number(e.target.value) || 0))}
+            onChange={(e) => setWeeklyFuelCost(e.target.value)}
             className="w-full px-4 py-3 rounded-xl text-lg font-bold mb-6"
             style={{
               background: theme.inputBg,
@@ -132,7 +134,7 @@ export default function EVvsFuelPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <ResultCard
               label="Weekly Fuel Cost"
-              value={`$${weeklyFuelCost.toFixed(0)}`}
+              value={`$${numWeeklyFuelCost.toFixed(0)}`}
               subtitle="Your current spend"
               color={theme.gold}
               theme={theme}
@@ -141,7 +143,7 @@ export default function EVvsFuelPage() {
             />
             <ResultCard
               label="Est. EV Cost"
-              value={`$${basicEVCost.toFixed(0)}`}
+              value={`$${(numWeeklyFuelCost * 0.4).toFixed(0)}`}
               subtitle="Electric equivalent"
               color={theme.green}
               theme={theme}
@@ -150,8 +152,8 @@ export default function EVvsFuelPage() {
             />
             <ResultCard
               label="Weekly Savings"
-              value={`$${basicSavingWeekly.toFixed(0)}`}
-              subtitle={`$${basicSavingYearly.toFixed(0)}/year`}
+              value={`$${(numWeeklyFuelCost * 0.6).toFixed(0)}`}
+              subtitle={`$${(numWeeklyFuelCost * 0.6 * 52).toFixed(0)}/year`}
               color={theme.green}
               theme={theme}
               isDark={isDark}
@@ -256,7 +258,7 @@ export default function EVvsFuelPage() {
             <InputField
               label="% charged at home"
               value={homeChargePercent}
-              onChange={(v) => setHomeChargePercent(Math.min(100, Math.max(0, v)))}
+              onChange={setHomeChargePercent}
               theme={theme}
             />
             <div>
@@ -286,7 +288,7 @@ export default function EVvsFuelPage() {
                 ${advFuelCostWeekly.toFixed(2)}
               </p>
               <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>
-                {litresPerWeek.toFixed(1)}L @ ${fuelPrice.toFixed(2)}/L
+                {litresPerWeek.toFixed(1)}L @ ${numFuelPrice.toFixed(2)}/L
               </p>
               <p className="text-xs font-semibold mt-2" style={{ color: theme.gold }}>
                 ${(advFuelCostWeekly * 52).toFixed(0)}/year
@@ -304,7 +306,7 @@ export default function EVvsFuelPage() {
                 ${advEVCostWeekly.toFixed(2)}
               </p>
               <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>
-                {kwhPerWeek.toFixed(1)} kWh ({homeChargePercent}% home, {100 - homeChargePercent}% public)
+                {kwhPerWeek.toFixed(1)} kWh ({numHomeChargePercent}% home, {100 - numHomeChargePercent}% public)
               </p>
               <p className="text-xs font-semibold mt-2" style={{ color: theme.green }}>
                 ${(advEVCostWeekly * 52).toFixed(0)}/year
@@ -419,7 +421,7 @@ function InputField({ label, value, onChange, step = 1, theme }) {
       <input
         type="number"
         value={value}
-        onChange={(e) => onChange(Number(e.target.value) || 0)}
+        onChange={(e) => onChange(e.target.value)}
         step={step}
         className="w-full px-3 py-2 rounded-xl text-sm"
         style={{

@@ -175,25 +175,34 @@ async function getNSWToken() {
   }
 }
 
+// QLD API config
+const QLD_API_BASE = 'https://fppdirectapi-prod.fuelpricesqld.com.au';
+const QLD_API_TOKEN = '3702baa0-61e3-4796-a011-45128c1e91fd';
+const QLD_FUEL_IDS = { E10: 12, U91: 2, U95: 5, U98: 8, Diesel: 3, LPG: 4 };
+
+// VIC API config
+const VIC_API_BASE = 'https://api.fuel.service.vic.gov.au/open-data/v1';
+const VIC_CONSUMER_ID = '306d44cdce3e09a9a61135cbe7e5eff1';
+const VIC_FUEL_CODES = { E10: 'E10', U91: 'U91', U95: 'P95', U98: 'P98', Diesel: 'DSL', LPG: 'LPG' };
+
 export async function fetchAllFuelPricesForStation(station) {
   const prices = {};
 
-  // If it's an NSW/TAS station from govt API, fetch all fuel types
   const isNSW = station.source?.includes('NSW Government');
   const isWA = station.source?.includes('WA FuelWatch');
+  const isQLD = station.source?.includes('QLD Government');
+  const isVIC = station.source?.includes('VIC Government');
 
   if (isNSW) {
     try {
       const token = await getNSWToken();
       if (!token) {
-        // Return just what we have
         if (station.price && station.fuelType) {
           prices[station.fuelType] = { price: station.price, lastUpdated: station.lastUpdated };
         }
         return prices;
       }
 
-      // Fetch each fuel type for this location
       for (const type of FUEL_TYPES) {
         try {
           const nswCode = FUEL_TYPE_NSW[type];
@@ -218,7 +227,6 @@ export async function fetchAllFuelPricesForStation(station) {
           const data = await response.json();
 
           if (data.prices && data.prices.length > 0) {
-            // Find the price for THIS station (by name match or closest)
             const stationCode = station.id?.replace('nsw-', '').split('-')[0];
             const matchedPrice = data.prices.find(p => p.stationcode === stationCode) || data.prices[0];
             if (matchedPrice) {
@@ -229,23 +237,87 @@ export async function fetchAllFuelPricesForStation(station) {
             }
           }
 
-          // Rate limit: small delay between requests
           await new Promise(r => setTimeout(r, 300));
         } catch {
           continue;
         }
       }
     } catch {
-      // Fallback: return what we already have
+      // Fallback
+    }
+  } else if (isQLD) {
+    try {
+      const siteId = station.id?.replace('qld-', '');
+      const headers = { 'Authorization': `FPDAPI SubscriberToken=${QLD_API_TOKEN}` };
+      let pricesData;
+      try {
+        const res = await fetch(`${QLD_API_BASE}/Price/GetSitesPrices?countryId=21&geoRegionLevel=3&geoRegionId=1`, { headers });
+        if (res.ok) pricesData = await res.json();
+      } catch {
+        // Try proxy fallback
+        try {
+          const res = await fetch('/api/qld-fuel.php?type=prices');
+          if (res.ok) pricesData = await res.json();
+        } catch { /* ignore */ }
+      }
+
+      if (pricesData?.SitePrices) {
+        const sitePrices = pricesData.SitePrices.filter(p => String(p.SiteId) === String(siteId) && p.Price > 0 && p.Price < 9000);
+        for (const sp of sitePrices) {
+          for (const [fuelName, fuelId] of Object.entries(QLD_FUEL_IDS)) {
+            if (sp.FuelId === fuelId) {
+              prices[fuelName] = {
+                price: (sp.Price / 10) / 100,
+                lastUpdated: sp.TransactionDateUtc || new Date().toISOString(),
+              };
+            }
+          }
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  } else if (isVIC) {
+    try {
+      const stationId = station.id?.replace('vic-', '');
+      const txnId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const res = await fetch(`${VIC_API_BASE}/fuel/prices`, {
+        headers: {
+          'x-consumer-id': VIC_CONSUMER_ID,
+          'x-transactionid': txnId,
+          'User-Agent': 'FueVolt/1.0',
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.fuelPriceDetails) {
+          const stationEntry = data.fuelPriceDetails.find(e => String(e.fuelStation?.id) === String(stationId));
+          if (stationEntry?.fuelPrices) {
+            for (const fp of stationEntry.fuelPrices) {
+              if (!fp.isAvailable) continue;
+              for (const [fuelName, vicCode] of Object.entries(VIC_FUEL_CODES)) {
+                if (fp.fuelType === vicCode) {
+                  prices[fuelName] = {
+                    price: fp.price / 100,
+                    lastUpdated: fp.updatedAt || stationEntry.updatedAt || new Date().toISOString(),
+                  };
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch {
+      // Fallback
     }
   } else if (isWA) {
-    // For WA, we only have the one fuel type from the search
     if (station.price && station.fuelType) {
       prices[station.fuelType] = { price: station.price, lastUpdated: station.lastUpdated };
     }
   }
 
-  // Always include the current search fuel type if we have it
+  // Always include the current search fuel type
   if (station.price && station.fuelType && !prices[station.fuelType]) {
     prices[station.fuelType] = { price: station.price, lastUpdated: station.lastUpdated };
   }
