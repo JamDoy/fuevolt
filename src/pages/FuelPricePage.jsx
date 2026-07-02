@@ -378,6 +378,28 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
           </p>
         </div>
       )}
+
+      {/* Informational content for SEO and AdSense */}
+      <div
+        className="rounded-2xl p-6 mt-4"
+        style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
+      >
+        <h2 className="text-base font-bold mb-3" style={{ color: theme.gold }}>How FueVolt Fuel Price Comparison Works</h2>
+        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+          FueVolt compares real-time fuel prices from official Australian government APIs. We pull live pricing data from the NSW Motor API, Victoria Fair Fuel Open Data API (Servo Saver), Queensland Fuel Pricing Direct API, and Western Australia FuelWatch. Prices are updated throughout the day as fuel stations report changes to their state government.
+        </p>
+        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+          Search by suburb, postcode, or use your current location to find the cheapest E10, Unleaded 91, Premium 95, Premium 98, Diesel, and LPG near you. Results can be sorted by price (lowest first) or by drive time using TomTom routing, so you can find the best value considering both fuel cost and travel distance.
+        </p>
+        <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Understanding Fuel Price Cycles</h3>
+        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+          Fuel prices in Australian capital cities follow predictable cycles, typically rising sharply over one to two days and then gradually falling over several weeks. The best time to fill up is at the bottom of the cycle when prices are lowest. FueVolt helps you spot these patterns by showing current prices from hundreds of stations in your area, making it easy to identify when prices are at their cheapest.
+        </p>
+        <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Coverage Across Australia</h3>
+        <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
+          FueVolt covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia — the four states with free, publicly accessible government fuel pricing APIs. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, and Wollongong, as well as regional and rural areas throughout these states.
+        </p>
+      </div>
     </div>
   );
 }
