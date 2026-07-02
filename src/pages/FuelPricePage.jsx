@@ -14,9 +14,9 @@ import { injectFuelStationSchema } from '../utils/seo';
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
   { id: 'U91', label: 'Unleaded 91' },
+  { id: 'Diesel', label: 'Diesel' },
   { id: 'U95', label: 'Premium 95' },
   { id: 'U98', label: 'Premium 98' },
-  { id: 'Diesel', label: 'Diesel' },
   { id: 'LPG', label: 'LPG' },
 ];
 

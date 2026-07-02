@@ -4,15 +4,18 @@ import { useTheme } from '../contexts/ThemeContext';
 export default function EVCostEstimator() {
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
-  const [batteryStart, setBatteryStart] = useState(20);
-  const [batteryEnd, setBatteryEnd] = useState(80);
-  const [batterySize, setBatterySize] = useState(60);
+  const [batteryStart, setBatteryStart] = useState('20');
+  const [batteryEnd, setBatteryEnd] = useState('80');
+  const [batterySize, setBatterySize] = useState('60');
 
   // Avg cost assumptions: 45c/kWh for public, 25c/kWh for home
   const PUBLIC_RATE = 0.45;
   const HOME_RATE = 0.25;
 
-  const kWhNeeded = ((batteryEnd - batteryStart) / 100) * batterySize;
+  const numStart = Number(batteryStart) || 0;
+  const numEnd = Number(batteryEnd) || 0;
+  const numSize = Number(batterySize) || 0;
+  const kWhNeeded = ((numEnd - numStart) / 100) * numSize;
   const publicCost = kWhNeeded * PUBLIC_RATE;
   const homeCost = kWhNeeded * HOME_RATE;
   const rangeAdded = Math.round(kWhNeeded * 6.5); // ~6.5km per kWh average
@@ -37,7 +40,7 @@ export default function EVCostEstimator() {
           <input
             type="number"
             value={batterySize}
-            onChange={(e) => setBatterySize(Math.max(1, Number(e.target.value)))}
+            onChange={(e) => setBatterySize(e.target.value)}
             className="w-full px-3 py-2 rounded-xl text-sm"
             style={{
               background: theme.inputBg,
@@ -53,7 +56,7 @@ export default function EVCostEstimator() {
           <input
             type="number"
             value={batteryStart}
-            onChange={(e) => setBatteryStart(Math.min(99, Math.max(0, Number(e.target.value))))}
+            onChange={(e) => setBatteryStart(e.target.value)}
             className="w-full px-3 py-2 rounded-xl text-sm"
             style={{
               background: theme.inputBg,
@@ -69,7 +72,7 @@ export default function EVCostEstimator() {
           <input
             type="number"
             value={batteryEnd}
-            onChange={(e) => setBatteryEnd(Math.min(100, Math.max(1, Number(e.target.value))))}
+            onChange={(e) => setBatteryEnd(e.target.value)}
             className="w-full px-3 py-2 rounded-xl text-sm"
             style={{
               background: theme.inputBg,

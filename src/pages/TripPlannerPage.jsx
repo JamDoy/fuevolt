@@ -21,10 +21,10 @@ export default function TripPlannerPage() {
   const [evStops, setEvStops] = useState([]);
   const [chargingPlan, setChargingPlan] = useState([]);
   const [mapCenter, setMapCenter] = useState(null);
-  const [batteryKWh, setBatteryKWh] = useState(60);
-  const [currentCharge, setCurrentCharge] = useState(80);
-  const [consumption, setConsumption] = useState(15);
-  const [vehicleRange, setVehicleRange] = useState(400);
+  const [batteryKWh, setBatteryKWh] = useState('60');
+  const [currentCharge, setCurrentCharge] = useState('80');
+  const [consumption, setConsumption] = useState('15');
+  const [vehicleRange, setVehicleRange] = useState('400');
   const autoLocation = useAutoLocation();
 
   // Default map to user's location if permission already granted
@@ -64,11 +64,14 @@ export default function TripPlannerPage() {
       setRoute(routeData);
 
       if (mode === 'ev') {
-        const currentChargeKWh = batteryKWh * currentCharge / 100;
+        const numBattery = Number(batteryKWh) || 60;
+        const numCharge = Number(currentCharge) || 80;
+        const numConsump = Number(consumption) || 15;
+        const currentChargeKWh = numBattery * numCharge / 100;
         const ev = await calculateEVRoute(
           startGeo.latitude, startGeo.longitude,
           endGeo.latitude, endGeo.longitude,
-          { batteryCapacityKWh: batteryKWh, currentChargeKWh, consumptionKWhPer100km: consumption }
+          { batteryCapacityKWh: numBattery, currentChargeKWh, consumptionKWhPer100km: numConsump }
         );
         if (ev) setEvRoute(ev);
 
@@ -79,9 +82,10 @@ export default function TripPlannerPage() {
 
           // Build charging plan based on vehicle range
           const distKm = parseFloat(routeData.distanceKm);
-          const rangeKm = vehicleRange * (currentCharge / 100);
+          const numRange = Number(vehicleRange) || 400;
+          const rangeKm = numRange * (numCharge / 100);
           if (distKm > rangeKm) {
-            const plan = buildChargingPlan(routeData.points, chargers, rangeKm, vehicleRange, distKm);
+            const plan = buildChargingPlan(routeData.points, chargers, rangeKm, numRange, distKm);
             setChargingPlan(plan);
           }
         }
@@ -191,7 +195,7 @@ export default function TripPlannerPage() {
               <input
                 type="number"
                 value={batteryKWh}
-                onChange={(e) => setBatteryKWh(Number(e.target.value))}
+                onChange={(e) => setBatteryKWh(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg text-sm"
                 style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
               />
@@ -201,7 +205,7 @@ export default function TripPlannerPage() {
               <input
                 type="number"
                 value={currentCharge}
-                onChange={(e) => setCurrentCharge(Number(e.target.value))}
+                onChange={(e) => setCurrentCharge(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg text-sm"
                 style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
               />
@@ -211,7 +215,7 @@ export default function TripPlannerPage() {
               <input
                 type="number"
                 value={consumption}
-                onChange={(e) => setConsumption(Number(e.target.value))}
+                onChange={(e) => setConsumption(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg text-sm"
                 style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
               />
@@ -221,7 +225,7 @@ export default function TripPlannerPage() {
               <input
                 type="number"
                 value={vehicleRange}
-                onChange={(e) => setVehicleRange(Number(e.target.value))}
+                onChange={(e) => setVehicleRange(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg text-sm"
                 style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
               />
@@ -236,7 +240,7 @@ export default function TripPlannerPage() {
             <input
               type="number"
               value={vehicleRange}
-              onChange={(e) => setVehicleRange(Number(e.target.value))}
+              onChange={(e) => setVehicleRange(e.target.value)}
               className="w-24 px-3 py-2 rounded-lg text-sm"
               style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
             />

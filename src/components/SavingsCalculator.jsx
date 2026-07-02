@@ -3,13 +3,15 @@ import { useTheme } from '../contexts/ThemeContext';
 
 export default function SavingsCalculator({ cheapest, average }) {
   const { theme } = useTheme();
-  const [kmPerWeek, setKmPerWeek] = useState(300);
-  const [consumption, setConsumption] = useState(8); // L/100km
+  const [kmPerWeek, setKmPerWeek] = useState('300');
+  const [consumption, setConsumption] = useState('8'); // L/100km
 
   if (!cheapest || !average) return null;
 
-  const savingPerLitre = (average - cheapest) / 100; // convert cents to dollars
-  const litresPerWeek = (kmPerWeek * consumption) / 100;
+  const numKm = Number(kmPerWeek) || 0;
+  const numConsumption = Number(consumption) || 0;
+  const savingPerLitre = (average - cheapest) / 100;
+  const litresPerWeek = (numKm * numConsumption) / 100;
   const weekSaving = savingPerLitre * litresPerWeek;
   const yearSaving = weekSaving * 52;
 
@@ -35,7 +37,7 @@ export default function SavingsCalculator({ cheapest, average }) {
           <input
             type="number"
             value={kmPerWeek}
-            onChange={(e) => setKmPerWeek(Number(e.target.value) || 0)}
+            onChange={(e) => setKmPerWeek(e.target.value)}
             className="w-full px-2 py-1 rounded-lg text-xs"
             style={{
               background: theme.inputBg,
@@ -51,7 +53,7 @@ export default function SavingsCalculator({ cheapest, average }) {
           <input
             type="number"
             value={consumption}
-            onChange={(e) => setConsumption(Number(e.target.value) || 0)}
+            onChange={(e) => setConsumption(e.target.value)}
             step="0.5"
             className="w-full px-2 py-1 rounded-lg text-xs"
             style={{

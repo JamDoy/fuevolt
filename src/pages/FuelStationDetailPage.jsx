@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
 import { fetchStationDetails, fetchAllFuelPricesForStation } from '../utils/stationDetails';
 import AmenityRow from '../components/AmenityRow';
+import TouchableMap from '../components/TouchableMap';
 
 const goldPin = new L.DivIcon({
   className: 'custom-marker',
@@ -69,8 +70,6 @@ export default function FuelStationDetailPage({ station, onBack }) {
 
 
 
-  const isGovSource = station.source && (station.source.includes('NSW Government') || station.source.includes('WA FuelWatch'));
-
   const amenities = details?.amenities || {};
 
   return (
@@ -98,39 +97,30 @@ export default function FuelStationDetailPage({ station, onBack }) {
           backdropFilter: 'blur(12px)',
         }}
       >
-        <div className="flex items-start justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: theme.gold }}>
-              {station.name}
-            </h1>
-            <span
-              className="inline-block px-3 py-1 rounded-full text-xs font-bold mt-2"
-              style={{
-                background: theme.brandBadgeBg,
-                color: theme.gold,
-                border: `1px solid ${theme.brandBadgeBorder}`,
-              }}
-            >
-              {station.brand}
-            </span>
-            {station.source && (
-              <p className="text-xs mt-2" style={{ color: theme.textMuted }}>
-                Data source: {station.source}
-              </p>
-            )}
+        <h1 className="text-xl sm:text-2xl font-bold" style={{ color: theme.gold }}>
+          {station.name}
+        </h1>
+        <span
+          className="inline-block px-3 py-1 rounded-full text-xs font-bold mt-2"
+          style={{
+            background: theme.brandBadgeBg,
+            color: theme.gold,
+            border: `1px solid ${theme.brandBadgeBorder}`,
+          }}
+        >
+          {station.brand}
+        </span>
+        {station.price && (
+          <div className="mt-4 flex items-end gap-3">
+            <p className="text-4xl font-bold" style={{ color: theme.green }}>
+              {(station.price * 100).toFixed(1)}
+              <span className="text-lg ml-1" style={{ color: theme.textSecondary }}>¢/L</span>
+            </p>
+            <p className="text-sm pb-1" style={{ color: theme.textMuted }}>
+              {station.fuelType} &bull; Updated {new Date(station.lastUpdated).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
+            </p>
           </div>
-          {station.price && (
-            <div className="text-right">
-              <p className="text-3xl font-bold" style={{ color: theme.green }}>
-                {(station.price * 100).toFixed(1)}
-                <span className="text-sm ml-1" style={{ color: theme.textSecondary }}>¢/L</span>
-              </p>
-              <p className="text-xs" style={{ color: theme.textMuted }}>
-                {station.fuelType} • Updated {new Date(station.lastUpdated).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
-              </p>
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Address & Directions */}
@@ -178,33 +168,35 @@ export default function FuelStationDetailPage({ station, onBack }) {
       </div>
 
       {/* Map — moved up to sit below location */}
-      <div
+      <TouchableMap
         className="rounded-2xl overflow-hidden"
-        style={{
-          border: `1px solid ${theme.mapBorder}`,
-        }}
+        style={{ border: `1px solid ${theme.mapBorder}` }}
       >
-        <MapContainer
-          center={[station.latitude, station.longitude]}
-          zoom={16}
-          style={{ height: '300px', width: '100%' }}
-          scrollWheelZoom={true}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker position={[station.latitude, station.longitude]} icon={goldPin}>
-            <Popup>
-              <div style={{ color: '#1a1a1a' }}>
-                <strong style={{ color: '#0D2B5E' }}>{station.name}</strong>
-                <br />
-                <span style={{ fontSize: '12px' }}>{station.address}</span>
-              </div>
-            </Popup>
-          </Marker>
-        </MapContainer>
-      </div>
+        {(mapActive, interactionController) => (
+          <MapContainer
+            center={[station.latitude, station.longitude]}
+            zoom={16}
+            style={{ height: '300px', width: '100%' }}
+            scrollWheelZoom={false}
+            dragging={false}
+          >
+            {interactionController}
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker position={[station.latitude, station.longitude]} icon={goldPin}>
+              <Popup>
+                <div style={{ color: '#1a1a1a' }}>
+                  <strong style={{ color: '#0D2B5E' }}>{station.name}</strong>
+                  <br />
+                  <span style={{ fontSize: '12px' }}>{station.address}</span>
+                </div>
+              </Popup>
+            </Marker>
+          </MapContainer>
+        )}
+      </TouchableMap>
 
       {/* Fuel Prices — All Types */}
       <div
@@ -234,21 +226,15 @@ export default function FuelStationDetailPage({ station, onBack }) {
               return (
                 <FuelPriceTile
                   key={code}
-                  code={code}
                   label={label}
                   priceData={priceData}
-                  isGovSource={isGovSource}
                   theme={theme}
                 />
               );
             })}
           </div>
         )}
-        {!isGovSource && !loadingPrices && (
-          <p className="text-xs mt-3 italic" style={{ color: theme.textMuted }}>
-            ⚠️ Price not currently available from official sources. Government fuel API not registered for this state.
-          </p>
-        )}
+  
       </div>
 
       {/* Amenities */}
@@ -320,7 +306,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
   );
 }
 
-function FuelPriceTile({ label, priceData, isGovSource, theme }) {
+function FuelPriceTile({ label, priceData, theme }) {
   const displayPrice = priceData?.price;
 
   return (
@@ -343,9 +329,7 @@ function FuelPriceTile({ label, priceData, isGovSource, theme }) {
               {new Date(priceData.lastUpdated).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
             </p>
           )}
-          {!isGovSource && (
-            <p className="text-[9px] mt-1 italic" style={{ color: theme.textMuted }}>estimate</p>
-          )}
+
         </>
       ) : (
         <p className="text-xs mt-1" style={{ color: theme.textMuted }}>Not currently available</p>

@@ -164,10 +164,7 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
         </span>
       </div>
 
-      <div className="mt-2 pt-2 flex items-center justify-between" style={{ borderTop: `1px solid ${theme.divider}` }}>
-        {station.source && (
-          <span className="text-[10px]" style={{ color: theme.textMuted }}>{station.source}</span>
-        )}
+      <div className="mt-2 pt-2 flex items-center justify-end" style={{ borderTop: `1px solid ${theme.divider}` }}>
         {onDetail && (
           <button
             onClick={(e) => { e.stopPropagation(); onDetail(); }}

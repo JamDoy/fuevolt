@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
+import TouchableMap from './TouchableMap';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -108,13 +109,19 @@ export default function StationMap({
   };
 
   return (
-    <div className="rounded-2xl overflow-hidden relative" style={{ border: `1px solid ${theme.mapBorder}` }}>
+    <TouchableMap
+      className="rounded-2xl overflow-hidden relative"
+      style={{ border: `1px solid ${theme.mapBorder}` }}
+    >
+      {(mapActive, interactionController) => (
       <MapContainer
         center={mapCenter}
         zoom={13}
         style={{ height: '400px', width: '100%' }}
-        scrollWheelZoom={true}
+        scrollWheelZoom={false}
+        dragging={false}
       >
+        {interactionController}
         {/* OpenStreetMap Tiles (free, no API key required) */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -215,6 +222,7 @@ export default function StationMap({
           );
         })}
       </MapContainer>
-    </div>
+      )}
+    </TouchableMap>
   );
 }
