@@ -51,6 +51,16 @@ const PAGE_META = {
     description: 'In-depth guide from FueVolt on fuel, EV charging, and driving in Australia.',
     path: '/guides',
   },
+  about: {
+    title: 'About FueVolt — Australian Fuel & EV Comparison Service',
+    description: 'Learn about FueVolt, our mission to help Australian drivers save on fuel, our free data sources, and how we compare fuel prices and EV charging stations.',
+    path: '/about',
+  },
+  faq: {
+    title: 'Frequently Asked Questions — FueVolt',
+    description: 'Common questions about FueVolt fuel price comparison, EV charging station finder, data sources, coverage, and how the app works.',
+    path: '/faq',
+  },
 };
 
 export function updatePageMeta(view, extra) {

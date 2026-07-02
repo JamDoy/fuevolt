@@ -12,6 +12,8 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import ArticlesPage from './pages/ArticlesPage';
 import ArticleDetailPage from './pages/ArticleDetailPage';
+import AboutPage from './pages/AboutPage';
+import FAQPage from './pages/FAQPage';
 import { updatePageMeta, POPULAR_SUBURBS } from './utils/seo';
 
 function parseRoute() {
@@ -36,6 +38,8 @@ function parseRoute() {
   }
   if (parts[0] === 'privacy') return { view: 'privacy', suburb: null };
   if (parts[0] === 'terms') return { view: 'terms', suburb: null };
+  if (parts[0] === 'about') return { view: 'about', suburb: null };
+  if (parts[0] === 'faq') return { view: 'faq', suburb: null };
   return { view: 'landing', suburb: null };
 }
 
@@ -175,6 +179,8 @@ function AppContent() {
         )}
         {view === 'privacy' && <PrivacyPolicyPage />}
         {view === 'terms' && <TermsPage />}
+        {view === 'about' && <AboutPage />}
+        {view === 'faq' && <FAQPage />}
       </main>
       <footer className="text-center py-6 px-4 mt-8">
         <p className="text-xs" style={{ color: theme.footerText }}>
@@ -183,7 +189,21 @@ function AppContent() {
         <p className="text-[10px] mt-1" style={{ color: theme.footerSubtext }}>
           Maps & routing by TomTom &bull; EV data by Open Charge Map &bull; Fuel prices from government APIs (NSW, VIC, QLD, WA)
         </p>
-        <div className="flex justify-center gap-4 mt-2">
+        <div className="flex flex-wrap justify-center gap-4 mt-2">
+          <button
+            onClick={() => navigate('about', '/about')}
+            className="text-[10px] underline cursor-pointer"
+            style={{ color: theme.footerSubtext, background: 'none', border: 'none' }}
+          >
+            About
+          </button>
+          <button
+            onClick={() => navigate('faq', '/faq')}
+            className="text-[10px] underline cursor-pointer"
+            style={{ color: theme.footerSubtext, background: 'none', border: 'none' }}
+          >
+            FAQ
+          </button>
           <button
             onClick={() => navigate('privacy', '/privacy')}
             className="text-[10px] underline cursor-pointer"
