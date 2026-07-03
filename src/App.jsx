@@ -17,10 +17,10 @@ import FAQPage from './pages/FAQPage';
 import { updatePageMeta, POPULAR_SUBURBS } from './utils/seo';
 
 function parseRoute() {
-  const hash = window.location.hash.replace('#', '');
-  if (!hash || hash === '/') return { view: 'landing', suburb: null };
+  const path = window.location.pathname;
+  if (!path || path === '/') return { view: 'landing', suburb: null };
 
-  const parts = hash.split('/').filter(Boolean);
+  const parts = path.split('/').filter(Boolean);
   if (parts[0] === 'fuel-prices') {
     const suburb = parts[1] ? POPULAR_SUBURBS.fuel.find((s) => s.slug === parts[1]) : null;
     return { view: 'fuel', suburb };
@@ -44,7 +44,7 @@ function parseRoute() {
 }
 
 function setRoute(path) {
-  window.history.pushState(null, '', `#${path}`);
+  window.history.pushState(null, '', path);
 }
 
 function AppContent() {
@@ -227,7 +227,7 @@ function AppContent() {
             {POPULAR_SUBURBS.fuel.slice(0, 10).map((s) => (
               <a
                 key={s.slug}
-                href={`#/fuel-prices/${s.slug}`}
+                href={`/fuel-prices/${s.slug}`}
                 className="text-[10px] hover:underline"
                 style={{ color: theme.footerSubtext }}
                 onClick={(e) => {
@@ -252,7 +252,7 @@ function AppContent() {
             {POPULAR_SUBURBS.ev.map((s) => (
               <a
                 key={s.slug}
-                href={`#/ev-charging/${s.slug}`}
+                href={`/ev-charging/${s.slug}`}
                 className="text-[10px] hover:underline"
                 style={{ color: theme.footerSubtext }}
                 onClick={(e) => {

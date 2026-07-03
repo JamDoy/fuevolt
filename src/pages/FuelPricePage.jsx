@@ -20,6 +20,28 @@ const FUEL_TYPES = [
   { id: 'LPG', label: 'LPG' },
 ];
 
+const CITY_DESCRIPTIONS = {
+  sydney: 'Sydney drivers face some of the highest fuel prices in Australia due to high demand and limited competition in some suburbs. Use FueVolt to compare prices across the Greater Sydney area including Parramatta, Penrith, and the Northern Beaches.',
+  melbourne: 'Melbourne follows a regular weekly fuel price cycle — prices typically peak mid-week and drop on Tuesdays. FueVolt helps you find the cheapest petrol across Melbourne suburbs from Dandenong to Footscray.',
+  brisbane: 'Brisbane and South East Queensland fuel prices are regulated by the QLD Government Fuel Pricing Direct API, giving you accurate real-time data for every servo in the region.',
+  perth: 'Perth fuel prices are monitored by FuelWatch WA, which requires stations to lock in their next-day price by 2pm. Check FueVolt to see tomorrow\'s prices today and plan your fill-up.',
+  adelaide: 'Adelaide fuel prices can vary significantly between suburbs. Coverage for South Australia is coming soon — in the meantime, nearby stations in border regions may appear in searches.',
+  'gold-coast': 'Gold Coast fuel prices benefit from QLD government transparency. Compare prices from Coolangatta to Helensvale and find the cheapest fuel for your coastal commute.',
+  canberra: 'Canberra fuel prices tend to be higher than surrounding NSW regional areas. ACT coverage is coming soon — nearby NSW stations with live pricing are already available.',
+  newcastle: 'Newcastle and the Hunter Valley region are covered by the NSW Motor API. Compare fuel prices across Charlestown, Maitland, and Lake Macquarie.',
+  wollongong: 'Wollongong and the Illawarra region fuel prices are sourced from the NSW Motor API. Find cheap petrol from Helensburgh to Kiama.',
+  hobart: 'Hobart and Tasmanian fuel prices — coverage is coming soon. Check back for real-time pricing data across the Apple Isle.',
+  darwin: 'Darwin fuel prices are among the highest in Australia due to remote supply chains. NT coverage is coming soon.',
+  geelong: 'Geelong fuel prices are covered by the Victorian Fair Fuel API. Compare prices across Geelong, Bellarine Peninsula, and the Surf Coast.',
+  toowoomba: 'Toowoomba fuel prices are monitored via the QLD Fuel Pricing Direct API. Find the cheapest fuel in the Darling Downs region.',
+  cairns: 'Cairns and Far North Queensland fuel prices are available through the QLD government API. Compare prices from Smithfield to Edmonton.',
+  ballarat: 'Ballarat fuel prices are sourced from the Victorian Fair Fuel Open Data API. Compare petrol and diesel across the Ballarat region.',
+  bendigo: 'Bendigo fuel prices come from Victoria\'s Servo Saver data. Find cheap fuel across Greater Bendigo and the Goldfields region.',
+  launceston: 'Launceston fuel prices — Tasmanian coverage is coming soon. We\'re working on bringing real-time pricing to Northern Tasmania.',
+  'sunshine-coast': 'Sunshine Coast fuel prices are covered by the QLD government API. Compare prices from Caloundra to Noosa.',
+  parramatta: 'Parramatta and Western Sydney fuel prices are sourced from the NSW Motor API. Find the cheapest petrol in one of Sydney\'s busiest commuter regions.',
+};
+
 export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail, onSwitchToEV, initialSuburb }) {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -154,11 +176,16 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
       {/* Hero */}
       <div className="text-center mb-2">
         <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
-          &#x26FD; Compare Fuel Prices
+          &#x26FD; {initialSuburb ? `Fuel Prices in ${initialSuburb.name}` : 'Compare Fuel Prices'}
         </h1>
         <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Find the cheapest fuel near you across Australia
         </p>
+        {initialSuburb?.slug && CITY_DESCRIPTIONS[initialSuburb.slug] && (
+          <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
+            {CITY_DESCRIPTIONS[initialSuburb.slug]}
+          </p>
+        )}
       </div>
 
       {/* Fuel Type Selector */}

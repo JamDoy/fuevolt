@@ -56,6 +56,9 @@ export default function LandingPage({ onSelect, onArticle }) {
         <p className="text-base sm:text-lg max-w-lg mx-auto" style={{ color: theme.textSecondary }}>
           Compare real-time fuel prices and locate EV charging stations across Australia
         </p>
+        <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: theme.textMuted }}>
+          Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location
+        </p>
       </div>
 
       {/* 50/50 Split — Fuel vs EV */}
@@ -334,6 +337,36 @@ export default function LandingPage({ onSelect, onArticle }) {
       {/* Latest News (RSS) */}
       <div className="w-full max-w-4xl animate-slide-up" style={{ animationDelay: '0.4s' }}>
         <LatestNews />
+      </div>
+
+      {/* Data Sources */}
+      <div className="w-full max-w-4xl mt-10 animate-slide-up" style={{ animationDelay: '0.5s' }}>
+        <h2 className="text-base font-bold mb-3" style={{ color: theme.heading || theme.text }}>Data Sources</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {[
+            { state: 'NSW', source: 'Motor API (api.nsw.gov.au)', active: true },
+            { state: 'VIC', source: 'Fair Fuel / Servo Saver (service.vic.gov.au)', active: true },
+            { state: 'QLD', source: 'Fuel Pricing Direct (fuelpricesqld.com.au)', active: true },
+            { state: 'WA', source: 'FuelWatch (fuelwatch.wa.gov.au)', active: true },
+            { state: 'SA', source: 'Coming Soon', active: false },
+            { state: 'NT', source: 'Coming Soon', active: false },
+            { state: 'TAS', source: 'Coming Soon', active: false },
+            { state: 'ACT', source: 'Coming Soon', active: false },
+          ].map((d) => (
+            <div key={d.state} className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+              <span className="font-bold" style={{ color: d.active ? theme.gold : theme.textMuted }}>{d.state}</span>
+              <span style={{ color: d.active ? theme.textSecondary : theme.textMuted }}>{d.source}</span>
+            </div>
+          ))}
+          <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+            <span className="font-bold" style={{ color: theme.green }}>EV</span>
+            <span style={{ color: theme.textSecondary }}>Open Charge Map (openchargemap.org)</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+            <span className="font-bold" style={{ color: theme.gold }}>Maps</span>
+            <span style={{ color: theme.textSecondary }}>TomTom + OpenStreetMap</span>
+          </div>
+        </div>
       </div>
 
       {/* Footer tagline */}
