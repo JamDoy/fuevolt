@@ -7,6 +7,7 @@
     <title>FueVolt — Compare Fuel Prices & EV Charging Stations in Australia</title>
     <meta name="description" content="Find the cheapest petrol, diesel and LPG near you across NSW, VIC, QLD and WA. Compare EV charging stations, plan trips, and save on fuel costs with live government data." />
     <link rel="canonical" href="https://fuevolt.com/" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <!-- Open Graph / Social sharing -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="FueVolt" />
@@ -25,28 +26,36 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <!-- Structured Data -->
+    <!-- Structured Data: WebSite with SearchAction -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
+      "@type": "WebSite",
       "name": "FueVolt",
       "url": "https://fuevolt.com",
-      "description": "Australian fuel price comparison and EV charging station finder. Real-time prices from NSW, VIC, QLD, and WA government APIs.",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "Web, Android",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "AUD"
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "FueVolt",
-        "url": "https://fuevolt.com"
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://fuevolt.com/fuel-prices?q={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
     }
     </script>
+    <!-- Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "FueVolt",
+      "url": "https://fuevolt.com",
+      "logo": "https://fuevolt.com/favicon.svg",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "contact@fuevolt.com",
+        "contactType": "customer service"
+      }
+    }
+    </script>
+    <!-- Structured Data: FAQPage -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -73,7 +82,7 @@
           "name": "Which states does FueVolt cover for fuel prices?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. These four states have free, publicly accessible government fuel pricing APIs."
+            "text": "FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia with real-time government pricing. South Australia, Northern Territory, Tasmania, and ACT coverage is coming soon."
           }
         },
         {
@@ -105,6 +114,7 @@
         <header style="text-align:center;margin-bottom:32px">
           <h1 style="font-size:2.5rem;font-weight:900;margin-bottom:8px">Find the <span style="color:#C8971F">cheapest fuel</span> &amp; <span style="color:#27AE60">charge</span></h1>
           <p style="font-size:1.1rem;color:#4B5563">Compare real-time fuel prices and locate EV charging stations across Australia</p>
+          <p style="font-size:0.95rem;color:#6B7280;margin-top:8px">Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location</p>
         </header>
 
         <section style="margin-bottom:32px">
@@ -126,18 +136,18 @@
           <h2 style="font-size:1.5rem;margin-bottom:12px">Guides &amp; Articles</h2>
           <p>Expert guides on fuel, EV charging, and saving money on the road in Australia:</p>
           <ul style="line-height:2">
-            <li><a href="#/guides/fuel-types-explained">Fuel Types Explained: E10, U91, U95, U98, Diesel and LPG — A complete guide to every fuel type at Australian service stations</a></li>
-            <li><a href="#/guides/ev-charging-connector-types-australia">EV Charging Connector Types in Australia: Type 2, CCS, CHAdeMO and Tesla — Which plug does your car use?</a></li>
-            <li><a href="#/guides/how-fuel-price-cycles-work-australia">How Fuel Price Cycles Work in Australia — Why prices rise and fall and how to spot the cheapest day</a></li>
-            <li><a href="#/guides/petrol-vs-diesel-vs-electric-comparison">Petrol vs Diesel vs Electric: Which Is Cheapest to Run in Australia? — Full cost comparison</a></li>
-            <li><a href="#/guides/understanding-octane-ratings">Understanding Octane Ratings: Does Premium Fuel Make a Difference? — What RON 91, 95 and 98 mean</a></li>
-            <li><a href="#/guides/australian-road-trip-fuel-planning-tips">Australian Road Trip Fuel Planning: Tips to Save Money on Long Drives</a></li>
-            <li><a href="#/guides/ev-home-charging-setup-guide-australia">How to Set Up EV Home Charging in Australia: Costs, Options and Tips</a></li>
-            <li><a href="#/guides/overcoming-ev-range-anxiety">Overcoming EV Range Anxiety: A Practical Guide for Australian Drivers</a></li>
-            <li><a href="#/guides/tips-to-save-money-on-fuel-australia">10 Proven Tips to Save Money on Fuel in Australia</a></li>
-            <li><a href="#/guides/electric-vs-hybrid-vs-plug-in-hybrid">Electric vs Hybrid vs Plug-in Hybrid: Which Is Right for You?</a></li>
-            <li><a href="#/guides/australian-fuel-excise-tax-explained">Australian Fuel Excise Tax Explained: Where Your Fuel Money Goes</a></li>
-            <li><a href="#/guides/ev-battery-health-and-longevity-tips">EV Battery Health: How to Maximise Your Electric Car Battery Life</a></li>
+            <li><a href="/guides/fuel-types-explained">Fuel Types Explained: E10, U91, U95, U98, Diesel and LPG — A complete guide to every fuel type at Australian service stations</a></li>
+            <li><a href="/guides/ev-charging-connector-types-australia">EV Charging Connector Types in Australia: Type 2, CCS, CHAdeMO and Tesla — Which plug does your car use?</a></li>
+            <li><a href="/guides/how-fuel-price-cycles-work-australia">How Fuel Price Cycles Work in Australia — Why prices rise and fall and how to spot the cheapest day</a></li>
+            <li><a href="/guides/petrol-vs-diesel-vs-electric-comparison">Petrol vs Diesel vs Electric: Which Is Cheapest to Run in Australia? — Full cost comparison</a></li>
+            <li><a href="/guides/understanding-octane-ratings">Understanding Octane Ratings: Does Premium Fuel Make a Difference? — What RON 91, 95 and 98 mean</a></li>
+            <li><a href="/guides/australian-road-trip-fuel-planning-tips">Australian Road Trip Fuel Planning: Tips to Save Money on Long Drives</a></li>
+            <li><a href="/guides/ev-home-charging-setup-guide-australia">How to Set Up EV Home Charging in Australia: Costs, Options and Tips</a></li>
+            <li><a href="/guides/overcoming-ev-range-anxiety">Overcoming EV Range Anxiety: A Practical Guide for Australian Drivers</a></li>
+            <li><a href="/guides/tips-to-save-money-on-fuel-australia">10 Proven Tips to Save Money on Fuel in Australia</a></li>
+            <li><a href="/guides/electric-vs-hybrid-vs-plug-in-hybrid">Electric vs Hybrid vs Plug-in Hybrid: Which Is Right for You?</a></li>
+            <li><a href="/guides/australian-fuel-excise-tax-explained">Australian Fuel Excise Tax Explained: Where Your Fuel Money Goes</a></li>
+            <li><a href="/guides/ev-battery-health-and-longevity-tips">EV Battery Health: How to Maximise Your Electric Car Battery Life</a></li>
           </ul>
         </section>
 
@@ -145,7 +155,7 @@
           <h2 style="font-size:1.5rem;margin-bottom:12px">Fuel Prices by City</h2>
           <p>Find the cheapest fuel near you in major Australian cities:</p>
           <p style="line-height:2">
-            <a href="#/fuel-prices/sydney">Fuel Prices Sydney</a> · <a href="#/fuel-prices/melbourne">Fuel Prices Melbourne</a> · <a href="#/fuel-prices/brisbane">Fuel Prices Brisbane</a> · <a href="#/fuel-prices/perth">Fuel Prices Perth</a> · <a href="#/fuel-prices/adelaide">Fuel Prices Adelaide</a> · <a href="#/fuel-prices/gold-coast">Fuel Prices Gold Coast</a> · <a href="#/fuel-prices/canberra">Fuel Prices Canberra</a> · <a href="#/fuel-prices/newcastle">Fuel Prices Newcastle</a> · <a href="#/fuel-prices/wollongong">Fuel Prices Wollongong</a> · <a href="#/fuel-prices/hobart">Fuel Prices Hobart</a> · <a href="#/fuel-prices/darwin">Fuel Prices Darwin</a> · <a href="#/fuel-prices/geelong">Fuel Prices Geelong</a> · <a href="#/fuel-prices/toowoomba">Fuel Prices Toowoomba</a> · <a href="#/fuel-prices/cairns">Fuel Prices Cairns</a> · <a href="#/fuel-prices/ballarat">Fuel Prices Ballarat</a> · <a href="#/fuel-prices/bendigo">Fuel Prices Bendigo</a> · <a href="#/fuel-prices/launceston">Fuel Prices Launceston</a> · <a href="#/fuel-prices/sunshine-coast">Fuel Prices Sunshine Coast</a> · <a href="#/fuel-prices/parramatta">Fuel Prices Parramatta</a>
+            <a href="/fuel-prices/sydney">Fuel Prices Sydney</a> · <a href="/fuel-prices/melbourne">Fuel Prices Melbourne</a> · <a href="/fuel-prices/brisbane">Fuel Prices Brisbane</a> · <a href="/fuel-prices/perth">Fuel Prices Perth</a> · <a href="/fuel-prices/adelaide">Fuel Prices Adelaide</a> · <a href="/fuel-prices/gold-coast">Fuel Prices Gold Coast</a> · <a href="/fuel-prices/canberra">Fuel Prices Canberra</a> · <a href="/fuel-prices/newcastle">Fuel Prices Newcastle</a> · <a href="/fuel-prices/wollongong">Fuel Prices Wollongong</a> · <a href="/fuel-prices/hobart">Fuel Prices Hobart</a> · <a href="/fuel-prices/darwin">Fuel Prices Darwin</a> · <a href="/fuel-prices/geelong">Fuel Prices Geelong</a> · <a href="/fuel-prices/toowoomba">Fuel Prices Toowoomba</a> · <a href="/fuel-prices/cairns">Fuel Prices Cairns</a> · <a href="/fuel-prices/ballarat">Fuel Prices Ballarat</a> · <a href="/fuel-prices/bendigo">Fuel Prices Bendigo</a> · <a href="/fuel-prices/launceston">Fuel Prices Launceston</a> · <a href="/fuel-prices/sunshine-coast">Fuel Prices Sunshine Coast</a> · <a href="/fuel-prices/parramatta">Fuel Prices Parramatta</a>
           </p>
         </section>
 
@@ -153,7 +163,7 @@
           <h2 style="font-size:1.5rem;margin-bottom:12px">EV Charging by City</h2>
           <p>Find EV charging stations near you in major Australian cities:</p>
           <p style="line-height:2">
-            <a href="#/ev-charging/sydney">EV Charging Sydney</a> · <a href="#/ev-charging/melbourne">EV Charging Melbourne</a> · <a href="#/ev-charging/brisbane">EV Charging Brisbane</a> · <a href="#/ev-charging/perth">EV Charging Perth</a> · <a href="#/ev-charging/adelaide">EV Charging Adelaide</a> · <a href="#/ev-charging/gold-coast">EV Charging Gold Coast</a> · <a href="#/ev-charging/canberra">EV Charging Canberra</a> · <a href="#/ev-charging/hobart">EV Charging Hobart</a> · <a href="#/ev-charging/darwin">EV Charging Darwin</a> · <a href="#/ev-charging/newcastle">EV Charging Newcastle</a>
+            <a href="/ev-charging/sydney">EV Charging Sydney</a> · <a href="/ev-charging/melbourne">EV Charging Melbourne</a> · <a href="/ev-charging/brisbane">EV Charging Brisbane</a> · <a href="/ev-charging/perth">EV Charging Perth</a> · <a href="/ev-charging/adelaide">EV Charging Adelaide</a> · <a href="/ev-charging/gold-coast">EV Charging Gold Coast</a> · <a href="/ev-charging/canberra">EV Charging Canberra</a> · <a href="/ev-charging/hobart">EV Charging Hobart</a> · <a href="/ev-charging/darwin">EV Charging Darwin</a> · <a href="/ev-charging/newcastle">EV Charging Newcastle</a>
           </p>
         </section>
 
@@ -165,6 +175,10 @@
             <li><strong>Victoria</strong> — Fair Fuel Open Data API / Servo Saver (service.vic.gov.au) — 1,743 fuel stations</li>
             <li><strong>Queensland</strong> — Fuel Pricing Direct Outbound API (fuelpricesqld.com.au)</li>
             <li><strong>Western Australia</strong> — FuelWatch (fuelwatch.wa.gov.au)</li>
+            <li><strong>South Australia</strong> — Coming Soon</li>
+            <li><strong>Northern Territory</strong> — Coming Soon</li>
+            <li><strong>Tasmania</strong> — Covered via NSW Motor API</li>
+            <li><strong>ACT</strong> — Coming Soon</li>
             <li><strong>EV Charging</strong> — Open Charge Map (openchargemap.org)</li>
             <li><strong>Maps, Routing &amp; Traffic</strong> — TomTom APIs (tomtom.com)</li>
             <li><strong>Geocoding</strong> — TomTom Geocoding with Nominatim / OpenStreetMap fallback</li>
@@ -175,7 +189,7 @@
           <h2 style="font-size:1.5rem;margin-bottom:12px">About FueVolt</h2>
           <p>FueVolt was created to help Australian drivers save money on fuel and make the transition to electric vehicles easier. Whether you drive a petrol car, diesel ute, or a fully electric vehicle, FueVolt gives you the tools to find the cheapest fuel, locate EV chargers, and plan road trips — all in one place, completely free.</p>
           <p style="margin-top:8px">FueVolt is an independent service not affiliated with any fuel company, petrol station chain, or EV charging network. We provide unbiased price comparisons using official government data sources. The site is supported by advertising revenue, which allows us to keep the service free for all users.</p>
-          <p style="margin-top:8px">FueVolt is an Australian-made product, designed and built in Australia for Australian drivers. <a href="#/about">Learn more about FueVolt</a>.</p>
+          <p style="margin-top:8px">FueVolt is an Australian-made product, designed and built in Australia for Australian drivers. <a href="/about">Learn more about FueVolt</a>.</p>
         </section>
 
         <section style="margin-bottom:32px">
@@ -190,7 +204,7 @@
             <dt style="font-weight:bold;margin-top:12px">Does FueVolt track my location?</dt>
             <dd>FueVolt only accesses your location if you grant permission, and it is used solely to find nearby stations. Your location data is never stored, sold, or shared.</dd>
           </dl>
-          <p style="margin-top:12px"><a href="#/faq">View all frequently asked questions</a></p>
+          <p style="margin-top:12px"><a href="/faq">View all frequently asked questions</a></p>
         </section>
 
         <section style="margin-bottom:32px">
@@ -200,65 +214,10 @@
 
         <footer style="margin-top:32px;padding-top:16px;border-top:1px solid #E5E7EB;font-size:0.85rem;color:#9CA3AF">
           <p>&copy; 2026 FueVolt — Australian EV &amp; Fuel Price Finder</p>
-          <p style="margin-top:8px"><a href="#/about">About</a> · <a href="#/faq">FAQ</a> · <a href="#/privacy">Privacy Policy</a> · <a href="#/terms">Terms of Service</a> · <a href="#/guides">Guides &amp; Articles</a></p>
+          <p style="margin-top:8px"><a href="/about">About</a> · <a href="/faq">FAQ</a> · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/guides">Guides &amp; Articles</a></p>
         </footer>
       </div>
     </div>
-    <noscript>
-      <div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,system-ui,sans-serif;color:#0D2B5E">
-        <h1 style="font-size:2rem;margin-bottom:8px">FueVolt — Compare Fuel Prices &amp; EV Charging Stations in Australia</h1>
-        <p style="font-size:1.1rem;color:#4B5563;margin-bottom:32px">Find the cheapest petrol, diesel and LPG near you across NSW, VIC, QLD and WA. Compare EV charging stations, plan trips, and save on fuel costs with live government data.</p>
-
-        <h2 style="font-size:1.5rem;margin-bottom:12px;color:#C8971F">Fuel Prices</h2>
-        <p>Compare real-time petrol, diesel, E10, U95, U98 and LPG prices from official government APIs. FueVolt pulls live data from the NSW Motor API, Victoria Fair Fuel API (Servo Saver), Queensland Fuel Pricing API, and Western Australia FuelWatch. Search by suburb or use your current location to find the cheapest fuel station near you. Results are sorted by price, drive time, or distance — powered by TomTom routing.</p>
-
-        <h2 style="font-size:1.5rem;margin-top:24px;margin-bottom:12px;color:#27AE60">EV Charging Stations</h2>
-        <p>Locate thousands of electric vehicle charging points across Australia. Filter by connector type (Type 2, CCS2, CHAdeMO, Tesla), charging speed (slow, fast, ultra-rapid), and real-time availability via the TomTom EV Charging Stations Availability API. Data sourced from Open Charge Map — the world's largest open registry of EV charging locations.</p>
-
-        <h2 style="font-size:1.5rem;margin-top:24px;margin-bottom:12px">Trip Planner</h2>
-        <p>Plan road trips with fuel stops and EV chargers along the way. Get live traffic conditions, drive time estimates, EV battery forecasts, and suggested charging stops. Powered by TomTom Routing API and Extended Routing API for electric vehicles.</p>
-
-        <h2 style="font-size:1.5rem;margin-top:24px;margin-bottom:12px">Guides &amp; Articles</h2>
-        <ul style="line-height:1.8">
-          <li><a href="#/guides/fuel-types-explained">Fuel Types Explained: E10, U91, U95, U98, Diesel and LPG</a></li>
-          <li><a href="#/guides/ev-charging-connector-types-australia">EV Charging Connector Types in Australia: Type 2, CCS, CHAdeMO and Tesla</a></li>
-          <li><a href="#/guides/how-fuel-price-cycles-work-australia">How Fuel Price Cycles Work in Australia</a></li>
-          <li><a href="#/guides/petrol-vs-diesel-vs-electric-comparison">Petrol vs Diesel vs Electric: Which Is Cheapest to Run?</a></li>
-          <li><a href="#/guides/understanding-octane-ratings">Understanding Octane Ratings: Does Premium Fuel Make a Difference?</a></li>
-          <li><a href="#/guides/australian-road-trip-fuel-planning-tips">Australian Road Trip Fuel Planning Tips</a></li>
-          <li><a href="#/guides/ev-home-charging-setup-guide-australia">How to Set Up EV Home Charging in Australia</a></li>
-          <li><a href="#/guides/overcoming-ev-range-anxiety">Overcoming EV Range Anxiety: A Practical Guide</a></li>
-          <li><a href="#/guides/tips-to-save-money-on-fuel-australia">10 Proven Tips to Save Money on Fuel in Australia</a></li>
-          <li><a href="#/guides/electric-vs-hybrid-vs-plug-in-hybrid">Electric vs Hybrid vs Plug-in Hybrid: Which Is Right for You?</a></li>
-          <li><a href="#/guides/australian-fuel-excise-tax-explained">Australian Fuel Excise Tax Explained</a></li>
-          <li><a href="#/guides/ev-battery-health-and-longevity-tips">EV Battery Health: How to Maximise Your Battery Life</a></li>
-        </ul>
-
-        <h2 style="font-size:1.5rem;margin-top:24px;margin-bottom:12px">Fuel Prices by City</h2>
-        <p>
-          <a href="#/fuel-prices/sydney">Sydney</a> · <a href="#/fuel-prices/melbourne">Melbourne</a> · <a href="#/fuel-prices/brisbane">Brisbane</a> · <a href="#/fuel-prices/perth">Perth</a> · <a href="#/fuel-prices/adelaide">Adelaide</a> · <a href="#/fuel-prices/gold-coast">Gold Coast</a> · <a href="#/fuel-prices/canberra">Canberra</a> · <a href="#/fuel-prices/newcastle">Newcastle</a> · <a href="#/fuel-prices/hobart">Hobart</a> · <a href="#/fuel-prices/darwin">Darwin</a> · <a href="#/fuel-prices/geelong">Geelong</a> · <a href="#/fuel-prices/toowoomba">Toowoomba</a> · <a href="#/fuel-prices/cairns">Cairns</a> · <a href="#/fuel-prices/ballarat">Ballarat</a>
-        </p>
-
-        <h2 style="font-size:1.5rem;margin-top:24px;margin-bottom:12px">EV Charging by City</h2>
-        <p>
-          <a href="#/ev-charging/sydney">Sydney</a> · <a href="#/ev-charging/melbourne">Melbourne</a> · <a href="#/ev-charging/brisbane">Brisbane</a> · <a href="#/ev-charging/perth">Perth</a> · <a href="#/ev-charging/adelaide">Adelaide</a> · <a href="#/ev-charging/gold-coast">Gold Coast</a> · <a href="#/ev-charging/canberra">Canberra</a> · <a href="#/ev-charging/hobart">Hobart</a> · <a href="#/ev-charging/darwin">Darwin</a> · <a href="#/ev-charging/newcastle">Newcastle</a>
-        </p>
-
-        <h2 style="font-size:1.5rem;margin-top:24px;margin-bottom:12px">Data Sources</h2>
-        <p>FueVolt uses 100% free, official data sources with no usage costs:</p>
-        <ul style="line-height:1.8">
-          <li><strong>NSW</strong> — Motor API fuel price data (api.nsw.gov.au)</li>
-          <li><strong>VIC</strong> — Fair Fuel Open Data API / Servo Saver (service.vic.gov.au)</li>
-          <li><strong>QLD</strong> — Fuel Pricing Direct Outbound API (fuelpricesqld.com.au)</li>
-          <li><strong>WA</strong> — FuelWatch (fuelwatch.wa.gov.au)</li>
-          <li><strong>EV Charging</strong> — Open Charge Map (openchargemap.org)</li>
-          <li><strong>Maps &amp; Routing</strong> — TomTom (tomtom.com)</li>
-          <li><strong>Geocoding</strong> — Nominatim / OpenStreetMap</li>
-        </ul>
-
-        <p style="margin-top:32px;font-size:0.85rem;color:#9CA3AF">&copy; 2025 FueVolt — Australian EV &amp; Fuel Price Finder. <a href="#/privacy">Privacy Policy</a> · <a href="#/terms">Terms of Service</a></p>
-      </div>
-    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
