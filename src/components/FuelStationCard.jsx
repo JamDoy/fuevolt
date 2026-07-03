@@ -94,10 +94,16 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
         </div>
         <div className="text-right flex flex-col items-end gap-1">
           <div>
-            <span className="text-lg font-bold" style={{ color: theme.green }}>
-              {(station.price * 100).toFixed(1)}
-            </span>
-            <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
+            {station.price != null ? (
+              <>
+                <span className="text-lg font-bold" style={{ color: theme.green }}>
+                  {(station.price * 100).toFixed(1)}
+                </span>
+                <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
+              </>
+            ) : (
+              <span className="text-xs font-medium" style={{ color: theme.textMuted }}>No price data</span>
+            )}
           </div>
           <div className="flex items-center gap-1">
             <button

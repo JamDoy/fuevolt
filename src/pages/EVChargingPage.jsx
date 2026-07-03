@@ -251,6 +251,8 @@ export default function EVChargingPage({ initialSuburb }) {
         }}
         type="ev"
         evAvailability={evAvailability}
+        userLocation={autoLocation}
+        onSearchArea={(lat, lng) => doSearch(lat, lng)}
       />
 
       {/* Results Count */}

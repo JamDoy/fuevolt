@@ -472,20 +472,20 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
     results = await fetchNSWFuelPrices(latitude, longitude, fuelType);
   }
 
-  // Fallback: fetch real station locations from OpenStreetMap, with estimated prices
+  // Fallback: fetch real station locations from OpenStreetMap (no pricing for these states)
   if (!results || results.length === 0) {
     results = await fetchRealFuelStations(latitude, longitude, radius, fuelType, state);
-  }
-
-  // Last resort fallback if Overpass also fails
-  if (!results || results.length === 0) {
-    results = await generateFallbackStations(latitude, longitude, fuelType, radius, state);
   }
 
   // Cache the fresh results
   setCachedPrices(cacheKey, results);
 
-  return results.sort((a, b) => a.price - b.price);
+  return results.sort((a, b) => {
+    if (a.price == null && b.price == null) return 0;
+    if (a.price == null) return 1;
+    if (b.price == null) return -1;
+    return a.price - b.price;
+  });
 }
 
 function detectState(lat, lng) {
@@ -579,11 +579,6 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
     const data = await response.json();
     if (!data.elements || data.elements.length === 0) return null;
 
-    const basePrices = {
-      'E10': 165, 'U91': 172, 'U95': 185, 'U98': 198,
-      'Diesel': 178, 'LPG': 89,
-    };
-    const basePrice = basePrices[fuelType] || 172;
     const stateLabel = state || 'AU';
 
     const stations = data.elements.map((el, i) => {
@@ -616,7 +611,6 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
         needsGeocode = true;
       }
 
-      const price = basePrice + Math.floor(Math.random() * 30) - 10;
       const dist = getDistance(lat, lng, stationLat, stationLng);
 
       return {
@@ -628,12 +622,12 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
         _hasRealName: !!(rawName || brand),
         latitude: stationLat,
         longitude: stationLng,
-        price: price / 100,
-        priceDisplay: `${(price / 100).toFixed(1)}¢/L`,
+        price: null,
+        priceDisplay: 'N/A',
         fuelType,
         lastUpdated: new Date().toISOString(),
         distance: dist.toFixed(1),
-        source: `Real Location (${stateLabel} — prices are estimates)`,
+        source: `Location only (${stateLabel} — no real-time pricing)`,
         _needsGeocode: needsGeocode,
       };
     }).filter(Boolean);
@@ -649,44 +643,7 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
   }
 }
 
-// Fallback if Overpass API fails
-async function generateFallbackStations(lat, lng, fuelType, radius, state) {
-  const brands = ['Shell', 'BP', 'Caltex', '7-Eleven', 'United', 'Ampol'];
-  const basePrices = {
-    'E10': 165, 'U91': 172, 'U95': 185, 'U98': 198,
-    'Diesel': 178, 'LPG': 89,
-  };
-  const basePrice = basePrices[fuelType] || 172;
-  const stateLabel = state || 'AU';
 
-  const stations = Array.from({ length: 10 }, (_, i) => {
-    const angle = Math.random() * 2 * Math.PI;
-    const dist = Math.sqrt(Math.random()) * radius;
-    const offsetLat = (dist / 111) * Math.cos(angle);
-    const offsetLng = (dist / (111 * Math.cos(lat * Math.PI / 180))) * Math.sin(angle);
-    const brand = brands[i % brands.length];
-    const price = basePrice + Math.floor(Math.random() * 30) - 10;
-
-    return {
-      id: `gen-${i}`,
-      name: `${brand} Station`,
-      brand,
-      address: stateLabel,
-      _needsGeocode: true,
-      latitude: lat + offsetLat,
-      longitude: lng + offsetLng,
-      price: price / 100,
-      priceDisplay: `${(price / 100).toFixed(1)}¢/L`,
-      fuelType,
-      lastUpdated: new Date().toISOString(),
-      distance: dist.toFixed(1),
-      source: `Approximate (${stateLabel})`,
-    };
-  });
-
-  applyCachedAddresses(stations);
-  return stations;
-}
 
 // Apply only cached addresses (no API calls)
 function applyCachedAddresses(stations) {

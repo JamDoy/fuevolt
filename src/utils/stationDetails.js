@@ -254,9 +254,9 @@ export async function fetchAllFuelPricesForStation(station) {
         const res = await fetch(`${QLD_API_BASE}/Price/GetSitesPrices?countryId=21&geoRegionLevel=3&geoRegionId=1`, { headers });
         if (res.ok) pricesData = await res.json();
       } catch {
-        // Try proxy fallback
+        // Try proxy fallback (CORS blocked in browser)
         try {
-          const res = await fetch('/api/qld-fuel.php?type=prices');
+          const res = await fetch('/api/qld-fuel.php?endpoint=GetSitesPrices&geoRegionLevel=3&geoRegionId=1');
           if (res.ok) pricesData = await res.json();
         } catch { /* ignore */ }
       }

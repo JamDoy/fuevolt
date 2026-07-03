@@ -268,31 +268,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
         )}
       </div>
 
-      {/* Reviews placeholder */}
-      <div
-        className="rounded-2xl p-5"
-        style={{
-          background: theme.cardBg,
-          border: `1px solid ${theme.cardBorder}`,
-          backdropFilter: 'blur(12px)',
-        }}
-      >
-        <h2 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: theme.gold }}>
-          Ratings & Reviews
-        </h2>
-        <p className="text-sm" style={{ color: theme.textMuted }}>
-          Reviews are not available from free API sources.
-        </p>
-        <a
-          href={mapsSearchUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 mt-3 text-sm font-semibold no-underline"
-          style={{ color: theme.gold }}
-        >
-          &#11088; View ratings on Google Maps &rarr;
-        </a>
-      </div>
+
 
 
 
