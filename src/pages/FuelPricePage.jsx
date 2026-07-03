@@ -120,25 +120,30 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
     }
   };
 
+  const pricedStations = stations.filter((s) => s.price != null);
+
   const sortedStations = [...stations].sort((a, b) => {
     if (sortBy === 'driveTime') {
-      if (a.driveTime == null && b.driveTime == null) return a.price - b.price;
+      if (a.driveTime == null && b.driveTime == null) return (a.price || 999) - (b.price || 999);
       if (a.driveTime == null) return 1;
       if (b.driveTime == null) return -1;
       return a.driveTime - b.driveTime;
     }
     if (sortBy === 'distance') return parseFloat(a.distance || 999) - parseFloat(b.distance || 999);
+    if (a.price == null && b.price == null) return 0;
+    if (a.price == null) return 1;
+    if (b.price == null) return -1;
     return a.price - b.price;
   });
 
-  const cheapest = stations.length > 0
-    ? stations.reduce((min, s) => (s.price < min.price ? s : min), stations[0])
+  const cheapest = pricedStations.length > 0
+    ? pricedStations.reduce((min, s) => (s.price < min.price ? s : min), pricedStations[0])
     : null;
-  const avgPrice = stations.length > 0
-    ? stations.reduce((sum, s) => sum + s.price, 0) / stations.length
+  const avgPrice = pricedStations.length > 0
+    ? pricedStations.reduce((sum, s) => sum + s.price, 0) / pricedStations.length
     : 0;
-  const expensive = stations.length > 0
-    ? stations.reduce((max, s) => (s.price > max.price ? s : max), stations[0])
+  const expensive = pricedStations.length > 0
+    ? pricedStations.reduce((max, s) => (s.price > max.price ? s : max), pricedStations[0])
     : null;
   const savings = cheapest && expensive
     ? ((expensive.price - cheapest.price) * 100).toFixed(1)
@@ -225,26 +230,38 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
         </div>
       )}
 
+      {/* Cheapest Station Highlight */}
+      {stations.length > 0 && !loading && cheapest && (
+        <div
+          className="rounded-2xl p-5 cursor-pointer"
+          onClick={() => onStationDetail && onStationDetail(cheapest)}
+          style={{
+            background: theme.mode === 'dark' ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.04)',
+            border: `2px solid ${theme.mode === 'dark' ? 'rgba(46,204,113,0.4)' : 'rgba(39,174,96,0.3)'}`,
+            boxShadow: theme.mode === 'dark' ? '0 0 16px rgba(46,204,113,0.1)' : '0 4px 12px rgba(39,174,96,0.08)',
+            transition: 'all 0.25s ease',
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: theme.green }}>Cheapest Near You</p>
+              <h3 className="text-base sm:text-lg font-bold" style={{ color: theme.text }}>{cheapest.name}</h3>
+              <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{cheapest.brand} &bull; {cheapest.distance} km away</p>
+            </div>
+            <div className="text-right">
+              <p className="text-3xl sm:text-4xl font-bold" style={{ color: theme.green }}>
+                {(cheapest.price * 100).toFixed(1)}
+                <span className="text-sm ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
+              </p>
+              <p className="text-xs mt-1 font-medium" style={{ color: theme.green }}>View Details &rarr;</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Price Summary */}
       {stations.length > 0 && !loading && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div
-            className="rounded-2xl p-4 text-center"
-            style={{
-              background: theme.cardBg,
-              border: `1px solid ${theme.mode === 'dark' ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)'}`,
-              boxShadow: theme.mode === 'dark' ? '0 0 12px rgba(46,204,113,0.08) inset' : '0 2px 8px rgba(0,0,0,0.04)',
-            }}
-          >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Cheapest</p>
-            <p className="text-2xl font-bold" style={{ color: theme.green }}>
-              {cheapest ? (cheapest.price * 100).toFixed(1) : '\u2014'}
-              <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
-            </p>
-            {cheapest && (
-              <p className="text-[10px] mt-1 truncate" style={{ color: theme.textMuted }}>{cheapest.name}</p>
-            )}
-          </div>
+        <div className="grid grid-cols-3 gap-3">
           <div
             className="rounded-2xl p-4 text-center"
             style={{
@@ -272,14 +289,17 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
             </p>
           </div>
           <div
-            className="rounded-2xl p-4 text-center col-span-2 sm:col-span-1"
+            className="rounded-2xl p-4 text-center"
             style={{
               background: theme.cardBg,
               border: `1px solid ${theme.cardBorder}`,
             }}
           >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Stations Found</p>
-            <p className="text-2xl font-bold" style={{ color: theme.text }}>{stations.length}</p>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Most Expensive</p>
+            <p className="text-2xl font-bold" style={{ color: '#E74C3C' }}>
+              {expensive ? (expensive.price * 100).toFixed(1) : '\u2014'}
+              <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
+            </p>
           </div>
         </div>
       )}
@@ -292,6 +312,8 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
         onStationSelect={setSelectedStation}
         onStationDetail={onStationDetail}
         type="fuel"
+        userLocation={autoLocation}
+        onSearchArea={(lat, lng) => doSearch(lat, lng, fuelType)}
       />
 
       {/* Error */}
