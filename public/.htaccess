@@ -2,19 +2,24 @@
   RewriteEngine On
   RewriteBase /
 
-  # If the request matches an existing file, serve it directly
-  RewriteRule ^index\.html$ - [L]
+  # Serve existing files directly (CSS, JS, images, etc.)
   RewriteCond %{REQUEST_FILENAME} -f
-  RewriteRule . - [L]
+  RewriteRule ^ - [L]
 
-  # If a pre-rendered directory exists (e.g. /guides/fuel-types-explained/index.html), serve it
-  RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
-  RewriteRule ^(.+?)/?$ /$1/index.html [L]
+  # Serve pre-rendered directories — if /path/index.html exists, serve it
+  # This handles /guides/fuel-types-explained → /guides/fuel-types-explained/index.html
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.*)$ $1/index.html [L]
+
+  # Also handle without trailing slash — check if adding /index.html works
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.*)$ $1/index.html [L]
 
   # Fallback: serve root index.html for client-side routing
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  RewriteRule ^ /index.html [L]
 </IfModule>
 
 DirectoryIndex index.html
