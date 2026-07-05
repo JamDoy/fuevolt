@@ -13,7 +13,7 @@ const PAGE_META = {
   },
   ev: {
     title: 'EV Charging Stations Near Me — Find Fast Chargers | FueVolt',
-    description: 'Locate EV charging stations across Australia with real-time availability. Filter by connector type (Type 2, CCS, CHAdeMO, Tesla) and charging speed.',
+    description: 'Locate EV charging stations across Australia. Filter by connector type (Type 2, CCS, CHAdeMO, Tesla) and charging speed.',
     path: '/ev-charging',
   },
   trip: {
@@ -22,8 +22,8 @@ const PAGE_META = {
     path: '/trip-planner',
   },
   notifications: {
-    title: 'Fuel & EV Alerts — Price Drops & Charger Availability | FueVolt',
-    description: 'Set alerts for fuel price drops and EV charger availability near your saved stations. Get notified when you are near cheap fuel or available chargers.',
+    title: 'Fuel & EV Alerts — Price Drops & Nearby Stations | FueVolt',
+    description: 'Set alerts for fuel price drops near your saved stations. Get notified when you are near cheap fuel or EV chargers.',
     path: '/alerts',
   },
   privacy: {

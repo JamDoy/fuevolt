@@ -10,7 +10,7 @@ import ErrorCard from '../components/ErrorCard';
 import EVCostEstimator from '../components/EVCostEstimator';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
-import { fetchEVAvailability, reverseGeocode } from '../utils/tomtom';
+import { reverseGeocode } from '../utils/tomtom';
 import { injectEVStationSchema } from '../utils/seo';
 
 const CONNECTOR_FILTERS = ['Type 2', 'CCS', 'CHAdeMO', 'Tesla', 'Type 1'];
@@ -29,7 +29,6 @@ export default function EVChargingPage({ initialSuburb }) {
   const [detailStation, setDetailStation] = useState(null);
   const [connectorFilters, setConnectorFilters] = useState([]);
   const [speedFilters, setSpeedFilters] = useState([]);
-  const [evAvailability, setEvAvailability] = useState({});
   const [locationName, setLocationName] = useState('');
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
@@ -66,15 +65,6 @@ export default function EVChargingPage({ initialSuburb }) {
         if (loc?.suburb) setLocationName(loc.suburb);
       }).catch(() => {});
 
-      // Fetch EV availability for visible stations (batch up to 10 to stay in budget)
-      const stationsWithUUID = data.filter((s) => s.UUID).slice(0, 10);
-      stationsWithUUID.forEach((s) => {
-        fetchEVAvailability(s.UUID).then((avail) => {
-          if (avail) {
-            setEvAvailability((prev) => ({ ...prev, [s.ID]: avail }));
-          }
-        }).catch(() => {});
-      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -146,9 +136,7 @@ export default function EVChargingPage({ initialSuburb }) {
   // Stats
   const totalPoints = filtered.reduce((sum, s) => sum + (s.NumberOfPoints || 1), 0);
   const ultraRapidCount = filtered.filter((s) => getMaxPower(s) >= 50).length;
-  const availableCount = filtered.filter(
-    (s) => ['Operational', 'Available'].includes(s.StatusType?.Title || '')
-  ).length;
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
@@ -196,7 +184,7 @@ export default function EVChargingPage({ initialSuburb }) {
 
       {/* EV Stats Summary */}
       {!loading && stations.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <div
             className="rounded-2xl p-4 text-center"
             style={{
@@ -223,13 +211,7 @@ export default function EVChargingPage({ initialSuburb }) {
             <p className="text-2xl font-bold" style={{ color: theme.gold }}>{ultraRapidCount}</p>
             <p className="text-[10px]" style={{ color: theme.textMuted }}>50kW+</p>
           </div>
-          <div
-            className="rounded-2xl p-4 text-center col-span-2 sm:col-span-1"
-            style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
-          >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Available</p>
-            <p className="text-2xl font-bold" style={{ color: theme.green }}>{availableCount}</p>
-          </div>
+
         </div>
       )}
 
@@ -250,7 +232,6 @@ export default function EVChargingPage({ initialSuburb }) {
           setDetailStation(s);
         }}
         type="ev"
-        evAvailability={evAvailability}
         userLocation={autoLocation}
         onSearchArea={(lat, lng) => doSearch(lat, lng)}
       />
@@ -294,7 +275,7 @@ export default function EVChargingPage({ initialSuburb }) {
                 setSelectedStation(station);
                 setDetailStation(station);
               }}
-              availability={evAvailability[station.ID] || null}
+
             />
           ))}
         </div>
@@ -346,7 +327,7 @@ export default function EVChargingPage({ initialSuburb }) {
       >
         <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>About EV Charging in Australia</h2>
         <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          Australia's electric vehicle charging network is growing rapidly, with thousands of public charging stations now available across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations. We show real-time charger availability where supported, so you know before you arrive whether a charger is free, occupied, or offline.
+          Australia's electric vehicle charging network is growing rapidly, with thousands of public charging stations now available across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.
         </p>
         <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Connector Types Explained</h3>
         <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>

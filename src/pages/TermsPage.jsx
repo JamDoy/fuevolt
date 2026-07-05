@@ -17,7 +17,7 @@ export default function TermsPage() {
         <p className="mt-2">Key features include:</p>
         <ul className="list-disc pl-6 mt-1 space-y-1">
           <li>Real-time fuel price comparison from official government sources</li>
-          <li>EV charging station finder with connector type, speed filters, and real-time availability</li>
+          <li>EV charging station finder with connector type and speed filters</li>
           <li>EV charge cost estimator (estimates based on average Australian rates)</li>
           <li>Fuel vs EV weekly cost comparison</li>
           <li>Trip planner with live traffic, fuel stops, and EV routing</li>
