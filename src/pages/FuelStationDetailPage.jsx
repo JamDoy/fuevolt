@@ -100,16 +100,9 @@ export default function FuelStationDetailPage({ station, onBack }) {
         <h1 className="text-xl sm:text-2xl font-bold" style={{ color: theme.gold }}>
           {station.name}
         </h1>
-        <span
-          className="inline-block px-3 py-1 rounded-full text-xs font-bold mt-2"
-          style={{
-            background: theme.brandBadgeBg,
-            color: theme.gold,
-            border: `1px solid ${theme.brandBadgeBorder}`,
-          }}
-        >
-          {station.brand}
-        </span>
+        {station.brand && (
+          <p className="text-sm mt-1" style={{ color: theme.textMuted }}>{station.brand}</p>
+        )}
         {station.price && (
           <div className="mt-4 flex items-end gap-3">
             <p className="text-4xl font-bold" style={{ color: theme.green }}>

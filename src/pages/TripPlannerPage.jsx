@@ -434,9 +434,7 @@ export default function TripPlannerPage() {
               >
                 <p className="text-sm font-semibold" style={{ color: theme.gold }}>{stop.name}</p>
                 {stop.brand && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: theme.brandBadgeBg, color: theme.gold }}>
-                    {stop.brand}
-                  </span>
+                  <p className="text-[10px]" style={{ color: theme.textMuted }}>{stop.brand}</p>
                 )}
                 <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
               </div>

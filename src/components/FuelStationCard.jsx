@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { getBrandStyle, formatOpeningHours } from '../utils/brandLogos';
+import { formatOpeningHours } from '../utils/brandLogos';
 import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
 import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
 
@@ -10,7 +10,6 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
   const [visible, setVisible] = useState(false);
   const [fav, setFav] = useState(false);
   const [hasGeofence, setHasGeofence] = useState(false);
-  const brandStyle = getBrandStyle(station.brand);
   const hours = formatOpeningHours(station.openingHours);
 
   useEffect(() => {
@@ -69,27 +68,13 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
               {rank + 1}
             </span>
           )}
-          {/* Brand logo */}
-          <span
-            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-black"
-            style={{ background: brandStyle.bg, color: brandStyle.text }}
-          >
-            {brandStyle.short}
-          </span>
           <div>
             <h3 className="text-sm font-semibold" style={{ color: theme.gold }}>
               {station.name}
             </h3>
-            <span
-              className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mt-1"
-              style={{
-                background: theme.brandBadgeBg,
-                color: theme.gold,
-                border: `1px solid ${theme.brandBadgeBorder}`,
-              }}
-            >
-              {station.brand}
-            </span>
+            {station.brand && (
+              <p className="text-[10px] mt-0.5" style={{ color: theme.textMuted }}>{station.brand}</p>
+            )}
           </div>
         </div>
         <div className="text-right flex flex-col items-end gap-1">

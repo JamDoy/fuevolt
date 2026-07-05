@@ -110,8 +110,8 @@
   </head>
   <body>
     <div id="root">
-      <!-- Static content for SEO crawlers — React replaces this on mount -->
-      <div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,system-ui,sans-serif;color:#0D2B5E">
+      <!-- Static content for SEO crawlers — hidden visually, React replaces on mount -->
+      <div id="seo-fallback" style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,system-ui,sans-serif;color:#0D2B5E">
         <header style="text-align:center;margin-bottom:32px">
           <h1 style="font-size:2.5rem;font-weight:900;margin-bottom:8px">Find the <span style="color:#C8971F">cheapest fuel</span> &amp; <span style="color:#27AE60">charge</span></h1>
           <p style="font-size:1.1rem;color:#4B5563">Compare real-time fuel prices and locate EV charging stations across Australia</p>
@@ -201,6 +201,7 @@
         </footer>
       </div>
     </div>
+    <script>document.getElementById('seo-fallback')&&(document.getElementById('seo-fallback').style.display='none')</script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
