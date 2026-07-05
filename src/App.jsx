@@ -186,9 +186,7 @@ function AppContent() {
         <p className="text-xs" style={{ color: theme.footerText }}>
           &copy; {new Date().getFullYear()} FueVolt &mdash; Australian EV & Fuel Price Finder
         </p>
-        <p className="text-[10px] mt-1" style={{ color: theme.footerSubtext }}>
-          Maps & routing by TomTom &bull; EV data by Open Charge Map &bull; Fuel prices from government APIs (NSW, VIC, QLD, WA)
-        </p>
+        
         <div className="flex flex-wrap justify-center gap-4 mt-2">
           <button
             onClick={() => navigate('about', '/about')}
@@ -262,7 +260,7 @@ function AppContent() {
                   navigate('ev', `/ev-charging/${s.slug}`);
                   updatePageMeta('ev', {
                     title: `EV Charging Stations in ${s.name} — Find Chargers | FueVolt`,
-                    description: `Find EV charging stations near ${s.name}. Filter by connector type and charging speed. Real-time availability.`,
+                    description: `Find EV charging stations near ${s.name}. Filter by connector type and charging speed.`,
                     url: `https://fuevolt.com/ev-charging/${s.slug}`,
                   });
                 }}

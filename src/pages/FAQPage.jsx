@@ -7,11 +7,11 @@ const FAQ_ITEMS = [
     questions: [
       {
         q: 'Where does FueVolt get its fuel prices?',
-        a: 'FueVolt pulls real-time fuel prices directly from official Australian government APIs. This includes the NSW Motor API, Victoria Fair Fuel Open Data API (Servo Saver), Queensland Fuel Pricing Direct API, and Western Australia FuelWatch. These are the same data sources used by each state government\'s official fuel price websites.',
+        a: 'FueVolt pulls real-time fuel prices directly from official Australian government sources. Prices are updated throughout the day as fuel stations report changes.',
       },
       {
         q: 'How often are fuel prices updated?',
-        a: 'Fuel prices are updated in real-time as they change throughout the day. Each state government API provides different update frequencies — NSW updates multiple times daily as stations report changes, Victoria and Queensland update throughout the day, and Western Australia\'s FuelWatch updates daily with the next day\'s prices published at 2:30pm.',
+        a: 'Fuel prices are updated in real-time as they change throughout the day. Each state has different update frequencies — some update multiple times daily as stations report changes, while others update daily with the next day\'s prices.',
       },
       {
         q: 'Which states does FueVolt cover for fuel prices?',
@@ -23,11 +23,11 @@ const FAQ_ITEMS = [
       },
       {
         q: 'Why does a station show "Not currently available" for some fuel types?',
-        a: 'This means the government API hasn\'t reported a price for that fuel type at that station. The station may not sell that fuel type, or the price hasn\'t been reported yet. The data comes directly from government sources, so FueVolt can only display what the APIs provide.',
+        a: 'This means a price hasn\'t been reported for that fuel type at that station. The station may not sell that fuel type, or the price hasn\'t been reported yet.',
       },
       {
         q: 'Are the fuel prices accurate?',
-        a: 'FueVolt displays prices exactly as reported by each state government\'s official API. Stations are required by law to report their prices in most states. However, there can be occasional short delays between when a station changes its price and when the government API updates. Always check the "last updated" time shown next to each price.',
+        a: 'FueVolt displays prices exactly as reported by official government sources. Stations are required by law to report their prices in most states. However, there can be occasional short delays between when a station changes its price and when the data updates. Always check the "last updated" time shown next to each price.',
       },
     ],
   },
@@ -36,11 +36,7 @@ const FAQ_ITEMS = [
     questions: [
       {
         q: 'Where does EV charging station data come from?',
-        a: 'EV charging station locations and details come from Open Charge Map, the world\'s largest open registry of EV charging locations. This is a community-maintained database with thousands of verified charging stations across Australia, including details about connector types, power output, and operator information.',
-      },
-      {
-        q: 'What do the charger availability colours mean?',
-        a: 'Green markers indicate chargers with at least one available connector. Red markers indicate all connectors are currently in use. Grey markers indicate the charger is offline or out of service. Availability data comes from the TomTom EV Charging Stations Availability API where supported.',
+        a: 'FueVolt shows thousands of verified charging stations across Australia, including details about connector types, power output, and operator information.',
       },
       {
         q: 'What connector types can I filter by?',
@@ -48,7 +44,7 @@ const FAQ_ITEMS = [
       },
       {
         q: 'Is the EV charging data available across all of Australia?',
-        a: 'Yes. Unlike fuel prices which are limited to states with government APIs, EV charging station data from Open Charge Map covers all of Australia, including regional and remote areas. Coverage is best in metropolitan areas and along major highways.',
+        a: 'Yes. EV charging station data covers all of Australia, including regional and remote areas. Coverage is best in metropolitan areas and along major highways.',
       },
     ],
   },
@@ -57,7 +53,7 @@ const FAQ_ITEMS = [
     questions: [
       {
         q: 'How does the trip planner work?',
-        a: 'Enter your start and end destinations, and FueVolt calculates the best route using TomTom\'s routing technology. The planner shows the total distance, estimated drive time, and finds fuel stations or EV chargers along your route. For electric vehicles, it also calculates battery usage at each stage and recommends where to stop for charging.',
+        a: 'Enter your start and end destinations, and FueVolt calculates the best route. The planner shows the total distance, estimated drive time, and finds fuel stations or EV chargers along your route. For electric vehicles, it also calculates battery usage at each stage and recommends where to stop for charging.',
       },
       {
         q: 'How does the EV battery forecast work?',
@@ -74,7 +70,7 @@ const FAQ_ITEMS = [
     questions: [
       {
         q: 'Is FueVolt free to use?',
-        a: 'Yes, FueVolt is completely free. There are no subscriptions, premium tiers, or hidden fees. The service is supported by advertising. All fuel pricing data comes from free government APIs, and EV charging data comes from the free Open Charge Map database.',
+        a: 'Yes, FueVolt is completely free. There are no subscriptions, premium tiers, or hidden fees. The service is supported by advertising.',
       },
       {
         q: 'Is FueVolt affiliated with any fuel company or EV charging network?',

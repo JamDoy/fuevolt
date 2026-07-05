@@ -38,7 +38,7 @@ export default function PrivacyPolicyPage() {
           <li><strong>OpenStreetMap</strong> — Station locations, names, addresses, and opening hours via the Overpass API</li>
           <li><strong>Open Charge Map</strong> — EV charging station locations and details (openchargemap.org)</li>
           <li><strong>Nominatim (OpenStreetMap)</strong> — Reverse geocoding for address resolution</li>
-          <li><strong>TomTom</strong> — Map display tiles, geocoding, routing, traffic data, and EV charger availability (tomtom.com)</li>
+          <li><strong>TomTom</strong> — Map display, geocoding, routing, and traffic data (tomtom.com)</li>
         </ul>
         <p className="mt-2">Fuel prices displayed are sourced directly from official government APIs where available. For states without a registered API (SA, NT), prices are clearly labelled as estimates. We do not guarantee the accuracy of third-party data.</p>
       </Section>
@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
           <li>To calculate EV charging cost estimates based on your battery size and charge level inputs</li>
           <li>To save your favourite stations locally for quick access</li>
           <li>To plan trips with live traffic and route optimization</li>
-          <li>To show real-time EV charger availability</li>
+          <li>To locate EV charging stations near you</li>
           <li>To sort fuel stations by actual drive time using live traffic data</li>
           <li>To send geofence-based alerts when near saved stations</li>
           <li>To serve relevant advertisements via Google AdMob</li>

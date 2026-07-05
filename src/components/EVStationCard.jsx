@@ -4,7 +4,7 @@ import StatusBadge from './StatusBadge';
 import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
 import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
 
-export default function EVStationCard({ station, isSelected, onClick, availability }) {
+export default function EVStationCard({ station, isSelected, onClick }) {
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
   const [fav, setFav] = useState(() => isFavourite(`ev-${station.ID}`));
@@ -125,7 +125,7 @@ export default function EVStationCard({ station, isSelected, onClick, availabili
         </p>
       )}
 
-      {/* Speed indicator + Availability */}
+      {/* Speed indicator */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
         <span
           className="px-2 py-0.5 rounded-full text-[10px] font-bold"
@@ -141,25 +141,6 @@ export default function EVStationCard({ station, isSelected, onClick, availabili
         >
           {speedLabel} {'\u2022'} {maxPower}kW
         </span>
-        {availability && (
-          <span
-            className="px-2 py-0.5 rounded-full text-[10px] font-bold"
-            style={{
-              background: availability.available > 0
-                ? (isDark ? 'rgba(46,204,113,0.15)' : 'rgba(39,174,96,0.1)')
-                : (isDark ? 'rgba(231,76,60,0.15)' : 'rgba(231,76,60,0.1)'),
-              color: availability.available > 0 ? theme.green : '#E74C3C',
-              border: `1px solid ${availability.available > 0
-                ? (isDark ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)')
-                : (isDark ? 'rgba(231,76,60,0.3)' : 'rgba(231,76,60,0.2)')}`,
-            }}
-          >
-            {availability.available > 0
-              ? `${availability.available}/${availability.total} Available`
-              : 'All In Use'}
-            {availability.outOfService > 0 && ` | ${availability.outOfService} Offline`}
-          </span>
-        )}
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-2">

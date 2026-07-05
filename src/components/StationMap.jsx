@@ -40,22 +40,6 @@ const evBoltIcon = new L.DivIcon({
   popupAnchor: [0, -42],
 });
 
-// EV availability icons (green = available, red = occupied, grey = offline)
-const evAvailableIcon = new L.DivIcon({
-  className: 'custom-marker',
-  html: `<svg width="32" height="42" viewBox="0 0 32 42" fill="none"><path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#2ECC71" stroke="#1a9c54" stroke-width="1"/><path d="M18 6l-6 10h4l-2 8 6-10h-4l2-8z" fill="#fff"/></svg>`,
-  iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -42],
-});
-const evOccupiedIcon = new L.DivIcon({
-  className: 'custom-marker',
-  html: `<svg width="32" height="42" viewBox="0 0 32 42" fill="none"><path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#E74C3C" stroke="#c0392b" stroke-width="1"/><path d="M18 6l-6 10h4l-2 8 6-10h-4l2-8z" fill="#fff"/></svg>`,
-  iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -42],
-});
-const evOfflineIcon = new L.DivIcon({
-  className: 'custom-marker',
-  html: `<svg width="32" height="42" viewBox="0 0 32 42" fill="none"><path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#95A5A6" stroke="#7f8c8d" stroke-width="1"/><path d="M18 6l-6 10h4l-2 8 6-10h-4l2-8z" fill="#fff"/></svg>`,
-  iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -42],
-});
 
 function MapUpdater({ center, routePoints }) {
   const map = useMap();
@@ -89,7 +73,6 @@ export default function StationMap({
   onStationDetail,
   type = 'ev',
   routePoints = null,
-  evAvailability = {},
   userLocation = null,
   onSearchArea = null,
 }) {
@@ -112,15 +95,6 @@ export default function StationMap({
 
   const getIcon = (station) => {
     if (type === 'fuel') return fuelIcon;
-
-    // EV availability-based icons
-    const avail = evAvailability[station.ID];
-    if (avail) {
-      if (avail.available > 0) return evAvailableIcon;
-      if (avail.outOfService > 0 && avail.occupied === 0) return evOfflineIcon;
-      return evOccupiedIcon;
-    }
-
     return evBoltIcon;
   };
 
@@ -177,8 +151,6 @@ export default function StationMap({
 
             if (!lat || !lng) return null;
 
-            const avail = type === 'ev' ? evAvailability[station.ID] : null;
-
             return (
               <Marker
                 key={type === 'ev' ? station.ID : station.id}
@@ -199,15 +171,6 @@ export default function StationMap({
                         ? station.AddressInfo?.AddressLine1
                         : station.address}
                     </span>
-                    {type === 'ev' && avail && (
-                      <>
-                        <br />
-                        <span style={{ fontSize: '11px', fontWeight: 'bold', color: avail.available > 0 ? '#2ECC71' : '#E74C3C' }}>
-                          {avail.available > 0 ? `${avail.available} Available` : 'All In Use'}
-                          {avail.outOfService > 0 && ` | ${avail.outOfService} Offline`}
-                        </span>
-                      </>
-                    )}
                     {type === 'fuel' && (
                       <>
                         <br />

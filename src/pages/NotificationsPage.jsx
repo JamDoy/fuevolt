@@ -181,7 +181,7 @@ export default function NotificationsPage() {
           <h3 className="text-sm font-bold" style={{ color: theme.text }}>Notification Preferences</h3>
           {[
             { key: 'priceDrops', label: 'Fuel Price Drops', desc: 'Get alerts when nearby fuel prices drop significantly', icon: '\u26FD' },
-            { key: 'chargerAvailability', label: 'EV Charger Availability', desc: 'Alerts when saved EV chargers become available', icon: '\u26A1' },
+            { key: 'chargerNearby', label: 'EV Charger Nearby', desc: 'Alerts when you are near a saved EV charger', icon: '\u26A1' },
             { key: 'trafficIncidents', label: 'Traffic Incidents', desc: 'Alerts for traffic issues near your saved stations', icon: '\u26A0' },
           ].map((item) => (
             <div key={item.key} className="flex items-center justify-between py-2" style={{ borderBottom: `1px solid ${theme.divider}` }}>

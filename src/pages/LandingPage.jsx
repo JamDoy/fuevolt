@@ -113,7 +113,7 @@ export default function LandingPage({ onSelect, onArticle }) {
               Fuel Prices
             </h2>
             <p className="text-sm mb-6" style={{ color: theme.textSecondary }}>
-              Compare petrol & diesel prices from government APIs. Find the cheapest station near you and save money every fill-up.
+              Compare real-time petrol & diesel prices. Find the cheapest station near you and save money every fill-up.
             </p>
 
             {/* Fuel type quick-select */}
@@ -265,7 +265,7 @@ export default function LandingPage({ onSelect, onArticle }) {
           <div className="flex-1">
             <h3 className="text-base font-bold" style={{ color: theme.gold }}>Trip Planner</h3>
             <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>
-              Plan your route with fuel stops and EV chargers. Live traffic, EV battery forecast, and drive time estimates powered by TomTom.
+              Plan your route with fuel stops and EV chargers. Live traffic, EV battery forecast, and drive time estimates.
             </p>
           </div>
           <span className="text-sm font-semibold hidden sm:block" style={{ color: theme.gold }}>Plan Trip →</span>
@@ -339,40 +339,9 @@ export default function LandingPage({ onSelect, onArticle }) {
         <LatestNews />
       </div>
 
-      {/* Data Sources */}
-      <div className="w-full max-w-4xl mt-10 animate-slide-up" style={{ animationDelay: '0.5s' }}>
-        <h2 className="text-base font-bold mb-3" style={{ color: theme.heading || theme.text }}>Data Sources</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {[
-            { state: 'NSW', source: 'Motor API (api.nsw.gov.au)', active: true },
-            { state: 'VIC', source: 'Fair Fuel / Servo Saver (service.vic.gov.au)', active: true },
-            { state: 'QLD', source: 'Fuel Pricing Direct (fuelpricesqld.com.au)', active: true },
-            { state: 'WA', source: 'FuelWatch (fuelwatch.wa.gov.au)', active: true },
-            { state: 'SA', source: 'Coming Soon', active: false },
-            { state: 'NT', source: 'Coming Soon', active: false },
-            { state: 'TAS', source: 'Coming Soon', active: false },
-            { state: 'ACT', source: 'Coming Soon', active: false },
-          ].map((d) => (
-            <div key={d.state} className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
-              <span className="font-bold" style={{ color: d.active ? theme.gold : theme.textMuted }}>{d.state}</span>
-              <span style={{ color: d.active ? theme.textSecondary : theme.textMuted }}>{d.source}</span>
-            </div>
-          ))}
-          <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
-            <span className="font-bold" style={{ color: theme.green }}>EV</span>
-            <span style={{ color: theme.textSecondary }}>Open Charge Map (openchargemap.org)</span>
-          </div>
-          <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
-            <span className="font-bold" style={{ color: theme.gold }}>Maps</span>
-            <span style={{ color: theme.textSecondary }}>TomTom + OpenStreetMap</span>
-          </div>
-        </div>
-      </div>
+      
 
-      {/* Footer tagline */}
-      <p className="text-xs mt-10 text-center" style={{ color: theme.textMuted }}>
-        Maps by TomTom &bull; Fuel data from NSW, VIC, QLD, WA &bull; EV data from Open Charge Map
-      </p>
+      
     </div>
   );
 }
