@@ -82,7 +82,7 @@ const FAQ_ITEMS = [
       },
       {
         q: 'How can I contact FueVolt?',
-        a: 'You can reach us by email at contact@fuevolt.com. We welcome feedback, feature suggestions, and bug reports.',
+        a: 'You can reach us through our Contact page. We welcome feedback, feature suggestions, and bug reports.',
       },
     ],
   },
@@ -118,7 +118,7 @@ function FAQItem({ q, a, theme }) {
   );
 }
 
-export default function FAQPage() {
+export default function FAQPage({ onContact }) {
   const { theme } = useTheme();
 
   return (
@@ -138,10 +138,14 @@ export default function FAQPage() {
       ))}
 
       <div className="mt-8 rounded-xl p-5 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
-        <p className="text-sm font-semibold mb-2" style={{ color: theme.text }}>Still have questions?</p>
-        <p className="text-xs" style={{ color: theme.textSecondary }}>
-          Contact us at <a href="mailto:contact@fuevolt.com" style={{ color: theme.gold }}>contact@fuevolt.com</a> and we'll get back to you as soon as possible.
-        </p>
+        <p className="text-sm font-semibold mb-3" style={{ color: theme.text }}>Still have questions?</p>
+        <button
+          onClick={onContact}
+          className="px-4 py-2 rounded-lg font-semibold"
+          style={{ background: theme.gold, color: '#0D2B5E', border: 'none', cursor: 'pointer', fontSize: '13px' }}
+        >
+          Contact Us
+        </button>
       </div>
     </div>
   );

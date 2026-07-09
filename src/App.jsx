@@ -14,6 +14,7 @@ import ArticlesPage from './pages/ArticlesPage';
 import ArticleDetailPage from './pages/ArticleDetailPage';
 import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
+import ContactPage from './pages/ContactPage';
 import { updatePageMeta, POPULAR_SUBURBS } from './utils/seo';
 
 function parseRoute() {
@@ -40,6 +41,7 @@ function parseRoute() {
   if (parts[0] === 'terms') return { view: 'terms', suburb: null };
   if (parts[0] === 'about') return { view: 'about', suburb: null };
   if (parts[0] === 'faq') return { view: 'faq', suburb: null };
+  if (parts[0] === 'contact') return { view: 'contact', suburb: null };
   return { view: 'landing', suburb: null };
 }
 
@@ -179,8 +181,9 @@ function AppContent() {
         )}
         {view === 'privacy' && <PrivacyPolicyPage />}
         {view === 'terms' && <TermsPage />}
-        {view === 'about' && <AboutPage />}
-        {view === 'faq' && <FAQPage />}
+        {view === 'about' && <AboutPage onContact={() => navigate('contact', '/contact')} />}
+        {view === 'faq' && <FAQPage onContact={() => navigate('contact', '/contact')} />}
+        {view === 'contact' && <ContactPage />}
       </main>
       <footer className="text-center py-6 px-4 mt-8">
         <p className="text-xs" style={{ color: theme.footerText }}>
@@ -201,6 +204,13 @@ function AppContent() {
             style={{ color: theme.footerSubtext, background: 'none', border: 'none' }}
           >
             FAQ
+          </button>
+          <button
+            onClick={() => navigate('contact', '/contact')}
+            className="text-[10px] underline cursor-pointer"
+            style={{ color: theme.footerSubtext, background: 'none', border: 'none' }}
+          >
+            Contact
           </button>
           <button
             onClick={() => navigate('privacy', '/privacy')}

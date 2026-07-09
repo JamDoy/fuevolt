@@ -1,6 +1,6 @@
 import { useTheme } from '../contexts/ThemeContext';
 
-export default function AboutPage() {
+export default function AboutPage({ onContact }) {
   const { theme } = useTheme();
 
   return (
@@ -71,9 +71,13 @@ export default function AboutPage() {
         <p className="text-sm leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
           Have feedback, a feature request, or found an issue? We'd love to hear from you.
         </p>
-        <p className="text-sm leading-relaxed" style={{ color: theme.textSecondary }}>
-          Email: <a href="mailto:contact@fuevolt.com" style={{ color: theme.gold }}>contact@fuevolt.com</a>
-        </p>
+        <button
+          onClick={onContact}
+          className="px-4 py-2 rounded-lg font-semibold"
+          style={{ background: theme.gold, color: '#0D2B5E', border: 'none', cursor: 'pointer', fontSize: '13px' }}
+        >
+          Send Us Feedback
+        </button>
         <p className="text-sm leading-relaxed mt-2" style={{ color: theme.textSecondary }}>
           FueVolt is an Australian-made product, designed and built in Australia for Australian drivers.
         </p>

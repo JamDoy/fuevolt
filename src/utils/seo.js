@@ -61,6 +61,11 @@ const PAGE_META = {
     description: 'Common questions about FueVolt fuel price comparison, EV charging station finder, data sources, coverage, and how the app works.',
     path: '/faq',
   },
+  contact: {
+    title: 'Contact & Feedback — FueVolt',
+    description: 'Get in touch with FueVolt. Send feedback, feature requests, or report an issue using our contact form.',
+    path: '/contact',
+  },
 };
 
 export function updatePageMeta(view, extra) {
