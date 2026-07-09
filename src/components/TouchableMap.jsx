@@ -26,7 +26,7 @@ export default function TouchableMap({ children, style, className }) {
   const overlayRef = useRef(null);
 
   return (
-    <div className={className} style={{ ...style, position: 'relative' }}>
+    <div className={className} style={{ ...style, position: 'relative', isolation: 'isolate' }}>
       {children(active, <MapInteractionController enabled={active} />)}
       {!active && (
         <div

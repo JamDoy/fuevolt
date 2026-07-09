@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -66,6 +67,57 @@ function MapMoveDetector({ onMoved, originalCenter }) {
   return null;
 }
 
+// Renders the "Search this area" button as a native Leaflet control so it is
+// embedded within the map rather than floating over surrounding page content.
+function SearchAreaControl({ visible, onClick, theme }) {
+  const map = useMap();
+  const [container] = useState(() => {
+    const div = L.DomUtil.create('div', 'leaflet-control search-area-control');
+    div.style.marginBottom = '18px';
+    return div;
+  });
+
+  useEffect(() => {
+    const CustomControl = L.Control.extend({
+      options: { position: 'bottomleft' },
+      onAdd: () => container,
+    });
+    const ctrl = new CustomControl();
+    ctrl.addTo(map);
+    L.DomEvent.disableClickPropagation(container);
+    L.DomEvent.disableScrollPropagation(container);
+    const parent = container.parentElement; // .leaflet-bottom.leaflet-left
+    if (parent) {
+      parent.style.left = '50%';
+      parent.style.transform = 'translateX(-50%)';
+    }
+    return () => ctrl.remove();
+  }, [map, container]);
+
+  return createPortal(
+    visible ? (
+      <button
+        onClick={onClick}
+        style={{
+          background: theme.mode === 'dark' ? 'rgba(13,43,94,0.95)' : 'rgba(255,255,255,0.95)',
+          color: theme.gold,
+          border: `1px solid ${theme.gold}`,
+          borderRadius: '20px',
+          padding: '8px 16px',
+          fontSize: '12px',
+          fontWeight: 600,
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        &#x1F50D; Search this area
+      </button>
+    ) : null,
+    container
+  );
+}
+
 export default function StationMap({
   stations,
   center,
@@ -122,6 +174,9 @@ export default function StationMap({
           <MapUpdater center={mapCenter} routePoints={routePoints} />
           {mapActive && onSearchArea && (
             <MapMoveDetector onMoved={handleMapMoved} originalCenter={mapCenter} />
+          )}
+          {onSearchArea && (
+            <SearchAreaControl visible={showSearchBtn} onClick={handleSearchArea} theme={theme} />
           )}
 
           {/* User location marker */}
@@ -214,30 +269,6 @@ export default function StationMap({
             );
           })}
         </MapContainer>
-        {/* Search this area button */}
-        {showSearchBtn && (
-          <button
-            onClick={handleSearchArea}
-            style={{
-              position: 'absolute',
-              top: 12,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1000,
-              background: theme.mode === 'dark' ? 'rgba(13,43,94,0.95)' : 'rgba(255,255,255,0.95)',
-              color: theme.gold,
-              border: `1px solid ${theme.gold}`,
-              borderRadius: '20px',
-              padding: '8px 16px',
-              fontSize: '12px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-            }}
-          >
-            &#x1F50D; Search this area
-          </button>
-        )}
         </>
       )}
     </TouchableMap>
