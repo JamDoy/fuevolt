@@ -225,7 +225,7 @@ const FAQ_ENTRIES = [
   { q: 'How does the EV battery forecast work?', a: 'The EV battery forecast uses your vehicle\'s battery capacity, current charge level, and energy consumption rate to estimate your battery level at the destination. It suggests optimal charging stops if your battery will not last the full trip.' },
   { q: 'Does FueVolt work on mobile phones?', a: 'Yes. FueVolt is a Progressive Web App (PWA) designed to work on any device with a web browser — smartphones, tablets, and desktops. On mobile, you can add FueVolt to your home screen for quick access.' },
   { q: 'Does FueVolt track my location?', a: 'FueVolt only accesses your location if you grant permission, and it is used solely to find nearby fuel stations and EV chargers. Your location data is never stored, sold, or shared with third parties.' },
-  { q: 'How can I contact FueVolt?', a: 'You can reach us by email at contact@fuevolt.com. We welcome feedback, feature suggestions, and bug reports.' },
+  { q: 'How can I contact FueVolt?', a: 'You can reach us through our Contact page. We welcome feedback, feature suggestions, and bug reports.' },
   { q: 'What is the fuel price cycle?', a: 'In many Australian cities, fuel prices follow a predictable pattern — rising sharply over a day or two, then gradually falling over one to three weeks. Filling up at the bottom of the cycle can save you 10-30 cents per litre.' },
   { q: 'Can I save favourite fuel stations?', a: 'Yes. Tap the star icon on any fuel station card to save it as a favourite. Your favourites are stored locally on your device and appear at the top of search results for quick access.' },
   { q: 'How does the EV vs Fuel calculator work?', a: 'Enter your weekly fuel spend or driving distance, and the calculator estimates your potential savings by switching to an electric vehicle. It compares fuel costs against electricity costs based on current Australian energy prices.' },
@@ -299,7 +299,7 @@ function generatePage({ urlPath, title, description, h1, content }) {
         ${content}
         <footer style="margin-top:32px;padding-top:16px;border-top:1px solid #E5E7EB;font-size:0.85rem;color:#9CA3AF">
           <p>&copy; 2026 FueVolt — Australian EV &amp; Fuel Price Finder</p>
-          <p style="margin-top:8px"><a href="/about">About</a> · <a href="/faq">FAQ</a> · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/guides">Guides</a></p>
+          <p style="margin-top:8px"><a href="/about">About</a> · <a href="/faq">FAQ</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/guides">Guides</a></p>
         </footer>
       </div>`;
 
@@ -467,9 +467,21 @@ writePage('/about', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Fuel price coverage: New South Wales, Victoria, Queensland, and Western Australia. EV charging data covers all of Australia. We are working to expand fuel price coverage to South Australia, Tasmania, the Northern Territory, and the ACT.</p>
         <h2 style="font-size:1.3rem;margin:20px 0 12px">Independent</h2>
         <p style="font-size:0.9rem;color:#4B5563">FueVolt is an independent service and not affiliated with any fuel company, petrol station chain, or EV charging network. We provide unbiased information to help Australians make informed decisions.</p>
-        <p style="margin-top:16px"><strong>Contact:</strong> <a href="mailto:contact@fuevolt.com">contact@fuevolt.com</a></p>`,
+        <p style="margin-top:16px"><strong>Contact:</strong> Have feedback or a question? Use our <a href="/contact">contact form</a> to get in touch.</p>`,
 }));
 sitemapUrls.push('/about');
+
+// Contact
+writePage('/contact', generatePage({
+  urlPath: '/contact',
+  title: 'Contact & Feedback — FueVolt',
+  description: 'Get in touch with FueVolt. Send feedback, feature requests, or report an issue using our contact form.',
+  h1: 'Contact Us',
+  content: `
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Have feedback, a feature request, or found an issue? We would love to hear from you. Fill in the form on this page and we will take a look.</p>
+        <p style="font-size:0.9rem;color:#4B5563">Enter your name, an optional email address so we can reply, and your message. Once you submit, you will see a confirmation that your feedback has been received.</p>`,
+}));
+sitemapUrls.push('/contact');
 
 // FAQ (17 entries)
 const faqHtml = FAQ_ENTRIES.map(
@@ -485,7 +497,7 @@ writePage('/faq', generatePage({
   title: 'Frequently Asked Questions — FueVolt',
   description: 'Common questions about FueVolt — fuel prices, EV charging, trip planner, and how to save money on fuel in Australia.',
   h1: 'Frequently Asked Questions',
-  content: `<p style="font-size:0.95rem;color:#4B5563;margin-bottom:24px">Everything you need to know about using FueVolt to find cheap fuel and EV chargers in Australia.</p>${faqHtml}<p style="margin-top:24px">Still have questions? Contact us at <a href="mailto:contact@fuevolt.com">contact@fuevolt.com</a>.</p>`,
+  content: `<p style="font-size:0.95rem;color:#4B5563;margin-bottom:24px">Everything you need to know about using FueVolt to find cheap fuel and EV chargers in Australia.</p>${faqHtml}<p style="margin-top:24px">Still have questions? Use our <a href="/contact">contact form</a> to get in touch.</p>`,
 }));
 sitemapUrls.push('/faq');
 
@@ -505,7 +517,7 @@ writePage('/privacy', generatePage({
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Third-Party Services</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt uses third-party APIs and services to provide its functionality. For full details, please review the complete Privacy Policy within the application.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Contact</h2>
-        <p style="font-size:0.9rem;color:#4B5563">For privacy enquiries, email us at <a href="mailto:contact@fuevolt.com">contact@fuevolt.com</a>.</p>`,
+        <p style="font-size:0.9rem;color:#4B5563">For privacy enquiries, please use our <a href="/contact">contact form</a>.</p>`,
 }));
 sitemapUrls.push('/privacy');
 
@@ -524,7 +536,7 @@ writePage('/terms', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">While we strive for accuracy, fuel prices can change at any time. Always verify the price at the pump. FueVolt is not liable for discrepancies between displayed prices and actual prices.</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">For full Terms of Service, please review the complete terms within the application.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Contact</h2>
-        <p style="font-size:0.9rem;color:#4B5563">For enquiries, email <a href="mailto:contact@fuevolt.com">contact@fuevolt.com</a>.</p>`,
+        <p style="font-size:0.9rem;color:#4B5563">For enquiries, please use our <a href="/contact">contact form</a>.</p>`,
 }));
 sitemapUrls.push('/terms');
 
