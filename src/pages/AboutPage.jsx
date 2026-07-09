@@ -10,10 +10,10 @@ export default function AboutPage() {
       <section className="mb-8">
         <h2 className="text-lg font-semibold mb-3" style={{ color: theme.gold }}>Our Mission</h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          FueVolt was created to help Australian drivers save money on fuel and make the transition to electric vehicles easier. Whether you drive a petrol car, diesel ute, or a fully electric vehicle, FueVolt gives you the tools to find the cheapest fuel, locate EV chargers, and plan road trips — all in one place, completely free.
+          FueVolt was created to help Australian drivers save money on fuel and make the transition to electric vehicles easier. Whether you drive a petrol car, diesel ute, or a fully electric vehicle, FueVolt gives you the tools to find the cheapest fuel, locate EV chargers, and plan road trips — all in one place.
         </p>
         <p className="text-sm leading-relaxed" style={{ color: theme.textSecondary }}>
-          We believe every Australian deserves access to transparent fuel pricing and reliable EV charging information without paywalls, hidden fees, or expensive subscriptions.
+          We believe every Australian deserves access to transparent fuel pricing and reliable EV charging information.
         </p>
       </section>
 
@@ -57,12 +57,12 @@ export default function AboutPage() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-3" style={{ color: theme.gold }}>Free and Independent</h2>
+        <h2 className="text-lg font-semibold mb-3" style={{ color: theme.gold }}>Independent</h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          FueVolt is a completely free service. We are not affiliated with any fuel company, petrol station chain, or EV charging network. Our goal is to provide unbiased, accurate information to help Australians make informed decisions about fuel and electric vehicles.
+          FueVolt is an independent service. We are not affiliated with any fuel company, petrol station chain, or EV charging network. Our goal is to provide unbiased, accurate information to help Australians make informed decisions about fuel and electric vehicles.
         </p>
         <p className="text-sm leading-relaxed" style={{ color: theme.textSecondary }}>
-          The site is supported by advertising revenue, which allows us to keep the service free for all users.
+          The site is supported by advertising revenue.
         </p>
       </section>
 

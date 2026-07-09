@@ -53,7 +53,7 @@ const PAGE_META = {
   },
   about: {
     title: 'About FueVolt — Australian Fuel & EV Comparison Service',
-    description: 'Learn about FueVolt, our mission to help Australian drivers save on fuel, our free data sources, and how we compare fuel prices and EV charging stations.',
+    description: 'Learn about FueVolt, our mission to help Australian drivers save on fuel, our data sources, and how we compare fuel prices and EV charging stations.',
     path: '/about',
   },
   faq: {

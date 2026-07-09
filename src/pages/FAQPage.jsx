@@ -15,7 +15,7 @@ const FAQ_ITEMS = [
       },
       {
         q: 'Which states does FueVolt cover for fuel prices?',
-        a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. These four states have free, publicly accessible government fuel pricing APIs. We are working to add South Australia, Tasmania, the Northern Territory, and the ACT as government data sources become available.',
+        a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. These four states have publicly accessible government fuel pricing data. We are working to add South Australia, Tasmania, the Northern Territory, and the ACT as government data sources become available.',
       },
       {
         q: 'What fuel types can I compare?',
@@ -68,10 +68,6 @@ const FAQ_ITEMS = [
   {
     category: 'General',
     questions: [
-      {
-        q: 'Is FueVolt free to use?',
-        a: 'Yes, FueVolt is completely free. There are no subscriptions, premium tiers, or hidden fees. The service is supported by advertising.',
-      },
       {
         q: 'Is FueVolt affiliated with any fuel company or EV charging network?',
         a: 'No. FueVolt is an independent service not affiliated with any fuel company, petrol station chain, or EV charging network. We provide unbiased price comparisons using official government data sources.',
