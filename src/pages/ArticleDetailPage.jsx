@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { updatePageMeta } from '../utils/seo';
 
 function parseFrontmatter(text) {
   const match = text.match(/^---\n([\s\S]*?)\n---\n\n?([\s\S]*)$/);
@@ -49,25 +50,36 @@ function renderMarkdown(md) {
 }
 
 export default function ArticleDetailPage({ slug, onBack }) {
-  const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [articleState, setArticleState] = useState({ slug: null, article: null });
   const { theme } = useTheme();
+  const loading = articleState.slug !== slug;
+  const article = loading ? null : articleState.article;
 
   useEffect(() => {
-    setLoading(true);
+    let cancelled = false;
+
     fetch(`/content/articles/${slug}.md`)
       .then((r) => {
         if (!r.ok) throw new Error('Not found');
         return r.text();
       })
       .then((text) => {
-        setArticle(parseFrontmatter(text));
-        setLoading(false);
+        if (cancelled) return;
+        const parsed = parseFrontmatter(text);
+        setArticleState({ slug, article: parsed });
+        updatePageMeta('article-detail', {
+          title: `${parsed.meta.title} | FueVolt`,
+          description: parsed.meta.description,
+          url: `https://fuevolt.com/guides/${slug}`,
+        });
       })
       .catch(() => {
-        setArticle(null);
-        setLoading(false);
+        if (!cancelled) setArticleState({ slug, article: null });
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [slug]);
 
   if (loading) {

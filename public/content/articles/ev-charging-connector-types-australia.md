@@ -29,7 +29,7 @@ Tesla vehicles sold in Australia use a modified Type 2 connector that supports b
 
 ## Choosing a Charger
 
-Before plugging in, confirm your car's connector type. Most public charging apps and the FueVolt app display which connectors each station offers. If you drive a non-Tesla EV made after 2020, CCS2 and Type 2 will cover nearly every public charger in Australia.
+Before plugging in, confirm your car's connector type. Most public charging services and FueVolt display which connectors each station offers. If you drive a non-Tesla EV made after 2020, CCS2 and Type 2 will cover nearly every public charger in Australia.
 
 ## Charging Speed Tiers
 

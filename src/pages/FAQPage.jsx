@@ -19,7 +19,7 @@ const FAQ_ITEMS = [
       },
       {
         q: 'What fuel types can I compare?',
-        a: 'FueVolt lets you compare prices for E10 (ethanol blend), Unleaded 91, Premium 95, Premium 98, Diesel, and LPG. Not all fuel types are available at every station — the app shows "Not currently available" for fuel types that a particular station doesn\'t sell or hasn\'t reported a price for.',
+        a: 'FueVolt lets you compare prices for E10 (ethanol blend), Unleaded 91, Premium 95, Premium 98, Diesel, and LPG. Not all fuel types are available at every station — FueVolt shows "Not currently available" when a station does not sell a fuel type or has not reported its price.',
       },
       {
         q: 'Why does a station show "Not currently available" for some fuel types?',
@@ -36,7 +36,7 @@ const FAQ_ITEMS = [
     questions: [
       {
         q: 'Where does EV charging station data come from?',
-        a: 'FueVolt shows thousands of verified charging stations across Australia, including details about connector types, power output, and operator information.',
+        a: 'FueVolt displays charging station records from third-party charging datasets, including connector types, power output, and operator information when those details are available.',
       },
       {
         q: 'What connector types can I filter by?',
@@ -44,7 +44,7 @@ const FAQ_ITEMS = [
       },
       {
         q: 'Is the EV charging data available across all of Australia?',
-        a: 'Yes. EV charging station data covers all of Australia, including regional and remote areas. Coverage is best in metropolitan areas and along major highways.',
+        a: 'EV charging station data covers locations across Australia, including regional and remote areas. Coverage and record completeness vary, with the strongest coverage generally in metropolitan areas and along major highways.',
       },
     ],
   },
@@ -57,7 +57,7 @@ const FAQ_ITEMS = [
       },
       {
         q: 'How does the EV battery forecast work?',
-        a: 'The EV battery forecast uses your vehicle\'s battery capacity, current charge level, and energy consumption rate (kWh per 100km) to estimate your battery level at the destination. It factors in elevation changes, route distance, and suggests optimal charging stops if your battery won\'t last the full trip. This is an estimate — actual consumption varies based on speed, temperature, terrain, and driving style.',
+        a: 'The EV battery forecast uses the route distance plus your entered battery capacity, current charge level, and energy consumption rate (kWh per 100km) to estimate energy use and remaining charge. Suggested stops are based on your entered range and nearby charger data. It is an estimate and does not model temperature, terrain, speed, towing, or driving style.',
       },
       {
         q: 'Can I use the trip planner for both fuel and electric vehicles?',
@@ -74,7 +74,7 @@ const FAQ_ITEMS = [
       },
       {
         q: 'Does FueVolt work on mobile phones?',
-        a: 'Yes. FueVolt is a Progressive Web App (PWA) designed to work on any device with a web browser — smartphones, tablets, and desktops. On mobile, you can add FueVolt to your home screen for quick access. FueVolt is also available as an Android app.',
+        a: 'Yes. FueVolt is a Progressive Web App (PWA) designed to work on devices with a web browser. On mobile, you can add FueVolt to your home screen for quick access.',
       },
       {
         q: 'Does FueVolt track my location?',
@@ -83,6 +83,18 @@ const FAQ_ITEMS = [
       {
         q: 'How can I contact FueVolt?',
         a: 'You can reach us through our Contact page. We welcome feedback, feature suggestions, and bug reports.',
+      },
+      {
+        q: 'What is the fuel price cycle?',
+        a: 'In many Australian cities, fuel prices rise sharply and then gradually fall over the following days or weeks. Comparing current station prices can help you avoid paying more than nearby alternatives, but cycle timing varies and cannot be predicted with certainty.',
+      },
+      {
+        q: 'Can I save favourite stations?',
+        a: 'Yes. Tap the star icon on a fuel station or EV charger card to save it as a favourite. Favourites are stored locally in the same browser on your device, and the star remains highlighted when you revisit that station.',
+      },
+      {
+        q: 'How does the EV vs Fuel calculator work?',
+        a: 'The basic calculator uses your weekly fuel spend and a disclosed indicative assumption. The advanced calculator uses your weekly distance, vehicle type, fuel price, electricity prices, and home-versus-public charging split. Results are estimates; default prices are indicative rather than live.',
       },
     ],
   },

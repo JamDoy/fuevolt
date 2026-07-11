@@ -23,7 +23,7 @@ A car rated at 500 km WLTP range might achieve 400 to 450 km in summer highway d
 
 ## Australia's Charging Network
 
-Australia's public charging network has grown rapidly. As of 2025, there are over 5,000 public charging locations across the country, including hundreds of DC fast chargers along major highways. The NRMA, Chargefox, Evie Networks and Tesla Supercharger networks cover the east coast comprehensively, with expanding coverage in WA, SA and Tasmania.
+Australia's public charging network continues to grow, with DC fast chargers available along many major highways. Networks operated by the NRMA, Chargefox, Evie Networks and Tesla serve locations across the east coast, with coverage also expanding in WA, SA and Tasmania.
 
 Key highway routes — Sydney to Melbourne, Sydney to Brisbane, Melbourne to Adelaide, Brisbane to Cairns — now have DC fast chargers spaced every 100 to 200 kilometres, well within the range of any modern EV.
 

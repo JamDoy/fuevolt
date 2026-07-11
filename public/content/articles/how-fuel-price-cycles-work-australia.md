@@ -21,11 +21,11 @@ The ACCC has noted that the sharp increases tend to happen mid-week in Sydney (o
 
 ## How to Buy at the Bottom of the Cycle
 
-The cheapest time to buy fuel is just before the next sharp price increase — the bottom of the cycle. Monitoring tools like the FueVolt app, which pulls real-time government price data, help you spot when prices are near their lowest point in your area.
+The cheapest time to buy fuel is just before the next sharp price increase — the bottom of the cycle. Monitoring tools like FueVolt, which pulls real-time government price data, help you spot when prices are near their lowest point in your area.
 
 Here are practical tips:
 
-1. Check prices daily using FueVolt or a similar app. If prices have been falling for several days and are near the recent low, fill up soon.
+1. Check prices daily using FueVolt or a similar service. If prices have been falling for several days and are near the recent low, fill up soon.
 2. Avoid buying on the day of a price spike. If you see prices jump 15 or more cents overnight, wait a day or two for the decline to begin.
 3. Fill up fully at the bottom. Rather than putting in 20 dollars, fill your tank completely when prices are low to maximise savings.
 4. Compare stations. Even within a cycle, prices vary between stations by 10 cents or more. The cheapest station in your suburb might save you five to eight dollars per tank.

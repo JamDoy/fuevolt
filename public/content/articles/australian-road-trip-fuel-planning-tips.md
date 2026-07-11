@@ -9,7 +9,7 @@ Australia is a country built for road trips. From the Great Ocean Road to the Pa
 
 ## Plan Your Fuel Stops Before You Leave
 
-The single most effective way to save money on fuel during a road trip is to plan your fill-up locations in advance. Use the FueVolt app or similar tools to check prices along your route before departure. Identify the cheapest towns and plan to fill up there rather than wherever your tank happens to run low.
+The single most effective way to save money on fuel during a road trip is to plan your fill-up locations in advance. Use FueVolt or similar tools to check prices along your route before departure. Identify the cheapest towns and plan to fill up there rather than wherever your tank happens to run low.
 
 In general, fuel is cheapest in large regional centres like Dubbo, Toowoomba, Ballarat or Geraldton. It is most expensive in very small towns between major centres and at highway service stations near capital cities.
 
@@ -23,7 +23,7 @@ On routes like the Stuart Highway through central Australia or the road from Per
 
 ## Drive Efficiently
 
-At highway speeds, aerodynamic drag increases with the square of velocity. Dropping from 120 km/h to 110 km/h can improve fuel economy by 10 to 15 per cent. On a 2,000 kilometre trip in a car that uses 8 litres per 100 km, that speed reduction saves roughly 25 litres — about $42 at current prices.
+At highway speeds, aerodynamic drag increases with the square of velocity. Dropping from 110 km/h to 100 km/h can improve fuel economy by 10 to 15 per cent. On a 2,000 kilometre trip in a car that uses 8 litres per 100 km, that speed reduction saves roughly 25 litres — about $42 at current prices.
 
 Other efficiency tips include maintaining correct tyre pressure (under-inflated tyres increase rolling resistance), removing roof racks or cargo boxes when not needed, using cruise control on flat highways, and avoiding sudden acceleration and braking.
 

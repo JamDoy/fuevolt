@@ -9,7 +9,7 @@ Choosing between petrol, diesel and electric is one of the biggest decisions Aus
 
 ## Fuel and Energy Costs
 
-The most visible running cost is what you spend at the pump or charger. As of 2025, average Australian prices sit around 170 cents per litre for unleaded 91, 190 cents for diesel, and roughly 30 to 45 cents per kilowatt-hour for public EV charging. Home EV charging on an off-peak tariff can be as low as 15 to 20 cents per kWh.
+The most visible running cost is what you spend at the pump or charger. As of 2026 (prices indicative — check FueVolt for live prices), average Australian prices sit around 170 cents per litre for unleaded 91, 190 cents for diesel, and roughly 30 to 45 cents per kilowatt-hour for public EV charging. Home EV charging on an off-peak tariff can be as low as 15 to 20 cents per kWh.
 
 For a typical mid-size sedan driving 15,000 kilometres per year:
 
@@ -29,7 +29,7 @@ Annual servicing for a petrol car averages $600 to $900. Diesel servicing is oft
 
 ## Registration and Insurance
 
-In most Australian states, EV registration costs are comparable to petrol vehicles. However, Victoria and New South Wales have introduced (or proposed) road user charges for EVs to compensate for lost fuel excise revenue. Victoria charges 2.8 cents per kilometre for EVs, adding roughly $420 per year for 15,000 km of driving.
+In most Australian states, EV registration costs are comparable to petrol vehicles. Some states have explored road user charges for EVs to offset declining fuel excise revenue, though legal challenges have affected their implementation.
 
 Insurance premiums for EVs can be higher due to the higher purchase price and specialised repair requirements. Shopping around is essential.
 

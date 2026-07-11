@@ -39,4 +39,4 @@ LPG is a mix of propane and butane stored under moderate pressure. It burns clea
 
 Always follow the minimum octane rating specified by your vehicle manufacturer. Using a higher octane than required will not damage your engine but usually provides no measurable benefit in a standard car. Using a lower octane than required can cause knocking, reduced power and potential engine damage over time.
 
-Check the fuel flap, owner's manual or the FueVolt app to confirm your car's requirements before filling up.
+Check the fuel flap or owner's manual to confirm your car's requirements before filling up.
