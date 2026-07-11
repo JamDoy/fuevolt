@@ -211,24 +211,27 @@ const EV_CITY_INTROS = {
   newcastle: 'Newcastle and the Hunter Valley have a solid EV charging network, with chargers at shopping centres, along the Pacific Highway, and throughout the city. The region\'s growing EV community is driving continued expansion.',
 };
 
-// ── FAQ data (17+ entries) ──────────────────────────────────────────────
+// ── FAQ data (19 entries) ───────────────────────────────────────────────
 const FAQ_ENTRIES = [
   { q: 'Where does FueVolt get its fuel prices?', a: 'FueVolt pulls real-time fuel prices directly from official Australian government sources. Prices are updated throughout the day as fuel stations report changes.' },
   { q: 'How often are fuel prices updated?', a: 'Fuel prices are updated in real-time as they change throughout the day. Each state has different update frequencies — some update multiple times daily as stations report changes, while others update daily.' },
-  { q: 'Which states does FueVolt cover for fuel prices?', a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. We are working to add South Australia, Tasmania, the Northern Territory, and the ACT.' },
+  { q: 'Which states does FueVolt cover for fuel prices?', a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. We are working to add South Australia, Tasmania, the Northern Territory, and the ACT as government data sources become available.' },
   { q: 'What fuel types can I compare?', a: 'FueVolt lets you compare prices for E10 (ethanol blend), Unleaded 91, Premium 95, Premium 98, Diesel, and LPG. Not all fuel types are available at every station.' },
   { q: 'Why does a station show "Not currently available" for some fuel types?', a: 'This means a price has not been reported for that fuel type at that station. The station may not sell that fuel type, or the price has not been reported yet.' },
-  { q: 'Are the fuel prices accurate?', a: 'FueVolt displays prices exactly as reported by official government sources. Stations are required by law to report their prices in most states. There can be occasional short delays between when a station changes its price and when the data updates.' },
-  { q: 'What connector types can I filter by?', a: 'FueVolt supports filtering by Type 2 (most common for AC charging), CCS2 (Combined Charging System for DC fast charging), CHAdeMO (older DC fast charging standard), and Tesla connectors. You can also filter by charging speed.' },
-  { q: 'Is the EV charging data available across all of Australia?', a: 'Yes. EV charging station data covers all of Australia, including regional and remote areas. Coverage is best in metropolitan areas and along major highways.' },
-  { q: 'How does the trip planner work?', a: 'Enter your start and end destinations, and FueVolt calculates the best route. The planner shows total distance, estimated drive time, and finds fuel stations or EV chargers along your route. For EVs, it includes battery forecasting and recommended charging stops.' },
-  { q: 'How does the EV battery forecast work?', a: 'The EV battery forecast uses your vehicle\'s battery capacity, current charge level, and energy consumption rate to estimate your battery level at the destination. It suggests optimal charging stops if your battery will not last the full trip.' },
-  { q: 'Does FueVolt work on mobile phones?', a: 'Yes. FueVolt is a Progressive Web App (PWA) designed to work on any device with a web browser — smartphones, tablets, and desktops. On mobile, you can add FueVolt to your home screen for quick access.' },
-  { q: 'Does FueVolt track my location?', a: 'FueVolt only accesses your location if you grant permission, and it is used solely to find nearby fuel stations and EV chargers. Your location data is never stored, sold, or shared with third parties.' },
+  { q: 'Are the fuel prices accurate?', a: 'FueVolt displays prices exactly as reported by official government sources. There can be occasional delays between when a station changes its price and when the data updates, so verify the pump price before purchasing.' },
+  { q: 'Where does EV charging station data come from?', a: 'FueVolt displays charging station records from third-party charging datasets, including connector types, power output, and operator information when those details are available.' },
+  { q: 'What connector types can I filter by?', a: 'FueVolt supports filtering by Type 2, CCS2, CHAdeMO, and Tesla connectors. You can also filter by charging speed.' },
+  { q: 'Is the EV charging data available across all of Australia?', a: 'EV charging station data covers locations across Australia, including regional and remote areas. Coverage and record completeness vary, with the strongest coverage generally in metropolitan areas and along major highways.' },
+  { q: 'How does the trip planner work?', a: 'Enter your start and end destinations, and FueVolt calculates a route. The planner shows total distance, estimated drive time, and searches for fuel stations or EV chargers along the route.' },
+  { q: 'How does the EV battery forecast work?', a: 'The EV battery forecast uses the route distance plus your entered battery capacity, current charge level, and energy consumption rate to estimate energy use and remaining charge. Suggested stops are based on your entered range and nearby charger data. It does not model temperature, terrain, speed, towing, or driving style.' },
+  { q: 'Can I use the trip planner for both fuel and electric vehicles?', a: 'Yes. Fuel mode searches for petrol stations along the route. Electric Vehicle mode searches for charging stations and provides estimated battery usage and suggested stops based on the range you enter.' },
+  { q: 'Is FueVolt affiliated with any fuel company or EV charging network?', a: 'No. FueVolt is an independent service and is not affiliated with a fuel company, petrol station chain, or EV charging network.' },
+  { q: 'Does FueVolt work on mobile phones?', a: 'Yes. FueVolt is a Progressive Web App (PWA) designed to work on devices with a web browser. On mobile, you can add FueVolt to your home screen for quick access.' },
+  { q: 'Does FueVolt track my location?', a: 'FueVolt only accesses your location if you grant permission, and it is used to find nearby fuel stations and EV chargers. You can search by suburb or postcode instead of sharing your location.' },
   { q: 'How can I contact FueVolt?', a: 'You can reach us through our Contact page. We welcome feedback, feature suggestions, and bug reports.' },
-  { q: 'What is the fuel price cycle?', a: 'In many Australian cities, fuel prices follow a predictable pattern — rising sharply over a day or two, then gradually falling over one to three weeks. Filling up at the bottom of the cycle can save you 10-30 cents per litre.' },
-  { q: 'Can I save favourite fuel stations?', a: 'Yes. Tap the star icon on any fuel station card to save it as a favourite. Your favourites are stored locally on your device and appear at the top of search results for quick access.' },
-  { q: 'How does the EV vs Fuel calculator work?', a: 'Enter your weekly fuel spend or driving distance, and the calculator estimates your potential savings by switching to an electric vehicle. It compares fuel costs against electricity costs based on current Australian energy prices.' },
+  { q: 'What is the fuel price cycle?', a: 'In many Australian cities, fuel prices rise sharply and then gradually fall over the following days or weeks. Comparing current station prices can help you avoid paying more than nearby alternatives, but cycle timing varies and cannot be predicted with certainty.' },
+  { q: 'Can I save favourite stations?', a: 'Yes. Tap the star icon on a fuel station or EV charger card to save it as a favourite. Favourites are stored locally in the same browser on your device, and the star remains highlighted when you revisit that station.' },
+  { q: 'How does the EV vs Fuel calculator work?', a: 'The basic calculator uses your weekly fuel spend and a disclosed indicative assumption. The advanced calculator uses your weekly distance, vehicle type, fuel price, electricity prices, and home-versus-public charging split. Results are estimates; default prices are indicative rather than live.' },
 ];
 
 // ── AdSense in-article ad unit ──────────────────────────────────────────
@@ -272,10 +275,12 @@ function generatePage({ urlPath, title, description, h1, content }) {
     `<meta name="description" content="${escAttr(description)}" />`
   );
 
-  // Replace OG meta
+  // Replace social metadata
   html = html.replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${escAttr(title)}" />`);
   html = html.replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${escAttr(description)}" />`);
   html = html.replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${BASE_URL}${urlPath}" />`);
+  html = html.replace(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="${escAttr(title)}" />`);
+  html = html.replace(/<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="${escAttr(description)}" />`);
 
   // Replace the seo-fallback content
   const seoStart = html.indexOf('<div id="seo-fallback"');
@@ -430,7 +435,7 @@ for (const city of EV_CITIES) {
           <li>Type 2 — most common AC connector in Australia, used for destination and home charging (up to 22kW)</li>
           <li>CCS2 (Combined Charging System) — the standard for DC fast charging (50kW to 350kW)</li>
           <li>CHAdeMO — older DC fast charging standard, used by Nissan Leaf and some Mitsubishi models</li>
-          <li>Tesla — Tesla\'s proprietary connector, available at Tesla Supercharger and Destination locations</li>
+          <li>Tesla — Tesla's proprietary connector, available at Tesla Supercharger and Destination locations</li>
         </ul>
         <h2 style="font-size:1.3rem;margin-bottom:12px">Charging Speeds</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Filter ${escHtml(city.name)} chargers by speed: <strong>Slow</strong> (up to 7kW, ideal for overnight charging), <strong>Fast</strong> (7-50kW, adds range in 1-2 hours), or <strong>Ultra-Rapid</strong> (50kW+, 80% charge in 20-40 minutes).</p>
@@ -461,7 +466,7 @@ writePage('/about', generatePage({
         <h2 style="font-size:1.3rem;margin-bottom:12px">What We Do</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Real-Time Fuel Prices:</strong> Live fuel prices updated throughout the day from official Australian government sources. Compare E10, Unleaded 91, Premium 95, Premium 98, Diesel, and LPG across thousands of stations.</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>EV Charging Finder:</strong> Find thousands of EV charging stations across all of Australia. Filter by connector type (Type 2, CCS2, CHAdeMO, Tesla) and charging speed (slow, fast, ultra-rapid).</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Trip Planner:</strong> Plan road trips with fuel stops and EV chargers along your route. For electric vehicles, get battery forecasts and recommended charging stops based on your vehicle\'s range.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Trip Planner:</strong> Plan road trips with fuel stops and EV chargers along your route. For electric vehicles, get battery forecasts and recommended charging stops based on your vehicle's range.</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>EV vs Fuel Calculator:</strong> Estimate how much you could save by switching to an electric vehicle based on your driving habits and electricity costs.</p>
         <h2 style="font-size:1.3rem;margin:20px 0 12px">Coverage</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Fuel price coverage: New South Wales, Victoria, Queensland, and Western Australia. EV charging data covers all of Australia. We are working to expand fuel price coverage to South Australia, Tasmania, the Northern Territory, and the ACT.</p>
@@ -483,7 +488,7 @@ writePage('/contact', generatePage({
 }));
 sitemapUrls.push('/contact');
 
-// FAQ (17 entries)
+// FAQ (19 entries)
 const faqHtml = FAQ_ENTRIES.map(
   (faq) =>
     `<div style="margin-bottom:12px;padding:12px 16px;border:1px solid #E5E7EB;border-radius:8px">
@@ -515,7 +520,7 @@ writePage('/privacy', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Usage Data:</strong> Anonymous analytics to improve the service. No personal accounts or login required.</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Local Storage:</strong> Favourites, preferences, and geofence alerts stored locally on your device only.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Third-Party Services</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt uses third-party APIs and services to provide its functionality. For full details, please review the complete Privacy Policy within the application.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt uses third-party APIs and services to provide its functionality. For full details, please review the complete Privacy Policy on this page.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Contact</h2>
         <p style="font-size:0.9rem;color:#4B5563">For privacy enquiries, please use our <a href="/contact">contact form</a>.</p>`,
 }));
@@ -534,7 +539,7 @@ writePage('/terms', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt provides fuel price data from official Australian government sources and EV charging station data. Prices and station information are provided as-is and may not reflect real-time conditions at every station.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Accuracy Disclaimer</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">While we strive for accuracy, fuel prices can change at any time. Always verify the price at the pump. FueVolt is not liable for discrepancies between displayed prices and actual prices.</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">For full Terms of Service, please review the complete terms within the application.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">For full Terms of Service, please review the complete terms on this page.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Contact</h2>
         <p style="font-size:0.9rem;color:#4B5563">For enquiries, please use our <a href="/contact">contact form</a>.</p>`,
 }));
@@ -544,7 +549,7 @@ sitemapUrls.push('/terms');
 writePage('/fuel-prices', generatePage({
   urlPath: '/fuel-prices',
   title: 'Fuel Prices Near Me — Compare Petrol, Diesel & LPG | FueVolt',
-  description: 'Compare real-time petrol, diesel, E10, U95, U98 and LPG prices from official Australian government sources. Find the cheapest fuel station near you.',
+  description: 'Compare real-time E10, U91, U95, U98, diesel and LPG prices from official Australian government sources. Find the cheapest fuel station near you.',
   h1: 'Compare Fuel Prices Across Australia',
   content: `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location. FueVolt compares real-time fuel prices from official government sources across NSW, VIC, QLD, and WA.</p>
@@ -560,7 +565,7 @@ writePage('/ev-charging', generatePage({
   description: 'Locate EV charging stations across Australia. Filter by connector type (Type 2, CCS, CHAdeMO, Tesla) and charging speed.',
   h1: 'EV Charging Stations Across Australia',
   content: `
-        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Find EV charging stations near you. Filter by connector type and charging speed. FueVolt shows thousands of verified charging stations across all of Australia.</p>
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Find EV charging stations near you. Filter by connector type and charging speed. Coverage and record completeness vary by location.</p>
         <h2 style="font-size:1.3rem;margin-bottom:12px">EV Chargers by City</h2>
         <ul style="padding-left:20px;line-height:2.2">${EV_CITIES.map(c => `<li><a href="/ev-charging/${c.slug}">${c.name} EV Chargers</a></li>`).join('')}</ul>`,
 }));
@@ -593,7 +598,7 @@ writePage('/trip-planner', generatePage({
         <ul style="padding-left:20px;line-height:2">
           <li><strong>Fuel Mode:</strong> Find petrol stations along your route with current prices</li>
           <li><strong>EV Mode:</strong> Find charging stations with battery forecast and recommended charging stops</li>
-          <li><strong>Battery Forecast:</strong> See estimated battery level at each waypoint based on your EV\'s range</li>
+          <li><strong>Battery Forecast:</strong> See estimated battery level at each waypoint based on your EV's range</li>
           <li><strong>Drive Time:</strong> Real-time drive time estimates including traffic conditions</li>
         </ul>`,
 }));

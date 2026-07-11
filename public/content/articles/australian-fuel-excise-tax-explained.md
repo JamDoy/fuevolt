@@ -9,7 +9,7 @@ Every time you fill up your car in Australia, a significant portion of what you 
 
 ## What Is Fuel Excise?
 
-Fuel excise is a flat-rate tax applied to every litre of petrol, diesel and LPG sold in Australia. As of 2025, the excise rate is approximately 50 cents per litre for petrol and diesel. LPG attracts a lower rate of around 15 cents per litre. On top of the excise, GST (10 per cent) is charged on the total price including the excise — effectively a tax on a tax.
+Fuel excise is a flat-rate tax applied to every litre of petrol, diesel and LPG sold in Australia. As of 2026 (prices indicative — check FueVolt for live prices), the excise rate is approximately 50 cents per litre for petrol and diesel. LPG attracts a lower rate of around 15 cents per litre. On top of the excise, GST (10 per cent) is charged on the total price including the excise — effectively a tax on a tax.
 
 For a litre of petrol priced at 170 cents, the breakdown is roughly: 50 cents excise, about 15 cents GST, 70 to 80 cents for the crude oil and refining cost, and 25 to 35 cents for the retailer's margin, transport and distribution.
 
@@ -21,7 +21,7 @@ The fuel excise rate is set by the federal government and indexed to the Consume
 
 Fuel excise revenue goes into the federal government's consolidated revenue — it is not hypothecated (earmarked) specifically for roads. However, the government allocates significant funding to road infrastructure through separate budget processes. In 2024-25, fuel excise raised approximately $18 billion for the federal budget.
 
-Historically, fuel excise was directly linked to road funding, but this formal link was severed in the 1950s. Today, the fuel excise is simply a general revenue measure, similar to income tax or company tax.
+Historically, fuel excise was directly linked to road funding, but the formal link was gradually severed during the latter half of the 20th century. Today, the fuel excise is simply a general revenue measure, similar to income tax or company tax.
 
 ## The 2022 Excise Cut
 
@@ -29,13 +29,13 @@ During the cost-of-living pressures of 2022, the Morrison government temporarily
 
 ## EV Road User Charges
 
-As more Australians switch to electric vehicles, fuel excise revenue is declining. EVs do not buy petrol, so they contribute nothing through this mechanism. To address this gap, Victoria introduced a road user charge for EVs at 2.8 cents per kilometre, and other states have considered similar measures.
+As more Australians switch to electric vehicles, fuel excise revenue is declining. EVs do not buy petrol, so they contribute nothing through this mechanism. Some states have explored road user charges for EVs to offset declining fuel excise revenue, though legal challenges have affected their implementation.
 
 This creates an interesting policy tension: the government wants to encourage EV adoption for environmental reasons but also needs to replace the revenue that EVs erode from fuel excise.
 
 ## International Comparison
 
-Australia's fuel excise is moderate by global standards. European countries like the UK, Germany and France levy significantly higher fuel taxes, often exceeding $1 per litre equivalent. The United States, by contrast, has very low federal and state fuel taxes, contributing to its much cheaper pump prices.
+Australia's fuel excise is moderate by global standards. Countries like Germany, France and the UK levy significantly higher fuel taxes, often exceeding $1 per litre equivalent. The United States, by contrast, has very low federal and state fuel taxes, contributing to its much cheaper pump prices.
 
 ## Impact on Pump Prices
 

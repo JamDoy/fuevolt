@@ -113,12 +113,12 @@ export default function LandingPage({ onSelect, onArticle }) {
               Fuel Prices
             </h2>
             <p className="text-sm mb-6" style={{ color: theme.textSecondary }}>
-              Compare real-time petrol & diesel prices. Find the cheapest station near you and save money every fill-up.
+              Compare E10, U91, U95, U98, diesel and LPG prices. Find the cheapest station near you and save money every fill-up.
             </p>
 
             {/* Fuel type quick-select */}
             <div className="flex flex-wrap gap-2 mb-6">
-              {['Petrol', 'Diesel', 'E10', 'LPG'].map((t) => (
+              {['E10', 'U91', 'U95', 'U98', 'Diesel', 'LPG'].map((t) => (
                 <span
                   key={t}
                   className="px-3 py-1 rounded-full text-xs font-medium"
@@ -196,7 +196,7 @@ export default function LandingPage({ onSelect, onArticle }) {
               EV Charging
             </h2>
             <p className="text-sm mb-6" style={{ color: theme.textSecondary }}>
-              Locate thousands of charging points. Filter by connector type, speed, and availability. Go electric with confidence.
+              Locate thousands of charging points. Filter by connector type and charging speed. Go electric with confidence.
             </p>
 
             {/* Connector type quick-select */}

@@ -1,15 +1,15 @@
 ---
 title: "10 Proven Tips to Save Money on Fuel in Australia"
-description: "Practical, tested strategies to reduce your fuel bill, from price comparison apps to driving techniques and vehicle maintenance."
+description: "Practical, tested strategies to reduce your fuel bill, from price comparison services to driving techniques and vehicle maintenance."
 category: "Tips"
 readTime: "6 min read"
 ---
 
 With fuel prices fluctuating constantly, Australian drivers are always looking for ways to spend less at the bowser. Here are ten proven strategies that can save you hundreds of dollars a year without changing your car or your lifestyle dramatically.
 
-## 1. Use a Price Comparison App
+## 1. Use a Price Comparison Service
 
-The simplest saving is knowing where cheap fuel is before you fill up. Apps like FueVolt pull real-time government price data from NSW, VIC, QLD and WA, showing you the cheapest station near your location or along your route. The price difference between the cheapest and most expensive station in the same suburb can be 20 cents per litre or more — that is $12 on a 60-litre tank.
+The simplest saving is knowing where cheap fuel is before you fill up. Services like FueVolt pull real-time government price data from NSW, VIC, QLD and WA, showing you the cheapest station near your location or along your route. The price difference between the cheapest and most expensive station in the same suburb can be 20 cents per litre or more — that is $12 on a 60-litre tank.
 
 ## 2. Buy at the Bottom of the Price Cycle
 
@@ -37,7 +37,7 @@ Aggressive acceleration and hard braking waste fuel. Smooth, gradual acceleratio
 
 ## 8. Use Cruise Control on Highways
 
-Maintaining a constant speed on the highway is more fuel-efficient than constantly speeding up and slowing down. Cruise control eliminates the unconscious tendency to gradually increase speed. Even dropping from 120 to 110 km/h saves roughly 10 per cent fuel on a highway trip.
+Maintaining a constant speed on the highway is more fuel-efficient than constantly speeding up and slowing down. Cruise control eliminates the unconscious tendency to gradually increase speed. Even dropping from 110 to 100 km/h saves roughly 10 per cent fuel on a highway trip.
 
 ## 9. Combine Short Trips
 

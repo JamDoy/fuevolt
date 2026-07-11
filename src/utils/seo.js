@@ -3,12 +3,12 @@ const BASE_URL = 'https://fuevolt.com';
 const PAGE_META = {
   landing: {
     title: 'FueVolt — Compare Fuel Prices & EV Charging Stations in Australia',
-    description: 'Find the cheapest petrol, diesel and LPG near you across NSW, VIC, QLD and WA. Compare EV charging stations, plan trips, and save on fuel costs with live government data.',
+    description: 'Find the cheapest petrol, diesel and LPG near you across NSW, VIC, QLD and WA. Plus EV charging stations, trip planner and fuel guides. Live government data.',
     path: '/',
   },
   fuel: {
     title: 'Fuel Prices Near Me — Compare Petrol, Diesel & LPG | FueVolt',
-    description: 'Compare real-time petrol, diesel, E10, U95, U98 and LPG prices from official NSW, VIC, QLD and WA government APIs. Sorted by price, drive time, or distance.',
+    description: 'Compare real-time E10, U91, U95, U98, diesel and LPG prices from official NSW, VIC, QLD and WA government APIs. Sorted by price, drive time, or distance.',
     path: '/fuel-prices',
   },
   ev: {
@@ -28,12 +28,12 @@ const PAGE_META = {
   },
   privacy: {
     title: 'Privacy Policy | FueVolt',
-    description: 'How FueVolt handles your data. We use government fuel APIs, TomTom maps, and Open Charge Map. No personal accounts or data collection required.',
+    description: 'How FueVolt handles your data. We use government fuel APIs, TomTom routing services, OpenStreetMap, and Open Charge Map. No personal account required.',
     path: '/privacy',
   },
   terms: {
     title: 'Terms of Service | FueVolt',
-    description: 'Terms of Service for using FueVolt — Australian fuel price comparison and EV charging station finder app.',
+    description: 'Terms of Service for using FueVolt — Australian fuel price comparison and EV charging station finder.',
     path: '/terms',
   },
   articles: {
@@ -58,7 +58,7 @@ const PAGE_META = {
   },
   faq: {
     title: 'Frequently Asked Questions — FueVolt',
-    description: 'Common questions about FueVolt fuel price comparison, EV charging station finder, data sources, coverage, and how the app works.',
+    description: 'Common questions about FueVolt fuel price comparison, EV charging station finder, data sources, coverage, and how the service works.',
     path: '/faq',
   },
   contact: {
