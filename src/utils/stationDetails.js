@@ -232,7 +232,7 @@ export async function fetchAllFuelPricesForStation(station) {
             if (matchedPrice) {
               prices[type] = {
                 price: matchedPrice.price / 100,
-                lastUpdated: matchedPrice.lastupdated || new Date().toISOString(),
+                lastUpdated: matchedPrice.lastupdated || null,
               };
             }
           }
@@ -268,7 +268,7 @@ export async function fetchAllFuelPricesForStation(station) {
             if (sp.FuelId === fuelId) {
               prices[fuelName] = {
                 price: (sp.Price / 10) / 100,
-                lastUpdated: sp.TransactionDateUtc || new Date().toISOString(),
+                lastUpdated: sp.TransactionDateUtc || null,
               };
             }
           }
@@ -300,7 +300,7 @@ export async function fetchAllFuelPricesForStation(station) {
                 if (fp.fuelType === vicCode) {
                   prices[fuelName] = {
                     price: fp.price / 100,
-                    lastUpdated: fp.updatedAt || stationEntry.updatedAt || new Date().toISOString(),
+                    lastUpdated: fp.updatedAt || stationEntry.updatedAt || null,
                   };
                 }
               }

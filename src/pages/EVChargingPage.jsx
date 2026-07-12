@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import FilterChips from '../components/FilterChips';
@@ -11,7 +11,7 @@ import EVCostEstimator from '../components/EVCostEstimator';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { reverseGeocode } from '../utils/tomtom';
-import { injectEVStationSchema } from '../utils/seo';
+import { injectEVStationSchema, POPULAR_SUBURBS } from '../utils/seo';
 
 const CONNECTOR_FILTERS = ['Type 2', 'CCS', 'CHAdeMO', 'Tesla', 'Type 1'];
 const SPEED_FILTERS = [
@@ -20,7 +20,7 @@ const SPEED_FILTERS = [
   { id: 'ultra', label: '50kW+ (Ultra-Rapid)', min: 50 },
 ];
 
-export default function EVChargingPage({ initialSuburb }) {
+export default function EVChargingPage({ initialSuburb, initialSearch }) {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,36 +29,26 @@ export default function EVChargingPage({ initialSuburb }) {
   const [detailStation, setDetailStation] = useState(null);
   const [connectorFilters, setConnectorFilters] = useState([]);
   const [speedFilters, setSpeedFilters] = useState([]);
-  const [locationName, setLocationName] = useState('');
+  const [locationName, setLocationName] = useState(initialSuburb?.name || '');
+  const [searchLabel, setSearchLabel] = useState(initialSuburb?.name || '');
+  const [searchRadius, setSearchRadius] = useState(10);
+  const [hasSearched, setHasSearched] = useState(false);
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
   const autoLocation = useAutoLocation();
 
-  // Auto-search if initialSuburb is set (from suburb-specific URL)
-  useEffect(() => {
-    if (initialSuburb?.lat && initialSuburb?.lng) {
-      doSearch(initialSuburb.lat, initialSuburb.lng);
-      setLocationName(initialSuburb.name);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Auto-search at user's location if permission already granted
-  useEffect(() => {
-    if (autoLocation && !initialSuburb && !mapCenter) {
-      doSearch(autoLocation.latitude, autoLocation.longitude);
-    }
-  }, [autoLocation]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const doSearch = useCallback(async (lat, lng) => {
+  const doSearch = async (lat, lng, radius = 10, label = '') => {
     setLoading(true);
+    setHasSearched(true);
     setError(null);
+    if (label) setSearchLabel(label);
     try {
-      const data = await fetchEVStations({ latitude: lat, longitude: lng });
+      const data = await fetchEVStations({ latitude: lat, longitude: lng, distance: radius });
       setStations(data);
       setMapCenter([lat, lng]);
 
       // Inject structured data for SEO
-      injectEVStationSchema(data, locationName || null);
+      injectEVStationSchema(data, label || null);
 
       // Reverse geocode to show suburb name
       reverseGeocode(lat, lng).then((loc) => {
@@ -70,31 +60,56 @@ export default function EVChargingPage({ initialSuburb }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  const handleSearch = useCallback(async (query) => {
+  const handleSearch = async (query) => {
     setLoading(true);
     setError(null);
+    setLocationName(query);
+    setSearchLabel(query);
     try {
       const geo = await geocodeLocation(query);
-      await doSearch(geo.latitude, geo.longitude);
+      await doSearch(geo.latitude, geo.longitude, searchRadius, query);
     } catch (err) {
       setError(err.message);
       setLoading(false);
     }
-  }, [doSearch]);
+  };
 
-  const handleUseLocation = useCallback(async () => {
+  const handleUseLocation = async () => {
     setLoading(true);
     setError(null);
+    setLocationName('your location');
+    setSearchLabel('your location');
     try {
       const pos = await getUserLocation();
-      await doSearch(pos.latitude, pos.longitude);
+      await doSearch(pos.latitude, pos.longitude, searchRadius, 'your location');
     } catch (err) {
       setError(err.message);
       setLoading(false);
     }
-  }, [doSearch]);
+  };
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      if (initialSuburb?.lat && initialSuburb?.lng) {
+        doSearch(initialSuburb.lat, initialSuburb.lng, 10, initialSuburb.name);
+      } else if (initialSearch?.query) {
+        handleSearch(initialSearch.query);
+      } else if (initialSearch?.useLocation) {
+        handleUseLocation();
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!autoLocation || initialSuburb || mapCenter || initialSearch) return undefined;
+    const timer = window.setTimeout(() => {
+      doSearch(autoLocation.latitude, autoLocation.longitude, 10, 'your location');
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [autoLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleConnector = (f) =>
     setConnectorFilters((prev) =>
@@ -136,7 +151,23 @@ export default function EVChargingPage({ initialSuburb }) {
   // Stats
   const totalPoints = filtered.reduce((sum, s) => sum + (s.NumberOfPoints || 1), 0);
   const ultraRapidCount = filtered.filter((s) => getMaxPower(s) >= 50).length;
+  const nearestCity = mapCenter
+    ? POPULAR_SUBURBS.ev.reduce((nearest, city) => {
+        const distance = Math.hypot(city.lat - mapCenter[0], city.lng - mapCenter[1]);
+        return !nearest || distance < nearest.distance ? { ...city, distance } : nearest;
+      }, null)
+    : POPULAR_SUBURBS.ev[0];
 
+  const clearFilters = () => {
+    setConnectorFilters([]);
+    setSpeedFilters([]);
+  };
+
+  const retryWithWiderRadius = () => {
+    if (!mapCenter) return;
+    setSearchRadius(30);
+    doSearch(mapCenter[0], mapCenter[1], 30, locationName || searchLabel);
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
@@ -156,6 +187,7 @@ export default function EVChargingPage({ initialSuburb }) {
         onUseLocation={handleUseLocation}
         loading={loading}
         placeholder="Search suburb, city or postcode..."
+        inputId="ev-location-search"
         accentColor={theme.green}
       />
 
@@ -233,7 +265,7 @@ export default function EVChargingPage({ initialSuburb }) {
         }}
         type="ev"
         userLocation={autoLocation}
-        onSearchArea={(lat, lng) => doSearch(lat, lng)}
+        onSearchArea={(lat, lng) => doSearch(lat, lng, searchRadius, 'this map area')}
       />
 
       {/* Results Count */}
@@ -249,17 +281,22 @@ export default function EVChargingPage({ initialSuburb }) {
         <ErrorCard
           message={error}
           onRetry={() => {
-            if (mapCenter) doSearch(mapCenter[0], mapCenter[1]);
+            if (mapCenter) doSearch(mapCenter[0], mapCenter[1], searchRadius, locationName || searchLabel);
           }}
         />
       )}
 
       {/* Loading */}
       {loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <ShimmerCard key={i} />
-          ))}
+        <div className="space-y-3" aria-live="polite">
+          <p className="text-sm font-medium text-center" style={{ color: theme.textSecondary }}>
+            Finding EV chargers near {searchLabel || locationName || 'your area'}...
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ShimmerCard key={i} />
+            ))}
+          </div>
         </div>
       )}
 
@@ -287,30 +324,44 @@ export default function EVChargingPage({ initialSuburb }) {
       )}
 
       {/* Empty state */}
-      {!loading && !error && stations.length === 0 && (
-        <div className="text-center py-16">
-          <div className="text-5xl mb-4">&#x26A1;</div>
-          <h3 className="text-lg font-semibold mb-1" style={{ color: theme.green }}>
-            Find EV chargers near you
-          </h3>
+      {!loading && !error && stations.length === 0 && !hasSearched && (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-semibold mb-1" style={{ color: theme.green }}>Find EV chargers near you</h3>
           <p className="text-sm" style={{ color: theme.textSecondary }}>
             Search for a location or use your current position to find nearby charging stations
           </p>
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
-            {['Type 2', 'CCS', 'CHAdeMO', 'Tesla'].map((c) => (
-              <span
-                key={c}
-                className="px-3 py-1 rounded-full text-xs"
-                style={{
-                  background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.06)',
-                  color: theme.green,
-                  border: `1px solid ${isDark ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
-                }}
-              >
-                {c}
-              </span>
-            ))}
+        </div>
+      )}
+
+      {!loading && !error && stations.length === 0 && hasSearched && (
+        <div className="rounded-2xl p-6 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+          <h3 className="text-lg font-semibold" style={{ color: theme.text }}>No charging stations found nearby</h3>
+          <p className="text-sm mt-2" style={{ color: theme.textSecondary }}>Try widening the search or choosing another suburb.</p>
+          <div className="flex flex-wrap justify-center gap-2 mt-5">
+            {searchRadius < 30 && mapCenter && (
+              <button type="button" onClick={retryWithWiderRadius} className="min-h-11 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer" style={{ background: theme.chipBg, color: theme.text, border: `1px solid ${theme.chipBorder}` }}>
+                Try a wider radius
+              </button>
+            )}
+            <button type="button" onClick={() => document.getElementById('ev-location-search')?.focus()} className="min-h-11 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer" style={{ background: theme.chipBg, color: theme.text, border: `1px solid ${theme.chipBorder}` }}>
+              Try a different suburb
+            </button>
+            {nearestCity && (
+              <a href={`/ev-charging/${nearestCity.slug}`} className="min-h-11 px-4 py-2 rounded-xl text-sm font-semibold inline-flex items-center no-underline" style={{ background: `linear-gradient(135deg, ${theme.greenDark}, ${theme.green})`, color: '#FFFFFF' }}>
+                Browse {nearestCity.name}
+              </a>
+            )}
           </div>
+        </div>
+      )}
+
+      {!loading && !error && stations.length > 0 && filtered.length === 0 && (
+        <div className="rounded-2xl p-6 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+          <h3 className="text-lg font-semibold" style={{ color: theme.text }}>No chargers match those filters</h3>
+          <p className="text-sm mt-2" style={{ color: theme.textSecondary }}>Clear the connector or speed filters to see nearby options.</p>
+          <button type="button" onClick={clearFilters} className="min-h-11 px-5 py-2 mt-4 rounded-xl text-sm font-bold cursor-pointer" style={{ background: `linear-gradient(135deg, ${theme.greenDark}, ${theme.green})`, color: '#FFFFFF', border: 'none' }}>
+            Clear filters
+          </button>
         </div>
       )}
 

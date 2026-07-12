@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import LatestNews from '../components/LatestNews';
+import SearchBar from '../components/SearchBar';
 
 const FEATURED_ARTICLES = [
   { slug: 'fuel-types-explained', title: 'Fuel Types Explained: E10, U91, U95, U98, Diesel', category: 'Fuel Guide', readTime: '6 min' },
@@ -38,28 +39,75 @@ function FeaturedArticles({ theme, isDark, onArticle }) {
   );
 }
 
-export default function LandingPage({ onSelect, onArticle }) {
+export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocation }) {
   const [hovered, setHovered] = useState(null);
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
 
   return (
-    <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center px-4 py-12">
-      {/* Hero */}
-      <div className="text-center mb-10 animate-fade-in">
-        <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-3">
-          <span style={{ color: theme.text }}>Find the </span>
-          <span style={{ color: theme.gold }}>cheapest fuel</span>
-          <span style={{ color: theme.text }}> & </span>
-          <span style={{ color: theme.green }}>charge</span>
-        </h1>
-        <p className="text-base sm:text-lg max-w-lg mx-auto" style={{ color: theme.textSecondary }}>
-          Compare real-time fuel prices and locate EV charging stations across Australia
-        </p>
-        <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: theme.textMuted }}>
-          Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location
-        </p>
-      </div>
+    <div className="min-h-[calc(100vh-80px)] flex flex-col items-center px-4 pb-12">
+      <section className="w-full max-w-4xl min-h-[calc(100svh-8rem)] md:min-h-0 flex flex-col justify-center md:pt-12 md:pb-8 animate-fade-in">
+        <div className="hidden md:block text-center mb-8">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-3">
+            <span style={{ color: theme.text }}>Find the </span>
+            <span style={{ color: theme.gold }}>cheapest fuel</span>
+            <span style={{ color: theme.text }}> & </span>
+            <span style={{ color: theme.green }}>charge</span>
+          </h1>
+          <p className="text-base sm:text-lg max-w-lg mx-auto" style={{ color: theme.textSecondary }}>
+            Compare real-time fuel prices and locate EV charging stations across Australia
+          </p>
+          <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: theme.textMuted }}>
+            Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location
+          </p>
+        </div>
+        <SearchBar
+          onSearch={onSearch}
+          onUseLocation={onUseLocation}
+          loading={false}
+          prominent
+          inputId="home-location-search"
+          placeholder="Search suburb, city or postcode"
+        />
+      </section>
+
+      <section className="w-full max-w-4xl pb-10" aria-labelledby="how-it-works-title">
+        <h2 id="how-it-works-title" className="text-lg font-bold text-center mb-5" style={{ color: theme.text }}>
+          How it works
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            { title: 'Enter your suburb or tap Use My Location', icon: 'search' },
+            { title: 'See live prices from official government sources', icon: 'prices' },
+            { title: 'Drive to the cheapest servo and save', icon: 'drive' },
+          ].map((step, index) => (
+            <div
+              key={step.title}
+              className="rounded-2xl p-4 flex sm:flex-col items-center sm:text-center gap-3"
+              style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
+            >
+              <span
+                className="w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center"
+                style={{ background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)', color: theme.gold }}
+              >
+                {step.icon === 'search' && (
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="10" cy="10" r="6" /><path d="m15 15 5 5" /></svg>
+                )}
+                {step.icon === 'prices' && (
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M4 19V9m6 10V5m6 14v-7m4 7H2" /></svg>
+                )}
+                {step.icon === 'drive' && (
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m5 16 1-5 2-4h8l2 4 1 5" /><path d="M4 16h16v4h-3v-2H7v2H4v-4Z" /><circle cx="8" cy="14" r="1" fill="currentColor" /><circle cx="16" cy="14" r="1" fill="currentColor" /></svg>
+                )}
+              </span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wide mb-1" style={{ color: theme.gold }}>Step {index + 1}</p>
+                <p className="text-sm font-semibold leading-snug" style={{ color: theme.text }}>{step.title}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* 50/50 Split — Fuel vs EV */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl animate-slide-up">

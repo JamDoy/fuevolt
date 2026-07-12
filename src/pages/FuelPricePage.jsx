@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import StationMap from '../components/StationMap';
@@ -9,7 +9,8 @@ import SavingsCalculator from '../components/SavingsCalculator';
 import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
-import { injectFuelStationSchema } from '../utils/seo';
+import { injectFuelStationSchema, POPULAR_SUBURBS } from '../utils/seo';
+import { getPriceContext, getPriceFreshness } from '../utils/priceFreshness';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -42,7 +43,14 @@ const CITY_DESCRIPTIONS = {
   parramatta: 'Parramatta and Western Sydney have real-time government fuel pricing. Find the cheapest petrol in one of Sydney\'s busiest commuter regions.',
 };
 
-export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail, onSwitchToEV, initialSuburb }) {
+export default function FuelPricePage({
+  initialFuelType = 'U91',
+  preferredFuelType,
+  initialSearch,
+  onStationDetail,
+  onSwitchToEV,
+  initialSuburb,
+}) {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -51,33 +59,24 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
   const [fuelType, setFuelType] = useState(initialFuelType);
   const [searchCoords, setSearchCoords] = useState(null);
   const [sortBy, setSortBy] = useState('price');
-  const [locationName, setLocationName] = useState('');
+  const [locationName, setLocationName] = useState(initialSuburb?.name || '');
+  const [searchLabel, setSearchLabel] = useState(initialSuburb?.name || '');
+  const [searchRadius, setSearchRadius] = useState(10);
+  const [hasSearched, setHasSearched] = useState(false);
   const { theme } = useTheme();
   const autoLocation = useAutoLocation();
 
-  // Auto-search if initialSuburb is set (from suburb-specific URL)
-  useEffect(() => {
-    if (initialSuburb?.lat && initialSuburb?.lng) {
-      doSearch(initialSuburb.lat, initialSuburb.lng, fuelType);
-      setLocationName(initialSuburb.name);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Auto-search at user's location if permission already granted
-  useEffect(() => {
-    if (autoLocation && !initialSuburb && !mapCenter) {
-      doSearch(autoLocation.latitude, autoLocation.longitude, fuelType);
-    }
-  }, [autoLocation]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const doSearch = useCallback(async (lat, lng, type) => {
+  const doSearch = async (lat, lng, type, radius = 10, label = '') => {
     setLoading(true);
+    setHasSearched(true);
     setError(null);
+    if (label) setSearchLabel(label);
     try {
       const data = await fetchFuelPrices({
         latitude: lat,
         longitude: lng,
         fuelType: type,
+        radius,
       });
       setStations(data);
       setMapCenter([lat, lng]);
@@ -85,7 +84,7 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
       geocodeStationAddresses(data, (updated) => setStations(updated));
 
       // Inject structured data for SEO
-      injectFuelStationSchema(data, locationName || null);
+      injectFuelStationSchema(data, label || null);
 
       // Reverse geocode to show suburb name
       reverseGeocode(lat, lng).then((loc) => {
@@ -109,38 +108,69 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  const handleSearch = useCallback(async (query) => {
+  const handleSearch = async (query) => {
     setLoading(true);
     setError(null);
+    setLocationName(query);
+    setSearchLabel(query);
     try {
       const geo = await geocodeLocation(query);
-      await doSearch(geo.latitude, geo.longitude, fuelType);
+      await doSearch(geo.latitude, geo.longitude, fuelType, searchRadius, query);
     } catch (err) {
       setError(err.message);
       setLoading(false);
     }
-  }, [doSearch, fuelType]);
+  };
 
-  const handleUseLocation = useCallback(async () => {
+  const handleUseLocation = async () => {
     setLoading(true);
     setError(null);
+    setLocationName('your location');
+    setSearchLabel('your location');
     try {
       const pos = await getUserLocation();
-      await doSearch(pos.latitude, pos.longitude, fuelType);
+      await doSearch(pos.latitude, pos.longitude, fuelType, searchRadius, 'your location');
     } catch (err) {
       setError(err.message);
       setLoading(false);
     }
-  }, [doSearch, fuelType]);
+  };
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      if (initialSuburb?.lat && initialSuburb?.lng) {
+        doSearch(initialSuburb.lat, initialSuburb.lng, fuelType, 10, initialSuburb.name);
+      } else if (initialSearch?.query) {
+        handleSearch(initialSearch.query);
+      } else if (initialSearch?.useLocation) {
+        handleUseLocation();
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!autoLocation || initialSuburb || mapCenter || initialSearch) return undefined;
+    const timer = window.setTimeout(() => {
+      doSearch(autoLocation.latitude, autoLocation.longitude, fuelType, searchRadius, 'your location');
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [autoLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFuelTypeChange = (type) => {
     setFuelType(type);
     if (searchCoords) {
-      doSearch(searchCoords.lat, searchCoords.lng, type);
+      doSearch(searchCoords.lat, searchCoords.lng, type, searchRadius, locationName);
     }
   };
+
+  const orderedFuelTypes = [...FUEL_TYPES].sort((a, b) => {
+    if (a.id === preferredFuelType) return -1;
+    if (b.id === preferredFuelType) return 1;
+    return 0;
+  });
 
   const pricedStations = stations.filter((s) => s.price != null);
 
@@ -170,6 +200,23 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
   const savings = cheapest && expensive
     ? ((expensive.price - cheapest.price) * 100).toFixed(1)
     : '0';
+  const cheapestFreshness = cheapest ? getPriceFreshness(cheapest.lastUpdated, cheapest.priceDate) : null;
+  const nearestCity = searchCoords
+    ? POPULAR_SUBURBS.fuel.reduce((nearest, city) => {
+        const distance = Math.hypot(city.lat - searchCoords.lat, city.lng - searchCoords.lng);
+        return !nearest || distance < nearest.distance ? { ...city, distance } : nearest;
+      }, null)
+    : POPULAR_SUBURBS.fuel[0];
+
+  const openStationDetail = (station) => {
+    onStationDetail?.({ ...station, resultAveragePrice: avgPrice });
+  };
+
+  const retryWithWiderRadius = () => {
+    if (!searchCoords) return;
+    setSearchRadius(30);
+    doSearch(searchCoords.lat, searchCoords.lng, fuelType, 30, locationName || searchLabel);
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
@@ -190,7 +237,7 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
 
       {/* Fuel Type Selector */}
       <div className="flex flex-wrap gap-2 justify-center">
-        {FUEL_TYPES.map((ft) => (
+        {orderedFuelTypes.map((ft) => (
           <button
             key={ft.id}
             onClick={() => handleFuelTypeChange(ft.id)}
@@ -221,26 +268,27 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
         onUseLocation={handleUseLocation}
         loading={loading}
         placeholder="Search suburb, city or postcode..."
+        inputId="fuel-location-search"
       />
 
       {/* Location + Sort Controls */}
       {stations.length > 0 && !loading && (
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           {locationName && (
             <p className="text-sm font-medium" style={{ color: theme.text }}>
               Showing results near <span style={{ color: theme.gold }}>{locationName}</span>
             </p>
           )}
-          <div className="flex gap-1.5 ml-auto">
+          <div className="flex gap-2 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
             {[
-              { id: 'price', label: 'Price' },
+              { id: 'price', label: 'Cheapest' },
+              { id: 'distance', label: 'Nearest' },
               { id: 'driveTime', label: 'Drive Time' },
-              { id: 'distance', label: 'Distance' },
             ].map((s) => (
               <button
                 key={s.id}
                 onClick={() => setSortBy(s.id)}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer"
+                className="min-h-11 px-4 py-2.5 rounded-full text-sm font-semibold cursor-pointer"
                 style={{
                   background: sortBy === s.id
                     ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`
@@ -261,7 +309,7 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
       {stations.length > 0 && !loading && cheapest && (
         <div
           className="rounded-2xl p-5 cursor-pointer"
-          onClick={() => onStationDetail && onStationDetail(cheapest)}
+          onClick={() => openStationDetail(cheapest)}
           style={{
             background: theme.mode === 'dark' ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.04)',
             border: `2px solid ${theme.mode === 'dark' ? 'rgba(46,204,113,0.4)' : 'rgba(39,174,96,0.3)'}`,
@@ -276,10 +324,15 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
               <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{cheapest.brand} &bull; {cheapest.distance} km away</p>
             </div>
             <div className="text-right">
-              <p className="text-3xl sm:text-4xl font-bold" style={{ color: theme.green }}>
+              <p className="text-3xl sm:text-4xl font-bold" style={{ color: theme.gold }}>
                 {(cheapest.price * 100).toFixed(1)}
                 <span className="text-sm ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
               </p>
+              <div className="mt-1 flex flex-wrap justify-end gap-1.5">
+                <PriceContextBadge context={getPriceContext(cheapest.price, avgPrice)} theme={theme} />
+                {cheapestFreshness?.isOutdated && <OutdatedBadge />}
+              </div>
+              <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{cheapestFreshness?.label}</p>
               <p className="text-xs mt-1 font-medium" style={{ color: theme.green }}>View Details &rarr;</p>
             </div>
           </div>
@@ -337,10 +390,10 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
         center={mapCenter}
         selectedStation={selectedStation}
         onStationSelect={setSelectedStation}
-        onStationDetail={onStationDetail}
+        onStationDetail={openStationDetail}
         type="fuel"
         userLocation={autoLocation}
-        onSearchArea={(lat, lng) => doSearch(lat, lng, fuelType)}
+        onSearchArea={(lat, lng) => doSearch(lat, lng, fuelType, searchRadius, 'this map area')}
       />
 
       {/* Error */}
@@ -348,17 +401,22 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
         <ErrorCard
           message={error}
           onRetry={() => {
-            if (searchCoords) doSearch(searchCoords.lat, searchCoords.lng, fuelType);
+            if (searchCoords) doSearch(searchCoords.lat, searchCoords.lng, fuelType, searchRadius, locationName || searchLabel);
           }}
         />
       )}
 
       {/* Loading */}
       {loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <ShimmerCard key={i} />
-          ))}
+        <div className="space-y-3" aria-live="polite">
+          <p className="text-sm font-medium text-center" style={{ color: theme.textSecondary }}>
+            Finding the cheapest fuel near {searchLabel || locationName || 'your area'}...
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ShimmerCard key={i} />
+            ))}
+          </div>
         </div>
       )}
 
@@ -372,8 +430,9 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
               rank={i}
               isSelected={selectedStation?.id === station.id}
               onClick={() => setSelectedStation(station)}
-              onDetail={() => onStationDetail && onStationDetail(station)}
+              onDetail={() => openStationDetail(station)}
               sortBy={sortBy}
+              averagePrice={avgPrice}
             />
           ))}
         </div>
@@ -416,15 +475,36 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
       )}
 
       {/* Empty state */}
-      {!loading && !error && stations.length === 0 && (
-        <div className="text-center py-16">
-          <div className="text-5xl mb-4">&#x26FD;</div>
-          <h3 className="text-lg font-semibold mb-1" style={{ color: theme.text }}>
-            Find cheap fuel near you
-          </h3>
+      {!loading && !error && stations.length === 0 && !hasSearched && (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-semibold mb-1" style={{ color: theme.text }}>Find cheap fuel near you</h3>
           <p className="text-sm" style={{ color: theme.textSecondary }}>
             Select a fuel type and search your location to compare prices
           </p>
+        </div>
+      )}
+
+      {!loading && !error && stations.length === 0 && hasSearched && (
+        <div className="rounded-2xl p-6 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+          <h3 className="text-lg font-semibold" style={{ color: theme.text }}>No live prices found nearby</h3>
+          <p className="text-sm mt-2" style={{ color: theme.textSecondary }}>
+            Try one of these options to keep searching.
+          </p>
+          <div className="flex flex-wrap justify-center gap-2 mt-5">
+            {searchCoords && searchRadius < 30 && (
+              <button type="button" onClick={retryWithWiderRadius} className="min-h-11 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer" style={{ background: theme.chipBg, color: theme.text, border: `1px solid ${theme.chipBorder}` }}>
+                Try a wider radius
+              </button>
+            )}
+            <button type="button" onClick={() => document.getElementById('fuel-location-search')?.focus()} className="min-h-11 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer" style={{ background: theme.chipBg, color: theme.text, border: `1px solid ${theme.chipBorder}` }}>
+              Try a different suburb
+            </button>
+            {nearestCity && (
+              <a href={`/fuel-prices/${nearestCity.slug}`} className="min-h-11 px-4 py-2 rounded-xl text-sm font-semibold inline-flex items-center no-underline" style={{ background: `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`, color: '#0D2B5E' }}>
+                Browse {nearestCity.name}
+              </a>
+            )}
+          </div>
         </div>
       )}
 
@@ -450,5 +530,29 @@ export default function FuelPricePage({ initialFuelType = 'U91', onStationDetail
         </p>
       </div>
     </div>
+  );
+}
+
+function PriceContextBadge({ context, theme }) {
+  if (!context) return null;
+  const styles = {
+    below: { label: 'Below average', background: 'rgba(39,174,96,0.14)', color: theme.green },
+    about: { label: 'About average', background: 'rgba(255,215,0,0.14)', color: theme.gold },
+    above: { label: 'Above average', background: 'rgba(231,76,60,0.14)', color: '#E74C3C' },
+  };
+  const style = styles[context];
+
+  return (
+    <span className="px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: style.background, color: style.color }}>
+      {style.label}
+    </span>
+  );
+}
+
+function OutdatedBadge() {
+  return (
+    <span className="px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
+      Price may be outdated ⚠️
+    </span>
   );
 }

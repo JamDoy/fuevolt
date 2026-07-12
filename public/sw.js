@@ -1,8 +1,11 @@
-const CACHE_NAME = 'fuevolt-v2.7';
+const CACHE_NAME = 'fuevolt-v2.8';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/favicon.svg',
+  '/manifest.webmanifest',
+  '/icon-192.png',
+  '/icon-512.png',
 ];
 
 // Install: cache static shell
