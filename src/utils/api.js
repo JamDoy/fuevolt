@@ -84,11 +84,11 @@ export async function geocodeLocation(query) {
 // --- Fuel price cache (4 refreshes per day = every 6 hours) ---
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
 
-function getCacheKey(state, fuelType, lat, lng) {
+function getCacheKey(state, fuelType, lat, lng, radius) {
   // Snap coordinates to ~11km grid so nearby searches share the cache
   const gridLat = (Math.round(lat * 10) / 10).toFixed(1);
   const gridLng = (Math.round(lng * 10) / 10).toFixed(1);
-  return `fuevolt_fuel_${state}_${fuelType}_${gridLat}_${gridLng}`;
+  return `fuevolt_fuel_${state}_${fuelType}_${gridLat}_${gridLng}_${radius}`;
 }
 
 function getCachedPrices(key) {
@@ -152,7 +152,7 @@ const QLD_BRAND_MAP = {
   3421193: 'Reddy Express', 3421230: 'SOLO',
 };
 
-async function fetchQLDFuelPrices(latitude, longitude, fuelType) {
+async function fetchQLDFuelPrices(latitude, longitude, fuelType, radius) {
   try {
     const qldFuelId = FUEL_TYPE_MAP[fuelType]?.qld || 2;
 
@@ -200,7 +200,7 @@ async function fetchQLDFuelPrices(latitude, longitude, fuelType) {
       if (!site || !site.Lat || !site.Lng) continue;
 
       const dist = getDistance(latitude, longitude, site.Lat, site.Lng);
-      if (dist > 30) continue;
+      if (dist > radius) continue;
 
       const brand = QLD_BRAND_MAP[site.B] || 'Independent';
       const price = priceEntry.Price / 10;
@@ -215,7 +215,7 @@ async function fetchQLDFuelPrices(latitude, longitude, fuelType) {
         price: price / 100,
         priceDisplay: `${price.toFixed(1)}¢/L`,
         fuelType,
-        lastUpdated: priceEntry.TransactionDateUtc || new Date().toISOString(),
+        lastUpdated: priceEntry.TransactionDateUtc || null,
         distance: dist.toFixed(1),
         source: 'QLD Government',
       });
@@ -257,7 +257,7 @@ async function getNSWToken() {
   }
 }
 
-async function fetchNSWFuelPrices(latitude, longitude, fuelType) {
+async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius) {
   try {
     const token = await getNSWToken();
     if (!token) return null;
@@ -274,7 +274,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType) {
         fueltype: nswCode,
         latitude: latitude.toString(),
         longitude: longitude.toString(),
-        radius: '10',
+        radius: String(radius),
         sortby: 'price',
         sortascending: 'true',
       }),
@@ -302,7 +302,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType) {
         price: p.price / 100,
         priceDisplay: `${p.price.toFixed(1)}¢/L`,
         fuelType: nswCode,
-        lastUpdated: p.lastupdated || new Date().toISOString(),
+        lastUpdated: p.lastupdated || null,
         distance: station.distance || '—',
         source: 'NSW Government',
       };
@@ -316,7 +316,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType) {
 const VIC_API_BASE = 'https://api.fuel.service.vic.gov.au/open-data/v1';
 const VIC_CONSUMER_ID = '306d44cdce3e09a9a61135cbe7e5eff1';
 
-async function fetchVICFuelPrices(latitude, longitude, fuelType) {
+async function fetchVICFuelPrices(latitude, longitude, fuelType, radius) {
   try {
     const vicFuelCode = FUEL_TYPE_MAP[fuelType]?.vic || 'U91';
     const txnId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -343,7 +343,7 @@ async function fetchVICFuelPrices(latitude, longitude, fuelType) {
       if (!fuelPrice) continue;
 
       const dist = getDistance(latitude, longitude, fs.location.latitude, fs.location.longitude);
-      if (dist > 30) continue;
+      if (dist > radius) continue;
 
       stations.push({
         id: `vic-${fs.id}`,
@@ -355,7 +355,7 @@ async function fetchVICFuelPrices(latitude, longitude, fuelType) {
         price: fuelPrice.price / 100,
         priceDisplay: `${fuelPrice.price.toFixed(1)}¢/L`,
         fuelType,
-        lastUpdated: fuelPrice.updatedAt || entry.updatedAt || new Date().toISOString(),
+        lastUpdated: fuelPrice.updatedAt || entry.updatedAt || null,
         distance: dist.toFixed(1),
         source: 'VIC Government',
         openingHours: formatVICOpeningHours(fs.openingHours),
@@ -381,7 +381,7 @@ function formatVICOpeningHours(hours) {
 }
 
 // WA FuelWatch RSS feed — completely free, no auth required
-async function fetchWAFuelPrices(latitude, longitude, fuelType) {
+async function fetchWAFuelPrices(latitude, longitude, fuelType, radius) {
   try {
     const waProduct = FUEL_TYPE_MAP[fuelType]?.wa || '1';
     const url = `https://www.fuelwatch.wa.gov.au/fuelwatch/fuelWatchRSS?Product=${waProduct}&Day=today`;
@@ -408,6 +408,7 @@ async function fetchWAFuelPrices(latitude, longitude, fuelType) {
 
       if (price > 0) {
         const dist = getDistance(latitude, longitude, stationLat, stationLng);
+        if (dist > radius) return;
         stations.push({
           id: `wa-${i}`,
           name: name || `${brand} ${suburb}`,
@@ -418,7 +419,8 @@ async function fetchWAFuelPrices(latitude, longitude, fuelType) {
           price: price / 100,
           priceDisplay: `${price.toFixed(1)}¢/L`,
           fuelType,
-          lastUpdated: new Date().toISOString(),
+          lastUpdated: null,
+          priceDate: item.querySelector('date')?.textContent?.trim() || null,
           distance: dist.toFixed(1),
           source: 'WA FuelWatch',
         });
@@ -447,7 +449,7 @@ function getDistance(lat1, lng1, lat2, lng2) {
 
 export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', radius = 10 }) {
   const state = detectState(latitude, longitude);
-  const cacheKey = getCacheKey(state, fuelType, latitude, longitude);
+  const cacheKey = getCacheKey(state, fuelType, latitude, longitude, radius);
   // Check cache first — serves cached data within the 6-hour window
   const cached = getCachedPrices(cacheKey);
   if (cached) {
@@ -463,13 +465,13 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
   let results = null;
 
   if (state === 'QLD') {
-    results = await fetchQLDFuelPrices(latitude, longitude, fuelType);
+    results = await fetchQLDFuelPrices(latitude, longitude, fuelType, radius);
   } else if (state === 'VIC') {
-    results = await fetchVICFuelPrices(latitude, longitude, fuelType);
+    results = await fetchVICFuelPrices(latitude, longitude, fuelType, radius);
   } else if (state === 'WA') {
-    results = await fetchWAFuelPrices(latitude, longitude, fuelType);
+    results = await fetchWAFuelPrices(latitude, longitude, fuelType, radius);
   } else if (state === 'NSW' || state === 'TAS') {
-    results = await fetchNSWFuelPrices(latitude, longitude, fuelType);
+    results = await fetchNSWFuelPrices(latitude, longitude, fuelType, radius);
   }
 
   // Fallback: fetch real station locations from OpenStreetMap (no pricing for these states)
@@ -517,7 +519,7 @@ function getAddressCache() {
 }
 
 function setAddressCache(cache) {
-  try { localStorage.setItem(ADDR_CACHE_KEY, JSON.stringify(cache)); } catch {}
+  try { localStorage.setItem(ADDR_CACHE_KEY, JSON.stringify(cache)); } catch { /* storage unavailable */ }
 }
 
 function coordKey(lat, lng) {
@@ -625,7 +627,7 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
         price: null,
         priceDisplay: 'N/A',
         fuelType,
-        lastUpdated: new Date().toISOString(),
+        lastUpdated: null,
         distance: dist.toFixed(1),
         source: `Location only (${stateLabel} — no real-time pricing)`,
         _needsGeocode: needsGeocode,

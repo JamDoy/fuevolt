@@ -6,6 +6,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { fetchStationDetails, fetchAllFuelPricesForStation } from '../utils/stationDetails';
 import AmenityRow from '../components/AmenityRow';
 import TouchableMap from '../components/TouchableMap';
+import { getPriceContext, getPriceFreshness } from '../utils/priceFreshness';
 
 const goldPin = new L.DivIcon({
   className: 'custom-marker',
@@ -33,7 +34,9 @@ export default function FuelStationDetailPage({ station, onBack }) {
   const [allPrices, setAllPrices] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [loadingPrices, setLoadingPrices] = useState(true);
-
+  const [shareStatus, setShareStatus] = useState('');
+  const freshness = getPriceFreshness(station.lastUpdated, station.priceDate);
+  const priceContext = getPriceContext(station.price, station.resultAveragePrice);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,21 +75,58 @@ export default function FuelStationDetailPage({ station, onBack }) {
 
   const amenities = details?.amenities || {};
 
+  const handleShare = async () => {
+    const price = station.price != null ? `$${station.price.toFixed(3)}/L` : 'current price';
+    const text = `⛽ ${station.name} — ${price} ${station.fuelType || ''} via fuevolt.com`.replace(/\s+/g, ' ').trim();
+    const shareData = { title: station.name, text, url: window.location.href };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        setShareStatus('Shared');
+      } else {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(window.location.href);
+        } else {
+          const textArea = document.createElement('textarea');
+          textArea.value = window.location.href;
+          textArea.style.position = 'fixed';
+          textArea.style.opacity = '0';
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          textArea.remove();
+        }
+        setShareStatus('Link copied');
+      }
+    } catch (error) {
+      if (error?.name !== 'AbortError') setShareStatus('Unable to share');
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6" style={{ animation: 'fadeSlideIn 0.35s ease' }}>
-      {/* Back Button */}
-      <button
-        onClick={onBack}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer"
-        style={{
-          background: theme.chipBg,
-          color: theme.text,
-          border: `1px solid ${theme.chipBorder}`,
-          transition: 'all 0.25s ease',
-        }}
-      >
-        <span>&#9664;</span> Back to results
-      </button>
+      <div className="flex items-center justify-between gap-3">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer"
+          style={{ background: theme.chipBg, color: theme.text, border: `1px solid ${theme.chipBorder}` }}
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+          Back to results
+        </button>
+        <div className="flex items-center gap-2">
+          {shareStatus && <span className="text-xs" style={{ color: theme.textMuted }}>{shareStatus}</span>}
+          <button
+            type="button"
+            onClick={handleShare}
+            className="min-h-10 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer"
+            style={{ background: theme.chipBg, color: theme.text, border: `1px solid ${theme.chipBorder}` }}
+          >
+            Share
+          </button>
+        </div>
+      </div>
 
       {/* Station Header */}
       <div
@@ -103,15 +143,21 @@ export default function FuelStationDetailPage({ station, onBack }) {
         {station.brand && (
           <p className="text-sm mt-1" style={{ color: theme.textMuted }}>{station.brand}</p>
         )}
-        {station.price && (
-          <div className="mt-4 flex items-end gap-3">
-            <p className="text-4xl font-bold" style={{ color: theme.green }}>
-              {(station.price * 100).toFixed(1)}
-              <span className="text-lg ml-1" style={{ color: theme.textSecondary }}>¢/L</span>
-            </p>
-            <p className="text-sm pb-1" style={{ color: theme.textMuted }}>
-              {station.fuelType} &bull; Updated {new Date(station.lastUpdated).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
-            </p>
+        {station.price != null && (
+          <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-4xl font-bold" style={{ color: theme.gold }}>
+                {(station.price * 100).toFixed(1)}
+                <span className="text-lg ml-1" style={{ color: theme.textSecondary }}>¢/L</span>
+              </p>
+              <p className="text-sm mt-1" style={{ color: theme.textMuted }}>
+                {station.fuelType} &bull; {freshness.label}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {priceContext && <PriceContextBadge context={priceContext} theme={theme} />}
+              {freshness.isOutdated && <OutdatedBadge />}
+            </div>
           </div>
         )}
       </div>
@@ -277,6 +323,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
 
 function FuelPriceTile({ label, priceData, theme }) {
   const displayPrice = priceData?.price;
+  const freshness = getPriceFreshness(priceData?.lastUpdated, priceData?.priceDate);
 
   return (
     <div
@@ -287,18 +334,14 @@ function FuelPriceTile({ label, priceData, theme }) {
       }}
     >
       <p className="text-xs font-semibold mb-1" style={{ color: theme.textSecondary }}>{label}</p>
-      {displayPrice ? (
+      {displayPrice != null ? (
         <>
           <p className="text-xl font-bold" style={{ color: theme.gold }}>
             {(displayPrice * 100).toFixed(1)}
             <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>¢/L</span>
           </p>
-          {priceData?.lastUpdated && (
-            <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>
-              {new Date(priceData.lastUpdated).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
-            </p>
-          )}
-
+          <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{freshness.label}</p>
+          {freshness.isOutdated && <OutdatedBadge compact />}
         </>
       ) : (
         <p className="text-xs mt-1" style={{ color: theme.textMuted }}>Not currently available</p>
@@ -308,6 +351,24 @@ function FuelPriceTile({ label, priceData, theme }) {
 }
 
 
+
+function PriceContextBadge({ context, theme }) {
+  const styles = {
+    below: { label: 'Below average', background: 'rgba(39,174,96,0.14)', color: theme.green },
+    about: { label: 'About average', background: 'rgba(255,215,0,0.14)', color: theme.gold },
+    above: { label: 'Above average', background: 'rgba(231,76,60,0.14)', color: '#E74C3C' },
+  };
+  const style = styles[context];
+  return <span className="px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: style.background, color: style.color }}>{style.label}</span>;
+}
+
+function OutdatedBadge({ compact = false }) {
+  return (
+    <span className={`inline-block ${compact ? 'mt-1' : ''} px-2 py-1 rounded-full text-[10px] font-bold`} style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
+      Price may be outdated ⚠️
+    </span>
+  );
+}
 
 function ShimmerLine({ theme, width = '100%' }) {
   return (

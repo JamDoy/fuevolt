@@ -15,9 +15,18 @@ import ArticleDetailPage from './pages/ArticleDetailPage';
 import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
 import ContactPage from './pages/ContactPage';
+import FuelPreferencePrompt from './components/FuelPreferencePrompt';
+import MobileBottomNav from './components/MobileBottomNav';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 import { updatePageMeta, POPULAR_SUBURBS } from './utils/seo';
+import { getFuelPreference, saveFuelPreference } from './utils/sessionPreferences';
 
 function parseRoute() {
+  const historyState = window.history.state;
+  if (historyState?.fuevoltView === 'station-detail' && historyState.station) {
+    return { view: 'station-detail', suburb: null, station: historyState.station };
+  }
+
   const path = window.location.pathname;
   if (!path || path === '/') return { view: 'landing', suburb: null };
 
@@ -45,22 +54,26 @@ function parseRoute() {
   return { view: 'landing', suburb: null };
 }
 
-function setRoute(path) {
-  window.history.pushState(null, '', path);
+function setRoute(path, state = {}) {
+  window.history.pushState(state, '', path);
 }
 
 function AppContent() {
   const parsed = parseRoute();
+  const storedFuelPreference = getFuelPreference();
   const [view, setView] = useState(parsed.view);
-  const [initialFuelType, setInitialFuelType] = useState('U91');
-  const [detailStation, setDetailStation] = useState(null);
+  const [fuelPreference, setFuelPreference] = useState(storedFuelPreference);
+  const [showFuelPreference, setShowFuelPreference] = useState(!storedFuelPreference);
+  const [initialFuelType, setInitialFuelType] = useState(storedFuelPreference && storedFuelPreference !== 'EV' ? storedFuelPreference : 'U91');
+  const [initialSearch, setInitialSearch] = useState(null);
+  const [detailStation, setDetailStation] = useState(parsed.station || null);
   const [initialSuburb, setInitialSuburb] = useState(parsed.suburb);
   const [articleSlug, setArticleSlug] = useState(parsed.articleSlug || null);
   const { theme } = useTheme();
 
-  const navigate = useCallback((newView, path) => {
+  const navigate = useCallback((newView, path, routeState = {}) => {
     setView(newView);
-    setRoute(path || '/');
+    setRoute(path || '/', { fuevoltView: newView, ...routeState });
     updatePageMeta(newView);
     window.scrollTo(0, 0);
   }, []);
@@ -72,7 +85,8 @@ function AppContent() {
       const p = parseRoute();
       setView(p.view);
       setInitialSuburb(p.suburb);
-      if (p.articleSlug) setArticleSlug(p.articleSlug);
+      setDetailStation(p.station || null);
+      setArticleSlug(p.articleSlug || null);
       updatePageMeta(p.view);
       window.scrollTo(0, 0);
     };
@@ -81,8 +95,9 @@ function AppContent() {
   }, [view]);
 
   const handleSelect = (option) => {
+    setInitialSearch(null);
     if (option === 'petrol') {
-      setInitialFuelType('U91');
+      setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
       setInitialSuburb(null);
       navigate('fuel', '/fuel-prices');
     } else if (option === 'diesel') {
@@ -100,43 +115,70 @@ function AppContent() {
   };
 
   const handleBack = () => {
-    if (view === 'station-detail') {
-      setView('fuel');
-      setDetailStation(null);
-      setRoute('/fuel-prices');
-    } else if (view === 'article-detail') {
-      setArticleSlug(null);
-      navigate('articles', '/guides');
-    } else {
-      setDetailStation(null);
-      navigate('landing', '/');
+    if (view === 'station-detail' || window.history.state?.fuevoltView) {
+      window.history.back();
+      return;
     }
+
+    const fallbackView = view === 'article-detail' ? 'articles' : 'landing';
+    const fallbackPath = view === 'article-detail' ? '/guides' : '/';
+    window.history.replaceState({ fuevoltView: fallbackView }, '', fallbackPath);
+    setView(fallbackView);
+    setDetailStation(null);
+    setArticleSlug(null);
+    updatePageMeta(fallbackView);
+    window.scrollTo(0, 0);
   };
 
   const handleStationDetail = (station) => {
     setDetailStation(station);
     setView('station-detail');
+    setRoute(window.location.pathname, { fuevoltView: 'station-detail', station });
     window.scrollTo(0, 0);
   };
 
+  const handleLandingSearch = (search) => {
+    const targetView = fuelPreference === 'EV' ? 'ev' : 'fuel';
+    setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
+    setInitialSuburb(null);
+    setInitialSearch({ ...search, key: Date.now() });
+    navigate(targetView, targetView === 'ev' ? '/ev-charging' : '/fuel-prices');
+  };
+
+  const handleFuelPreference = (preference) => {
+    saveFuelPreference(preference);
+    setFuelPreference(preference);
+    if (preference !== 'EV') setInitialFuelType(preference);
+    setShowFuelPreference(false);
+  };
+
+  const handlePrimaryNavigation = (newView, path) => {
+    setInitialSearch(null);
+    setInitialSuburb(null);
+    setDetailStation(null);
+    if (newView === 'fuel') {
+      setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
+    }
+    navigate(newView, path);
+  };
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 md:pb-0">
       <Header
         showBack={view !== 'landing'}
         onBack={handleBack}
         view={view}
         onViewChange={(v) => {
-          if (v === 'fuel') { setInitialFuelType('U91'); setInitialSuburb(null); }
-          setDetailStation(null);
           const paths = { fuel: '/fuel-prices', ev: '/ev-charging', trip: '/trip-planner', calculator: '/ev-vs-fuel', notifications: '/alerts', articles: '/guides' };
-          navigate(v, paths[v] || '/');
+          handlePrimaryNavigation(v, paths[v] || '/');
         }}
-        onHome={() => { setDetailStation(null); navigate('landing', '/'); }}
       />
       <main>
         {view === 'landing' && (
           <LandingPage
             onSelect={handleSelect}
+            onSearch={(query) => handleLandingSearch({ query })}
+            onUseLocation={() => handleLandingSearch({ useLocation: true })}
             onArticle={(slug) => {
               if (slug) {
                 setArticleSlug(slug);
@@ -147,12 +189,21 @@ function AppContent() {
             }}
           />
         )}
-        {view === 'ev' && <EVChargingPage initialSuburb={initialSuburb} />}
+        {view === 'ev' && (
+          <EVChargingPage
+            key={`ev-${initialSuburb?.slug || 'search'}-${initialSearch?.key || ''}`}
+            initialSuburb={initialSuburb}
+            initialSearch={initialSearch}
+          />
+        )}
         {view === 'fuel' && (
           <FuelPricePage
+            key={`fuel-${initialFuelType}-${initialSuburb?.slug || 'search'}-${initialSearch?.key || ''}`}
             initialFuelType={initialFuelType}
+            preferredFuelType={fuelPreference}
+            initialSearch={initialSearch}
             onStationDetail={handleStationDetail}
-            onSwitchToEV={() => navigate('ev', '/ev-charging')}
+            onSwitchToEV={() => handlePrimaryNavigation('ev', '/ev-charging')}
             initialSuburb={initialSuburb}
           />
         )}
@@ -176,7 +227,7 @@ function AppContent() {
         {view === 'article-detail' && articleSlug && (
           <ArticleDetailPage
             slug={articleSlug}
-            onBack={() => { setArticleSlug(null); navigate('articles', '/guides'); }}
+            onBack={handleBack}
           />
         )}
         {view === 'privacy' && <PrivacyPolicyPage />}
@@ -240,7 +291,8 @@ function AppContent() {
                 style={{ color: theme.footerSubtext }}
                 onClick={(e) => {
                   e.preventDefault();
-                  setInitialFuelType('U91');
+                  setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
+                  setInitialSearch(null);
                   setInitialSuburb(s);
                   setDetailStation(null);
                   navigate('fuel', `/fuel-prices/${s.slug}`);
@@ -281,6 +333,9 @@ function AppContent() {
           </div>
         </div>
       </footer>
+      <MobileBottomNav view={view} onNavigate={handlePrimaryNavigation} />
+      <PWAInstallPrompt />
+      {showFuelPreference && <FuelPreferencePrompt onSelect={handleFuelPreference} />}
     </div>
   );
 }
