@@ -34,3 +34,6 @@ jobs:
           publish_dir: ./dist
           publish_branch: deploy
           force_orphan: true
+
+      - name: Notify IndexNow
+        run: node scripts/ping-indexnow.js
