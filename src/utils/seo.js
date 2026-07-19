@@ -1,4 +1,4 @@
-const BASE_URL = 'https://fuevolt.com';
+const BASE_URL = 'https://www.fuevolt.com';
 
 const PAGE_META = {
   landing: {
@@ -175,6 +175,37 @@ export function injectEVStationSchema(stations, location) {
   };
 
   injectSchema('ev-stations', schema);
+}
+
+export function injectArticleSchema({ slug, title, description, datePublished, dateModified }) {
+  const url = `${BASE_URL}/guides/${slug}`;
+  injectSchema('article', {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    mainEntityOfPage: url,
+    datePublished,
+    dateModified,
+    author: {
+      '@type': 'Person',
+      name: 'James Doyle',
+      url: `${BASE_URL}/about`,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'FueVolt',
+      url: BASE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${BASE_URL}/favicon.svg`,
+      },
+    },
+  });
+}
+
+export function removeArticleSchema() {
+  removeSchema('article');
 }
 
 function injectSchema(id, data) {

@@ -3,9 +3,13 @@ title: "EV Charging Connector Types in Australia: Type 2, CCS, CHAdeMO and Tesla
 description: "Understand the different EV charging plugs used across Australia, which cars use which connectors, and how charging speeds differ."
 category: "EV Guide"
 readTime: "6 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-If you are new to electric vehicles, the variety of charging connectors can be confusing. Unlike petrol cars where every nozzle fits every filler neck, EVs use different plug types depending on the manufacturer, charging speed and region. In Australia, four connector types dominate the market.
+There is a rite of passage for new EV owners: pulling up to a public charger for the first time, staring at the cable, and wondering whether it will even fit your car. With petrol, every nozzle fits every filler neck. With EVs, the plug depends on the manufacturer, the charging speed and the era the car was built — and getting caught out at the wrong connector is a genuinely common early mistake.
+
+The good news is that Australia has largely settled on a small number of standards, so once you know your car's connector you rarely have to think about it again. Four connector types dominate the local market, and government resources like [energy.gov.au's guide to EV charging equipment](https://www.energy.gov.au/electric-vehicles/owning-electric-vehicle/electric-vehicle-charging-equipment) cover them in detail.
 
 ## Type 2 (Mennekes)
 
@@ -33,6 +37,6 @@ Before plugging in, confirm your car's connector type. Most public charging serv
 
 ## Charging Speed Tiers
 
-Charging speed depends on both the charger output and your car's onboard acceptance rate. Slow AC chargers (up to 7 kW) are best for overnight top-ups. Fast AC chargers (7 to 22 kW) suit a few hours at a shopping centre. DC fast chargers (50 kW and above) are designed for highway stops where you need a quick boost.
+Charging speed depends on both the charger output and your car's onboard acceptance rate. As [energy.gov.au explains](https://www.energy.gov.au/electric-vehicles/owning-electric-vehicle/how-charge-your-electric-vehicle), slow AC chargers (up to 7 kW) are best for overnight top-ups, fast AC chargers (7 to 22 kW) suit a few hours at a shopping centre, and DC fast chargers (50 kW and above) are designed for highway stops where you need a quick boost.
 
 Understanding your connector type and the charger speed available helps you plan stops efficiently and avoid arriving at an incompatible station.

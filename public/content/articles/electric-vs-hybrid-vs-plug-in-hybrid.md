@@ -3,9 +3,13 @@ title: "Electric vs Hybrid vs Plug-in Hybrid: Which Is Right for You?"
 description: "Compare pure electric (BEV), hybrid (HEV) and plug-in hybrid (PHEV) vehicles to find the best fit for your driving needs and budget."
 category: "Comparison"
 readTime: "6 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-The market for electrified vehicles has expanded rapidly in Australia, but the terminology can be confusing. What exactly is the difference between a hybrid, a plug-in hybrid and a full electric vehicle? And which one makes sense for your situation?
+Walk into a dealership today and you will hear "hybrid", "self-charging hybrid", "plug-in hybrid" and "EV" thrown around almost interchangeably — and it is genuinely confusing. It is easy to buy a "hybrid" expecting to plug it in, only to discover that it never plugs in at all. Getting the terminology straight before you shop saves a lot of that frustration.
+
+There are real, practical differences between an HEV, a PHEV and a full battery EV, and each suits a different kind of driver. The government's [Green Vehicle Guide explains how each hybrid and electric type is classified](https://www.greenvehicleguide.gov.au/pages/LowAndZeroEmissionVehicles/HybridVehicleInformation), which is a useful reference as you compare models.
 
 ## Hybrid Electric Vehicle (HEV)
 
@@ -49,4 +53,4 @@ Consider a diesel only if you tow heavy loads regularly or drive very high kilom
 
 ## The Trend
 
-The direction of the market is clear — BEV sales are growing fastest, PHEV sales are steady, and hybrid technology is becoming standard across most model ranges. Whatever you choose today will serve you well, but the future is increasingly electric.
+The direction of the market is clear — according to the [Electric Vehicle Council](https://electricvehiclecouncil.com.au/), EV uptake in Australia continues to climb even as the country works through charging and policy challenges. BEV sales are growing fastest, PHEV sales are steady, and hybrid technology is becoming standard across most model ranges. Whatever you choose today will serve you well, but the future is increasingly electric.

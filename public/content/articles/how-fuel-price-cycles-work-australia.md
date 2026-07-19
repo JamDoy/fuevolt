@@ -3,9 +3,13 @@ title: "How Fuel Price Cycles Work in Australia"
 description: "Learn why petrol prices rise and fall in regular cycles across Australian cities, how to spot the cheapest day to fill up, and tips for saving."
 category: "Fuel Guide"
 readTime: "5 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-If you have ever noticed petrol prices shooting up on one day and gradually dropping over the following week, you have experienced a fuel price cycle. These cycles are a well-documented pattern in most major Australian cities and understanding them can save you real money at the bowser.
+Picture this: you drive past your local servo on a Sunday and it is 165.9 a litre. You drive past the same servo on Wednesday and it has jumped to 199.9 overnight. You did nothing wrong — you just watched a fuel price cycle in action. Not knowing when or where to fill up is the frustration that led me to build FueVolt.
+
+These cycles are a well-documented pattern in most major Australian cities, and understanding them can genuinely save you money. The [Australian Competition and Consumer Commission (ACCC) tracks petrol price cycles in the five largest cities](https://www.accc.gov.au/consumers/petrol-and-fuel/petrol-price-cycles-in-the-5-largest-cities) and publishes where each city sits in its cycle — a habit worth getting into before you fill up.
 
 ## What Is a Fuel Price Cycle?
 
@@ -21,7 +25,7 @@ The ACCC has noted that the sharp increases tend to happen mid-week in Sydney (o
 
 ## How to Buy at the Bottom of the Cycle
 
-The cheapest time to buy fuel is just before the next sharp price increase — the bottom of the cycle. Monitoring tools like FueVolt, which pulls real-time government price data, help you spot when prices are near their lowest point in your area.
+The cheapest time to buy fuel is just before the next sharp price increase — the bottom of the cycle. Monitoring tools like FueVolt, which retrieves government-reported price data, help you spot when prices are near their lowest point in your area.
 
 Here are practical tips:
 
@@ -36,6 +40,6 @@ Country towns generally do not experience the same cyclical pattern. Prices in r
 
 ## The Bigger Picture
 
-Beyond cycles, fuel prices are influenced by global crude oil prices, the Australian dollar exchange rate, refining margins and government excise. The federal fuel excise adds a fixed amount per litre and is indexed to inflation twice a year. These macro factors determine the overall price level, while cycles determine the short-term ups and downs within that level.
+Beyond cycles, fuel prices are influenced by [several factors the ACCC identifies](https://www.accc.gov.au/consumers/petrol-and-fuel/what-affects-fuel-prices) — global crude oil prices, the Australian dollar exchange rate, refining margins and government excise. The federal fuel excise adds a fixed amount per litre and is indexed to inflation twice a year. These macro factors determine the overall price level, while cycles determine the short-term ups and downs within that level.
 
 Understanding both gives you the best chance of filling up at the right time and the right station.

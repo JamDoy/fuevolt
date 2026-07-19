@@ -299,7 +299,7 @@ function AppContent() {
                   updatePageMeta('fuel', {
                     title: `Fuel Prices in ${s.name} — Cheapest Petrol Today | FueVolt`,
                     description: `Compare petrol, diesel and LPG prices near ${s.name}. Live data from government APIs. Find the cheapest fuel station today.`,
-                    url: `https://fuevolt.com/fuel-prices/${s.slug}`,
+                    url: `https://www.fuevolt.com/fuel-prices/${s.slug}`,
                   });
                 }}
               >
@@ -323,7 +323,7 @@ function AppContent() {
                   updatePageMeta('ev', {
                     title: `EV Charging Stations in ${s.name} — Find Chargers | FueVolt`,
                     description: `Find EV charging stations near ${s.name}. Filter by connector type and charging speed.`,
-                    url: `https://fuevolt.com/ev-charging/${s.slug}`,
+                    url: `https://www.fuevolt.com/ev-charging/${s.slug}`,
                   });
                 }}
               >

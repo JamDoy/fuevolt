@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { updatePageMeta } from '../utils/seo';
+import ArticleAuthorBio from '../components/ArticleAuthorBio';
+import LiveFueVoltData from '../components/LiveFueVoltData';
+import { injectArticleSchema, removeArticleSchema, updatePageMeta } from '../utils/seo';
 
 function parseFrontmatter(text) {
   const match = text.match(/^---\n([\s\S]*?)\n---\n\n?([\s\S]*)$/);
@@ -16,6 +18,44 @@ function parseFrontmatter(text) {
     }
   });
   return { meta, body: match[2] };
+}
+
+function formatArticleDate(value) {
+  if (!value) return null;
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat('en-AU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
+
+function renderInlineLinks(text, linkColor) {
+  const parts = [];
+  const linkPattern = /\[([^\]]+)]\((https:\/\/[^)\s]+)\)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = linkPattern.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    parts.push(
+      <a
+        key={`${match[2]}-${match.index}`}
+        href={match[2]}
+        target="_blank"
+        rel="noreferrer"
+        className="underline"
+        style={{ color: linkColor }}
+      >
+        {match[1]}
+      </a>
+    );
+    lastIndex = linkPattern.lastIndex;
+  }
+
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts.length > 0 ? parts : text;
 }
 
 function renderMarkdown(md) {
@@ -57,6 +97,7 @@ export default function ArticleDetailPage({ slug, onBack }) {
 
   useEffect(() => {
     let cancelled = false;
+    removeArticleSchema();
 
     fetch(`/content/articles/${slug}.md`)
       .then((r) => {
@@ -70,7 +111,14 @@ export default function ArticleDetailPage({ slug, onBack }) {
         updatePageMeta('article-detail', {
           title: `${parsed.meta.title} | FueVolt`,
           description: parsed.meta.description,
-          url: `https://fuevolt.com/guides/${slug}`,
+          url: `https://www.fuevolt.com/guides/${slug}`,
+        });
+        injectArticleSchema({
+          slug,
+          title: parsed.meta.title,
+          description: parsed.meta.description,
+          datePublished: parsed.meta.datePublished,
+          dateModified: parsed.meta.dateModified,
         });
       })
       .catch(() => {
@@ -79,6 +127,7 @@ export default function ArticleDetailPage({ slug, onBack }) {
 
     return () => {
       cancelled = true;
+      removeArticleSchema();
     };
   }, [slug]);
 
@@ -131,9 +180,14 @@ export default function ArticleDetailPage({ slug, onBack }) {
         {article.meta.title}
       </h1>
 
-      {article.meta.readTime && (
-        <p className="text-xs mb-6" style={{ color: theme.textMuted }}>{article.meta.readTime}</p>
-      )}
+      <div className="text-xs mb-6 space-y-1" style={{ color: theme.textMuted }}>
+        <p>By James Doyle{article.meta.readTime ? ` · ${article.meta.readTime}` : ''}</p>
+        {formatArticleDate(article.meta.dateModified) && (
+          <p>Last updated: {formatArticleDate(article.meta.dateModified)}</p>
+        )}
+      </div>
+
+      <LiveFueVoltData slug={slug} theme={theme} />
 
       <article className="space-y-4">
         {blocks.map((block) => {
@@ -153,11 +207,17 @@ export default function ArticleDetailPage({ slug, onBack }) {
           }
           return (
             <p key={block.key} className="text-sm leading-relaxed" style={{ color: theme.text }}>
-              {block.text}
+              {renderInlineLinks(block.text, theme.accent)}
             </p>
           );
         })}
       </article>
+
+      <ArticleAuthorBio theme={theme} />
+
+      <p className="text-[11px] leading-relaxed mt-4" style={{ color: theme.textMuted }}>
+        This guide was written and reviewed by James Doyle for FueVolt. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.
+      </p>
 
       <div className="mt-8 pt-4" style={{ borderTop: `1px solid ${theme.cardBorder}` }}>
         <button

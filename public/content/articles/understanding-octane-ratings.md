@@ -3,9 +3,13 @@ title: "Understanding Octane Ratings: Does Premium Fuel Make a Difference?"
 description: "What RON 91, 95 and 98 actually mean, whether premium fuel improves performance, and when it is worth paying extra."
 category: "Fuel Guide"
 readTime: "5 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-Walk into any Australian service station and you will see fuel labelled with numbers like 91, 95 and 98. These are octane ratings, specifically the Research Octane Number (RON). But what does this number actually mean, and should you pay more for a higher one?
+"Should I be putting the expensive stuff in?" is one of the most common questions drivers ask when they are standing at the bowser choosing between 91, 95 and 98. It feels like the higher number must be better — but that is not how octane actually works.
+
+Those numbers are octane ratings, specifically the Research Octane Number (RON). In Australia, regular unleaded must be a minimum of 91 RON and premium unleaded a minimum of 95 RON, with 98 sitting above that — the parameters are defined in the government's [petrol fuel quality standard](https://www.dcceew.gov.au/climate-change/emissions-reduction/regulating-fuel-quality). This guide explains what the number means and whether paying more for a higher one is actually worth it.
 
 ## What Is an Octane Rating?
 
@@ -37,7 +41,7 @@ If your owner's manual states "minimum 95 RON" or "minimum 98 RON," you must use
 
 ## The Additive Question
 
-Premium fuels sometimes contain better detergent packages that help keep fuel injectors and intake valves clean. Some drivers report smoother running after switching to premium for this reason alone. However, all Australian fuels must meet minimum detergent standards, so the base-grade fuel is not leaving your engine dirty.
+Premium fuels sometimes contain better detergent packages that help keep fuel injectors and intake valves clean. Some drivers report smoother running after switching to premium for this reason alone. However, all Australian fuels must meet the [minimum standards set by the Fuel Quality Standards Act](https://www.dcceew.gov.au/climate-change/emissions-reduction/regulating-fuel-quality), so the base-grade fuel is not leaving your engine dirty.
 
 ## Practical Advice
 

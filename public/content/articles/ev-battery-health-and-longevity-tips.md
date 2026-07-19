@@ -3,13 +3,17 @@ title: "EV Battery Health: How to Maximise Your Electric Car Battery Life"
 description: "Practical tips to preserve your EV battery over the long term, including charging habits, temperature management and what degradation really looks like."
 category: "EV Guide"
 readTime: "6 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-The battery is the most expensive component in an electric vehicle, often accounting for 30 to 40 per cent of the car's total cost. Naturally, owners want to know how long it will last and what they can do to keep it healthy. The good news is that modern EV batteries are remarkably durable, and simple habits can extend their life significantly.
+The number one worry for many people thinking about an EV is not range or charging — it is the battery. "What happens in ten years when it dies and I'm up for a costly replacement?" It is a fair question, and the reassuring reality is that modern EV batteries last far longer than most people expect.
+
+The battery is the most expensive component in an electric vehicle, often 30 to 40 per cent of the car's cost, so owners naturally want to know how long it will last. The government's [energy.gov.au notes that many EV batteries last 15 to 20 years or 200,000-plus kilometres before significant degradation](https://www.energy.gov.au/electric-vehicles/electric-vehicle-basics/electric-vehicle-batteries-and-motors), and a few simple habits can stretch that even further.
 
 ## How Long Do EV Batteries Last?
 
-Most EV manufacturers warrant their batteries for 8 years or 160,000 kilometres, guaranteeing at least 70 per cent of original capacity. Real-world data shows that many batteries retain 85 to 90 per cent capacity after 200,000 kilometres. A Tesla Model S study found average degradation of about 12 per cent after 300,000 kilometres.
+Most EV manufacturers warrant their batteries for 8 years or 160,000 kilometres, guaranteeing at least 70 per cent of original capacity. The government's [electric vehicle facts page](https://www.energy.gov.au/electric-vehicles/electric-vehicle-basics/electric-vehicle-facts) cites analysis of more than 22,700 EVs that put the average expected battery lifespan at around 13 years or more. Real-world data shows that many batteries retain 85 to 90 per cent capacity after 200,000 kilometres. A Tesla Model S study found average degradation of about 12 per cent after 300,000 kilometres.
 
 This means an EV with a 500 km rated range would still deliver 425 to 450 km after years of use — more than enough for daily driving.
 
@@ -39,7 +43,7 @@ Modern EVs use liquid-cooled battery packs that maintain cells within an optimal
 
 ## Replacement Costs
 
-If a battery does eventually need replacement outside warranty, costs have been falling steadily. Battery pack prices have dropped from over $1,000 per kWh in 2010 to under $150 per kWh in 2025. A replacement battery for a mid-range EV might cost $8,000 to $15,000 — significant, but comparable to a major engine or transmission replacement in a petrol car.
+If a battery eventually needs replacement outside warranty, ask the manufacturer or an accredited repairer for a current quote. Pack costs have generally fallen as battery production has scaled, but the owner-facing replacement price varies widely by vehicle, usable capacity, labour and whether individual modules can be repaired instead of replacing the whole pack.
 
 ## The Bottom Line
 
