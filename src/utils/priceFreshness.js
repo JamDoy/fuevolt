@@ -22,36 +22,52 @@ function isSameDay(a, b) {
     && a.getDate() === b.getDate();
 }
 
-export function getPriceFreshness(lastUpdated, priceDate) {
+function formatCheckedLabel(dataCheckedAt, now) {
+  const checked = dataCheckedAt ? new Date(dataCheckedAt) : null;
+  if (!checked || Number.isNaN(checked.getTime())) return null;
+
+  const ageMinutes = Math.floor(Math.max(0, now.getTime() - checked.getTime()) / 60000);
+  if (ageMinutes < 1) return 'Government data checked just now';
+  if (ageMinutes < 60) {
+    return `Government data checked ${ageMinutes} minute${ageMinutes === 1 ? '' : 's'} ago`;
+  }
+  if (isSameDay(checked, now)) return `Government data checked today at ${formatTime(checked)}`;
+  return `Government data checked ${formatDate(checked)} at ${formatTime(checked)}`;
+}
+
+export function getPriceFreshness(lastUpdated, priceDate, dataCheckedAt) {
   const parsed = lastUpdated ? new Date(lastUpdated) : null;
+  const checked = dataCheckedAt ? new Date(dataCheckedAt) : null;
   const validTimestamp = parsed && !Number.isNaN(parsed.getTime());
+  const validCheckedTimestamp = checked && !Number.isNaN(checked.getTime());
+  const now = new Date();
+  const checkedLabel = formatCheckedLabel(dataCheckedAt, now);
+  const isOutdated = validCheckedTimestamp
+    ? now.getTime() - checked.getTime() > OUTDATED_THRESHOLD_MS
+    : false;
 
   if (!validTimestamp) {
     if (priceDate) {
-      return { label: `Price dated ${priceDate}; update time not provided`, isOutdated: false };
+      return { label: `Price applies ${priceDate}; report time unavailable`, checkedLabel, isOutdated };
     }
-    return { label: 'Price update time unavailable', isOutdated: false };
+    return { label: 'Price report time unavailable', checkedLabel, isOutdated };
   }
 
-  const now = new Date();
   const ageMs = Math.max(0, now.getTime() - parsed.getTime());
   const ageMinutes = Math.floor(ageMs / 60000);
   let label;
 
   if (ageMinutes < 1) {
-    label = 'Updated just now';
+    label = 'Price change reported just now';
   } else if (ageMinutes < 60) {
-    label = `Updated ${ageMinutes} minute${ageMinutes === 1 ? '' : 's'} ago`;
+    label = `Price change reported ${ageMinutes} minute${ageMinutes === 1 ? '' : 's'} ago`;
   } else if (isSameDay(parsed, now)) {
-    label = `Updated today at ${formatTime(parsed)}`;
+    label = `Price change reported today at ${formatTime(parsed)}`;
   } else {
-    label = `Updated ${formatDate(parsed)} at ${formatTime(parsed)}`;
+    label = `Last price change reported ${formatDate(parsed)} at ${formatTime(parsed)}`;
   }
 
-  return {
-    label,
-    isOutdated: ageMs > OUTDATED_THRESHOLD_MS,
-  };
+  return { label, checkedLabel, isOutdated };
 }
 
 export function getPriceContext(price, averagePrice) {

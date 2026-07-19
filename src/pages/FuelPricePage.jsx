@@ -200,7 +200,9 @@ export default function FuelPricePage({
   const savings = cheapest && expensive
     ? ((expensive.price - cheapest.price) * 100).toFixed(1)
     : '0';
-  const cheapestFreshness = cheapest ? getPriceFreshness(cheapest.lastUpdated, cheapest.priceDate) : null;
+  const cheapestFreshness = cheapest
+    ? getPriceFreshness(cheapest.lastUpdated, cheapest.priceDate, cheapest.dataCheckedAt)
+    : null;
   const nearestCity = searchCoords
     ? POPULAR_SUBURBS.fuel.reduce((nearest, city) => {
         const distance = Math.hypot(city.lat - searchCoords.lat, city.lng - searchCoords.lng);
@@ -332,7 +334,10 @@ export default function FuelPricePage({
                 <PriceContextBadge context={getPriceContext(cheapest.price, avgPrice)} theme={theme} />
                 {cheapestFreshness?.isOutdated && <OutdatedBadge />}
               </div>
-              <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{cheapestFreshness?.label}</p>
+              {cheapestFreshness?.checkedLabel && (
+                <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{cheapestFreshness.checkedLabel}</p>
+              )}
+              <p className="text-[10px]" style={{ color: theme.textMuted }}>{cheapestFreshness?.label}</p>
               <p className="text-xs mt-1 font-medium" style={{ color: theme.green }}>View Details &rarr;</p>
             </div>
           </div>
@@ -552,7 +557,7 @@ function PriceContextBadge({ context, theme }) {
 function OutdatedBadge() {
   return (
     <span className="px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
-      Price may be outdated ⚠️
+      Data check is over 2 hours old
     </span>
   );
 }

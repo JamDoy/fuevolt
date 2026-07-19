@@ -12,7 +12,7 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
   const [fav, setFav] = useState(() => isFavourite(station.id));
   const [hasGeofence, setHasGeofence] = useState(() => getSavedGeofences().some((geofence) => geofence.id === station.id));
   const hours = formatOpeningHours(station.openingHours);
-  const freshness = getPriceFreshness(station.lastUpdated, station.priceDate);
+  const freshness = getPriceFreshness(station.lastUpdated, station.priceDate, station.dataCheckedAt);
   const priceContext = getPriceContext(station.price, averagePrice);
 
   useEffect(() => {
@@ -94,10 +94,17 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-[10px]" style={{ color: theme.textMuted }}>{station.price != null ? freshness.label : 'No live price update available'}</p>
+          {station.price != null ? (
+            <>
+              {freshness.checkedLabel && <p className="text-[10px]" style={{ color: theme.textMuted }}>{freshness.checkedLabel}</p>}
+              <p className="text-[10px]" style={{ color: theme.textMuted }}>{freshness.label}</p>
+            </>
+          ) : (
+            <p className="text-[10px]" style={{ color: theme.textMuted }}>No live price update available</p>
+          )}
           {freshness.isOutdated && (
             <span className="inline-block mt-1 px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
-              Price may be outdated ⚠️
+              Data check is over 2 hours old
             </span>
           )}
         </div>
