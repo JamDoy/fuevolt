@@ -3,9 +3,13 @@ title: "Petrol vs Diesel vs Electric: Which Is Cheapest to Run in Australia?"
 description: "A detailed cost comparison of petrol, diesel and electric vehicles in Australia covering fuel costs, servicing, registration and total cost of ownership."
 category: "Comparison"
 readTime: "7 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-Choosing between petrol, diesel and electric is one of the biggest decisions Australian car buyers face today. Each powertrain has distinct running costs, and the cheapest option depends on how you drive, where you live and how long you plan to keep the vehicle.
+"Should my next car be electric?" is a question almost every Australian driver is now asking, and the honest answer is: it depends on you. A tradie towing a trailer 40,000 km a year and a retiree doing school runs around the suburbs will reach very different conclusions — and both can be right. This is the kind of comparison I built FueVolt's cost tools to help with.
+
+Each powertrain has distinct running costs, and the cheapest option depends on how you drive, where you live and how long you keep the vehicle. If you want to compare specific models, the government's [Green Vehicle Guide](https://www.greenvehicleguide.gov.au/) lists fuel use, running costs and emissions side by side.
 
 ## Fuel and Energy Costs
 
@@ -29,7 +33,7 @@ Annual servicing for a petrol car averages $600 to $900. Diesel servicing is oft
 
 ## Registration and Insurance
 
-In most Australian states, EV registration costs are comparable to petrol vehicles. Some states have explored road user charges for EVs to offset declining fuel excise revenue, though legal challenges have affected their implementation.
+In most Australian states, EV registration costs are comparable to petrol vehicles. Some states have explored road user charges for EVs to offset declining fuel excise revenue, though legal challenges have affected their implementation. The [Electric Vehicle Council](https://electricvehiclecouncil.com.au/) tracks the state-by-state incentives and charges that apply to EV owners.
 
 Insurance premiums for EVs can be higher due to the higher purchase price and specialised repair requirements. Shopping around is essential.
 

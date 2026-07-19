@@ -3,15 +3,19 @@ title: "How to Set Up EV Home Charging in Australia: Costs, Options and Tips"
 description: "Everything you need to know about installing a home EV charger in Australia, from choosing a wall box to understanding electricity tariffs."
 category: "EV Guide"
 readTime: "6 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-Charging your electric vehicle at home is the most convenient and cheapest way to keep your battery topped up. Around 80 per cent of EV charging in Australia happens at home, typically overnight. Setting up a home charger is straightforward but involves a few decisions about hardware, installation and electricity pricing.
+One of the quiet joys of owning an EV that nobody mentions in the ads: you never have to make a special trip to fill up again. You plug in when you get home, and every morning the car is "full". For most people that is the single biggest lifestyle change — no more detours to the servo when you are already running late.
+
+Home charging is also the cheapest way to keep the battery topped up. In fact, [energy.gov.au reports that around 80 per cent of EV charging in Australia happens at home](https://www.energy.gov.au/electric-vehicles/owning-electric-vehicle/how-charge-your-electric-vehicle), usually overnight. Setting it up is straightforward, but there are a few decisions to make about hardware, installation and electricity pricing.
 
 ## Level 1 vs Level 2 Charging
 
 Every EV comes with a portable charger that plugs into a standard 240-volt household power point. This is Level 1 charging and delivers about 2.3 kW, adding roughly 10 to 15 kilometres of range per hour. For a daily commute of 40 to 60 kilometres, overnight Level 1 charging is sufficient.
 
-Level 2 charging uses a dedicated wall box hardwired to your switchboard. On a single-phase connection (most Australian homes), a Level 2 charger delivers 7.2 kW — about three times faster than a power point. On a three-phase connection, some chargers can deliver up to 22 kW. Level 2 charging adds 35 to 45 kilometres of range per hour on single-phase.
+Level 2 charging uses a dedicated wall box hardwired to your switchboard. On a single-phase connection (most Australian homes), a Level 2 charger delivers 7.2 kW — [energy.gov.au notes dedicated home chargers run at 7 to 22 kW and can charge 3 to 10 times faster than a standard power point](https://www.energy.gov.au/electric-vehicles/owning-electric-vehicle/how-charge-your-electric-vehicle). On a three-phase connection, some chargers can deliver up to 22 kW. Level 2 charging adds 35 to 45 kilometres of range per hour on single-phase.
 
 ## Choosing a Wall Box
 
@@ -29,13 +33,13 @@ Some states offer rebates. Victoria's Zero Emissions Vehicle subsidy and the ACT
 
 The cost of charging at home depends entirely on your electricity plan. Key tariff types include:
 
-Flat rate — a single price per kWh at all times, typically 28 to 38 cents in 2025. Time of use — different prices for peak, shoulder and off-peak periods. Off-peak rates (usually 10pm to 7am) can be as low as 15 to 20 cents per kWh. Controlled load — a separate meter for specific appliances including EV chargers, often priced at 12 to 18 cents per kWh.
+Flat rate — a single price per kWh at all times. Time of use — different prices for peak, shoulder and off-peak periods. Controlled load — a separate meter for specific appliances that may include an EV charger. Rates vary by retailer, location and plan, so compare current offers rather than relying on a fixed national figure.
 
 A smart charger set to charge only during off-peak hours can cut your charging costs by 40 to 60 per cent compared to charging at peak times. For a car using 16 kWh per 100 km driving 15,000 km per year, that is the difference between $600 and $360 annually.
 
 ## Solar Charging
 
-If you have rooftop solar, charging your EV from excess solar production is essentially free after the initial system cost. Many smart chargers can detect when your solar panels are exporting power to the grid and divert that energy to your car instead. Given that solar feed-in tariffs have dropped to 3 to 7 cents per kWh in most states, using that energy to charge your car at an effective rate of zero is far more valuable than exporting it.
+If you have rooftop solar, charging your EV from excess generation can substantially reduce the energy cost after the initial system investment. Many smart chargers can detect when your solar panels are exporting power to the grid and divert that energy to your car instead. Whether that is worthwhile depends on your feed-in tariff, electricity plan and the time your vehicle is at home.
 
 ## Practical Tips
 

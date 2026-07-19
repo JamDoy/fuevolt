@@ -1,3 +1,8 @@
+# Force the bare domain to the canonical www host
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^fuevolt\.com$ [NC]
+RewriteRule ^ https://www.fuevolt.com%{REQUEST_URI} [L,R=301]
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /

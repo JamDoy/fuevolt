@@ -24,13 +24,21 @@ const articles = JSON.parse(
   fs.readFileSync(path.join(CONTENT_DIR, 'index.json'), 'utf-8')
 );
 
-function readArticleMarkdown(slug) {
+function readArticle(slug) {
   const filePath = path.join(CONTENT_DIR, `${slug}.md`);
   if (!fs.existsSync(filePath)) return null;
-  let md = fs.readFileSync(filePath, 'utf-8');
-  // Strip frontmatter
-  md = md.replace(/^---[\s\S]*?---\n*/, '');
-  return md;
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n\n?([\s\S]*)$/);
+  if (!match) return { meta: {}, markdown: raw };
+
+  const meta = {};
+  for (const line of match[1].split('\n')) {
+    const separator = line.indexOf(':');
+    if (separator < 1) continue;
+    const key = line.slice(0, separator).trim();
+    meta[key] = line.slice(separator + 1).trim().replace(/^"|"$/g, '');
+  }
+  return { meta, markdown: match[2] };
 }
 
 function markdownToHtml(md) {
@@ -256,7 +264,41 @@ function insertAdsInArticle(html) {
 }
 
 // ── Helper: generate page HTML ──────────────────────────────────────────
-function generatePage({ urlPath, title, description, h1, content }) {
+function formatArticleDate(value) {
+  if (!value) return '';
+  const date = new Date(`${value}T00:00:00Z`);
+  return Number.isNaN(date.getTime())
+    ? ''
+    : new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date);
+}
+
+function articleSchema(article, meta, urlPath) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.description,
+    mainEntityOfPage: `${BASE_URL}${urlPath}`,
+    datePublished: meta.datePublished,
+    dateModified: meta.dateModified,
+    author: {
+      '@type': 'Person',
+      name: 'James Doyle',
+      url: `${BASE_URL}/about`,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'FueVolt',
+      url: BASE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${BASE_URL}/favicon.svg`,
+      },
+    },
+  };
+}
+
+function generatePage({ urlPath, title, description, h1, content, ogType = 'website', headHtml = '' }) {
   let html = template;
 
   // Replace <title>
@@ -276,11 +318,14 @@ function generatePage({ urlPath, title, description, h1, content }) {
   );
 
   // Replace social metadata
+  html = html.replace(/<meta property="og:type"[^>]*>/, `<meta property="og:type" content="${ogType}" />`);
   html = html.replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${escAttr(title)}" />`);
   html = html.replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${escAttr(description)}" />`);
   html = html.replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${BASE_URL}${urlPath}" />`);
   html = html.replace(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="${escAttr(title)}" />`);
   html = html.replace(/<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="${escAttr(description)}" />`);
+
+  if (headHtml) html = html.replace('</head>', `${headHtml}\n  </head>`);
 
   // Replace the seo-fallback content
   const seoStart = html.indexOf('<div id="seo-fallback"');
@@ -335,20 +380,33 @@ const sitemapUrls = ['/'];
 // ── Generate guide pages ────────────────────────────────────────────────
 console.log('Pre-rendering guide pages...');
 for (const article of articles) {
-  const md = readArticleMarkdown(article.slug);
-  if (!md) {
+  const articleFile = readArticle(article.slug);
+  if (!articleFile) {
     console.warn(`  ⚠ No markdown found for ${article.slug}`);
     continue;
   }
-  let articleHtml = markdownToHtml(md);
+  let articleHtml = markdownToHtml(articleFile.markdown);
   articleHtml = insertAdsInArticle(articleHtml);
 
   const urlPath = `/guides/${article.slug}`;
+  const updated = formatArticleDate(articleFile.meta.dateModified);
   const content = `
-        <p style="font-size:0.85rem;color:#6B7280;margin-bottom:4px">${escHtml(article.category)} · ${escHtml(article.readTime)}</p>
+        <p style="font-size:0.85rem;color:#6B7280;margin-bottom:4px">By James Doyle · ${escHtml(article.category)} · ${escHtml(article.readTime)}</p>
+        ${updated ? `<p style="font-size:0.85rem;color:#6B7280;margin-bottom:16px">Last updated: ${escHtml(updated)}</p>` : ''}
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:24px">${escHtml(article.description)}</p>
+        <aside style="padding:16px;border:1px solid #C8971F;border-radius:12px;margin-bottom:24px;background:#FFF9E8">
+          <h2 style="font-size:1rem;margin-bottom:8px">Live FueVolt Data</h2>
+          <p style="font-size:0.9rem;color:#4B5563">FueVolt loads a current Brisbane-area government fuel-price snapshot here when the page opens. The figures come from the same official price feed used by FueVolt's fuel search.</p>
+          <p style="margin-top:8px"><a href="/fuel-prices/brisbane">View live Brisbane fuel prices</a></p>
+        </aside>
         <article style="line-height:1.8;font-size:0.95rem">${articleHtml}</article>
+        <section style="display:flex;gap:12px;padding:16px;border:1px solid #E5E7EB;border-radius:12px;margin-top:32px">
+          <div style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#C8971F;color:#0D2B5E;font-weight:700;flex:none">JD</div>
+          <div><h2 style="font-size:1rem;margin-bottom:4px">About James Doyle</h2><p style="font-size:0.85rem;color:#4B5563">James Doyle is a Brisbane-based driver and the founder of FueVolt. He built FueVolt after getting frustrated with not knowing where to find the cheapest fuel, with the aim of helping other Australian drivers save money.</p></div>
+        </section>
+        <p style="font-size:0.8rem;color:#6B7280;margin-top:16px">This guide was written and reviewed by James Doyle for FueVolt. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.</p>
         <p style="margin-top:24px"><a href="/guides">← Back to all guides</a></p>`;
+  const schema = JSON.stringify(articleSchema(article, articleFile.meta, urlPath)).replace(/</g, '\\u003c');
 
   const html = generatePage({
     urlPath,
@@ -356,6 +414,8 @@ for (const article of articles) {
     description: article.description,
     h1: escHtml(article.title),
     content,
+    ogType: 'article',
+    headHtml: `  <script type="application/ld+json" id="schema-article">${schema}</script>`,
   });
   writePage(urlPath, html);
   sitemapUrls.push(urlPath);
@@ -462,17 +522,23 @@ writePage('/about', generatePage({
   description: 'Learn about FueVolt, our mission to help Australian drivers save on fuel, and how we compare fuel prices and EV charging stations across Australia.',
   h1: 'About FueVolt',
   content: `
-        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">FueVolt is an Australian service that helps drivers find the cheapest fuel and locate EV charging stations across the country. We compare real-time petrol, diesel, and LPG prices from official government sources across New South Wales, Victoria, Queensland, and Western Australia.</p>
-        <h2 style="font-size:1.3rem;margin-bottom:12px">What We Do</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Real-Time Fuel Prices:</strong> Live fuel prices updated throughout the day from official Australian government sources. Compare E10, Unleaded 91, Premium 95, Premium 98, Diesel, and LPG across thousands of stations.</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>EV Charging Finder:</strong> Find thousands of EV charging stations across all of Australia. Filter by connector type (Type 2, CCS2, CHAdeMO, Tesla) and charging speed (slow, fast, ultra-rapid).</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Trip Planner:</strong> Plan road trips with fuel stops and EV chargers along your route. For electric vehicles, get battery forecasts and recommended charging stops based on your vehicle's range.</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>EV vs Fuel Calculator:</strong> Estimate how much you could save by switching to an electric vehicle based on your driving habits and electricity costs.</p>
-        <h2 style="font-size:1.3rem;margin:20px 0 12px">Coverage</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Fuel price coverage: New South Wales, Victoria, Queensland, and Western Australia. EV charging data covers all of Australia. We are working to expand fuel price coverage to South Australia, Tasmania, the Northern Territory, and the ACT.</p>
-        <h2 style="font-size:1.3rem;margin:20px 0 12px">Independent</h2>
-        <p style="font-size:0.9rem;color:#4B5563">FueVolt is an independent service and not affiliated with any fuel company, petrol station chain, or EV charging network. We provide unbiased information to help Australians make informed decisions.</p>
-        <p style="margin-top:16px"><strong>Contact:</strong> Have feedback or a question? Use our <a href="/contact">contact form</a> to get in touch.</p>`,
+        <h2 style="font-size:1.3rem;margin-bottom:12px">Why FueVolt Exists</h2>
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:12px">FueVolt was started in 2026 by James Doyle, a Brisbane-based driver who was frustrated by not knowing which nearby servo had the cheapest fuel. He built one place where Australian drivers could compare reported prices, find EV chargers and plan a trip.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:20px">The aim is practical: make transport costs easier to understand without favouring a fuel retailer or charging network. FueVolt is independently operated and supported by advertising revenue.</p>
+        <h2 style="font-size:1.3rem;margin-bottom:12px">What FueVolt Does</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Government-reported fuel prices:</strong> FueVolt retrieves petrol, diesel and LPG reports from official state sources, and separates the time government data was checked from the time a retailer last reported a price change.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>EV charging locations:</strong> Drivers can find charging locations and filter by connector type and charging speed. FueVolt does not claim real-time bay availability.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:20px"><strong>Planning tools:</strong> The trip planner and EV-versus-fuel calculator provide estimates based on the details a driver enters; they are not guarantees of range, cost or charger operation.</p>
+        <h2 style="font-size:1.3rem;margin-bottom:12px">Official Data Sources</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">FueVolt links to the public authorities behind its current fuel-price coverage so drivers can review the original data and reporting rules:</p>
+        <ul style="line-height:2;margin-bottom:12px">
+          <li><a href="https://www.fuelcheck.nsw.gov.au/">NSW Government FuelCheck</a></li>
+          <li><a href="https://www.treasury.qld.gov.au/policies-and-programs/fuel-in-queensland/">Queensland Government fuel price reporting</a></li>
+          <li><a href="https://service.vic.gov.au/fuel">Service Victoria Servo Saver</a></li>
+          <li><a href="https://fuelwatch.wa.gov.au/">Western Australia FuelWatch</a></li>
+        </ul>
+        <p style="font-size:0.85rem;color:#6B7280">Fuel retailers supply the underlying price reports under each state's rules. FueVolt does not alter a source-reported price or invent a newer update time.</p>
+        <p style="margin-top:16px"><strong>Contact James:</strong> Send feedback, corrections or questions through the <a href="/contact">contact form</a>.</p>`,
 }));
 sitemapUrls.push('/about');
 

@@ -3,9 +3,13 @@ title: "Australian Fuel Excise Tax Explained: Where Your Fuel Money Goes"
 description: "How much tax is included in every litre of fuel you buy in Australia, what it funds, and how it has changed over time."
 category: "Fuel Guide"
 readTime: "5 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-Every time you fill up your car in Australia, a significant portion of what you pay goes straight to the federal government as fuel excise. Understanding this tax helps explain why fuel costs what it does and why prices can only drop so far.
+Look closely at a fuel receipt and one part of the total may surprise you: a substantial amount never reaches the servo at all — it goes to the federal government as fuel excise. Once you understand that slice, the price on the board makes a lot more sense, and you stop expecting it to fall below a certain floor.
+
+Fuel excise is a flat, per-litre tax, and the rate is set and indexed by the [Australian Taxation Office](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/excise-on-fuel-and-petroleum-products/excise-duty-rates-for-fuel-and-petroleum-products). This guide explains how it works, how much of your fill is tax, and why it puts a hard floor under pump prices.
 
 ## What Is Fuel Excise?
 
@@ -15,7 +19,7 @@ For a litre of petrol priced at 170 cents, the breakdown is roughly: 50 cents ex
 
 ## How Is It Set?
 
-The fuel excise rate is set by the federal government and indexed to the Consumer Price Index (CPI) twice a year, in February and August. This means the excise increases automatically with inflation, typically by 1 to 2 cents per litre each year. The government does not need to pass new legislation for these increases — they happen automatically.
+The fuel excise rate is set by the federal government and indexed to the Consumer Price Index (CPI) twice a year, in February and August. The ATO publishes [how excise duty on fuel is calculated and applied](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/excise-on-fuel-and-petroleum-products/calculating-excise-duty-payable-on-fuel). This means the excise increases automatically with inflation, typically by 1 to 2 cents per litre each year. The government does not need to pass new legislation for these increases — they happen automatically.
 
 ## What Does It Fund?
 

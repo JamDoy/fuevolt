@@ -3,9 +3,13 @@ title: "Fuel Types Explained: E10, U91, U95, U98, Diesel and LPG"
 description: "A complete guide to every fuel type available at Australian service stations, what the numbers mean, and which one your car needs."
 category: "Fuel Guide"
 readTime: "6 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-When you pull into an Australian service station, you are greeted by a row of nozzles labelled with codes like E10, U91, U95, U98, Diesel and LPG. Each represents a different type of fuel with distinct properties, price points and engine compatibility. Choosing the right one matters for your engine's health, your wallet and sometimes the environment.
+Pull into almost any Australian servo and you face a row of coloured nozzles: E10, U91, U95, U98, diesel and sometimes LPG. Six labels, six different prices, and no obvious explanation of which one your car actually wants. It is exactly the kind of everyday fuel confusion I want FueVolt to clear up.
+
+Each nozzle represents a fuel with distinct properties, price points and engine compatibility. Picking the right one matters for your engine's health and your wallet, and it is not as complicated as the labels make it look. In Australia, the properties of each fuel are set in law under the [Fuel Quality Standards Act 2000](https://www.dcceew.gov.au/climate-change/emissions-reduction/regulating-fuel-quality), administered by the Department of Climate Change, Energy, the Environment and Water — so a litre of U95 at one servo has to meet the same standard as U95 anywhere else.
 
 ## Unleaded 91 (U91)
 
@@ -37,6 +41,6 @@ LPG is a mix of propane and butane stored under moderate pressure. It burns clea
 
 ## Which Fuel Should You Use?
 
-Always follow the minimum octane rating specified by your vehicle manufacturer. Using a higher octane than required will not damage your engine but usually provides no measurable benefit in a standard car. Using a lower octane than required can cause knocking, reduced power and potential engine damage over time.
+Always follow the minimum octane rating specified by your vehicle manufacturer. The [Green Vehicle Guide](https://www.greenvehicleguide.gov.au/) lists the recommended fuel type for most models sold in Australia if you are unsure. Using a higher octane than required will not damage your engine but usually provides no measurable benefit in a standard car. Using a lower octane than required can cause knocking, reduced power and potential engine damage over time.
 
 Check the fuel flap or owner's manual to confirm your car's requirements before filling up.

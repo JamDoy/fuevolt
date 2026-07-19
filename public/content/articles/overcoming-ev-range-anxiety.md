@@ -3,15 +3,19 @@ title: "Overcoming EV Range Anxiety: A Practical Guide for Australian Drivers"
 description: "How far can modern EVs really go? Tips for managing range on long trips, understanding real-world range vs rated range, and using charging networks."
 category: "EV Guide"
 readTime: "6 min read"
+datePublished: "2026-06-24"
+dateModified: "2026-07-19"
 ---
 
-Range anxiety — the fear of running out of battery before reaching a charger — is the most commonly cited concern among people considering an electric vehicle. The good news is that for the vast majority of Australian drivers, range anxiety is a problem that disappears within the first few weeks of ownership.
+Almost everyone considering their first EV pictures the same nightmare: stranded on the side of the highway, battery at zero, nowhere to plug in. That fear even has a name — range anxiety — and it stops a lot of people before they start. Here is the thing though: it is almost entirely a fear of the unknown, and it fades fast once you actually live with an EV.
+
+The reason is simple maths. The [average Australian drives around 33 km a day, according to energy.gov.au](https://www.energy.gov.au/electric-vehicles/owning-electric-vehicle/how-charge-your-electric-vehicle) — a tiny fraction of what a modern EV holds on a full charge. For the vast majority of drivers, range anxiety disappears within the first few weeks of ownership.
 
 ## How Far Do Modern EVs Actually Go?
 
-The cheapest EVs on the Australian market in 2025 offer a WLTP-rated range of 300 to 400 kilometres. Mid-range models like the Tesla Model 3 Long Range, BYD Seal and Hyundai Ioniq 5 Extended Range achieve 500 to 600 kilometres on a full charge. Premium models like the Mercedes EQS and BMW iX can exceed 600 kilometres.
+Many current EVs sold in Australia have a WLTP-rated range of roughly 300 to 500 kilometres, with some long-range models exceeding that. The exact figure varies by model, wheel size and battery, so use the manufacturer's current Australian specification as your starting point rather than comparing badge names alone.
 
-The average Australian drives about 36 kilometres per day. Even the most affordable EV can cover a week of average driving on a single charge.
+The average Australian drives about 33 kilometres per day. Even a shorter-range EV can cover several days of typical driving on a single charge.
 
 ## WLTP Range vs Real-World Range
 
@@ -23,7 +27,7 @@ A car rated at 500 km WLTP range might achieve 400 to 450 km in summer highway d
 
 ## Australia's Charging Network
 
-Australia's public charging network continues to grow, with DC fast chargers available along many major highways. Networks operated by the NRMA, Chargefox, Evie Networks and Tesla serve locations across the east coast, with coverage also expanding in WA, SA and Tasmania.
+Australia's public charging network continues to grow, with DC fast chargers available along many major highways — the [Electric Vehicle Council](https://electricvehiclecouncil.com.au/) reports steady expansion of public charging infrastructure year on year. Networks operated by the NRMA, Chargefox, Evie Networks and Tesla serve locations across the east coast, with coverage also expanding in WA, SA and Tasmania.
 
 Key highway routes — Sydney to Melbourne, Sydney to Brisbane, Melbourne to Adelaide, Brisbane to Cairns — now have DC fast chargers spaced every 100 to 200 kilometres, well within the range of any modern EV.
 
