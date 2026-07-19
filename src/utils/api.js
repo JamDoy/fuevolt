@@ -454,8 +454,10 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
   const cached = getCachedPrices(cacheKey);
   if (cached) {
     const age = formatCacheAge(cached.timestamp);
+    const dataCheckedAt = new Date(cached.timestamp).toISOString();
     const results = cached.stations.map((s) => ({
       ...s,
+      dataCheckedAt,
       source: s.source.replace(/ \(updated .*\)$/, '') + ` (updated ${age})`,
     }));
     return results.sort((a, b) => a.price - b.price);
@@ -478,6 +480,9 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
   if (!results || results.length === 0) {
     results = await fetchRealFuelStations(latitude, longitude, radius, fuelType, state);
   }
+
+  const dataCheckedAt = new Date().toISOString();
+  results = results.map((station) => ({ ...station, dataCheckedAt }));
 
   // Cache the fresh results
   setCachedPrices(cacheKey, results);

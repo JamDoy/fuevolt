@@ -187,6 +187,7 @@ const VIC_FUEL_CODES = { E10: 'E10', U91: 'U91', U95: 'P95', U98: 'P98', Diesel:
 
 export async function fetchAllFuelPricesForStation(station) {
   const prices = {};
+  let dataCheckedAt = station.dataCheckedAt || null;
 
   const isNSW = station.source?.includes('NSW Government');
   const isWA = station.source?.includes('WA FuelWatch');
@@ -198,7 +199,12 @@ export async function fetchAllFuelPricesForStation(station) {
       const token = await getNSWToken();
       if (!token) {
         if (station.price && station.fuelType) {
-          prices[station.fuelType] = { price: station.price, lastUpdated: station.lastUpdated };
+          prices[station.fuelType] = {
+            price: station.price,
+            lastUpdated: station.lastUpdated,
+            priceDate: station.priceDate,
+            dataCheckedAt,
+          };
         }
         return prices;
       }
@@ -225,6 +231,7 @@ export async function fetchAllFuelPricesForStation(station) {
 
           if (!response.ok) continue;
           const data = await response.json();
+          dataCheckedAt = new Date().toISOString();
 
           if (data.prices && data.prices.length > 0) {
             const stationCode = station.id?.replace('nsw-', '').split('-')[0];
@@ -262,6 +269,7 @@ export async function fetchAllFuelPricesForStation(station) {
       }
 
       if (pricesData?.SitePrices) {
+        dataCheckedAt = new Date().toISOString();
         const sitePrices = pricesData.SitePrices.filter(p => String(p.SiteId) === String(siteId) && p.Price > 0 && p.Price < 9000);
         for (const sp of sitePrices) {
           for (const [fuelName, fuelId] of Object.entries(QLD_FUEL_IDS)) {
@@ -292,6 +300,7 @@ export async function fetchAllFuelPricesForStation(station) {
       if (res.ok) {
         const data = await res.json();
         if (data.fuelPriceDetails) {
+          dataCheckedAt = new Date().toISOString();
           const stationEntry = data.fuelPriceDetails.find(e => String(e.fuelStation?.id) === String(stationId));
           if (stationEntry?.fuelPrices) {
             for (const fp of stationEntry.fuelPrices) {
@@ -313,13 +322,27 @@ export async function fetchAllFuelPricesForStation(station) {
     }
   } else if (isWA) {
     if (station.price && station.fuelType) {
-      prices[station.fuelType] = { price: station.price, lastUpdated: station.lastUpdated };
+      prices[station.fuelType] = {
+        price: station.price,
+        lastUpdated: station.lastUpdated,
+        priceDate: station.priceDate,
+        dataCheckedAt,
+      };
     }
   }
 
   // Always include the current search fuel type
   if (station.price && station.fuelType && !prices[station.fuelType]) {
-    prices[station.fuelType] = { price: station.price, lastUpdated: station.lastUpdated };
+    prices[station.fuelType] = {
+      price: station.price,
+      lastUpdated: station.lastUpdated,
+      priceDate: station.priceDate,
+      dataCheckedAt,
+    };
+  }
+
+  for (const priceData of Object.values(prices)) {
+    if (!priceData.dataCheckedAt && dataCheckedAt) priceData.dataCheckedAt = dataCheckedAt;
   }
 
   return prices;

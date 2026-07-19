@@ -35,7 +35,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [loadingPrices, setLoadingPrices] = useState(true);
   const [shareStatus, setShareStatus] = useState('');
-  const freshness = getPriceFreshness(station.lastUpdated, station.priceDate);
+  const freshness = getPriceFreshness(station.lastUpdated, station.priceDate, station.dataCheckedAt);
   const priceContext = getPriceContext(station.price, station.resultAveragePrice);
 
   useEffect(() => {
@@ -150,9 +150,9 @@ export default function FuelStationDetailPage({ station, onBack }) {
                 {(station.price * 100).toFixed(1)}
                 <span className="text-lg ml-1" style={{ color: theme.textSecondary }}>¢/L</span>
               </p>
-              <p className="text-sm mt-1" style={{ color: theme.textMuted }}>
-                {station.fuelType} &bull; {freshness.label}
-              </p>
+              <p className="text-sm mt-1" style={{ color: theme.textMuted }}>{station.fuelType}</p>
+              {freshness.checkedLabel && <p className="text-xs mt-1" style={{ color: theme.textMuted }}>{freshness.checkedLabel}</p>}
+              <p className="text-xs" style={{ color: theme.textMuted }}>{freshness.label}</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {priceContext && <PriceContextBadge context={priceContext} theme={theme} />}
@@ -323,7 +323,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
 
 function FuelPriceTile({ label, priceData, theme }) {
   const displayPrice = priceData?.price;
-  const freshness = getPriceFreshness(priceData?.lastUpdated, priceData?.priceDate);
+  const freshness = getPriceFreshness(priceData?.lastUpdated, priceData?.priceDate, priceData?.dataCheckedAt);
 
   return (
     <div
@@ -340,7 +340,8 @@ function FuelPriceTile({ label, priceData, theme }) {
             {(displayPrice * 100).toFixed(1)}
             <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>¢/L</span>
           </p>
-          <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{freshness.label}</p>
+          {freshness.checkedLabel && <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{freshness.checkedLabel}</p>}
+          <p className="text-[10px]" style={{ color: theme.textMuted }}>{freshness.label}</p>
           {freshness.isOutdated && <OutdatedBadge compact />}
         </>
       ) : (
@@ -365,7 +366,7 @@ function PriceContextBadge({ context, theme }) {
 function OutdatedBadge({ compact = false }) {
   return (
     <span className={`inline-block ${compact ? 'mt-1' : ''} px-2 py-1 rounded-full text-[10px] font-bold`} style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
-      Price may be outdated ⚠️
+      Data check is over 2 hours old
     </span>
   );
 }
