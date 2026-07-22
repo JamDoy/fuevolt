@@ -18,22 +18,48 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build production app
+      - name: Build and verify production app
         run: npm run build
 
-      - name: Deploy to deploy branch
+      - name: Upload verified production artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuevolt-public-html
+          path: ./dist
+          include-hidden-files: true
+
+      - name: Publish verified artifact to deploy branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: deploy
           force_orphan: true
+
+      - name: Verify deploy branch artifact
+        run: |
+          mkdir -p "$RUNNER_TEMP/deploy-output"
+          git fetch origin deploy
+          git archive origin/deploy | tar -x -C "$RUNNER_TEMP/deploy-output"
+          node scripts/verify-prerender.js "$RUNNER_TEMP/deploy-output"
+
+      - name: Deploy complete artifact to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: 145.223.108.78
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ./public_html/
+
+      - name: Verify live Hostinger guide pages
+        run: npm run verify:live
 
       - name: Notify IndexNow
         run: node scripts/ping-indexnow.js

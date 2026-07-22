@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { geocode as tomtomGeocode } from './tomtom';
 
 const OCM_API_KEY = '1ce3a80b-61c0-40e2-97ed-45e81462eac9';
@@ -127,9 +128,9 @@ function formatCacheAge(timestamp) {
 
 // Fuel type mapping for various APIs
 const FUEL_TYPE_MAP = {
-  'E10': { nsw: 'E10', wa: '2', qld: 12, vic: 'E10' },
+  'E10': { nsw: 'E10', wa: null, qld: 12, vic: 'E10' },
   'U91': { nsw: 'U91', wa: '1', qld: 2, vic: 'U91' },
-  'U95': { nsw: 'P95', wa: '4', qld: 5, vic: 'P95' },
+  'U95': { nsw: 'P95', wa: '2', qld: 5, vic: 'P95' },
   'U98': { nsw: 'P98', wa: '6', qld: 8, vic: 'P98' },
   'Diesel': { nsw: 'DL', wa: '4', qld: 3, vic: 'DSL' },
   'LPG': { nsw: 'LPG', wa: '5', qld: 4, vic: 'LPG' },
@@ -380,18 +381,21 @@ function formatVICOpeningHours(hours) {
   return `${todayHours.from} - ${todayHours.to}`;
 }
 
-// WA FuelWatch RSS feed — completely free, no auth required
+// WA FuelWatch RSS feed — public government data, accessed through the same-origin proxy
 async function fetchWAFuelPrices(latitude, longitude, fuelType, radius) {
   try {
-    const waProduct = FUEL_TYPE_MAP[fuelType]?.wa || '1';
-    const url = `https://www.fuelwatch.wa.gov.au/fuelwatch/fuelWatchRSS?Product=${waProduct}&Day=today`;
+    const waProduct = FUEL_TYPE_MAP[fuelType]?.wa;
+    if (!waProduct) return [];
 
+    const proxyOrigin = Capacitor.isNativePlatform() ? 'https://www.fuevolt.com' : '';
+    const url = `${proxyOrigin}/api/wa-fuel.php?product=${encodeURIComponent(waProduct)}&day=today`;
     const response = await fetch(url);
     if (!response.ok) return null;
 
     const xmlText = await response.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(xmlText, 'text/xml');
+    if (doc.querySelector('parsererror')) return null;
     const items = doc.querySelectorAll('item');
 
     if (items.length === 0) return null;
@@ -410,7 +414,7 @@ async function fetchWAFuelPrices(latitude, longitude, fuelType, radius) {
         const dist = getDistance(latitude, longitude, stationLat, stationLng);
         if (dist > radius) return;
         stations.push({
-          id: `wa-${i}`,
+          id: `wa-${waProduct}-${i}`,
           name: name || `${brand} ${suburb}`,
           brand: brand || 'Unknown',
           address: `${address}, ${suburb} WA`,
