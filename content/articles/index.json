@@ -1,0 +1,98 @@
+[
+  {
+    "id": "fuel-types-explained",
+    "slug": "fuel-types-explained",
+    "title": "Fuel Types Explained: E10, U91, U95, U98, Diesel and LPG",
+    "description": "A complete guide to every fuel type available at Australian service stations, what the numbers mean, and which one your car needs.",
+    "category": "Fuel Guide",
+    "readTime": "6 min read"
+  },
+  {
+    "id": "ev-charging-connectors",
+    "slug": "ev-charging-connector-types-australia",
+    "title": "EV Charging Connector Types in Australia: Type 2, CCS, CHAdeMO and Tesla",
+    "description": "Understand the different EV charging plugs used across Australia, which cars use which connectors, and how charging speeds differ.",
+    "category": "EV Guide",
+    "readTime": "6 min read"
+  },
+  {
+    "id": "fuel-price-cycles",
+    "slug": "how-fuel-price-cycles-work-australia",
+    "title": "How Fuel Price Cycles Work in Australia",
+    "description": "Learn why petrol prices rise and fall in regular cycles across Australian cities, how to spot the cheapest day to fill up, and tips for saving.",
+    "category": "Fuel Guide",
+    "readTime": "5 min read"
+  },
+  {
+    "id": "petrol-vs-diesel-vs-electric",
+    "slug": "petrol-vs-diesel-vs-electric-comparison",
+    "title": "Petrol vs Diesel vs Electric: Which Is Cheapest to Run in Australia?",
+    "description": "A detailed cost comparison of petrol, diesel and electric vehicles in Australia covering fuel costs, servicing, registration and total cost of ownership.",
+    "category": "Comparison",
+    "readTime": "7 min read"
+  },
+  {
+    "id": "octane-ratings",
+    "slug": "understanding-octane-ratings",
+    "title": "Understanding Octane Ratings: Does Premium Fuel Make a Difference?",
+    "description": "What RON 91, 95 and 98 actually mean, whether premium fuel improves performance, and when it is worth paying extra.",
+    "category": "Fuel Guide",
+    "readTime": "5 min read"
+  },
+  {
+    "id": "road-trip-fuel-planning",
+    "slug": "australian-road-trip-fuel-planning-tips",
+    "title": "Australian Road Trip Fuel Planning: Tips to Save Money on Long Drives",
+    "description": "How to plan fuel stops on long Australian road trips, avoid overpriced outback stations, and maximise your savings.",
+    "category": "Tips",
+    "readTime": "6 min read"
+  },
+  {
+    "id": "ev-home-charging",
+    "slug": "ev-home-charging-setup-guide-australia",
+    "title": "How to Set Up EV Home Charging in Australia: Costs, Options and Tips",
+    "description": "Everything you need to know about installing a home EV charger in Australia, from choosing a wall box to understanding electricity tariffs.",
+    "category": "EV Guide",
+    "readTime": "6 min read"
+  },
+  {
+    "id": "ev-range-anxiety",
+    "slug": "overcoming-ev-range-anxiety",
+    "title": "Overcoming EV Range Anxiety: A Practical Guide for Australian Drivers",
+    "description": "How far can modern EVs really go? Tips for managing range on long trips, understanding real-world range vs rated range, and using charging networks.",
+    "category": "EV Guide",
+    "readTime": "6 min read"
+  },
+  {
+    "id": "saving-money-fuel",
+    "slug": "tips-to-save-money-on-fuel-australia",
+    "title": "10 Proven Tips to Save Money on Fuel in Australia",
+    "description": "Practical, tested strategies to reduce your fuel bill, from price comparison apps to driving techniques and vehicle maintenance.",
+    "category": "Tips",
+    "readTime": "6 min read"
+  },
+  {
+    "id": "ev-vs-hybrid",
+    "slug": "electric-vs-hybrid-vs-plug-in-hybrid",
+    "title": "Electric vs Hybrid vs Plug-in Hybrid: Which Is Right for You?",
+    "description": "Compare pure electric (BEV), hybrid (HEV) and plug-in hybrid (PHEV) vehicles to find the best fit for your driving needs and budget.",
+    "category": "Comparison",
+    "readTime": "6 min read"
+  },
+  {
+    "id": "fuel-excise-tax",
+    "slug": "australian-fuel-excise-tax-explained",
+    "title": "Australian Fuel Excise Tax Explained: Where Your Fuel Money Goes",
+    "description": "How much tax is included in every litre of fuel you buy in Australia, what it funds, and how it has changed over time.",
+    "category": "Fuel Guide",
+    "readTime": "5 min read"
+  },
+  {
+    "id": "ev-battery-health",
+    "slug": "ev-battery-health-and-longevity-tips",
+    "title": "EV Battery Health: How to Maximise Your Electric Car Battery Life",
+    "description": "Practical tips to preserve your EV battery over the long term, including charging habits, temperature management and what degradation really looks like.",
+    "category": "EV Guide",
+    "readTime": "6 min read"
+  }
+]
