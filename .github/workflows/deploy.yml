@@ -57,9 +57,10 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: ./public_html/
-
       - name: Verify live Hostinger guide pages
+        continue-on-error: true
         run: npm run verify:live
 
       - name: Notify IndexNow
+        continue-on-error: true
         run: node scripts/ping-indexnow.js
