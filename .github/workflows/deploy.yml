@@ -52,7 +52,7 @@ jobs:
       - name: Deploy complete artifact to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: 145.223.108.78
+          server: 5.183.10.103
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
