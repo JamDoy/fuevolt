@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import StationMap from '../components/StationMap';
@@ -311,6 +311,7 @@ export default function FuelPricePage({
       {/* Cheapest Station Highlight */}
       {stations.length > 0 && !loading && cheapest && (
         <div
+          key={cheapest.id}
           className="rounded-2xl p-5 cursor-pointer"
           onClick={() => openStationDetail(cheapest)}
           style={{
@@ -318,6 +319,7 @@ export default function FuelPricePage({
             border: `2px solid ${theme.mode === 'dark' ? 'rgba(46,204,113,0.4)' : 'rgba(39,174,96,0.3)'}`,
             boxShadow: theme.mode === 'dark' ? '0 0 16px rgba(46,204,113,0.1)' : '0 4px 12px rgba(39,174,96,0.08)',
             transition: 'all 0.25s ease',
+            animation: 'cheapestFoundPulse 900ms ease-out',
           }}
         >
           <div className="flex items-center justify-between">
@@ -328,7 +330,7 @@ export default function FuelPricePage({
             </div>
             <div className="text-right">
               <p className="text-3xl sm:text-4xl font-bold" style={{ color: theme.gold }}>
-                {(cheapest.price * 100).toFixed(1)}
+                <CountUpPrice value={cheapest.price * 100} />
                 <span className="text-sm ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
               </p>
               <div className="mt-1 flex flex-wrap justify-end gap-1.5">
@@ -537,8 +539,44 @@ export default function FuelPricePage({
       </div>
 
       <AdUnit />
+
+      <style>{`
+        @keyframes cheapestFoundPulse {
+          0% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); transform: scale(1); }
+          35% { box-shadow: 0 0 28px rgba(255, 215, 0, 0.6); transform: scale(1.015); }
+          100% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); transform: scale(1); }
+        }
+      `}</style>
     </div>
   );
+}
+
+function CountUpPrice({ value }) {
+  const [display, setDisplay] = useState(0);
+  const displayRef = useRef(0);
+
+  useEffect(() => {
+    const from = displayRef.current;
+    const to = value;
+    if (!Number.isFinite(to) || from === to) return undefined;
+
+    const duration = 700;
+    const start = performance.now();
+    let frame;
+
+    const tick = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      const next = from + (to - from) * eased;
+      displayRef.current = next;
+      setDisplay(next);
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return display.toFixed(1);
 }
 
 function PriceContextBadge({ context, theme }) {
