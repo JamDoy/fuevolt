@@ -18,7 +18,7 @@ import ContactPage from './pages/ContactPage';
 import FuelPreferencePrompt from './components/FuelPreferencePrompt';
 import MobileBottomNav from './components/MobileBottomNav';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
-import { updatePageMeta, POPULAR_SUBURBS } from './utils/seo';
+import { updatePageMeta, buildCityMeta, POPULAR_SUBURBS } from './utils/seo';
 import { getFuelPreference, saveFuelPreference } from './utils/sessionPreferences';
 
 function parseRoute() {
@@ -71,15 +71,15 @@ function AppContent() {
   const [articleSlug, setArticleSlug] = useState(parsed.articleSlug || null);
   const { theme } = useTheme();
 
-  const navigate = useCallback((newView, path, routeState = {}) => {
+  const navigate = useCallback((newView, path, routeState = {}, extra) => {
     setView(newView);
     setRoute(path || '/', { fuevoltView: newView, ...routeState });
-    updatePageMeta(newView);
+    updatePageMeta(newView, extra);
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    updatePageMeta(view);
+    updatePageMeta(view, buildCityMeta(view, initialSuburb));
 
     const handlePop = () => {
       const p = parseRoute();
@@ -87,12 +87,12 @@ function AppContent() {
       setInitialSuburb(p.suburb);
       setDetailStation(p.station || null);
       setArticleSlug(p.articleSlug || null);
-      updatePageMeta(p.view);
+      updatePageMeta(p.view, buildCityMeta(p.view, p.suburb));
       window.scrollTo(0, 0);
     };
     window.addEventListener('popstate', handlePop);
     return () => window.removeEventListener('popstate', handlePop);
-  }, [view]);
+  }, [view, initialSuburb]);
 
   const handleSelect = (option) => {
     setInitialSearch(null);
@@ -283,7 +283,7 @@ function AppContent() {
         <div className="mt-4 max-w-4xl mx-auto">
           <p className="text-[10px] mb-1" style={{ color: theme.footerSubtext }}>Fuel prices in:</p>
           <div className="flex flex-wrap justify-center gap-x-2 gap-y-0.5">
-            {POPULAR_SUBURBS.fuel.slice(0, 10).map((s) => (
+            {POPULAR_SUBURBS.fuel.map((s) => (
               <a
                 key={s.slug}
                 href={`/fuel-prices/${s.slug}`}
@@ -295,12 +295,7 @@ function AppContent() {
                   setInitialSearch(null);
                   setInitialSuburb(s);
                   setDetailStation(null);
-                  navigate('fuel', `/fuel-prices/${s.slug}`);
-                  updatePageMeta('fuel', {
-                    title: `Fuel Prices in ${s.name} — Cheapest Petrol Today | FueVolt`,
-                    description: `Compare petrol, diesel and LPG prices near ${s.name}. Live data from government APIs. Find the cheapest fuel station today.`,
-                    url: `https://www.fuevolt.com/fuel-prices/${s.slug}`,
-                  });
+                  navigate('fuel', `/fuel-prices/${s.slug}`, {}, buildCityMeta('fuel', s));
                 }}
               >
                 {s.name}
@@ -319,12 +314,7 @@ function AppContent() {
                   e.preventDefault();
                   setInitialSuburb(s);
                   setDetailStation(null);
-                  navigate('ev', `/ev-charging/${s.slug}`);
-                  updatePageMeta('ev', {
-                    title: `EV Charging Stations in ${s.name} — Find Chargers | FueVolt`,
-                    description: `Find EV charging stations near ${s.name}. Filter by connector type and charging speed.`,
-                    url: `https://www.fuevolt.com/ev-charging/${s.slug}`,
-                  });
+                  navigate('ev', `/ev-charging/${s.slug}`, {}, buildCityMeta('ev', s));
                 }}
               >
                 {s.name}

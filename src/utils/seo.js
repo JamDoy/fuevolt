@@ -68,6 +68,25 @@ const PAGE_META = {
   },
 };
 
+export function buildCityMeta(kind, suburb) {
+  if (!suburb) return undefined;
+  if (kind === 'fuel') {
+    return {
+      title: `Fuel Prices in ${suburb.name} — Cheapest Petrol Today | FueVolt`,
+      description: `Compare petrol, diesel and LPG prices near ${suburb.name}. Live data from government APIs. Find the cheapest fuel station today.`,
+      url: `${BASE_URL}/fuel-prices/${suburb.slug}`,
+    };
+  }
+  if (kind === 'ev') {
+    return {
+      title: `EV Charging Stations in ${suburb.name} — Find Chargers | FueVolt`,
+      description: `Find EV charging stations near ${suburb.name}. Filter by connector type and charging speed.`,
+      url: `${BASE_URL}/ev-charging/${suburb.slug}`,
+    };
+  }
+  return undefined;
+}
+
 export function updatePageMeta(view, extra) {
   const meta = PAGE_META[view] || PAGE_META.landing;
   const title = extra?.title || meta.title;
