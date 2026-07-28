@@ -6,6 +6,7 @@ import FuelStationCard from '../components/FuelStationCard';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import SavingsCalculator from '../components/SavingsCalculator';
+import AdUnit from '../components/AdUnit';
 import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
@@ -534,6 +535,8 @@ export default function FuelPricePage({
           FueVolt covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, and Wollongong, as well as regional and rural areas throughout these states.
         </p>
       </div>
+
+      <AdUnit />
     </div>
   );
 }

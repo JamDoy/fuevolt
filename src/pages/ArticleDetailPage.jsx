@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import ArticleAuthorBio from '../components/ArticleAuthorBio';
 import LiveFueVoltData from '../components/LiveFueVoltData';
+import AdUnit from '../components/AdUnit';
 import { injectArticleSchema, removeArticleSchema, updatePageMeta } from '../utils/seo';
 
 function parseFrontmatter(text) {
@@ -190,27 +191,36 @@ export default function ArticleDetailPage({ slug, onBack }) {
       <LiveFueVoltData slug={slug} theme={theme} />
 
       <article className="space-y-4">
-        {blocks.map((block) => {
-          if (block.type === 'h2') {
-            return (
-              <h2 key={block.key} className="text-lg font-semibold mt-6 mb-2" style={{ color: theme.heading }}>
-                {block.text}
-              </h2>
-            );
-          }
-          if (block.type === 'h3') {
-            return (
-              <h3 key={block.key} className="text-base font-semibold mt-4 mb-1" style={{ color: theme.heading }}>
-                {block.text}
-              </h3>
-            );
-          }
-          return (
-            <p key={block.key} className="text-sm leading-relaxed" style={{ color: theme.text }}>
-              {renderInlineLinks(block.text, theme.accent)}
-            </p>
-          );
-        })}
+        {(() => {
+          let h2Count = 0;
+          const nodes = [];
+          blocks.forEach((block) => {
+            if (block.type === 'h2') {
+              h2Count++;
+              if (h2Count > 1 && h2Count % 2 === 1) {
+                nodes.push(<AdUnit key={`ad-${block.key}`} />);
+              }
+              nodes.push(
+                <h2 key={block.key} className="text-lg font-semibold mt-6 mb-2" style={{ color: theme.heading }}>
+                  {block.text}
+                </h2>
+              );
+            } else if (block.type === 'h3') {
+              nodes.push(
+                <h3 key={block.key} className="text-base font-semibold mt-4 mb-1" style={{ color: theme.heading }}>
+                  {block.text}
+                </h3>
+              );
+            } else {
+              nodes.push(
+                <p key={block.key} className="text-sm leading-relaxed" style={{ color: theme.text }}>
+                  {renderInlineLinks(block.text, theme.accent)}
+                </p>
+              );
+            }
+          });
+          return nodes;
+        })()}
       </article>
 
       <ArticleAuthorBio theme={theme} />

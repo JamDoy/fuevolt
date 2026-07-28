@@ -8,6 +8,7 @@ import EVDetailPanel from '../components/EVDetailPanel';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import EVCostEstimator from '../components/EVCostEstimator';
+import AdUnit from '../components/AdUnit';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { reverseGeocode } from '../utils/tomtom';
@@ -393,6 +394,8 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
           Public DC fast charging in Australia typically costs between $0.40 and $0.60 per kWh. Home charging on a standard electricity tariff costs around $0.25-$0.35 per kWh, making it significantly cheaper. An average EV travelling 300km per week costs roughly $15-$20 in electricity compared to $50-$70 in petrol for an equivalent fuel vehicle. Use our EV vs Fuel calculator to get a personalised savings estimate based on your driving habits.
         </p>
       </div>
+
+      <AdUnit />
     </div>
   );
 }
