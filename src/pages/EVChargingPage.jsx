@@ -13,6 +13,7 @@ import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api'
 import useAutoLocation from '../hooks/useAutoLocation';
 import { reverseGeocode } from '../utils/tomtom';
 import { injectEVStationSchema, POPULAR_SUBURBS } from '../utils/seo';
+import { EV_CITY_CONTENT } from '../data/cityContent';
 
 const CONNECTOR_FILTERS = ['Type 2', 'CCS', 'CHAdeMO', 'Tesla', 'Type 1'];
 const SPEED_FILTERS = [
@@ -22,6 +23,7 @@ const SPEED_FILTERS = [
 ];
 
 export default function EVChargingPage({ initialSuburb, initialSearch }) {
+  const cityContent = initialSuburb?.slug ? EV_CITY_CONTENT[initialSuburb.slug] : null;
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -175,11 +177,16 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
       {/* Hero Section — Green EV Identity */}
       <div className="text-center mb-2">
         <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.green }}>
-          &#x26A1; EV Charging Stations
+          &#x26A1; {initialSuburb ? `EV Charging Stations in ${initialSuburb.name}` : 'EV Charging Stations'}
         </h1>
         <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Search thousands of EV charging points across Australia
         </p>
+        {cityContent?.intro && (
+          <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
+            {cityContent.intro}
+          </p>
+        )}
       </div>
 
       {/* Search */}
@@ -373,27 +380,51 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
       />
 
       {/* Informational content for SEO and AdSense */}
-      <div
-        className="rounded-2xl p-6 mt-4"
-        style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
-      >
-        <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>About EV Charging in Australia</h2>
-        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          Australia's electric vehicle charging network is growing rapidly, with thousands of public charging stations now available across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.
-        </p>
-        <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Connector Types Explained</h3>
-        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          <strong>Type 2 (Mennekes)</strong> is the standard AC charging connector used by most EVs in Australia. It supports charging speeds from 7kW to 22kW and is the most common plug type at public and home chargers. <strong>CCS2 (Combined Charging System)</strong> is the dominant DC fast charging standard in Australia, supporting speeds from 50kW to 350kW. Most new EVs sold in Australia use CCS2 for fast charging. <strong>CHAdeMO</strong> is an older DC fast charging standard used by some Japanese EVs like the Nissan Leaf and Mitsubishi Outlander PHEV. <strong>Tesla</strong> Superchargers use a proprietary connector but many newer Tesla vehicles also support CCS2.
-        </p>
-        <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Charging Speed Levels</h3>
-        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          <strong>Slow charging (up to 7kW)</strong> is typically used for overnight home charging and takes 8-12 hours for a full charge. <strong>Fast charging (7-50kW)</strong> is commonly found at shopping centres and workplaces, taking 1-4 hours. <strong>Ultra-rapid charging (50kW+)</strong> is available at highway rest stops and dedicated charging hubs — a 350kW charger can add 200km of range in just 10-15 minutes.
-        </p>
-        <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Charging Cost Estimates</h3>
-        <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
-          Public DC fast charging in Australia typically costs between $0.40 and $0.60 per kWh. Home charging on a standard electricity tariff costs around $0.25-$0.35 per kWh, making it significantly cheaper. An average EV travelling 300km per week costs roughly $15-$20 in electricity compared to $50-$70 in petrol for an equivalent fuel vehicle. Use our EV vs Fuel calculator to get a personalised savings estimate based on your driving habits.
-        </p>
-      </div>
+      {cityContent ? (
+        <div
+          className="rounded-2xl p-6 mt-4"
+          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
+        >
+          <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>EV Charging in {initialSuburb.name}</h2>
+          {cityContent.coverage && (
+            <>
+              <h3 className="text-sm font-semibold mb-2" style={{ color: theme.text }}>Charging Coverage in {initialSuburb.name}</h3>
+              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.coverage}</p>
+            </>
+          )}
+          {cityContent.tips && (
+            <>
+              <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Charging Tips for {initialSuburb.name}</h3>
+              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.tips}</p>
+            </>
+          )}
+          <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
+            Filter {initialSuburb.name} chargers by connector (Type 2, CCS2, CHAdeMO, Tesla) or speed — see our <a href="/guides/ev-charging-connector-types-australia" style={{ color: theme.green }}>guide to EV connector types</a> for which one fits your car.
+          </p>
+        </div>
+      ) : (
+        <div
+          className="rounded-2xl p-6 mt-4"
+          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
+        >
+          <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>About EV Charging in Australia</h2>
+          <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+            Australia's electric vehicle charging network is growing rapidly, with thousands of public charging stations now available across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.
+          </p>
+          <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Connector Types Explained</h3>
+          <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+            <strong>Type 2 (Mennekes)</strong> is the standard AC charging connector used by most EVs in Australia. It supports charging speeds from 7kW to 22kW and is the most common plug type at public and home chargers. <strong>CCS2 (Combined Charging System)</strong> is the dominant DC fast charging standard in Australia, supporting speeds from 50kW to 350kW. Most new EVs sold in Australia use CCS2 for fast charging. <strong>CHAdeMO</strong> is an older DC fast charging standard used by some Japanese EVs like the Nissan Leaf and Mitsubishi Outlander PHEV. <strong>Tesla</strong> Superchargers use a proprietary connector but many newer Tesla vehicles also support CCS2.
+          </p>
+          <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Charging Speed Levels</h3>
+          <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+            <strong>Slow charging (up to 7kW)</strong> is typically used for overnight home charging and takes 8-12 hours for a full charge. <strong>Fast charging (7-50kW)</strong> is commonly found at shopping centres and workplaces, taking 1-4 hours. <strong>Ultra-rapid charging (50kW+)</strong> is available at highway rest stops and dedicated charging hubs — a 350kW charger can add 200km of range in just 10-15 minutes.
+          </p>
+          <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Charging Cost Estimates</h3>
+          <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
+            Public DC fast charging in Australia typically costs between $0.40 and $0.60 per kWh. Home charging on a standard electricity tariff costs around $0.25-$0.35 per kWh, making it significantly cheaper. An average EV travelling 300km per week costs roughly $15-$20 in electricity compared to $50-$70 in petrol for an equivalent fuel vehicle. Use our EV vs Fuel calculator to get a personalised savings estimate based on your driving habits.
+          </p>
+        </div>
+      )}
 
       <AdUnit />
     </div>

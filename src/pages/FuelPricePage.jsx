@@ -12,6 +12,7 @@ import useAutoLocation from '../hooks/useAutoLocation';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
 import { injectFuelStationSchema, POPULAR_SUBURBS } from '../utils/seo';
 import { getPriceContext, getPriceFreshness } from '../utils/priceFreshness';
+import { FUEL_CITY_CONTENT } from '../data/cityContent';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -21,28 +22,6 @@ const FUEL_TYPES = [
   { id: 'U98', label: 'Premium 98' },
   { id: 'LPG', label: 'LPG' },
 ];
-
-const CITY_DESCRIPTIONS = {
-  sydney: 'Sydney drivers face some of the highest fuel prices in Australia due to high demand and limited competition in some suburbs. Use FueVolt to compare prices across the Greater Sydney area including Parramatta, Penrith, and the Northern Beaches.',
-  melbourne: 'Melbourne follows a regular weekly fuel price cycle — prices typically peak mid-week and drop on Tuesdays. FueVolt helps you find the cheapest petrol across Melbourne suburbs from Dandenong to Footscray.',
-  brisbane: 'Brisbane and South East Queensland fuel prices are sourced from official government data, giving you accurate real-time pricing for every servo in the region.',
-  perth: 'Perth fuel prices are updated daily — stations are required to lock in their next-day price by 2pm. Check FueVolt to see tomorrow\'s prices today and plan your fill-up.',
-  adelaide: 'Adelaide fuel prices can vary significantly between suburbs. Coverage for South Australia is coming soon — in the meantime, nearby stations in border regions may appear in searches.',
-  'gold-coast': 'Gold Coast fuel prices benefit from QLD government transparency. Compare prices from Coolangatta to Helensvale and find the cheapest fuel for your coastal commute.',
-  canberra: 'Canberra fuel prices tend to be higher than surrounding NSW regional areas. ACT coverage is coming soon — nearby NSW stations with live pricing are already available.',
-  newcastle: 'Newcastle and the Hunter Valley region have real-time government fuel pricing. Compare prices across Charlestown, Maitland, and Lake Macquarie.',
-  wollongong: 'Wollongong and the Illawarra region have real-time fuel pricing. Find cheap petrol from Helensburgh to Kiama.',
-  hobart: 'Hobart and Tasmanian fuel prices — coverage is coming soon. Check back for real-time pricing data across the Apple Isle.',
-  darwin: 'Darwin fuel prices are among the highest in Australia due to remote supply chains. NT coverage is coming soon.',
-  geelong: 'Geelong has real-time government fuel pricing. Compare prices across Geelong, Bellarine Peninsula, and the Surf Coast.',
-  toowoomba: 'Toowoomba has real-time government fuel pricing. Find the cheapest fuel in the Darling Downs region.',
-  cairns: 'Cairns and Far North Queensland have real-time fuel pricing from official government sources. Compare prices from Smithfield to Edmonton.',
-  ballarat: 'Ballarat has real-time government fuel pricing. Compare petrol and diesel across the Ballarat region.',
-  bendigo: 'Bendigo has real-time government fuel pricing. Find cheap fuel across Greater Bendigo and the Goldfields region.',
-  launceston: 'Launceston fuel prices — Tasmanian coverage is coming soon. We\'re working on bringing real-time pricing to Northern Tasmania.',
-  'sunshine-coast': 'Sunshine Coast has real-time fuel pricing from official government sources. Compare prices from Caloundra to Noosa.',
-  parramatta: 'Parramatta and Western Sydney have real-time government fuel pricing. Find the cheapest petrol in one of Sydney\'s busiest commuter regions.',
-};
 
 export default function FuelPricePage({
   initialFuelType = 'U91',
@@ -189,6 +168,8 @@ export default function FuelPricePage({
     return a.price - b.price;
   });
 
+  const cityContent = initialSuburb?.slug ? FUEL_CITY_CONTENT[initialSuburb.slug] : null;
+
   const cheapest = pricedStations.length > 0
     ? pricedStations.reduce((min, s) => (s.price < min.price ? s : min), pricedStations[0])
     : null;
@@ -231,9 +212,9 @@ export default function FuelPricePage({
         <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Find the cheapest fuel near you across Australia
         </p>
-        {initialSuburb?.slug && CITY_DESCRIPTIONS[initialSuburb.slug] && (
+        {cityContent?.intro && (
           <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
-            {CITY_DESCRIPTIONS[initialSuburb.slug]}
+            {cityContent.intro}
           </p>
         )}
       </div>
@@ -517,26 +498,56 @@ export default function FuelPricePage({
       )}
 
       {/* Informational content for SEO and AdSense */}
-      <div
-        className="rounded-2xl p-6 mt-4"
-        style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
-      >
-        <h2 className="text-base font-bold mb-3" style={{ color: theme.gold }}>How FueVolt Fuel Price Comparison Works</h2>
-        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          FueVolt compares real-time fuel prices from official Australian government sources. Prices are updated throughout the day as fuel stations report changes, giving you the most accurate data available.
-        </p>
-        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          Search by suburb, postcode, or use your current location to find the cheapest E10, Unleaded 91, Premium 95, Premium 98, Diesel, and LPG near you. Results can be sorted by price (lowest first) or by drive time, so you can find the best value considering both fuel cost and travel distance.
-        </p>
-        <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Understanding Fuel Price Cycles</h3>
-        <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          Fuel prices in Australian capital cities follow predictable cycles, typically rising sharply over one to two days and then gradually falling over several weeks. The best time to fill up is at the bottom of the cycle when prices are lowest. FueVolt helps you spot these patterns by showing current prices from hundreds of stations in your area, making it easy to identify when prices are at their cheapest.
-        </p>
-        <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Coverage Across Australia</h3>
-        <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
-          FueVolt covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, and Wollongong, as well as regional and rural areas throughout these states.
-        </p>
-      </div>
+      {cityContent ? (
+        <div
+          className="rounded-2xl p-6 mt-4"
+          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
+        >
+          <h2 className="text-base font-bold mb-3" style={{ color: theme.gold }}>Fuel Prices in {initialSuburb.name}</h2>
+          {cityContent.suburbs && (
+            <>
+              <h3 className="text-sm font-semibold mb-2" style={{ color: theme.text }}>Suburbs &amp; Areas Covered</h3>
+              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.suburbs}</p>
+            </>
+          )}
+          {cityContent.trends && (
+            <>
+              <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Price Trends in {initialSuburb.name}</h3>
+              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.trends}</p>
+            </>
+          )}
+          {cityContent.tips && (
+            <>
+              <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Tips to Save on Fuel in {initialSuburb.name}</h3>
+              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.tips}</p>
+            </>
+          )}
+          <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
+            FueVolt compares E10, Unleaded 91, Premium 95, Premium 98, Diesel and LPG in {initialSuburb.name} — see our <a href="/guides/fuel-types-explained" style={{ color: theme.gold }}>guide to fuel types</a> for which grade suits your car.
+          </p>
+        </div>
+      ) : (
+        <div
+          className="rounded-2xl p-6 mt-4"
+          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
+        >
+          <h2 className="text-base font-bold mb-3" style={{ color: theme.gold }}>How FueVolt Fuel Price Comparison Works</h2>
+          <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+            FueVolt compares real-time fuel prices from official Australian government sources. Prices are updated throughout the day as fuel stations report changes, giving you the most accurate data available.
+          </p>
+          <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+            Search by suburb, postcode, or use your current location to find the cheapest E10, Unleaded 91, Premium 95, Premium 98, Diesel, and LPG near you. Results can be sorted by price (lowest first) or by drive time, so you can find the best value considering both fuel cost and travel distance.
+          </p>
+          <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Understanding Fuel Price Cycles</h3>
+          <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
+            Fuel prices in Australian capital cities follow predictable cycles, typically rising sharply over one to two days and then gradually falling over several weeks. The best time to fill up is at the bottom of the cycle when prices are lowest. FueVolt helps you spot these patterns by showing current prices from hundreds of stations in your area, making it easy to identify when prices are at their cheapest.
+          </p>
+          <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Coverage Across Australia</h3>
+          <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
+            FueVolt covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, and Wollongong, as well as regional and rural areas throughout these states.
+          </p>
+        </div>
+      )}
 
       <AdUnit />
 

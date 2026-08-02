@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { marked } from 'marked';
+import { FUEL_CITY_CONTENT, EV_CITY_CONTENT } from '../src/data/cityContent.js';
 
 const DIST = path.resolve('dist');
 const CONTENT_DIR = path.resolve('public/content/articles');
@@ -81,143 +82,6 @@ const EV_CITIES = [
   { slug: 'darwin', name: 'Darwin' },
   { slug: 'newcastle', name: 'Newcastle' },
 ];
-
-// Each city intro is expanded to 300+ words with local suburbs, price trends, and tips
-const FUEL_CITY_CONTENT = {
-  sydney: {
-    intro: 'Sydney drivers face some of the highest fuel prices in Australia due to high demand, congestion surcharges, and limited competition in some suburbs. Prices can vary by 30 cents per litre or more between the cheapest and most expensive stations on any given day.',
-    suburbs: 'FueVolt compares prices across the Greater Sydney area including Parramatta, Penrith, Liverpool, Blacktown, Campbelltown, Bankstown, Hornsby, Chatswood, Bondi, Manly, the Northern Beaches, Canterbury, Sutherland, Cronulla, and the Hills District.',
-    trends: 'Sydney fuel prices follow a regular weekly cycle. Prices typically rise sharply on Wednesdays or Thursdays and gradually fall over the following week. The cheapest day to fill up is usually Tuesday, when prices hit the bottom of the cycle. Independent stations in Western Sydney suburbs like Fairfield, Auburn, and Granville often undercut the major brands. Motorway service stations and inner-city locations tend to charge the highest prices.',
-    tips: 'To save money on fuel in Sydney, fill up at the bottom of the price cycle (typically Tuesday), compare prices between suburbs using FueVolt, and consider driving a few extra minutes to a cheaper station. Costco at Crossroads in Casula and Marsden Park consistently offers some of the lowest prices in the city. Avoid filling up at petrol stations directly on major highways or near the airport.',
-  },
-  melbourne: {
-    intro: 'Melbourne follows a regular weekly fuel price cycle — prices typically peak mid-week and drop on Tuesdays. Understanding this cycle can save you 10-20 cents per litre every fill-up, adding up to hundreds of dollars in annual savings for regular commuters.',
-    suburbs: 'FueVolt tracks prices across Melbourne suburbs including Dandenong, Footscray, Werribee, Ringwood, Frankston, Cranbourne, Broadmeadows, Sunshine, Essendon, Brunswick, Preston, Box Hill, Glen Waverley, Mornington, Geelong Road corridor, and the outer growth suburbs of Craigieburn and Pakenham.',
-    trends: 'Melbourne fuel prices follow a predictable fortnightly to weekly cycle. Prices rise sharply — usually by 20-40 cents per litre — then gradually fall over 7-14 days. The cheapest time to fill up is typically Monday or Tuesday. Melbourne\'s western suburbs (Werribee, Hoppers Crossing, Deer Park) often have the lowest prices, while inner-city stations in South Yarra, Prahran, and the CBD charge premium rates. The price difference between the cheapest and most expensive Melbourne station can exceed 50 cents per litre.',
-    tips: 'Check FueVolt on Monday evenings to catch the bottom of Melbourne\'s price cycle. Independent servos in industrial areas like Laverton, Campbellfield, and Dandenong South frequently offer the best prices. Avoid filling up on Wednesday or Thursday when prices typically spike.',
-  },
-  brisbane: {
-    intro: 'Brisbane and South East Queensland benefit from government-mandated fuel price transparency, meaning every station must report its prices publicly. This transparency makes price comparison especially effective — the price difference between the cheapest and most expensive stations across Greater Brisbane can be 30 cents per litre or more.',
-    suburbs: 'FueVolt shows real-time pricing for every servo in the region, from the Brisbane CBD to Ipswich, Logan, Redlands, Moreton Bay, Caboolture, Redcliffe, Chermside, Mt Gravatt, Carindale, Wynnum, and Springfield. Outer suburbs like Beaudesert, Jimboomba, and Samford also covered.',
-    trends: 'Brisbane fuel prices tend to follow a fortnightly cycle, though the pattern can be less predictable than Sydney or Melbourne. Prices typically rise sharply over one to two days, then fall gradually over 10-14 days. The southside suburbs (Logan, Browns Plains, Beenleigh) often have lower prices than the northside, while stations near the Brisbane Airport and in Fortitude Valley tend to charge more. Queensland does not have a mandated Tuesday price drop like some other states, so checking FueVolt daily is the best strategy.',
-    tips: 'Fill up when prices are at the bottom of the cycle — FueVolt shows you current prices to help identify these dips. Stations along the Ipswich Motorway and Logan Motorway service centres tend to charge premiums. Instead, exit the motorway and fill up at suburban stations nearby for significant savings.',
-  },
-  perth: {
-    intro: 'Perth has a unique fuel pricing system called FuelWatch. Stations must lock in their next-day price by 2pm the day before, so Perth drivers can see tomorrow\'s prices today. This makes Perth one of the most predictable cities in Australia for fuel savings — you can literally plan your fill-up a day in advance.',
-    suburbs: 'Compare prices across Perth from Joondalup to Rockingham, Midland to Fremantle, Armadale to Scarborough, Wanneroo, Morley, Cannington, Victoria Park, Osborne Park, Balcatta, Canning Vale, and the outer suburbs of Mandurah, Ellenbrook, and Butler.',
-    trends: 'Perth fuel prices follow a very regular weekly cycle, largely driven by the FuelWatch system. Prices typically bottom out on Tuesdays or Wednesdays and peak later in the week. The difference between the top and bottom of the cycle can be 15-30 cents per litre. Northern corridor suburbs (Joondalup, Wanneroo, Butler) often compete aggressively on price. Stations in Fremantle and near Cottesloe Beach tend to be more expensive. The Costco in Perth Airport and independent stations in Canning Vale are consistently among the cheapest.',
-    tips: 'Check FueVolt the evening before you plan to fill up — Perth\'s FuelWatch system means tomorrow\'s prices are already set by 2pm today. Fill up on the cheapest day (usually Tuesday). Avoid highway service stations on the Kwinana Freeway and Mitchell Freeway.',
-  },
-  adelaide: {
-    intro: 'Adelaide fuel prices can vary significantly between suburbs, with price differences of 20 cents per litre or more on any given day. While South Australia\'s live government fuel pricing data is still being integrated into FueVolt, nearby border stations with real-time pricing are already available.',
-    suburbs: 'FueVolt coverage is expanding across Adelaide including the CBD, North Adelaide, Port Adelaide, Glenelg, Marion, Salisbury, Elizabeth, Modbury, Norwood, Unley, Prospect, Reynella, Morphett Vale, and Mount Barker.',
-    trends: 'Adelaide typically sees less dramatic price cycles than Sydney and Melbourne, but savings of 10-20 cents per litre between the cheapest and most expensive stations are common. Northern suburbs like Elizabeth and Salisbury tend to have lower prices than the eastern suburbs and the Adelaide Hills. Petrol stations along main arterials like Port Road, South Road, and Main North Road are generally competitive due to high traffic volumes. Stations in tourist areas like Hahndorf and Victor Harbor often charge premiums.',
-    tips: 'Compare prices before heading to the pump. Independent stations in Adelaide\'s outer northern and southern suburbs often offer the best value. Avoid filling up at stations near the Adelaide Oval or along the Adelaide-Crafers Highway. Full SA coverage with live pricing is coming soon to FueVolt.',
-  },
-  'gold-coast': {
-    intro: 'The Gold Coast benefits from Queensland\'s fuel price transparency laws. However, being a major tourist destination means fuel prices can vary dramatically — tourist strips and beachfront stations often charge significant premiums over suburban servos just a few minutes inland.',
-    suburbs: 'Compare prices from Coolangatta to Helensvale, Surfers Paradise to Robina, Broadbeach, Southport, Burleigh Heads, Palm Beach, Nerang, Mudgeeraba, Coomera, Oxenford, Varsity Lakes, and Tweed Heads just across the NSW border.',
-    trends: 'Gold Coast fuel prices generally follow Brisbane\'s fortnightly cycle but with more volatility in tourist areas. Stations along the Gold Coast Highway and near theme parks (Dreamworld, Movie World, Sea World) consistently charge 10-15 cents more per litre than inland alternatives. The M1 motorway corridor through Coomera and Nerang has competitive pricing due to high traffic volume. Stations near the airport at Coolangatta can also be expensive.',
-    tips: 'If you\'re visiting the Gold Coast, fill up before arriving — stations in Logan or Beenleigh on the M1 are usually cheaper. For locals, Nerang, Mudgeeraba, and Varsity Lakes consistently offer better prices than the beachfront. Check FueVolt before heading out to avoid overpaying at tourist-trap servos.',
-  },
-  canberra: {
-    intro: 'Canberra fuel prices tend to be higher than surrounding NSW regional areas due to limited competition and the ACT\'s smaller market. With fewer stations than comparable cities, Canberrans benefit significantly from price comparison — the gap between cheapest and most expensive stations can be 15-25 cents per litre.',
-    suburbs: 'ACT coverage is expanding on FueVolt. Nearby NSW stations with live pricing are already available, including Queanbeyan, Fyshwick, Belconnen, Woden, Tuggeranong, Gungahlin, Mitchell, Hume, Kingston, and Majura Park. Cross-border stations in Queanbeyan often offer competitive prices.',
-    trends: 'Canberra\'s fuel market has fewer stations than comparable Australian cities, which limits competition. Prices are generally stable without the dramatic weekly cycles seen in Sydney and Melbourne. However, independent stations in Fyshwick and Mitchell tend to undercut the major brands. Stations on Northbourne Avenue and near the Parliamentary Triangle charge premium rates. Queanbeyan, just across the NSW border, sometimes has lower prices than Canberra proper due to different state pricing dynamics.',
-    tips: 'Compare Canberra stations with Queanbeyan — cross-border price differences can be significant. Avoid Canberra Avenue and Northbourne Avenue stations during peak hours when prices tend to be highest. Check FueVolt for the cheapest options in your part of the ACT. Full ACT government pricing data is coming soon.',
-  },
-  newcastle: {
-    intro: 'Newcastle and the Hunter Valley region benefit from NSW\'s real-time government fuel pricing. As a major regional city, Newcastle has good competition between fuel retailers, with prices generally tracking 2-5 cents below Sydney averages.',
-    suburbs: 'Compare prices across Charlestown, Maitland, Lake Macquarie, Cessnock, Raymond Terrace, Nelson Bay, Toronto, Warners Bay, Adamstown, Hamilton, Wallsend, Mayfield, Merewether, Lambton, Jesmond, and the broader Hunter Valley region.',
-    trends: 'Newcastle fuel prices follow the same weekly cycle as Sydney but often sit a few cents lower. The cheapest stations tend to be along the Pacific Highway corridor and in industrial areas like Mayfield and Hexham. Stations near the Newcastle Beach and Honeysuckle precinct charge premium rates. The Hunter Valley wine region stations (Cessnock, Pokolbin) are typically more expensive than Newcastle metropolitan stations due to lower competition.',
-    tips: 'Fill up along the Pacific Highway or in Charlestown and Kotara where competition is strongest. Avoid tourist-area stations near Newcastle Beach and in the Hunter Valley wine region. Check FueVolt before road trips from Newcastle to Sydney — prices along the M1 service centres are usually higher than surrounding suburbs.',
-  },
-  wollongong: {
-    intro: 'Wollongong and the Illawarra region have real-time fuel pricing through NSW government data. As a compact regional city, Wollongong offers easy access to multiple competing stations, and prices are often lower than nearby Sydney — making it one of the more affordable places to fill up in NSW.',
-    suburbs: 'Find cheap petrol from Helensburgh to Kiama, including Wollongong CBD, Shellharbour, Warrawong, Dapto, Unanderra, Corrimal, Thirroul, Fairy Meadow, Figtree, Berkeley, Albion Park, Gerringong, and the Shoalhaven region down to Nowra.',
-    trends: 'Wollongong fuel prices generally follow the Sydney cycle but tend to sit 3-8 cents per litre cheaper. The most competitive pricing is found along the Princes Highway corridor through Dapto, Unanderra, and Albion Park. Stations on Crown Street in the Wollongong CBD and near the beaches are typically more expensive. Shellharbour has good competition between major brands. Heading south toward Kiama and Berry, prices tend to rise slightly due to lower station density.',
-    tips: 'Fill up along the Princes Highway where competition keeps prices low. Avoid Helensburgh on the way from Sydney — it\'s often the most expensive in the region. For road trips south, fill up in Albion Park or Shellharbour before heading into the less competitive southern Illawarra and Shoalhaven regions.',
-  },
-  hobart: {
-    intro: 'Hobart and Tasmanian fuel prices are typically higher than mainland Australian capitals due to additional shipping and transport costs to get fuel to the island. This freight premium adds approximately 3-8 cents per litre compared to Melbourne prices.',
-    suburbs: 'Fuel price coverage across Hobart is expanding, including the CBD, Sandy Bay, Glenorchy, Moonah, Kingston, Bellerive, Rosny Park, Claremont, New Town, Lindisfarne, and surrounding areas. Regional Tasmanian towns including Launceston, Devonport, Burnie, and Ulverstone are also being added.',
-    trends: 'Hobart\'s fuel market is smaller than mainland capitals with fewer stations and less aggressive price competition. Prices tend to be more stable without the dramatic weekly cycles. Northern suburbs like Glenorchy and Moonah generally have lower prices than the CBD and Sandy Bay. Stations along the Brooker Highway are usually competitive. The tourist town of Richmond and stations near the Salamanca waterfront tend to charge premiums.',
-    tips: 'Compare prices before filling up — even in a smaller market like Hobart, savings of 10-15 cents per litre are possible. Fill up in Glenorchy or along the Brooker Highway rather than the CBD. For trips around Tasmania, fill up in major towns as rural stations can be significantly more expensive. Full live Tasmanian pricing data is coming soon to FueVolt.',
-  },
-  darwin: {
-    intro: 'Darwin fuel prices are consistently among the highest in Australia due to remote supply chains, high transport costs, and limited competition. The average Darwin fuel price can be 15-25 cents higher per litre than in capital cities like Melbourne or Brisbane, making price comparison especially valuable.',
-    suburbs: 'FueVolt is expanding coverage across Darwin including the CBD, Stuart Park, Fannie Bay, Parap, Winnellie, Berrimah, Palmerston, Howard Springs, Humpty Doo, and the rural areas along the Stuart Highway.',
-    trends: 'Darwin\'s small market means fewer stations and less price competition than mainland capitals. Prices are generally stable without regular cycles. Stations in the CBD and along the Stuart Highway tend to be more expensive than suburban Palmerston. The Woolworths/Caltex stations in Palmerston sometimes offer the best prices due to supermarket fuel discount schemes. Fuel prices increase significantly heading south along the Stuart Highway toward Alice Springs.',
-    tips: 'Always compare prices before filling up in Darwin — the small number of stations means less competition and higher potential for overpaying. Fill up in Palmerston or Berrimah rather than the Darwin CBD. If heading on a road trip south, fill up completely in Darwin as regional NT prices are even higher. Full NT live pricing is coming soon to FueVolt.',
-  },
-  geelong: {
-    intro: 'Geelong benefits from Victoria\'s real-time government fuel pricing, giving drivers access to accurate, up-to-the-minute pricing at every station in the region. As Victoria\'s second-largest city, Geelong has strong competition between fuel retailers, creating genuine opportunities to save.',
-    suburbs: 'Compare prices across Geelong, Bellarine Peninsula, the Surf Coast, Lara, Corio, Norlane, North Geelong, Newtown, Highton, Waurn Ponds, Leopold, Ocean Grove, Queenscliff, Torquay, and the surrounding Barwon region.',
-    trends: 'Geelong fuel prices tend to follow Melbourne\'s weekly cycle but often sit slightly lower. The Geelong Ring Road corridor and Latrobe Terrace have the most competitive pricing due to high traffic volumes and multiple adjacent stations. Stations along the Surf Coast Highway toward Torquay charge premiums during summer tourist season. Bellarine Peninsula stations (Queenscliff, Point Lonsdale) are consistently more expensive due to lower competition.',
-    tips: 'Fill up along the Geelong Ring Road or near Waurn Ponds shopping precinct where competition is strongest. Avoid Surf Coast Highway stations during summer unless absolutely necessary. If driving to Melbourne, compare Geelong prices first — it\'s often cheaper to fill up in Geelong than along the Princes Freeway or in Melbourne\'s western suburbs.',
-  },
-  toowoomba: {
-    intro: 'Toowoomba benefits from Queensland\'s government fuel pricing transparency. As the Darling Downs\' major centre, Toowoomba serves as a refuelling hub for regional drivers across south-western Queensland, making price comparison particularly valuable for both locals and travellers.',
-    suburbs: 'Find the cheapest fuel across Toowoomba including the CBD, Highfields, Rangeville, Newtown, Darling Heights, Harristown, Wilsonton, Kearneys Spring, Drayton, and surrounding rural areas including Gatton, Laidley, and Dalby.',
-    trends: 'Toowoomba fuel prices are generally higher than Brisbane due to additional transport costs to get fuel up the Great Dividing Range. However, competition within the city keeps prices relatively stable. Stations along James Street and Ruthven Street (the main commercial corridors) tend to have competitive pricing. Rural stations west of Toowoomba (Dalby, Chinchilla, Miles) are significantly more expensive due to lower volume.',
-    tips: 'Fill up in Toowoomba before heading west into rural Queensland where prices increase significantly. Compare stations along James Street and the New England Highway for the best deals. If driving from Brisbane, consider whether Toowoomba or Ipswich/Springfield prices are cheaper before heading up the range.',
-  },
-  cairns: {
-    intro: 'Cairns and Far North Queensland have real-time fuel pricing from official government sources. As a regional centre and major tourist destination, Cairns fuel prices tend to be higher than Brisbane due to transport costs, but significant variation exists between stations — savings of 10-20 cents per litre are common.',
-    suburbs: 'Compare prices from Smithfield to Edmonton, Palm Cove to Gordonvale, Cairns CBD, Manunda, Manoora, Parramatta Park, Earlville, Woree, White Rock, Mount Sheridan, Trinity Beach, and surrounding areas including Atherton Tablelands, Innisfail, and Port Douglas.',
-    trends: 'Cairns prices are typically 5-10 cents higher per litre than Brisbane. The cheapest stations tend to be along the Bruce Highway corridor through Edmonton and Gordonvale. CBD and Esplanade area stations charge premiums, particularly during tourist season (June-October). Port Douglas stations are consistently the most expensive in the region. The Atherton Tablelands (Atherton, Mareeba) often have lower prices than Cairns due to less tourist traffic.',
-    tips: 'Fill up in Edmonton or Gordonvale on the Bruce Highway rather than the Cairns CBD. If heading to Port Douglas, fill up in Cairns first. For trips to the Atherton Tablelands, check whether Atherton or Cairns has better prices on FueVolt before setting off.',
-  },
-  ballarat: {
-    intro: 'Ballarat benefits from Victoria\'s real-time fuel pricing system. As one of Victoria\'s fastest-growing regional cities, Ballarat has increasing competition among fuel retailers, creating genuine opportunities to save compared to just filling up at the nearest station.',
-    suburbs: 'Compare petrol and diesel across the Ballarat region, including the CBD, Wendouree, Delacombe, Buninyong, Sebastopol, Alfredton, Lucas, Canadian, Mount Helen, Creswick, Daylesford, and surrounding Goldfields communities.',
-    trends: 'Ballarat fuel prices tend to follow Melbourne\'s cycle but with a slight delay and generally sit 2-5 cents higher. The Western Highway corridor through Ballarat has the most competitive pricing. Stations in the CBD on Sturt Street can be more expensive than suburban alternatives. The growing suburbs of Lucas and Alfredton have newer stations competing on price. Daylesford and Hepburn Springs stations charge tourist premiums, particularly on weekends.',
-    tips: 'Fill up along the Western Highway or in Wendouree where competition is strongest. Avoid CBD stations on Sturt Street during peak times. If driving from Melbourne, compare whether to fill up in Ballarat or Bacchus Marsh — the price difference can go either way depending on the cycle.',
-  },
-  bendigo: {
-    intro: 'Bendigo benefits from Victoria\'s real-time fuel pricing system, giving drivers across Greater Bendigo and the Goldfields region access to live pricing data. Bendigo\'s competitive fuel market means savings are there for those who compare before filling up.',
-    suburbs: 'Find cheap fuel across Greater Bendigo including the CBD, Kangaroo Flat, Eaglehawk, Strathfieldsaye, Epsom, Huntly, Golden Square, Long Gully, Maiden Gully, and surrounding towns including Castlemaine, Kyneton, and Heathcote.',
-    trends: 'Bendigo fuel prices tend to follow Melbourne\'s cycle with a day or two delay. The Calder Highway corridor and High Street have the most competitive pricing. Kangaroo Flat consistently has some of Bendigo\'s cheapest fuel due to the cluster of competing stations along the highway. Eaglehawk prices are usually in the mid-range. Stations on Pall Mall in the CBD can charge premiums. Smaller surrounding towns like Castlemaine and Heathcote generally have higher prices due to less competition.',
-    tips: 'Fill up in Kangaroo Flat along the Calder Highway where competition between stations keeps prices low. Check FueVolt before driving through Bendigo on the Calder Freeway — the on-highway stations may not be the cheapest. For trips toward Echuca or the Murray, fill up in Bendigo first as northern Victoria rural prices tend to be higher.',
-  },
-  launceston: {
-    intro: 'Launceston fuel prices are expanding on FueVolt as Tasmanian coverage develops. Northern Tasmania typically sees slightly lower prices than Hobart but higher than mainland averages due to the island freight premium that adds approximately 3-8 cents per litre.',
-    suburbs: 'Coverage across Launceston is expanding, including the CBD, Mowbray, Kings Meadows, Riverside, Prospect, Newstead, Invermay, South Launceston, Youngtown, and surrounding areas including Longford, Perth (TAS), and George Town.',
-    trends: 'Launceston\'s fuel market is smaller than Hobart\'s with fewer stations, but the Bass Highway corridor provides some price competition. Stations on Wellington Street and in Kings Meadows tend to be competitive. Invermay\'s industrial area occasionally has lower prices. Prices increase significantly in rural northern Tasmania, particularly along the Great Western Tiers and the East Coast. George Town and surrounding areas have limited station options.',
-    tips: 'Fill up in Launceston before heading to rural parts of northern Tasmania where stations are sparse and expensive. Compare prices along Wellington Street and the Bass Highway. For trips to Cradle Mountain or the East Coast, ensure a full tank before leaving the city. Full live Tasmanian pricing data is coming soon to FueVolt.',
-  },
-  'sunshine-coast': {
-    intro: 'The Sunshine Coast benefits from Queensland\'s government fuel pricing transparency, providing live prices at every station across the region. As a popular tourist destination, fuel prices can vary significantly between tourist strips and suburban stations — checking FueVolt before filling up can save you 10-15 cents per litre.',
-    suburbs: 'Compare prices from Caloundra to Noosa, Maroochydore to Nambour, Mooloolaba, Buderim, Kawana Waters, Sippy Downs, Palmwoods, Eumundi, Coolum Beach, Bli Bli, Beerwah, Glass House Mountains, and Maleny.',
-    trends: 'Sunshine Coast fuel prices generally follow Brisbane\'s fortnightly cycle. Tourist-area stations in Noosa Heads, Hastings Street, and Mooloolaba Esplanade consistently charge premiums of 10-15 cents over inland alternatives. The Bruce Highway corridor through Beerwah, Glass House Mountains, and Caloundra has the most competitive pricing. Nambour and Maroochydore CBD stations offer mid-range pricing. The hinterland towns of Maleny, Montville, and Eumundi tend to be more expensive due to lower station density.',
-    tips: 'Fill up along the Bruce Highway before heading to the beach — beachside stations charge tourist premiums. Stations in Sippy Downs and Kawana Waters offer good value due to residential competition. If travelling from Brisbane, compare whether to fill up at Caboolture on the Bruce Highway or on the Sunshine Coast.',
-  },
-  parramatta: {
-    intro: 'Parramatta and Western Sydney have real-time government fuel pricing. As one of Sydney\'s most populated commuter regions, Western Sydney has strong competition between fuel retailers, and prices are generally 3-8 cents lower per litre than Sydney\'s eastern suburbs and CBD.',
-    suburbs: 'Find the cheapest petrol across Western Sydney including Parramatta CBD, Blacktown, Penrith, Liverpool, Fairfield, Auburn, Granville, Merrylands, Seven Hills, Castle Hill, Rouse Hill, Marsden Park, St Marys, Mount Druitt, Wetherill Park, and Campbelltown.',
-    trends: 'Western Sydney fuel prices follow Sydney\'s weekly cycle but tend to bottom out first, meaning you can often get the cheapest prices in the city before the eastern suburbs drop. The Great Western Highway corridor and Parramatta Road have multiple competing stations. Independent stations in Fairfield, Auburn, and Granville consistently offer some of Sydney\'s cheapest fuel. The Costco at Marsden Park is usually among the lowest-priced stations in all of Sydney. New suburbs like Jordan Springs and Oran Park have newer stations competing on price.',
-    tips: 'Costco Marsden Park consistently has the lowest prices in Sydney — if you have a membership, it\'s worth the trip. Independent stations along Parramatta Road and in Fairfield are excellent alternatives. Avoid filling up on the M4 Motorway or M7 service centres where prices are significantly higher than surrounding suburbs.',
-  },
-  townsville: {
-    intro: 'Townsville and North Queensland have real-time fuel pricing from government data. As the largest city in northern Australia, Townsville serves as a fuel hub for travellers heading to Magnetic Island, Mission Beach, and the outback — making price comparison important for both locals and visitors.',
-    suburbs: 'Compare prices across Townsville including the CBD, North Ward, South Townsville, Aitkenvale, Cranbrook, Thuringowa, Kirwan, Bohle, Bushland Beach, Deeragun, and surrounding areas including Ayr, Home Hill, and Ingham.',
-    trends: 'Townsville fuel prices are typically 5-10 cents higher than Brisbane due to distance from refineries. The most competitive pricing is found along Stuart Drive and Ross River Road where multiple stations compete. CBD and Palmer Street stations tend to charge premiums. Thuringowa and Kirwan have competitive suburban pricing. Prices increase significantly heading west toward Charters Towers and Mount Isa, and north toward Ingham and Cardwell.',
-    tips: 'Fill up in Aitkenvale or along Stuart Drive where competition keeps prices low. Before heading to Magnetic Island, fill up in Townsville as island prices are higher. If driving north to Cairns or west to Charters Towers, fill up completely in Townsville — regional prices are significantly more expensive.',
-  },
-};
-
-const EV_CITY_INTROS = {
-  sydney: 'Sydney has one of Australia\'s most extensive EV charging networks, with hundreds of chargers across the CBD, Eastern Suburbs, Northern Beaches, and Western Sydney. From ultra-rapid 350kW chargers at major shopping centres to destination chargers at hotels and restaurants, Sydney EV drivers have plenty of options.',
-  melbourne: 'Melbourne\'s EV charging infrastructure is growing rapidly, with chargers throughout the CBD, inner suburbs, and along major arterials. Victoria\'s push for EV adoption means new charging stations are being installed across Melbourne regularly, including in shopping centres, car parks, and along the Great Ocean Road.',
-  brisbane: 'Brisbane offers a strong EV charging network spanning the CBD to the outer suburbs. Queensland\'s Electric Super Highway connects Brisbane to Cairns with fast chargers every 150km, making long-distance EV travel increasingly practical from the Sunshine State\'s capital.',
-  perth: 'Perth\'s EV charging network is expanding across the metro area, with chargers from Joondalup to Rockingham. Western Australia\'s vast distances make the growing network of fast chargers along major highways particularly important for EV drivers.',
-  adelaide: 'Adelaide has a growing network of EV chargers across the city and South Australia. The state\'s high solar adoption makes EV charging particularly cost-effective, with many public chargers powered by renewable energy.',
-  'gold-coast': 'The Gold Coast has EV chargers throughout the tourist and residential areas, from Coolangatta to the northern Gold Coast. Many hotels, shopping centres, and attractions now offer EV charging for visitors.',
-  canberra: 'Canberra leads Australia in EV adoption rates, and its charging infrastructure reflects this. The ACT has chargers across the city including in government buildings, shopping centres, and residential areas, with plans for significant expansion.',
-  hobart: 'Hobart and Tasmania have a growing EV charging network. Key routes around the island are being equipped with fast chargers, making EV travel around Tasmania increasingly practical.',
-  darwin: 'Darwin\'s EV charging network is developing, with chargers available in the CBD and surrounding areas. The Northern Territory is working to extend charging along the Stuart Highway to support long-distance EV travel.',
-  newcastle: 'Newcastle and the Hunter Valley have a solid EV charging network, with chargers at shopping centres, along the Pacific Highway, and throughout the city. The region\'s growing EV community is driving continued expansion.',
-};
 
 // ── FAQ data (19 entries) ───────────────────────────────────────────────
 const FAQ_ENTRIES = [
@@ -459,17 +323,9 @@ for (const city of FUEL_CITIES) {
   const content = `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">${escHtml(intro)}</p>
         ${suburbs ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Suburbs &amp; Areas Covered</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(suburbs)}</p>` : ''}
-        <h2 style="font-size:1.3rem;margin:20px 0 12px">Fuel Types Available in ${escHtml(city.name)}</h2>
-        <ul style="margin-bottom:16px;padding-left:20px;line-height:2">
-          <li><strong>E10 (Ethanol Blend)</strong> — typically the cheapest option, suitable for most cars manufactured after 2000</li>
-          <li><strong>Unleaded 91 (U91)</strong> — standard unleaded petrol, the baseline grade</li>
-          <li><strong>Premium 95 (U95)</strong> — recommended for many modern and European engines</li>
-          <li><strong>Premium 98 (U98)</strong> — highest octane for performance and turbocharged vehicles</li>
-          <li><strong>Diesel</strong> — for diesel engines, SUVs, utes and trucks</li>
-          <li><strong>LPG</strong> — liquefied petroleum gas, cheapest per litre but limited availability</li>
-        </ul>
         ${trends ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Price Trends in ${escHtml(city.name)}</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(trends)}</p>` : ''}
         ${tips ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Tips to Save on Fuel in ${escHtml(city.name)}</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(tips)}</p>` : ''}
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">FueVolt compares E10, Unleaded 91, Premium 95, Premium 98, Diesel and LPG in ${escHtml(city.name)} — see our <a href="/guides/fuel-types-explained">guide to fuel types</a> for which grade suits your car.</p>
         <p style="margin-top:16px"><a href="/fuel-prices">← Compare fuel prices in all cities</a></p>`;
 
   const html = generatePage({
@@ -486,19 +342,16 @@ for (const city of FUEL_CITIES) {
 // ── Generate EV city pages ──────────────────────────────────────────────
 console.log('Pre-rendering EV charging city pages...');
 for (const city of EV_CITIES) {
-  const intro = EV_CITY_INTROS[city.slug] || `Find EV charging stations in ${city.name} and surrounding areas.`;
+  const cityData = EV_CITY_CONTENT[city.slug] || {};
+  const intro = cityData.intro || `Find EV charging stations in ${city.name} and surrounding areas.`;
+  const coverage = cityData.coverage || '';
+  const tips = cityData.tips || '';
   const urlPath = `/ev-charging/${city.slug}`;
   const content = `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">${escHtml(intro)}</p>
-        <h2 style="font-size:1.3rem;margin-bottom:12px">Connector Types in ${escHtml(city.name)}</h2>
-        <ul style="margin-bottom:16px;padding-left:20px;line-height:2">
-          <li>Type 2 — most common AC connector in Australia, used for destination and home charging (up to 22kW)</li>
-          <li>CCS2 (Combined Charging System) — the standard for DC fast charging (50kW to 350kW)</li>
-          <li>CHAdeMO — older DC fast charging standard, used by Nissan Leaf and some Mitsubishi models</li>
-          <li>Tesla — Tesla's proprietary connector, available at Tesla Supercharger and Destination locations</li>
-        </ul>
-        <h2 style="font-size:1.3rem;margin-bottom:12px">Charging Speeds</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Filter ${escHtml(city.name)} chargers by speed: <strong>Slow</strong> (up to 7kW, ideal for overnight charging), <strong>Fast</strong> (7-50kW, adds range in 1-2 hours), or <strong>Ultra-Rapid</strong> (50kW+, 80% charge in 20-40 minutes).</p>
+        ${coverage ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Charging Coverage in ${escHtml(city.name)}</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(coverage)}</p>` : ''}
+        ${tips ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Charging Tips for ${escHtml(city.name)}</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(tips)}</p>` : ''}
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">Filter ${escHtml(city.name)} chargers by connector (Type 2, CCS2, CHAdeMO, Tesla) or speed — see our <a href="/guides/ev-charging-connector-types-australia">guide to EV connector types</a> for which one fits your car.</p>
         <p style="margin-top:16px"><a href="/ev-charging">← Find EV chargers in all cities</a></p>`;
 
   const html = generatePage({
