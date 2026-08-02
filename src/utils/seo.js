@@ -207,9 +207,9 @@ export function injectArticleSchema({ slug, title, description, datePublished, d
     datePublished,
     dateModified,
     author: {
-      '@type': 'Person',
-      name: 'James Doyle',
-      url: `${BASE_URL}/about`,
+      '@type': 'Organization',
+      name: 'FueVolt',
+      url: BASE_URL,
     },
     publisher: {
       '@type': 'Organization',

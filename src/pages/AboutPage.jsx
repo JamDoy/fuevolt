@@ -17,7 +17,7 @@ export default function AboutPage({ onContact }) {
       <section className="mb-8">
         <h2 className="text-lg font-semibold mb-3" style={{ color: theme.gold }}>Why FueVolt Exists</h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          FueVolt was started in 2026 by James Doyle, a Brisbane-based driver who was frustrated by not knowing which nearby servo had the cheapest fuel. Checking several sources before every fill was inconvenient, so he built one place where Australian drivers could compare reported prices, find EV chargers and plan a trip.
+          FueVolt was started in 2026 by a small team of Brisbane-based drivers frustrated by not knowing which nearby servo had the cheapest fuel. Checking several sources before every fill was inconvenient, so we built one place where Australian drivers could compare reported prices, find EV chargers and plan a trip.
         </p>
         <p className="text-sm leading-relaxed" style={{ color: theme.textSecondary }}>
           The aim is practical: make transport costs easier to understand without favouring a fuel retailer or charging network. FueVolt remains independently operated and is supported by advertising revenue.
@@ -68,7 +68,7 @@ export default function AboutPage({ onContact }) {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-3" style={{ color: theme.gold }}>Contact James</h2>
+        <h2 className="text-lg font-semibold mb-3" style={{ color: theme.gold }}>Get in Touch</h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
           Have feedback, a correction or a question about FueVolt? Send it through the contact form.
         </p>

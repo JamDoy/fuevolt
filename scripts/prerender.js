@@ -146,9 +146,9 @@ function articleSchema(article, meta, urlPath) {
     datePublished: meta.datePublished,
     dateModified: meta.dateModified,
     author: {
-      '@type': 'Person',
-      name: 'James Doyle',
-      url: `${BASE_URL}/about`,
+      '@type': 'Organization',
+      name: 'FueVolt',
+      url: BASE_URL,
     },
     publisher: {
       '@type': 'Organization',
@@ -255,7 +255,7 @@ for (const article of articles) {
   const urlPath = `/guides/${article.slug}`;
   const updated = formatArticleDate(articleFile.meta.dateModified);
   const content = `
-        <p style="font-size:0.85rem;color:#6B7280;margin-bottom:4px">By James Doyle · ${escHtml(article.category)} · ${escHtml(article.readTime)}</p>
+        <p style="font-size:0.85rem;color:#6B7280;margin-bottom:4px">By the FueVolt Team · ${escHtml(article.category)} · ${escHtml(article.readTime)}</p>
         ${updated ? `<p style="font-size:0.85rem;color:#6B7280;margin-bottom:16px">Last updated: ${escHtml(updated)}</p>` : ''}
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:24px">${escHtml(article.description)}</p>
         <aside style="padding:16px;border:1px solid #C8971F;border-radius:12px;margin-bottom:24px;background:#FFF9E8">
@@ -265,10 +265,10 @@ for (const article of articles) {
         </aside>
         <article style="line-height:1.8;font-size:0.95rem">${articleHtml}</article>
         <section style="display:flex;gap:12px;padding:16px;border:1px solid #E5E7EB;border-radius:12px;margin-top:32px">
-          <div style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#C8971F;color:#0D2B5E;font-weight:700;flex:none">JD</div>
-          <div><h2 style="font-size:1rem;margin-bottom:4px">About James Doyle</h2><p style="font-size:0.85rem;color:#4B5563">James Doyle is a Brisbane-based driver and the founder of FueVolt. He built FueVolt after getting frustrated with not knowing where to find the cheapest fuel, with the aim of helping other Australian drivers save money.</p></div>
+          <div style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#C8971F;color:#0D2B5E;font-weight:700;flex:none">FV</div>
+          <div><h2 style="font-size:1rem;margin-bottom:4px">About FueVolt</h2><p style="font-size:0.85rem;color:#4B5563">FueVolt is built by a small Australian team focused on making it easy to find the cheapest fuel and nearest EV chargers. We built FueVolt after getting frustrated with not knowing where to find the cheapest fuel, with the aim of helping other Australian drivers save money.</p></div>
         </section>
-        <p style="font-size:0.8rem;color:#6B7280;margin-top:16px">This guide was written and reviewed by James Doyle for FueVolt. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.</p>
+        <p style="font-size:0.8rem;color:#6B7280;margin-top:16px">This guide was written and reviewed by the FueVolt team. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.</p>
         <p style="margin-top:24px"><a href="/guides">← Back to all guides</a></p>`;
   const schema = JSON.stringify(articleSchema(article, articleFile.meta, urlPath)).replace(/</g, '\\u003c');
 
@@ -376,7 +376,7 @@ writePage('/about', generatePage({
   h1: 'About FueVolt',
   content: `
         <h2 style="font-size:1.3rem;margin-bottom:12px">Why FueVolt Exists</h2>
-        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:12px">FueVolt was started in 2026 by James Doyle, a Brisbane-based driver who was frustrated by not knowing which nearby servo had the cheapest fuel. He built one place where Australian drivers could compare reported prices, find EV chargers and plan a trip.</p>
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:12px">FueVolt was started in 2026 by a small team of Brisbane-based drivers frustrated by not knowing which nearby servo had the cheapest fuel. Checking several sources before every fill was inconvenient, so we built one place where Australian drivers could compare reported prices, find EV chargers and plan a trip.</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:20px">The aim is practical: make transport costs easier to understand without favouring a fuel retailer or charging network. FueVolt is independently operated and supported by advertising revenue.</p>
         <h2 style="font-size:1.3rem;margin-bottom:12px">What FueVolt Does</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Government-reported fuel prices:</strong> FueVolt retrieves petrol, diesel and LPG reports from official state sources, and separates the time government data was checked from the time a retailer last reported a price change.</p>
@@ -391,7 +391,7 @@ writePage('/about', generatePage({
           <li><a href="https://fuelwatch.wa.gov.au/">Western Australia FuelWatch</a></li>
         </ul>
         <p style="font-size:0.85rem;color:#6B7280">Fuel retailers supply the underlying price reports under each state's rules. FueVolt does not alter a source-reported price or invent a newer update time.</p>
-        <p style="margin-top:16px"><strong>Contact James:</strong> Send feedback, corrections or questions through the <a href="/contact">contact form</a>.</p>`,
+        <p style="margin-top:16px"><strong>Get in touch:</strong> Send feedback, corrections or questions through the <a href="/contact">contact form</a>.</p>`,
 }));
 sitemapUrls.push('/about');
 

@@ -8,14 +8,14 @@ export default function ArticleAuthorBio({ theme }) {
       <div
         className="w-12 h-12 rounded-full flex items-center justify-center font-bold shrink-0"
         style={{ background: theme.accent, color: '#0D2B5E' }}
-        aria-label="James Doyle avatar placeholder"
+        aria-label="FueVolt logo placeholder"
       >
-        JD
+        FV
       </div>
       <div>
-        <h2 className="text-sm font-bold mb-1" style={{ color: theme.heading }}>About James Doyle</h2>
+        <h2 className="text-sm font-bold mb-1" style={{ color: theme.heading }}>About FueVolt</h2>
         <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
-          James Doyle is a Brisbane-based driver and the founder of FueVolt. He built FueVolt after getting frustrated with not knowing where to find the cheapest fuel, with the aim of helping other Australian drivers save money.
+          FueVolt is built by a small Australian team focused on making it easy to find the cheapest fuel and nearest EV chargers. We built FueVolt after getting frustrated with not knowing where to find the cheapest fuel, with the aim of helping other Australian drivers save money.
         </p>
       </div>
     </section>
