@@ -1,6 +1,53 @@
 // Fetch detailed station info from OpenStreetMap Overpass API
 // This gets amenity tags, opening hours, phone etc for a specific station
 
+function distanceMeters(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// When more than one candidate comes back from the proximity search, prefer
+// the closest one, and give a strong boost to a name/brand match — the
+// government price APIs' coordinates don't always line up precisely with
+// OSM's own node for the same station, so distance alone can pick the wrong
+// element at a busy intersection or multi-pump forecourt.
+function pickBestElement(elements, station) {
+  if (elements.length === 1) return elements[0];
+
+  const stationName = (station.name || '').toLowerCase().trim();
+  const stationBrand = (station.brand || '').toLowerCase().trim();
+
+  let best = null;
+  let bestScore = -Infinity;
+
+  for (const el of elements) {
+    const elLat = el.lat ?? el.center?.lat;
+    const elLng = el.lon ?? el.center?.lon;
+    if (elLat == null || elLng == null) continue;
+
+    const dist = distanceMeters(station.latitude, station.longitude, elLat, elLng);
+    const tags = el.tags || {};
+    const elName = (tags.name || '').toLowerCase().trim();
+    const elBrand = (tags.brand || tags.operator || '').toLowerCase().trim();
+
+    let score = -dist;
+    if (stationName && elName && (elName.includes(stationName) || stationName.includes(elName))) score += 1000;
+    if (stationBrand && elBrand && (elBrand.includes(stationBrand) || stationBrand.includes(elBrand))) score += 500;
+
+    if (score > bestScore) {
+      bestScore = score;
+      best = el;
+    }
+  }
+
+  return best || elements[0];
+}
+
 export async function fetchStationDetails(station) {
   const result = {
     opening_hours: null,
@@ -23,12 +70,12 @@ export async function fetchStationDetails(station) {
 
     if (osmId) {
       // Try both node and way
-      query = `[out:json][timeout:10];(node(${osmId});way(${osmId}););out tags;`;
+      query = `[out:json][timeout:10];(node(${osmId});way(${osmId}););out center tags;`;
     } else {
       // Search by proximity for fuel stations
       const lat = station.latitude;
       const lng = station.longitude;
-      query = `[out:json][timeout:10];(node["amenity"="fuel"](around:50,${lat},${lng});way["amenity"="fuel"](around:50,${lat},${lng}););out tags;`;
+      query = `[out:json][timeout:10];(node["amenity"="fuel"](around:75,${lat},${lng});way["amenity"="fuel"](around:75,${lat},${lng}););out center tags;`;
     }
 
     const response = await fetch('https://overpass-api.de/api/interpreter', {
@@ -42,8 +89,9 @@ export async function fetchStationDetails(station) {
 
     if (!data.elements || data.elements.length === 0) return result;
 
-    // Use the first matching element's tags
-    const tags = data.elements[0].tags || {};
+    // Pick the best-matching element instead of blindly using the first result
+    const element = osmId ? data.elements[0] : pickBestElement(data.elements, station);
+    const tags = element.tags || {};
 
     // Opening hours
     if (tags.opening_hours) {
