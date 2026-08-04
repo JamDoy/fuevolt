@@ -1,8 +1,18 @@
+import { useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import StatusBadge from './StatusBadge';
 
 export default function EVDetailPanel({ station, onClose }) {
   const { theme } = useTheme();
+
+  useEffect(() => {
+    if (!station) return undefined;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [station, onClose]);
 
   if (!station) return null;
 
@@ -10,6 +20,9 @@ export default function EVDetailPanel({ station, onClose }) {
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ev-detail-title"
     >
       {/* Backdrop */}
       <div
@@ -34,7 +47,9 @@ export default function EVDetailPanel({ station, onClose }) {
       >
         {/* Close button */}
         <button
+          type="button"
           onClick={onClose}
+          aria-label="Close station details"
           className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
           style={{
             background: theme.chipBg,
@@ -47,7 +62,7 @@ export default function EVDetailPanel({ station, onClose }) {
         </button>
 
         {/* Title */}
-        <h2 className="text-xl font-bold mb-1 pr-8" style={{ color: theme.gold }}>
+        <h2 id="ev-detail-title" className="text-xl font-bold mb-1 pr-8" style={{ color: theme.gold }}>
           {station.AddressInfo?.Title}
         </h2>
 

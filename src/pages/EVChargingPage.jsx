@@ -199,6 +199,15 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
         accentColor={theme.green}
       />
 
+      {/* Screen-reader announcement of search state */}
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {loading
+          ? `Searching for EV chargers near ${locationName || 'your area'}...`
+          : hasSearched
+            ? `${stations.length} charging station${stations.length === 1 ? '' : 's'} found.`
+            : ''}
+      </p>
+
       {/* Filters */}
       {stations.length > 0 && (
         <div className="space-y-2">

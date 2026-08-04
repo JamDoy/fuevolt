@@ -6,7 +6,7 @@ const DARK = {
   cardBg: '#0D2B5E',
   text: '#FFFFFF',
   textSecondary: '#9CA3AF',
-  textMuted: '#6B7280',
+  textMuted: '#94A3B8',
   gold: '#FFD700',
   goldDark: '#C8971F',
   green: '#2ECC71',
@@ -39,8 +39,8 @@ const DARK = {
   heading: '#FFD700',
   subtext: '#9CA3AF',
   accent: '#FFD700',
-  footerText: '#6B7280',
-  footerSubtext: '#4B5563',
+  footerText: '#9CA3AF',
+  footerSubtext: '#94A3B8',
 };
 
 const LIGHT = {
@@ -49,7 +49,7 @@ const LIGHT = {
   cardBg: '#FFFFFF',
   text: '#0D2B5E',
   textSecondary: '#4B5563',
-  textMuted: '#9CA3AF',
+  textMuted: '#6B7280',
   gold: '#C8971F',
   goldDark: '#9A7518',
   green: '#27AE60',
@@ -82,8 +82,8 @@ const LIGHT = {
   heading: '#0D2B5E',
   subtext: '#6B7280',
   accent: '#C8971F',
-  footerText: '#9CA3AF',
-  footerSubtext: '#D1D5DB',
+  footerText: '#4B5563',
+  footerSubtext: '#6B7280',
 };
 
 const ThemeContext = createContext();

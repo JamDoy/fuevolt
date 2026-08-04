@@ -168,3 +168,35 @@ body {
 .theme-transition * {
   transition: background 0.35s ease, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease !important;
 }
+
+/* Skip-to-content link — visually hidden until keyboard-focused */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  z-index: 2000;
+  background: #FFD700;
+  color: #0D2B5E;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* Respect the user's OS-level reduced-motion preference across every
+   animation and transition in the app, including component-scoped
+   keyframes (count-up glow pulse, shimmer, logo charge, fade-ins). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

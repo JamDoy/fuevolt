@@ -32,6 +32,15 @@ export default function TouchableMap({ children, style, className }) {
         <div
           ref={overlayRef}
           onClick={() => setActive(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setActive(true);
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Activate map to pan and zoom"
           style={{
             position: 'absolute',
             inset: 0,

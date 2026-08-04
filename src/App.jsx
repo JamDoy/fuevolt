@@ -164,6 +164,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen pb-20 md:pb-0">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Header
         showBack={view !== 'landing'}
         onBack={handleBack}
@@ -173,7 +174,7 @@ function AppContent() {
           handlePrimaryNavigation(v, paths[v] || '/');
         }}
       />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         {view === 'landing' && (
           <LandingPage
             onSelect={handleSelect}

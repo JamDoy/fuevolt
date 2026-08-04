@@ -47,6 +47,9 @@ export default function SearchBar({
             <circle cx="8" cy="8" r="6" />
             <path d="M13 13l4 4" />
           </svg>
+          <label htmlFor={inputId} className="sr-only">
+            {placeholder || 'Search suburb, city or postcode'}
+          </label>
           <input
             id={inputId}
             type="search"

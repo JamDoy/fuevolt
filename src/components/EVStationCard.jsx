@@ -77,6 +77,7 @@ export default function EVStationCard({ station, isSelected, onClick }) {
         </div>
         <div className="flex items-center gap-1.5">
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               const id = `ev-${station.ID}`;
@@ -96,14 +97,19 @@ export default function EVStationCard({ station, isSelected, onClick }) {
             }}
             className="text-sm leading-none cursor-pointer"
             title={hasGeofence ? 'Remove alert' : 'Alert when nearby'}
+            aria-label={hasGeofence ? 'Remove nearby alert for this station' : 'Set nearby alert for this station'}
+            aria-pressed={hasGeofence}
             style={{ color: hasGeofence ? theme.green : theme.textMuted, border: 'none', background: 'none' }}
           >
             {hasGeofence ? '\uD83D\uDD14' : '\uD83D\uDD15'}
           </button>
           <button
+            type="button"
             onClick={toggleFav}
             className="text-lg leading-none cursor-pointer"
             title={fav ? 'Remove from favourites' : 'Add to favourites'}
+            aria-label={fav ? 'Remove from favourites' : 'Add to favourites'}
+            aria-pressed={fav}
             style={{ color: fav ? '#2ECC71' : theme.textMuted, border: 'none', background: 'none' }}
           >
             {fav ? '\u2605' : '\u2606'}

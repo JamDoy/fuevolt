@@ -255,6 +255,15 @@ export default function FuelPricePage({
         inputId="fuel-location-search"
       />
 
+      {/* Screen-reader announcement of search state */}
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {loading
+          ? `Searching for fuel prices near ${searchLabel || locationName || 'your area'}...`
+          : hasSearched
+            ? `${stations.length} station${stations.length === 1 ? '' : 's'} found${cheapest ? `. Cheapest is ${cheapest.name} at ${(cheapest.price * 100).toFixed(1)} cents per litre` : ''}.`
+            : ''}
+      </p>
+
       {/* Location + Sort Controls */}
       {stations.length > 0 && !loading && (
         <div className="flex flex-wrap items-center justify-between gap-3">
