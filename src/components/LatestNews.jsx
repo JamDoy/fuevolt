@@ -40,7 +40,7 @@ export default function LatestNews() {
   return (
     <div className="mt-8">
       <h2 className="text-lg font-bold mb-1" style={{ color: theme.heading }}>Latest Auto & EV News</h2>
-      <p className="text-[10px] mb-4" style={{ color: theme.textMuted }}>
+      <p className="text-[11px] mb-4" style={{ color: theme.textMuted }}>
         Headlines from Australian automotive sources. Auto-refreshes every 6 hours.
       </p>
 
@@ -67,11 +67,11 @@ export default function LatestNews() {
               <h3 className="text-xs font-semibold leading-snug mb-1 line-clamp-2" style={{ color: theme.heading }}>
                 {item.title}
               </h3>
-              <div className="flex items-center gap-2 text-[10px]" style={{ color: theme.textMuted }}>
+              <div className="flex items-center gap-2 text-[11px]" style={{ color: theme.textMuted }}>
                 <span>{item.sourceIcon} {item.source}</span>
                 {item.pubDate && <span>· {formatNewsDate(item.pubDate)}</span>}
               </div>
-              <p className="text-[10px] mt-1 line-clamp-1" style={{ color: theme.subtext }}>
+              <p className="text-[11px] mt-1 line-clamp-1" style={{ color: theme.subtext }}>
                 Read more on {item.source} →
               </p>
             </div>
@@ -79,7 +79,7 @@ export default function LatestNews() {
         ))}
       </div>
 
-      <p className="text-[9px] mt-3 text-center" style={{ color: theme.textMuted }}>
+      <p className="text-[11px] mt-3 text-center" style={{ color: theme.textMuted }}>
         News headlines sourced from The Driven, CarExpert, and Drive.com.au. All content belongs to their respective publishers.
       </p>
     </div>

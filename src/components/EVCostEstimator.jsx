@@ -97,7 +97,7 @@ export default function EVCostEstimator() {
         >
           <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Public Cost</p>
           <p className="text-lg font-bold" style={{ color: theme.gold }}>${publicCost.toFixed(2)}</p>
-          <p className="text-[10px]" style={{ color: theme.textMuted }}>@45¢/kWh</p>
+          <p className="text-[11px]" style={{ color: theme.textMuted }}>@45¢/kWh</p>
         </div>
         <div
           className="p-3 rounded-xl text-center"
@@ -105,7 +105,7 @@ export default function EVCostEstimator() {
         >
           <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Home Cost</p>
           <p className="text-lg font-bold" style={{ color: theme.green }}>${homeCost.toFixed(2)}</p>
-          <p className="text-[10px]" style={{ color: theme.textMuted }}>@25¢/kWh</p>
+          <p className="text-[11px]" style={{ color: theme.textMuted }}>@25¢/kWh</p>
         </div>
         <div
           className="p-3 rounded-xl text-center"
@@ -113,11 +113,11 @@ export default function EVCostEstimator() {
         >
           <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Range Added</p>
           <p className="text-lg font-bold" style={{ color: theme.text }}>~{rangeAdded} km</p>
-          <p className="text-[10px]" style={{ color: theme.textMuted }}>@6.5km/kWh</p>
+          <p className="text-[11px]" style={{ color: theme.textMuted }}>@6.5km/kWh</p>
         </div>
       </div>
 
-      <p className="text-[10px] mt-3 text-center" style={{ color: theme.textMuted }}>
+      <p className="text-[11px] mt-3 text-center" style={{ color: theme.textMuted }}>
         Estimates based on average Australian EV charging rates. Actual costs vary by provider and location.
       </p>
     </div>

@@ -82,7 +82,7 @@ export default function SearchBar({
             className="absolute z-30 left-0 right-0 mt-2 rounded-2xl p-3"
             style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}
           >
-            <p className="text-[10px] font-semibold uppercase tracking-wide mb-2" style={{ color: theme.textMuted }}>
+            <p className="text-[11px] font-semibold uppercase tracking-wide mb-2" style={{ color: theme.textMuted }}>
               Recent
             </p>
             <div className="flex flex-wrap gap-2">

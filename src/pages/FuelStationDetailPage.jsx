@@ -340,8 +340,8 @@ function FuelPriceTile({ label, priceData, theme }) {
             {(displayPrice * 100).toFixed(1)}
             <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>¢/L</span>
           </p>
-          {freshness.checkedLabel && <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{freshness.checkedLabel}</p>}
-          <p className="text-[10px]" style={{ color: theme.textMuted }}>{freshness.label}</p>
+          {freshness.checkedLabel && <p className="text-[11px] mt-1" style={{ color: theme.textMuted }}>{freshness.checkedLabel}</p>}
+          <p className="text-[11px]" style={{ color: theme.textMuted }}>{freshness.label}</p>
           {freshness.isOutdated && <OutdatedBadge compact />}
         </>
       ) : (
@@ -360,12 +360,12 @@ function PriceContextBadge({ context, theme }) {
     above: { label: 'Above average', background: 'rgba(231,76,60,0.14)', color: '#E74C3C' },
   };
   const style = styles[context];
-  return <span className="px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: style.background, color: style.color }}>{style.label}</span>;
+  return <span className="px-2 py-1 rounded-full text-[11px] font-bold" style={{ background: style.background, color: style.color }}>{style.label}</span>;
 }
 
 function OutdatedBadge({ compact = false }) {
   return (
-    <span className={`inline-block ${compact ? 'mt-1' : ''} px-2 py-1 rounded-full text-[10px] font-bold`} style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
+    <span className={`inline-block ${compact ? 'mt-1' : ''} px-2 py-1 rounded-full text-[11px] font-bold`} style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
       Data check is over 2 hours old
     </span>
   );

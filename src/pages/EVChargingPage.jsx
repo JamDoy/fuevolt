@@ -258,7 +258,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
           >
             <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Ultra-Rapid</p>
             <p className="text-2xl font-bold" style={{ color: theme.gold }}>{ultraRapidCount}</p>
-            <p className="text-[10px]" style={{ color: theme.textMuted }}>50kW+</p>
+            <p className="text-[11px]" style={{ color: theme.textMuted }}>50kW+</p>
           </div>
 
         </div>

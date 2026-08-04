@@ -115,13 +115,13 @@ export default function NotificationsPage() {
                     <p className="text-sm font-semibold" style={{ color: theme.text }}>
                       {n.title}
                       {!n.read && (
-                        <span className="ml-2 text-[9px] px-1.5 py-0.5 rounded-full" style={{ background: theme.gold, color: '#0D2B5E' }}>
+                        <span className="ml-2 text-[11px] px-1.5 py-0.5 rounded-full" style={{ background: theme.gold, color: '#0D2B5E' }}>
                           NEW
                         </span>
                       )}
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>{n.message}</p>
-                    <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>
+                    <p className="text-[11px] mt-1" style={{ color: theme.textMuted }}>
                       {new Date(n.timestamp).toLocaleString('en-AU')}
                     </p>
                   </div>

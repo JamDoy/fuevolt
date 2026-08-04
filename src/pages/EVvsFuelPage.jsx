@@ -262,13 +262,13 @@ export default function EVvsFuelPage() {
               theme={theme}
             />
             <div>
-              <label className="text-[10px] block mb-1" style={{ color: theme.textMuted }}>
+              <label className="text-[11px] block mb-1" style={{ color: theme.textMuted }}>
                 Fuel consumption
               </label>
               <p className="px-3 py-2 rounded-xl text-sm font-semibold" style={{ background: theme.chipBg, color: theme.text }}>
                 {fuelConsumption.toFixed(1)} L/100km
               </p>
-              <p className="text-[9px] mt-0.5" style={{ color: theme.textMuted }}>
+              <p className="text-[11px] mt-0.5" style={{ color: theme.textMuted }}>
                 Avg for {vehicle.label}
               </p>
             </div>
@@ -287,7 +287,7 @@ export default function EVvsFuelPage() {
               <p className="text-3xl font-bold" style={{ color: theme.gold }}>
                 ${advFuelCostWeekly.toFixed(2)}
               </p>
-              <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>
+              <p className="text-[11px] mt-1" style={{ color: theme.textMuted }}>
                 {litresPerWeek.toFixed(1)}L @ ${numFuelPrice.toFixed(2)}/L
               </p>
               <p className="text-xs font-semibold mt-2" style={{ color: theme.gold }}>
@@ -305,7 +305,7 @@ export default function EVvsFuelPage() {
               <p className="text-3xl font-bold" style={{ color: theme.green }}>
                 ${advEVCostWeekly.toFixed(2)}
               </p>
-              <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>
+              <p className="text-[11px] mt-1" style={{ color: theme.textMuted }}>
                 {kwhPerWeek.toFixed(1)} kWh ({numHomeChargePercent}% home, {100 - numHomeChargePercent}% public)
               </p>
               <p className="text-xs font-semibold mt-2" style={{ color: theme.green }}>
@@ -407,7 +407,7 @@ function ResultCard({ label, value, subtitle, color, theme, isDark, accentColor 
     >
       <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>{label}</p>
       <p className="text-2xl font-bold" style={{ color }}>{value}</p>
-      <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{subtitle}</p>
+      <p className="text-[11px] mt-1" style={{ color: theme.textMuted }}>{subtitle}</p>
     </div>
   );
 }
@@ -415,7 +415,7 @@ function ResultCard({ label, value, subtitle, color, theme, isDark, accentColor 
 function InputField({ label, value, onChange, step = 1, theme }) {
   return (
     <div>
-      <label className="text-[10px] block mb-1" style={{ color: theme.textMuted }}>
+      <label className="text-[11px] block mb-1" style={{ color: theme.textMuted }}>
         {label}
       </label>
       <input

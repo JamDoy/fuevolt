@@ -328,9 +328,9 @@ export default function FuelPricePage({
                 {cheapestFreshness?.isOutdated && <OutdatedBadge />}
               </div>
               {cheapestFreshness?.checkedLabel && (
-                <p className="text-[10px] mt-1" style={{ color: theme.textMuted }}>{cheapestFreshness.checkedLabel}</p>
+                <p className="text-[11px] mt-1" style={{ color: theme.textMuted }}>{cheapestFreshness.checkedLabel}</p>
               )}
-              <p className="text-[10px]" style={{ color: theme.textMuted }}>{cheapestFreshness?.label}</p>
+              <p className="text-[11px]" style={{ color: theme.textMuted }}>{cheapestFreshness?.label}</p>
               <p className="text-xs mt-1 font-medium" style={{ color: theme.green }}>View Details &rarr;</p>
             </div>
           </div>
@@ -609,7 +609,7 @@ function PriceContextBadge({ context, theme }) {
   const style = styles[context];
 
   return (
-    <span className="px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: style.background, color: style.color }}>
+    <span className="px-2 py-1 rounded-full text-[11px] font-bold" style={{ background: style.background, color: style.color }}>
       {style.label}
     </span>
   );
@@ -617,7 +617,7 @@ function PriceContextBadge({ context, theme }) {
 
 function OutdatedBadge() {
   return (
-    <span className="px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
+    <span className="px-2 py-1 rounded-full text-[11px] font-bold" style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
       Data check is over 2 hours old
     </span>
   );

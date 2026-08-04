@@ -191,7 +191,7 @@ export default function TripPlannerPage() {
         {mode === 'ev' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
-              <label className="block text-[10px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Battery (kWh)</label>
+              <label className="block text-[11px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Battery (kWh)</label>
               <input
                 type="number"
                 value={batteryKWh}
@@ -201,7 +201,7 @@ export default function TripPlannerPage() {
               />
             </div>
             <div>
-              <label className="block text-[10px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Current Charge %</label>
+              <label className="block text-[11px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Current Charge %</label>
               <input
                 type="number"
                 value={currentCharge}
@@ -211,7 +211,7 @@ export default function TripPlannerPage() {
               />
             </div>
             <div>
-              <label className="block text-[10px] font-semibold mb-1" style={{ color: theme.textSecondary }}>kWh/100km</label>
+              <label className="block text-[11px] font-semibold mb-1" style={{ color: theme.textSecondary }}>kWh/100km</label>
               <input
                 type="number"
                 value={consumption}
@@ -221,7 +221,7 @@ export default function TripPlannerPage() {
               />
             </div>
             <div>
-              <label className="block text-[10px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Range (km)</label>
+              <label className="block text-[11px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Range (km)</label>
               <input
                 type="number"
                 value={vehicleRange}
@@ -244,7 +244,7 @@ export default function TripPlannerPage() {
               className="w-24 px-3 py-2 rounded-lg text-sm"
               style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
             />
-            <span className="text-[10px]" style={{ color: theme.textMuted }}>Used to suggest fuel stops on long trips</span>
+            <span className="text-[11px]" style={{ color: theme.textMuted }}>Used to suggest fuel stops on long trips</span>
           </div>
         )}
 
@@ -327,21 +327,21 @@ export default function TripPlannerPage() {
           <h3 className="text-sm font-bold mb-3" style={{ color: theme.green }}>EV Battery Forecast</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="text-center">
-              <p className="text-[10px]" style={{ color: theme.textSecondary }}>Battery at Start</p>
+              <p className="text-[11px]" style={{ color: theme.textSecondary }}>Battery at Start</p>
               <p className="text-xl font-bold" style={{ color: theme.green }}>{evRoute.batteryAtStart}%</p>
             </div>
             <div className="text-center">
-              <p className="text-[10px]" style={{ color: theme.textSecondary }}>Battery at Dest</p>
+              <p className="text-[11px]" style={{ color: theme.textSecondary }}>Battery at Dest</p>
               <p className="text-xl font-bold" style={{ color: evRoute.batteryAtDest < 20 ? '#E74C3C' : theme.green }}>
                 {evRoute.batteryAtDest}%
               </p>
             </div>
             <div className="text-center">
-              <p className="text-[10px]" style={{ color: theme.textSecondary }}>Energy Used</p>
+              <p className="text-[11px]" style={{ color: theme.textSecondary }}>Energy Used</p>
               <p className="text-xl font-bold" style={{ color: theme.gold }}>{evRoute.energyUsedKWh} kWh</p>
             </div>
             <div className="text-center">
-              <p className="text-[10px]" style={{ color: theme.textSecondary }}>Charging Stops</p>
+              <p className="text-[11px]" style={{ color: theme.textSecondary }}>Charging Stops</p>
               <p className="text-xl font-bold" style={{ color: evRoute.chargingStopsNeeded > 0 ? '#E74C3C' : theme.green }}>
                 {evRoute.chargingStopsNeeded}
               </p>
@@ -350,7 +350,7 @@ export default function TripPlannerPage() {
 
           {/* Battery bar */}
           <div className="mt-4">
-            <div className="flex justify-between text-[10px] mb-1" style={{ color: theme.textSecondary }}>
+            <div className="flex justify-between text-[11px] mb-1" style={{ color: theme.textSecondary }}>
               <span>Start: {evRoute.batteryAtStart}%</span>
               <span>Arrival: {evRoute.batteryAtDest}%</span>
             </div>
@@ -434,7 +434,7 @@ export default function TripPlannerPage() {
               >
                 <p className="text-sm font-semibold" style={{ color: theme.gold }}>{stop.name}</p>
                 {stop.brand && (
-                  <p className="text-[10px]" style={{ color: theme.textMuted }}>{stop.brand}</p>
+                  <p className="text-[11px]" style={{ color: theme.textMuted }}>{stop.brand}</p>
                 )}
                 <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
               </div>

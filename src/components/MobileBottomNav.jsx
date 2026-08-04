@@ -37,7 +37,7 @@ export default function MobileBottomNav({ view, onNavigate }) {
             key={item.id}
             type="button"
             onClick={() => onNavigate(item.id, item.path)}
-            className="min-h-14 flex flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-semibold cursor-pointer"
+            className="min-h-14 flex flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold cursor-pointer"
             style={{ color: active ? theme.gold : theme.textMuted, background: 'transparent', border: 'none' }}
             aria-current={active ? 'page' : undefined}
           >

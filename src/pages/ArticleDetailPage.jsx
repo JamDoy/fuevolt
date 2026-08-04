@@ -170,7 +170,7 @@ export default function ArticleDetailPage({ slug, onBack }) {
 
       {article.meta.category && (
         <span
-          className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold mb-3"
+          className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold mb-3"
           style={{ background: theme.accent + '22', color: theme.accent }}
         >
           {article.meta.category}

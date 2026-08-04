@@ -79,17 +79,17 @@ export default function LiveFueVoltData({ slug, theme }) {
           <div className="flex flex-wrap gap-2">
             {state.stats.map((stat) => (
               <div key={stat.fuelType} className="rounded-lg px-3 py-2" style={{ background: theme.bg }}>
-                <p className="text-[10px] font-semibold" style={{ color: theme.textMuted }}>{stat.fuelType}</p>
+                <p className="text-[11px] font-semibold" style={{ color: theme.textMuted }}>{stat.fuelType}</p>
                 <p className="text-sm font-bold" style={{ color: theme.accent }}>
                   {(stat.average * 100).toFixed(1)}¢/L average
                 </p>
-                <p className="text-[10px]" style={{ color: theme.textMuted }}>
+                <p className="text-[11px]" style={{ color: theme.textMuted }}>
                   {stat.stationCount} nearby station{stat.stationCount === 1 ? '' : 's'}
                 </p>
               </div>
             ))}
           </div>
-          <p className="text-[10px] mt-3" style={{ color: theme.textMuted }}>
+          <p className="text-[11px] mt-3" style={{ color: theme.textMuted }}>
             Brisbane-area government price reports{formatCheckedAt(state.checkedAt) ? ` checked ${formatCheckedAt(state.checkedAt)}` : ''}. Prices can change at any time.
           </p>
         </>

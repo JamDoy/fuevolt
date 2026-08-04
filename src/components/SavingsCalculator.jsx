@@ -31,7 +31,7 @@ export default function SavingsCalculator({ cheapest, average }) {
 
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <label className="text-[10px] block mb-1" style={{ color: theme.textMuted }}>
+          <label className="text-[11px] block mb-1" style={{ color: theme.textMuted }}>
             km/week
           </label>
           <input
@@ -47,7 +47,7 @@ export default function SavingsCalculator({ cheapest, average }) {
           />
         </div>
         <div>
-          <label className="text-[10px] block mb-1" style={{ color: theme.textMuted }}>
+          <label className="text-[11px] block mb-1" style={{ color: theme.textMuted }}>
             L/100km
           </label>
           <input
@@ -80,7 +80,7 @@ export default function SavingsCalculator({ cheapest, average }) {
         </div>
       </div>
 
-      <p className="text-[10px] mt-2 text-center" style={{ color: theme.textMuted }}>
+      <p className="text-[11px] mt-2 text-center" style={{ color: theme.textMuted }}>
         Based on filling at cheapest ({(cheapest / 100).toFixed(1)}¢/L) vs average ({(average / 100).toFixed(1)}¢/L)
       </p>
     </div>

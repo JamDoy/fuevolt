@@ -21,7 +21,7 @@ function FeaturedArticles({ theme, isDark, onArticle }) {
           style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder || theme.border}` }}
         >
           <span
-            className="inline-block px-2 py-0.5 rounded-full text-[9px] font-semibold mb-2"
+            className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold mb-2"
             style={{
               background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)',
               color: theme.gold,
@@ -32,7 +32,7 @@ function FeaturedArticles({ theme, isDark, onArticle }) {
           <h3 className="text-xs font-semibold leading-snug" style={{ color: theme.heading || theme.text }}>
             {a.title}
           </h3>
-          <span className="text-[9px] mt-1 block" style={{ color: theme.textMuted }}>{a.readTime} read</span>
+          <span className="text-[11px] mt-1 block" style={{ color: theme.textMuted }}>{a.readTime} read</span>
         </button>
       ))}
     </div>
@@ -101,7 +101,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
                 )}
               </span>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wide mb-1" style={{ color: theme.gold }}>Step {index + 1}</p>
+                <p className="text-[11px] font-bold uppercase tracking-wide mb-1" style={{ color: theme.gold }}>Step {index + 1}</p>
                 <p className="text-sm font-semibold leading-snug" style={{ color: theme.text }}>{step.title}</p>
               </div>
             </div>

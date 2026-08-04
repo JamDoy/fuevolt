@@ -134,7 +134,7 @@ export default function EVStationCard({ station, isSelected, onClick }) {
       {/* Speed indicator */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
         <span
-          className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+          className="px-2 py-0.5 rounded-full text-[11px] font-bold"
           style={{
             background: maxPower >= 50
               ? (isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)')
@@ -153,7 +153,7 @@ export default function EVStationCard({ station, isSelected, onClick }) {
         {station.Connections?.slice(0, 3).map((conn, i) => (
           <span
             key={i}
-            className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
+            className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium"
             style={{
               background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.05)',
               color: theme.green,
@@ -170,7 +170,7 @@ export default function EVStationCard({ station, isSelected, onClick }) {
           {station.NumberOfPoints ? `${station.NumberOfPoints} point${station.NumberOfPoints > 1 ? 's' : ''}` : ''}
         </span>
         {station.UsageType?.Title && (
-          <span className="text-[10px]">{station.UsageType.Title}</span>
+          <span className="text-[11px]">{station.UsageType.Title}</span>
         )}
       </div>
     </div>

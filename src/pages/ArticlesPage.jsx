@@ -60,7 +60,7 @@ export default function ArticlesPage({ onArticle }) {
               style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
             >
               <span
-                className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold mb-2"
+                className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold mb-2"
                 style={{ background: catColor.bg, color: catColor.text }}
               >
                 {article.category}
@@ -71,7 +71,7 @@ export default function ArticlesPage({ onArticle }) {
               <p className="text-xs leading-relaxed mb-3" style={{ color: theme.subtext }}>
                 {article.description}
               </p>
-              <span className="text-[10px] font-medium" style={{ color: theme.textMuted }}>
+              <span className="text-[11px] font-medium" style={{ color: theme.textMuted }}>
                 {article.readTime}
               </span>
             </button>

@@ -64,7 +64,7 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             {rank != null && (
-              <span className="text-[10px] font-bold" style={{ color: rank === 0 ? theme.green : theme.textMuted }}>
+              <span className="text-[11px] font-bold" style={{ color: rank === 0 ? theme.green : theme.textMuted }}>
                 #{rank + 1}
               </span>
             )}
@@ -96,14 +96,14 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
         <div>
           {station.price != null ? (
             <>
-              {freshness.checkedLabel && <p className="text-[10px]" style={{ color: theme.textMuted }}>{freshness.checkedLabel}</p>}
-              <p className="text-[10px]" style={{ color: theme.textMuted }}>{freshness.label}</p>
+              {freshness.checkedLabel && <p className="text-[11px]" style={{ color: theme.textMuted }}>{freshness.checkedLabel}</p>}
+              <p className="text-[11px]" style={{ color: theme.textMuted }}>{freshness.label}</p>
             </>
           ) : (
-            <p className="text-[10px]" style={{ color: theme.textMuted }}>No live price update available</p>
+            <p className="text-[11px]" style={{ color: theme.textMuted }}>No live price update available</p>
           )}
           {freshness.isOutdated && (
-            <span className="inline-block mt-1 px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
+            <span className="inline-block mt-1 px-2 py-1 rounded-full text-[11px] font-bold" style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
               Data check is over 2 hours old
             </span>
           )}
@@ -127,7 +127,7 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
         <div className="pt-3 space-y-2">
           {station.address && <p className="text-xs" style={{ color: theme.textSecondary }}>{station.address}</p>}
           {hours && (
-            <p className="text-[10px]" style={{ color: hours.isOpen === true ? theme.green : hours.isOpen === false ? '#E74C3C' : theme.textMuted }}>
+            <p className="text-[11px]" style={{ color: hours.isOpen === true ? theme.green : hours.isOpen === false ? '#E74C3C' : theme.textMuted }}>
               {hours.isOpen === true ? 'Open now' : hours.isOpen === false ? 'Closed' : ''} {hours.display}
             </p>
           )}
@@ -159,7 +159,7 @@ function PriceContextBadge({ context, theme }) {
   const style = styles[context];
 
   return (
-    <span className="inline-block mt-2 px-2 py-1 rounded-full text-[10px] font-bold" style={{ background: style.background, color: style.color }}>
+    <span className="inline-block mt-2 px-2 py-1 rounded-full text-[11px] font-bold" style={{ background: style.background, color: style.color }}>
       {style.label}
     </span>
   );
