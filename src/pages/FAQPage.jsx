@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useId } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { injectFAQSchema, removeFAQSchema } from '../utils/seo';
 
 const FAQ_ITEMS = [
   {
@@ -102,6 +103,7 @@ const FAQ_ITEMS = [
 
 function FAQItem({ q, a, theme }) {
   const [open, setOpen] = useState(false);
+  const panelId = useId();
 
   return (
     <div
@@ -109,20 +111,24 @@ function FAQItem({ q, a, theme }) {
       style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
     >
       <button
+        type="button"
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-controls={panelId}
         className="w-full text-left px-4 py-3 flex items-center justify-between cursor-pointer"
         style={{ background: 'transparent', border: 'none', color: theme.text }}
       >
         <span className="text-sm font-semibold pr-4">{q}</span>
         <span
           className="text-xs flex-shrink-0 transition-transform"
+          aria-hidden="true"
           style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', color: theme.gold }}
         >
           &#9660;
         </span>
       </button>
       {open && (
-        <div className="px-4 pb-4">
+        <div id={panelId} className="px-4 pb-4">
           <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>{a}</p>
         </div>
       )}
@@ -132,6 +138,12 @@ function FAQItem({ q, a, theme }) {
 
 export default function FAQPage({ onContact }) {
   const { theme } = useTheme();
+
+  useEffect(() => {
+    const flat = FAQ_ITEMS.flatMap((section) => section.questions);
+    injectFAQSchema(flat);
+    return () => removeFAQSchema();
+  }, []);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8" style={{ color: theme.text }}>

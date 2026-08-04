@@ -227,6 +227,22 @@ export function removeArticleSchema() {
   removeSchema('article');
 }
 
+export function injectFAQSchema(faqItems) {
+  injectSchema('faq', {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  });
+}
+
+export function removeFAQSchema() {
+  removeSchema('faq');
+}
+
 function injectSchema(id, data) {
   let el = document.getElementById(`schema-${id}`);
   if (!el) {
