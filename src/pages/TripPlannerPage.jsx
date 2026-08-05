@@ -320,8 +320,8 @@ export default function TripPlannerPage() {
         <div
           className="rounded-2xl p-5"
           style={{
-            background: isDark ? 'rgba(46,204,113,0.06)' : 'rgba(39,174,96,0.04)',
-            border: `1px solid ${isDark ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
+            background: isDark ? 'rgba(34, 197, 94,0.06)' : 'rgba(34,197,94,0.04)',
+            border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.2)' : 'rgba(34,197,94,0.15)'}`,
           }}
         >
           <h3 className="text-sm font-bold mb-3" style={{ color: theme.green }}>EV Battery Forecast</h3>

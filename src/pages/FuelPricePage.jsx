@@ -233,7 +233,7 @@ export default function FuelPricePage({
                 ? {
                     background: `linear-gradient(135deg, ${theme.green}, ${theme.greenDark})`,
                     color: '#FFFFFF',
-                    boxShadow: `0 0 12px ${theme.mode === 'dark' ? 'rgba(46, 204, 113, 0.3)' : 'rgba(39, 174, 96, 0.25)'}`,
+                    boxShadow: `0 0 12px ${theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(34,197,94, 0.25)'}`,
                   }
                 : {
                     background: theme.chipBg,
@@ -305,9 +305,9 @@ export default function FuelPricePage({
           className="rounded-2xl p-5 cursor-pointer"
           onClick={() => openStationDetail(cheapest)}
           style={{
-            background: theme.mode === 'dark' ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.04)',
-            border: `2px solid ${theme.mode === 'dark' ? 'rgba(46,204,113,0.4)' : 'rgba(39,174,96,0.3)'}`,
-            boxShadow: theme.mode === 'dark' ? '0 0 16px rgba(46,204,113,0.1)' : '0 4px 12px rgba(39,174,96,0.08)',
+            background: theme.mode === 'dark' ? 'rgba(34, 197, 94,0.08)' : 'rgba(34,197,94,0.04)',
+            border: `2px solid ${theme.mode === 'dark' ? 'rgba(34, 197, 94,0.4)' : 'rgba(34,197,94,0.3)'}`,
+            boxShadow: theme.mode === 'dark' ? '0 0 16px rgba(34, 197, 94,0.1)' : '0 4px 12px rgba(34,197,94,0.08)',
             transition: 'all 0.25s ease',
             animation: 'cheapestFoundPulse 900ms ease-out',
           }}
@@ -450,8 +450,8 @@ export default function FuelPricePage({
           className="rounded-2xl p-5 cursor-pointer"
           onClick={onSwitchToEV}
           style={{
-            background: theme.mode === 'dark' ? 'rgba(46,204,113,0.06)' : 'rgba(39,174,96,0.04)',
-            border: `1px solid ${theme.mode === 'dark' ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
+            background: theme.mode === 'dark' ? 'rgba(34, 197, 94,0.06)' : 'rgba(34,197,94,0.04)',
+            border: `1px solid ${theme.mode === 'dark' ? 'rgba(34, 197, 94,0.2)' : 'rgba(34,197,94,0.15)'}`,
             transition: 'all 0.25s ease',
           }}
         >
@@ -562,9 +562,9 @@ export default function FuelPricePage({
 
       <style>{`
         @keyframes cheapestFoundPulse {
-          0% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); transform: scale(1); }
-          35% { box-shadow: 0 0 28px rgba(255, 215, 0, 0.6); transform: scale(1.015); }
-          100% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); transform: scale(1); }
+          0% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
+          35% { box-shadow: 0 0 28px rgba(245, 158, 11, 0.6); transform: scale(1.015); }
+          100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
         }
       `}</style>
     </div>
@@ -602,8 +602,8 @@ function CountUpPrice({ value }) {
 function PriceContextBadge({ context, theme }) {
   if (!context) return null;
   const styles = {
-    below: { label: 'Below average', background: 'rgba(39,174,96,0.14)', color: theme.green },
-    about: { label: 'About average', background: 'rgba(255,215,0,0.14)', color: theme.gold },
+    below: { label: 'Below average', background: 'rgba(34,197,94,0.14)', color: theme.green },
+    about: { label: 'About average', background: 'rgba(245, 158, 11,0.14)', color: theme.gold },
     above: { label: 'Above average', background: 'rgba(231,76,60,0.14)', color: '#E74C3C' },
   };
   const style = styles[context];

@@ -103,7 +103,7 @@ export default function NotificationsPage() {
                 onClick={() => handleRead(n.id)}
                 className="rounded-xl p-4 cursor-pointer"
                 style={{
-                  background: n.read ? theme.cardBg : (isDark ? 'rgba(255,215,0,0.06)' : 'rgba(200,151,31,0.04)'),
+                  background: n.read ? theme.cardBg : (isDark ? 'rgba(245, 158, 11,0.06)' : 'rgba(245,158,11,0.04)'),
                   border: `1px solid ${n.read ? theme.cardBorder : theme.gold}`,
                   opacity: n.read ? 0.7 : 1,
                   transition: 'all 0.25s ease',

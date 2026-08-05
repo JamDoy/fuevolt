@@ -17,6 +17,29 @@ const CONTENT_DIR = path.resolve('public/content/articles');
 const BASE_URL = 'https://www.fuevolt.com';
 const ADSENSE_PUB_ID = 'ca-pub-7549230738737699';
 
+// FueVolt fuel-drop + bolt mark, matching src/components/FueVoltLogo.jsx,
+// inlined here since this script generates static HTML outside React.
+const FUEVOLT_ICON_SVG = `<svg width="36" height="47" viewBox="0 0 120 156" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="pfvdg" cx="35%" cy="28%" r="70%">
+      <stop offset="0%" stop-color="#4ADE80" /><stop offset="45%" stop-color="#22C55E" /><stop offset="100%" stop-color="#14532D" />
+    </radialGradient>
+    <radialGradient id="pfvrl" cx="82%" cy="78%" r="38%">
+      <stop offset="0%" stop-color="#86EFAC" stop-opacity="0.4" /><stop offset="100%" stop-color="#86EFAC" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="pfvbg" x1="68" y1="28" x2="46" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE68A" /><stop offset="40%" stop-color="#F59E0B" /><stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+    <linearGradient id="pfvbs" x1="60" y1="28" x2="52" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FEF9C3" stop-opacity="0.85" /><stop offset="100%" stop-color="#FDE68A" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <path d="M 60,6 C 62,10 72,22 82,38 C 94,57 110,76 110,100 A 50,50 0 0 1 10,100 C 10,76 26,57 38,38 C 48,22 58,10 60,6 Z" fill="url(#pfvdg)" />
+  <path d="M 60,6 C 62,10 72,22 82,38 C 94,57 110,76 110,100 A 50,50 0 0 1 10,100 C 10,76 26,57 38,38 C 48,22 58,10 60,6 Z" fill="url(#pfvrl)" />
+  <polygon points="68,28 44,82 60,82 46,128 76,70 60,70 68,28" fill="url(#pfvbg)" />
+  <polygon points="68,28 60,70 46,128 44,82 68,28" fill="url(#pfvbs)" />
+</svg>`;
+
 // Read the base template (built index.html)
 const template = fs.readFileSync(path.join(DIST, 'index.html'), 'utf-8');
 
@@ -275,14 +298,14 @@ for (const article of articles) {
         <p style="font-size:0.85rem;color:#6B7280;margin-bottom:4px">By the FueVolt Team · ${escHtml(article.category)} · ${escHtml(article.readTime)}</p>
         ${updated ? `<p style="font-size:0.85rem;color:#6B7280;margin-bottom:16px">Last updated: ${escHtml(updated)}</p>` : ''}
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:24px">${escHtml(article.description)}</p>
-        <aside style="padding:16px;border:1px solid #C8971F;border-radius:12px;margin-bottom:24px;background:#FFF9E8">
+        <aside style="padding:16px;border:1px solid #F59E0B;border-radius:12px;margin-bottom:24px;background:#FFF9E8">
           <h2 style="font-size:1rem;margin-bottom:8px">Live FueVolt Data</h2>
           <p style="font-size:0.9rem;color:#4B5563">FueVolt loads a current Brisbane-area government fuel-price snapshot here when the page opens. The figures come from the same official price feed used by FueVolt's fuel search.</p>
           <p style="margin-top:8px"><a href="/fuel-prices/brisbane">View live Brisbane fuel prices</a></p>
         </aside>
         <article style="line-height:1.8;font-size:0.95rem">${articleHtml}</article>
         <section style="display:flex;gap:12px;padding:16px;border:1px solid #E5E7EB;border-radius:12px;margin-top:32px">
-          <div style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#C8971F;color:#0D2B5E;font-weight:700;flex:none">FV</div>
+          <div style="flex:none;width:36px;height:47px" aria-hidden="true">${FUEVOLT_ICON_SVG}</div>
           <div><h2 style="font-size:1rem;margin-bottom:4px">About FueVolt</h2><p style="font-size:0.85rem;color:#4B5563">FueVolt is built by a small Australian team focused on making it easy to find the cheapest fuel and nearest EV chargers. We built FueVolt after getting frustrated with not knowing where to find the cheapest fuel, with the aim of helping other Australian drivers save money.</p></div>
         </section>
         <p style="font-size:0.8rem;color:#6B7280;margin-top:16px">This guide was written and reviewed by the FueVolt team. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.</p>
@@ -313,7 +336,7 @@ console.log('Pre-rendering guides index...');
     .map(
       (a) =>
         `<div style="margin-bottom:16px;padding:16px;border:1px solid #E5E7EB;border-radius:12px">
-          <h2 style="font-size:1.1rem;margin-bottom:4px"><a href="/guides/${a.slug}" style="color:#C8971F;text-decoration:none">${escHtml(a.title)}</a></h2>
+          <h2 style="font-size:1.1rem;margin-bottom:4px"><a href="/guides/${a.slug}" style="color:#F59E0B;text-decoration:none">${escHtml(a.title)}</a></h2>
           <p style="font-size:0.85rem;color:#6B7280">${escHtml(a.category)} · ${escHtml(a.readTime)}</p>
           <p style="font-size:0.9rem;color:#4B5563;margin-top:8px">${escHtml(a.description)}</p>
         </div>`

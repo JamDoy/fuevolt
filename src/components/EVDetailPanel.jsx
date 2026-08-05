@@ -38,7 +38,7 @@ export default function EVDetailPanel({ station, onClose }) {
         className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl p-6"
         style={{
           background: theme.panelBg,
-          border: `1px solid ${theme.mode === 'dark' ? 'rgba(255,215,0,0.3)' : 'rgba(200,151,31,0.25)'}`,
+          border: `1px solid ${theme.mode === 'dark' ? 'rgba(245, 158, 11,0.3)' : 'rgba(245,158,11,0.25)'}`,
           boxShadow: theme.mode === 'dark'
             ? '0 0 40px rgba(26,111,219,0.2)'
             : '0 8px 40px rgba(0,0,0,0.12)',
@@ -161,7 +161,7 @@ export default function EVDetailPanel({ station, onClose }) {
           rel="noopener noreferrer"
           className="block text-center py-3 rounded-xl text-sm font-semibold"
           style={{
-            background: 'linear-gradient(135deg, #C8971F, #FFD700)',
+            background: 'linear-gradient(135deg, #B45309, #F59E0B)',
             color: '#0D2B5E',
             transition: 'all 0.25s ease',
           }}

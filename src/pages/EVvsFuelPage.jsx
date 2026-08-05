@@ -279,8 +279,8 @@ export default function EVvsFuelPage() {
             <div
               className="rounded-2xl p-5 text-center"
               style={{
-                background: isDark ? 'rgba(255,215,0,0.06)' : 'rgba(200,151,31,0.04)',
-                border: `1px solid ${isDark ? 'rgba(255,215,0,0.2)' : 'rgba(200,151,31,0.15)'}`,
+                background: isDark ? 'rgba(245, 158, 11,0.06)' : 'rgba(245,158,11,0.04)',
+                border: `1px solid ${isDark ? 'rgba(245, 158, 11,0.2)' : 'rgba(245,158,11,0.15)'}`,
               }}
             >
               <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Weekly Fuel Cost</p>
@@ -297,8 +297,8 @@ export default function EVvsFuelPage() {
             <div
               className="rounded-2xl p-5 text-center"
               style={{
-                background: isDark ? 'rgba(46,204,113,0.06)' : 'rgba(39,174,96,0.04)',
-                border: `1px solid ${isDark ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
+                background: isDark ? 'rgba(34, 197, 94,0.06)' : 'rgba(34,197,94,0.04)',
+                border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.2)' : 'rgba(34,197,94,0.15)'}`,
               }}
             >
               <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Weekly EV Cost</p>
@@ -319,9 +319,9 @@ export default function EVvsFuelPage() {
             className="rounded-2xl p-5"
             style={{
               background: isDark
-                ? 'linear-gradient(135deg, rgba(46,204,113,0.1), rgba(255,215,0,0.05))'
-                : 'linear-gradient(135deg, rgba(39,174,96,0.08), rgba(200,151,31,0.04))',
-              border: `1px solid ${isDark ? 'rgba(46,204,113,0.25)' : 'rgba(39,174,96,0.2)'}`,
+                ? 'linear-gradient(135deg, rgba(34, 197, 94,0.1), rgba(245, 158, 11,0.05))'
+                : 'linear-gradient(135deg, rgba(34,197,94,0.08), rgba(245,158,11,0.04))',
+              border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.25)' : 'rgba(34,197,94,0.2)'}`,
             }}
           >
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
@@ -398,11 +398,11 @@ function ResultCard({ label, value, subtitle, color, theme, isDark, accentColor 
       className="rounded-xl p-4 text-center"
       style={{
         background: isDark
-          ? `rgba(${accentColor === 'green' ? '46,204,113' : '255,215,0'},0.06)`
-          : `rgba(${accentColor === 'green' ? '39,174,96' : '200,151,31'},0.04)`,
+          ? `rgba(${accentColor === 'green' ? '34, 197, 94' : '245, 158, 11'},0.06)`
+          : `rgba(${accentColor === 'green' ? '34,197,94' : '245,158,11'},0.04)`,
         border: `1px solid ${isDark
-          ? `rgba(${accentColor === 'green' ? '46,204,113' : '255,215,0'},0.2)`
-          : `rgba(${accentColor === 'green' ? '39,174,96' : '200,151,31'},0.15)`}`,
+          ? `rgba(${accentColor === 'green' ? '34, 197, 94' : '245, 158, 11'},0.2)`
+          : `rgba(${accentColor === 'green' ? '34,197,94' : '245,158,11'},0.15)`}`,
       }}
     >
       <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>{label}</p>

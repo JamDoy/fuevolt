@@ -11,7 +11,7 @@ import { getPriceContext, getPriceFreshness } from '../utils/priceFreshness';
 const goldPin = new L.DivIcon({
   className: 'custom-marker',
   html: `<svg width="36" height="52" viewBox="0 0 28 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 26 14 26s14-15.5 14-26C28 6.268 21.732 0 14 0z" fill="#FFD700"/>
+    <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 26 14 26s14-15.5 14-26C28 6.268 21.732 0 14 0z" fill="#F59E0B"/>
     <circle cx="14" cy="14" r="6" fill="#0D2B5E"/>
   </svg>`,
   iconSize: [36, 52],
@@ -182,7 +182,7 @@ export default function FuelStationDetailPage({ station, onBack }) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold no-underline"
             style={{
-              background: `linear-gradient(135deg, #C8971F, #FFD700)`,
+              background: `linear-gradient(135deg, #B45309, #F59E0B)`,
               color: '#0D2B5E',
               transition: 'all 0.25s ease',
             }}
@@ -355,8 +355,8 @@ function FuelPriceTile({ label, priceData, theme }) {
 
 function PriceContextBadge({ context, theme }) {
   const styles = {
-    below: { label: 'Below average', background: 'rgba(39,174,96,0.14)', color: theme.green },
-    about: { label: 'About average', background: 'rgba(255,215,0,0.14)', color: theme.gold },
+    below: { label: 'Below average', background: 'rgba(34,197,94,0.14)', color: theme.green },
+    about: { label: 'About average', background: 'rgba(245, 158, 11,0.14)', color: theme.gold },
     above: { label: 'Above average', background: 'rgba(231,76,60,0.14)', color: '#E74C3C' },
   };
   const style = styles[context];

@@ -238,8 +238,8 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
             className="rounded-2xl p-4 text-center"
             style={{
               background: theme.cardBg,
-              border: `1px solid ${isDark ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)'}`,
-              boxShadow: isDark ? '0 0 12px rgba(46,204,113,0.08) inset' : '0 2px 8px rgba(0,0,0,0.04)',
+              border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.3)' : 'rgba(34,197,94,0.2)'}`,
+              boxShadow: isDark ? '0 0 12px rgba(34, 197, 94,0.08) inset' : '0 2px 8px rgba(0,0,0,0.04)',
             }}
           >
             <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Stations</p>

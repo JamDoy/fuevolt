@@ -23,7 +23,7 @@ function FeaturedArticles({ theme, isDark, onArticle }) {
           <span
             className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold mb-2"
             style={{
-              background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)',
+              background: isDark ? 'rgba(245, 158, 11,0.1)' : 'rgba(245,158,11,0.08)',
               color: theme.gold,
             }}
           >
@@ -88,7 +88,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
             >
               <span
                 className="w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center"
-                style={{ background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)', color: theme.gold }}
+                style={{ background: isDark ? 'rgba(245, 158, 11,0.1)' : 'rgba(245,158,11,0.08)', color: theme.gold }}
               >
                 {step.icon === 'search' && (
                   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="10" cy="10" r="6" /><path d="m15 15 5 5" /></svg>
@@ -123,8 +123,8 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
               : `1px solid ${theme.cardBorder}`,
             boxShadow: hovered === 'fuel'
               ? (isDark
-                  ? '0 0 50px rgba(255,215,0,0.12), 0 20px 60px rgba(0,0,0,0.4)'
-                  : '0 0 40px rgba(200,151,31,0.15), 0 20px 40px rgba(0,0,0,0.1)')
+                  ? '0 0 50px rgba(245, 158, 11,0.12), 0 20px 60px rgba(0,0,0,0.4)'
+                  : '0 0 40px rgba(245,158,11,0.15), 0 20px 40px rgba(0,0,0,0.1)')
               : (isDark
                   ? '0 4px 20px rgba(0,0,0,0.3)'
                   : '0 2px 12px rgba(0,0,0,0.06)'),
@@ -145,13 +145,13 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
               style={{
-                background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)',
-                border: `1px solid ${isDark ? 'rgba(255,215,0,0.25)' : 'rgba(200,151,31,0.2)'}`,
+                background: isDark ? 'rgba(245, 158, 11,0.1)' : 'rgba(245,158,11,0.08)',
+                border: `1px solid ${isDark ? 'rgba(245, 158, 11,0.25)' : 'rgba(245,158,11,0.2)'}`,
               }}
             >
               <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
                 <rect x="8" y="10" width="24" height="30" rx="3" stroke={theme.gold} strokeWidth="2.5" fill="none" />
-                <rect x="12" y="14" width="16" height="10" rx="2" fill={isDark ? 'rgba(255,215,0,0.15)' : 'rgba(200,151,31,0.12)'} stroke={theme.gold} strokeWidth="1.5" />
+                <rect x="12" y="14" width="16" height="10" rx="2" fill={isDark ? 'rgba(245, 158, 11,0.15)' : 'rgba(245,158,11,0.12)'} stroke={theme.gold} strokeWidth="1.5" />
                 <path d="M32 18h6a2 2 0 012 2v14a3 3 0 01-3 3h0a3 3 0 01-3-3V22" stroke={theme.gold} strokeWidth="2" />
                 <circle cx="38" cy="16" r="2" fill={theme.gold} />
               </svg>
@@ -171,9 +171,9 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
                   key={t}
                   className="px-3 py-1 rounded-full text-xs font-medium"
                   style={{
-                    background: isDark ? 'rgba(255,215,0,0.08)' : 'rgba(200,151,31,0.06)',
+                    background: isDark ? 'rgba(245, 158, 11,0.08)' : 'rgba(245,158,11,0.06)',
                     color: theme.gold,
-                    border: `1px solid ${isDark ? 'rgba(255,215,0,0.2)' : 'rgba(200,151,31,0.15)'}`,
+                    border: `1px solid ${isDark ? 'rgba(245, 158, 11,0.2)' : 'rgba(245,158,11,0.15)'}`,
                   }}
                 >
                   {t}
@@ -187,7 +187,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
               style={{
                 background: `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`,
                 color: '#0D2B5E',
-                boxShadow: isDark ? '0 4px 20px rgba(255,215,0,0.2)' : '0 4px 15px rgba(200,151,31,0.25)',
+                boxShadow: isDark ? '0 4px 20px rgba(245, 158, 11,0.2)' : '0 4px 15px rgba(245,158,11,0.25)',
                 transition: 'all 0.25s ease',
                 border: 'none',
               }}
@@ -209,8 +209,8 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
               : `1px solid ${theme.cardBorder}`,
             boxShadow: hovered === 'ev'
               ? (isDark
-                  ? '0 0 50px rgba(46,204,113,0.12), 0 20px 60px rgba(0,0,0,0.4)'
-                  : '0 0 40px rgba(39,174,96,0.15), 0 20px 40px rgba(0,0,0,0.1)')
+                  ? '0 0 50px rgba(34, 197, 94,0.12), 0 20px 60px rgba(0,0,0,0.4)'
+                  : '0 0 40px rgba(34,197,94,0.15), 0 20px 40px rgba(0,0,0,0.1)')
               : (isDark
                   ? '0 4px 20px rgba(0,0,0,0.3)'
                   : '0 2px 12px rgba(0,0,0,0.06)'),
@@ -231,12 +231,12 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
               style={{
-                background: isDark ? 'rgba(46,204,113,0.1)' : 'rgba(39,174,96,0.08)',
-                border: `1px solid ${isDark ? 'rgba(46,204,113,0.25)' : 'rgba(39,174,96,0.2)'}`,
+                background: isDark ? 'rgba(34, 197, 94,0.1)' : 'rgba(34,197,94,0.08)',
+                border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.25)' : 'rgba(34,197,94,0.2)'}`,
               }}
             >
               <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
-                <path d="M20 8l-8 18h10l-4 14 14-20H22l6-12H20z" fill={isDark ? 'rgba(46,204,113,0.15)' : 'rgba(39,174,96,0.12)'} stroke={theme.green} strokeWidth="2.5" strokeLinejoin="round" />
+                <path d="M20 8l-8 18h10l-4 14 14-20H22l6-12H20z" fill={isDark ? 'rgba(34, 197, 94,0.15)' : 'rgba(34,197,94,0.12)'} stroke={theme.green} strokeWidth="2.5" strokeLinejoin="round" />
               </svg>
             </div>
 
@@ -254,9 +254,9 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
                   key={t}
                   className="px-3 py-1 rounded-full text-xs font-medium"
                   style={{
-                    background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.06)',
+                    background: isDark ? 'rgba(34, 197, 94,0.08)' : 'rgba(34,197,94,0.06)',
                     color: theme.green,
-                    border: `1px solid ${isDark ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
+                    border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.2)' : 'rgba(34,197,94,0.15)'}`,
                   }}
                 >
                   {t}
@@ -270,7 +270,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
               style={{
                 background: `linear-gradient(135deg, ${theme.greenDark}, ${theme.green})`,
                 color: '#FFFFFF',
-                boxShadow: isDark ? '0 4px 20px rgba(46,204,113,0.2)' : '0 4px 15px rgba(39,174,96,0.25)',
+                boxShadow: isDark ? '0 4px 20px rgba(34, 197, 94,0.2)' : '0 4px 15px rgba(34,197,94,0.25)',
                 transition: 'all 0.25s ease',
                 border: 'none',
               }}
@@ -293,7 +293,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
             ? `2px solid ${theme.gold}`
             : `1px solid ${theme.cardBorder}`,
           boxShadow: hovered === 'trip'
-            ? (isDark ? '0 0 30px rgba(255,215,0,0.1)' : '0 0 20px rgba(200,151,31,0.1)')
+            ? (isDark ? '0 0 30px rgba(245, 158, 11,0.1)' : '0 0 20px rgba(245,158,11,0.1)')
             : theme.mode === 'dark' ? '0 4px 20px rgba(0,0,0,0.3)' : '0 2px 12px rgba(0,0,0,0.06)',
           transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
           transform: hovered === 'trip' ? 'translateY(-2px)' : 'translateY(0)',
@@ -304,8 +304,8 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
             style={{
-              background: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)',
-              border: `1px solid ${isDark ? 'rgba(255,215,0,0.25)' : 'rgba(200,151,31,0.2)'}`,
+              background: isDark ? 'rgba(245, 158, 11,0.1)' : 'rgba(245,158,11,0.08)',
+              border: `1px solid ${isDark ? 'rgba(245, 158, 11,0.25)' : 'rgba(245,158,11,0.2)'}`,
             }}
           >
             {'\uD83D\uDDFA'}
@@ -328,13 +328,13 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
         className="w-full max-w-4xl mt-6 rounded-2xl p-6 cursor-pointer animate-slide-up"
         style={{
           background: isDark
-            ? 'linear-gradient(135deg, rgba(255,215,0,0.04), rgba(46,204,113,0.04))'
-            : 'linear-gradient(135deg, rgba(200,151,31,0.03), rgba(39,174,96,0.03))',
+            ? 'linear-gradient(135deg, rgba(245, 158, 11,0.04), rgba(34, 197, 94,0.04))'
+            : 'linear-gradient(135deg, rgba(245,158,11,0.03), rgba(34,197,94,0.03))',
           border: hovered === 'calculator'
             ? `2px solid ${theme.green}`
             : `1px solid ${theme.cardBorder}`,
           boxShadow: hovered === 'calculator'
-            ? (isDark ? '0 0 30px rgba(46,204,113,0.1)' : '0 0 20px rgba(39,174,96,0.1)')
+            ? (isDark ? '0 0 30px rgba(34, 197, 94,0.1)' : '0 0 20px rgba(34,197,94,0.1)')
             : isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 2px 12px rgba(0,0,0,0.06)',
           transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
           transform: hovered === 'calculator' ? 'translateY(-2px)' : 'translateY(0)',
@@ -346,9 +346,9 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
             className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
             style={{
               background: isDark
-                ? 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(46,204,113,0.1))'
-                : 'linear-gradient(135deg, rgba(200,151,31,0.08), rgba(39,174,96,0.08))',
-              border: `1px solid ${isDark ? 'rgba(46,204,113,0.25)' : 'rgba(39,174,96,0.2)'}`,
+                ? 'linear-gradient(135deg, rgba(245, 158, 11,0.1), rgba(34, 197, 94,0.1))'
+                : 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(34,197,94,0.08))',
+              border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.25)' : 'rgba(34,197,94,0.2)'}`,
             }}
           >
             {'\uD83D\uDCA1'}

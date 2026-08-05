@@ -67,7 +67,7 @@ export default function SearchBar({
               setFocused(true);
               setRecentSearches(getRecentSearches());
               event.target.style.borderColor = theme.inputFocusBorder;
-              event.target.style.boxShadow = `0 0 12px ${theme.mode === 'dark' ? 'rgba(255,215,0,0.15)' : 'rgba(200,151,31,0.12)'}`;
+              event.target.style.boxShadow = `0 0 12px ${theme.mode === 'dark' ? 'rgba(245, 158, 11,0.15)' : 'rgba(245,158,11,0.12)'}`;
             }}
             onBlur={(event) => {
               window.setTimeout(() => setFocused(false), 120);
@@ -124,11 +124,11 @@ export default function SearchBar({
           disabled={loading}
           className={`${prominent ? 'min-h-14 px-6 py-4 text-base w-full sm:w-auto' : 'px-5 py-3 text-sm'} rounded-2xl font-bold cursor-pointer disabled:opacity-50 whitespace-nowrap`}
           style={{
-            background: 'linear-gradient(135deg, #C8971F, #FFD700)',
+            background: 'linear-gradient(135deg, #B45309, #F59E0B)',
             color: '#0D2B5E',
             border: 'none',
             transition: 'all 0.25s ease',
-            boxShadow: prominent ? '0 8px 24px rgba(200,151,31,0.24)' : 'none',
+            boxShadow: prominent ? '0 8px 24px rgba(245,158,11,0.24)' : 'none',
           }}
         >
           Use My Location

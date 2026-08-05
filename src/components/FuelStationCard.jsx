@@ -152,8 +152,8 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
 
 function PriceContextBadge({ context, theme }) {
   const styles = {
-    below: { label: 'Below average', background: 'rgba(39,174,96,0.14)', color: theme.green },
-    about: { label: 'About average', background: 'rgba(255,215,0,0.14)', color: theme.gold },
+    below: { label: 'Below average', background: 'rgba(34,197,94,0.14)', color: theme.green },
+    about: { label: 'About average', background: 'rgba(245, 158, 11,0.14)', color: theme.gold },
     above: { label: 'Above average', background: 'rgba(231,76,60,0.14)', color: '#E74C3C' },
   };
   const style = styles[context];

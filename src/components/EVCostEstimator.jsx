@@ -25,7 +25,7 @@ export default function EVCostEstimator() {
       className="rounded-2xl p-5"
       style={{
         background: theme.cardBg,
-        border: `1px solid ${isDark ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
+        border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.2)' : 'rgba(34,197,94,0.15)'}`,
       }}
     >
       <h3 className="text-base font-bold mb-4" style={{ color: theme.green }}>
@@ -86,14 +86,14 @@ export default function EVCostEstimator() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div
           className="p-3 rounded-xl text-center"
-          style={{ background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.05)' }}
+          style={{ background: isDark ? 'rgba(34, 197, 94,0.08)' : 'rgba(34,197,94,0.05)' }}
         >
           <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Energy Needed</p>
           <p className="text-lg font-bold" style={{ color: theme.green }}>{kWhNeeded.toFixed(1)} kWh</p>
         </div>
         <div
           className="p-3 rounded-xl text-center"
-          style={{ background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.05)' }}
+          style={{ background: isDark ? 'rgba(34, 197, 94,0.08)' : 'rgba(34,197,94,0.05)' }}
         >
           <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Public Cost</p>
           <p className="text-lg font-bold" style={{ color: theme.gold }}>${publicCost.toFixed(2)}</p>
@@ -101,7 +101,7 @@ export default function EVCostEstimator() {
         </div>
         <div
           className="p-3 rounded-xl text-center"
-          style={{ background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.05)' }}
+          style={{ background: isDark ? 'rgba(34, 197, 94,0.08)' : 'rgba(34,197,94,0.05)' }}
         >
           <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Home Cost</p>
           <p className="text-lg font-bold" style={{ color: theme.green }}>${homeCost.toFixed(2)}</p>
@@ -109,7 +109,7 @@ export default function EVCostEstimator() {
         </div>
         <div
           className="p-3 rounded-xl text-center"
-          style={{ background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.05)' }}
+          style={{ background: isDark ? 'rgba(34, 197, 94,0.08)' : 'rgba(34,197,94,0.05)' }}
         >
           <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Range Added</p>
           <p className="text-lg font-bold" style={{ color: theme.text }}>~{rangeAdded} km</p>

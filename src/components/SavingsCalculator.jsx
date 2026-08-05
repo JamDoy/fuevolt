@@ -20,8 +20,8 @@ export default function SavingsCalculator({ cheapest, average }) {
       className="rounded-2xl p-4 mt-4"
       style={{
         background: theme.mode === 'dark'
-          ? 'linear-gradient(135deg, rgba(255,215,0,0.08), rgba(46,204,113,0.08))'
-          : 'linear-gradient(135deg, rgba(255,215,0,0.12), rgba(46,204,113,0.12))',
+          ? 'linear-gradient(135deg, rgba(245, 158, 11,0.08), rgba(34, 197, 94,0.08))'
+          : 'linear-gradient(135deg, rgba(245, 158, 11,0.12), rgba(34, 197, 94,0.12))',
         border: `1px solid ${theme.cardBorder}`,
       }}
     >

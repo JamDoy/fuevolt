@@ -17,10 +17,10 @@ L.Icon.Default.mergeOptions({
 const fuelIcon = new L.DivIcon({
   className: 'custom-marker',
   html: `<svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#FFD700" stroke="#B8860B" stroke-width="1"/>
+    <path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#F59E0B" stroke="#B8860B" stroke-width="1"/>
     <rect x="10" y="7" width="10" height="14" rx="2" fill="#0D2B5E"/>
-    <rect x="12" y="9" width="6" height="5" rx="1" fill="#FFD700"/>
-    <rect x="14" y="16" width="2" height="3" fill="#FFD700"/>
+    <rect x="12" y="9" width="6" height="5" rx="1" fill="#F59E0B"/>
+    <rect x="14" y="16" width="2" height="3" fill="#F59E0B"/>
     <path d="M22 10h2v8h-2z" fill="#0D2B5E"/>
     <circle cx="23" cy="10" r="2" fill="#0D2B5E"/>
   </svg>`,
@@ -33,7 +33,7 @@ const fuelIcon = new L.DivIcon({
 const evBoltIcon = new L.DivIcon({
   className: 'custom-marker',
   html: `<svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#2ECC71" stroke="#1a9c54" stroke-width="1"/>
+    <path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#22C55E" stroke="#1a9c54" stroke-width="1"/>
     <path d="M18 6l-6 10h4l-2 8 6-10h-4l2-8z" fill="#FFFFFF"/>
   </svg>`,
   iconSize: [32, 42],
@@ -209,7 +209,7 @@ export default function StationMap({
           {routePoints && routePoints.length > 1 && (
             <Polyline
               positions={routePoints}
-              pathOptions={{ color: '#2ECC71', weight: 4, opacity: 0.8 }}
+              pathOptions={{ color: '#22C55E', weight: 4, opacity: 0.8 }}
             />
           )}
 
@@ -265,7 +265,7 @@ export default function StationMap({
                               style={{
                                 marginTop: '6px',
                                 padding: '4px 10px',
-                                background: 'linear-gradient(135deg, #C8971F, #FFD700)',
+                                background: 'linear-gradient(135deg, #B45309, #F59E0B)',
                                 color: '#0D2B5E',
                                 border: 'none',
                                 borderRadius: '6px',

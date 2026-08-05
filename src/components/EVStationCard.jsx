@@ -49,9 +49,9 @@ export default function EVStationCard({ station, isSelected, onClick }) {
         background: theme.cardBg,
         border: isSelected
           ? `2px solid ${theme.green}`
-          : `1px solid ${isDark ? 'rgba(46,204,113,0.15)' : theme.cardBorder}`,
+          : `1px solid ${isDark ? 'rgba(34, 197, 94,0.15)' : theme.cardBorder}`,
         boxShadow: isSelected
-          ? (isDark ? '0 0 20px rgba(46,204,113,0.15) inset' : '0 0 12px rgba(39,174,96,0.1) inset')
+          ? (isDark ? '0 0 20px rgba(34, 197, 94,0.15) inset' : '0 0 12px rgba(34,197,94,0.1) inset')
           : theme.cardGlowDefault,
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         opacity: visible ? 1 : 0,
@@ -64,9 +64,9 @@ export default function EVStationCard({ station, isSelected, onClick }) {
           <span
             className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm"
             style={{
-              background: isDark ? 'rgba(46,204,113,0.15)' : 'rgba(39,174,96,0.1)',
+              background: isDark ? 'rgba(34, 197, 94,0.15)' : 'rgba(34,197,94,0.1)',
               color: theme.green,
-              border: `1px solid ${isDark ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)'}`,
+              border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.3)' : 'rgba(34,197,94,0.2)'}`,
             }}
           >
             ⚡
@@ -110,7 +110,7 @@ export default function EVStationCard({ station, isSelected, onClick }) {
             title={fav ? 'Remove from favourites' : 'Add to favourites'}
             aria-label={fav ? 'Remove from favourites' : 'Add to favourites'}
             aria-pressed={fav}
-            style={{ color: fav ? '#2ECC71' : theme.textMuted, border: 'none', background: 'none' }}
+            style={{ color: fav ? '#22C55E' : theme.textMuted, border: 'none', background: 'none' }}
           >
             {fav ? '\u2605' : '\u2606'}
           </button>
@@ -137,12 +137,12 @@ export default function EVStationCard({ station, isSelected, onClick }) {
           className="px-2 py-0.5 rounded-full text-[11px] font-bold"
           style={{
             background: maxPower >= 50
-              ? (isDark ? 'rgba(255,215,0,0.1)' : 'rgba(200,151,31,0.08)')
-              : (isDark ? 'rgba(46,204,113,0.1)' : 'rgba(39,174,96,0.06)'),
+              ? (isDark ? 'rgba(245, 158, 11,0.1)' : 'rgba(245,158,11,0.08)')
+              : (isDark ? 'rgba(34, 197, 94,0.1)' : 'rgba(34,197,94,0.06)'),
             color: speedColor,
             border: `1px solid ${maxPower >= 50
-              ? (isDark ? 'rgba(255,215,0,0.3)' : 'rgba(200,151,31,0.2)')
-              : (isDark ? 'rgba(46,204,113,0.3)' : 'rgba(39,174,96,0.2)')}`,
+              ? (isDark ? 'rgba(245, 158, 11,0.3)' : 'rgba(245,158,11,0.2)')
+              : (isDark ? 'rgba(34, 197, 94,0.3)' : 'rgba(34,197,94,0.2)')}`,
           }}
         >
           {speedLabel} {'\u2022'} {maxPower}kW
@@ -155,9 +155,9 @@ export default function EVStationCard({ station, isSelected, onClick }) {
             key={i}
             className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium"
             style={{
-              background: isDark ? 'rgba(46,204,113,0.08)' : 'rgba(39,174,96,0.05)',
+              background: isDark ? 'rgba(34, 197, 94,0.08)' : 'rgba(34,197,94,0.05)',
               color: theme.green,
-              border: `1px solid ${isDark ? 'rgba(46,204,113,0.2)' : 'rgba(39,174,96,0.15)'}`,
+              border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.2)' : 'rgba(34,197,94,0.15)'}`,
             }}
           >
             {conn.ConnectionType?.Title || 'Unknown'} {conn.PowerKW ? `• ${conn.PowerKW}kW` : ''}

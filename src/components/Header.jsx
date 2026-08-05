@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { FueVoltIcon } from './FueVoltLogo';
 
 const TABS = [
   { id: 'fuel', label: 'Fuel Prices', icon: '\u26FD' },
@@ -46,17 +47,9 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
             className="flex items-center gap-2 cursor-pointer"
             style={{ background: 'none', border: 'none' }}
           >
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold logo-charge-icon"
-              style={{
-                background: 'linear-gradient(135deg, #C8971F, #FFD700)',
-                color: '#0D2B5E',
-              }}
-            >
-              FV
-            </div>
+            <FueVoltIcon size={28} className="logo-charge-icon" />
             <span className="text-xl font-bold tracking-tight logo-charge" style={{ color: '#FFFFFF' }}>
-              Fue<span className="logo-charge-volt" style={{ color: '#FFD700' }}>Volt</span>
+              Fue<span className="logo-charge-volt" style={{ background: 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #B45309 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Volt</span>
             </span>
           </button>
         </div>
@@ -73,10 +66,10 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                   transition: 'all 0.25s ease',
                   ...(view === tab.id
                     ? (tab.id === 'ev'
-                        ? { background: 'linear-gradient(135deg, #2ECC71, #27AE60)', color: '#FFFFFF', boxShadow: '0 0 12px rgba(46, 204, 113, 0.3)' }
+                        ? { background: 'linear-gradient(135deg, #22C55E, #14532D)', color: '#FFFFFF', boxShadow: '0 0 12px rgba(34, 197, 94, 0.3)' }
                         : tab.id === 'calculator'
-                        ? { background: 'linear-gradient(135deg, #C8971F, #2ECC71)', color: '#FFFFFF', boxShadow: '0 0 12px rgba(46,204,113,0.2)' }
-                        : { background: 'linear-gradient(135deg, #C8971F, #FFD700)', color: '#0D2B5E', boxShadow: '0 0 12px rgba(255, 215, 0, 0.3)' })
+                        ? { background: 'linear-gradient(135deg, #B45309, #22C55E)', color: '#FFFFFF', boxShadow: '0 0 12px rgba(34, 197, 94,0.2)' }
+                        : { background: 'linear-gradient(135deg, #B45309, #F59E0B)', color: '#0D2B5E', boxShadow: '0 0 12px rgba(245, 158, 11, 0.3)' })
                     : { background: 'rgba(255,255,255,0.1)', color: '#FFFFFF' }),
                 }}
               >
@@ -96,7 +89,7 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
             style={{
               background: 'rgba(255,255,255,0.1)',
               border: '1px solid rgba(255,255,255,0.12)',
-              color: '#FFD700',
+              color: '#F59E0B',
               transition: 'all 0.25s ease',
             }}
             title={theme.mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -154,10 +147,10 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                 transition: 'all 0.25s ease',
                 ...(view === tab.id
                   ? (tab.id === 'ev'
-                      ? { background: 'linear-gradient(135deg, #2ECC71, #27AE60)', color: '#FFFFFF' }
+                      ? { background: 'linear-gradient(135deg, #22C55E, #14532D)', color: '#FFFFFF' }
                       : tab.id === 'calculator'
-                      ? { background: 'linear-gradient(135deg, #C8971F, #2ECC71)', color: '#FFFFFF' }
-                      : { background: 'linear-gradient(135deg, #C8971F, #FFD700)', color: '#0D2B5E' })
+                      ? { background: 'linear-gradient(135deg, #B45309, #22C55E)', color: '#FFFFFF' }
+                      : { background: 'linear-gradient(135deg, #B45309, #F59E0B)', color: '#0D2B5E' })
                   : {
                       background: 'rgba(255,255,255,0.08)',
                       color: '#FFFFFF',

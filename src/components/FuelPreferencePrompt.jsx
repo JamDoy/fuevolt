@@ -1,4 +1,5 @@
 import { useTheme } from '../contexts/ThemeContext';
+import { FueVoltIcon } from './FueVoltLogo';
 
 function FuelPumpIcon() {
   return (
@@ -52,13 +53,7 @@ export default function FuelPreferencePrompt({ onSelect }) {
         style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, boxShadow: '0 24px 80px rgba(0,0,0,0.35)' }}
       >
         <div className="flex items-center justify-center gap-2 mb-4">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold"
-            style={{ background: 'linear-gradient(135deg, #C8971F, #FFD700)', color: '#0D2B5E' }}
-            aria-hidden="true"
-          >
-            FV
-          </div>
+          <FueVoltIcon size={28} />
           <span className="text-xl font-bold tracking-tight" style={{ color: theme.text }}>
             Fue<span style={{ color: theme.gold }}>Volt</span>
           </span>
