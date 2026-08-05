@@ -339,44 +339,44 @@ export default function FuelPricePage({
 
       {/* Price Summary */}
       {stations.length > 0 && !loading && (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <div
-            className="rounded-2xl p-4 text-center"
+            className="rounded-2xl p-2 sm:p-4 text-center min-w-0"
             style={{
               background: theme.cardBg,
               border: `1px solid ${theme.cardBorder}`,
             }}
           >
             <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Average</p>
-            <p className="text-2xl font-bold" style={{ color: theme.gold }}>
+            <p className="text-lg sm:text-2xl font-bold whitespace-nowrap" style={{ color: theme.gold }}>
               {(avgPrice * 100).toFixed(1)}
-              <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
+              <span className="text-[11px] ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
             </p>
           </div>
           <div
-            className="rounded-2xl p-4 text-center"
+            className="rounded-2xl p-2 sm:p-4 text-center min-w-0"
             style={{
               background: theme.cardBg,
               border: `1px solid ${theme.cardBorder}`,
             }}
           >
             <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>You Could Save</p>
-            <p className="text-2xl font-bold" style={{ color: theme.green }}>
+            <p className="text-lg sm:text-2xl font-bold whitespace-nowrap" style={{ color: theme.green }}>
               {savings}
-              <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
+              <span className="text-[11px] ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
             </p>
           </div>
           <div
-            className="rounded-2xl p-4 text-center"
+            className="rounded-2xl p-2 sm:p-4 text-center min-w-0"
             style={{
               background: theme.cardBg,
               border: `1px solid ${theme.cardBorder}`,
             }}
           >
             <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Most Expensive</p>
-            <p className="text-2xl font-bold" style={{ color: '#E74C3C' }}>
+            <p className="text-lg sm:text-2xl font-bold whitespace-nowrap" style={{ color: '#E74C3C' }}>
               {expensive ? (expensive.price * 100).toFixed(1) : '\u2014'}
-              <span className="text-xs ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
+              <span className="text-[11px] ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
             </p>
           </div>
         </div>
