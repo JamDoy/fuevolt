@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
@@ -39,6 +39,21 @@ const evBoltIcon = new L.DivIcon({
   iconSize: [32, 42],
   iconAnchor: [16, 42],
   popupAnchor: [0, -42],
+});
+
+// User location marker — small car in the same blue gradient as the header
+const userCarIcon = new L.DivIcon({
+  className: 'custom-marker',
+  html: `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg, #1A6FDB 0%, #0D2B5E 100%);border:2px solid #FFFFFF;box-shadow:0 2px 6px rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 17h14M5 17a2 2 0 0 1-2-2v-2a2 2 0 0 1 .4-1.2L5 8.5A2 2 0 0 1 6.6 8h10.8a2 2 0 0 1 1.6.8l1.6 3.1A2 2 0 0 1 21 13v2a2 2 0 0 1-2 2" />
+      <circle cx="7.5" cy="17" r="2" />
+      <circle cx="16.5" cy="17" r="2" />
+    </svg>
+  </div>`,
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+  popupAnchor: [0, -17],
 });
 
 
@@ -181,11 +196,13 @@ export default function StationMap({
 
           {/* User location marker */}
           {userLocation && (
-            <Circle
-              center={[userLocation.latitude, userLocation.longitude]}
-              radius={40}
-              pathOptions={{ color: '#4285F4', fillColor: '#4285F4', fillOpacity: 0.7, weight: 2 }}
-            />
+            <Marker
+              position={[userLocation.latitude, userLocation.longitude]}
+              icon={userCarIcon}
+              zIndexOffset={1000}
+            >
+              <Popup>Your location</Popup>
+            </Marker>
           )}
 
           {/* Route line */}
