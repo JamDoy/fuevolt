@@ -9,10 +9,12 @@ initializeAdMob().then(() => {
   showBannerAd();
 });
 
-// Register service worker for offline caching
+// Register service worker for offline caching. updateViaCache: 'none' stops
+// the browser's own HTTP cache from ever serving a stale copy of sw.js
+// itself when checking for updates, so a new deploy is detected promptly.
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch(() => {});
   });
 }
 

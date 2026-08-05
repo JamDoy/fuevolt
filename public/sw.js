@@ -26,7 +26,8 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: network-first for API calls, cache-first for static assets
+// Fetch: network-first for API calls and page navigations, cache-first for
+// hashed static assets (JS/CSS/images)
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
@@ -62,7 +63,29 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets: cache-first
+  // Page navigations (the HTML shell): network-first. This is the file
+  // that tells the browser which hashed JS/CSS to load, so it must always
+  // be re-checked against the network when possible — caching it cache-
+  // first (like the old behavior) meant a phone that cached it once could
+  // stay stuck on that version forever, no matter how many times the site
+  // was redeployed. Falls back to the cached shell only when offline.
+  if (event.request.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // Hashed static assets (JS/CSS/images): cache-first — safe, since Vite
+  // gives every build's output a new content-hashed filename.
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
