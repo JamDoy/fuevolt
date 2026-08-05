@@ -148,8 +148,13 @@ function AppContent() {
   const handleFuelPreference = (preference) => {
     saveFuelPreference(preference);
     setFuelPreference(preference);
-    if (preference !== 'EV') setInitialFuelType(preference);
     setShowFuelPreference(false);
+
+    const targetView = preference === 'EV' ? 'ev' : 'fuel';
+    if (preference !== 'EV') setInitialFuelType(preference);
+    setInitialSuburb(null);
+    setInitialSearch({ useLocation: true, key: Date.now() });
+    navigate(targetView, targetView === 'ev' ? '/ev-charging' : '/fuel-prices');
   };
 
   const handlePrimaryNavigation = (newView, path) => {
