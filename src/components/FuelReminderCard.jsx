@@ -10,6 +10,9 @@ import {
   hasReminderPreferenceSet,
   getReturnMessage,
   recordVisit,
+  getAllNotificationsOff,
+  getReminderMethod,
+  getNotificationPermission,
   DEFAULT_REMINDER_DAYS,
 } from '../utils/fuelReminder';
 
@@ -54,12 +57,25 @@ export default function FuelReminderCard() {
   const customInputId = useId();
 
   useEffect(() => {
+    if (getAllNotificationsOff()) {
+      setMode(null);
+      return;
+    }
     if (isReminderEnabled()) {
       const days = daysSinceLastVisit();
       const target = getReminderDays();
       if (days !== null && days >= target) {
-        setMessage(getReturnMessage());
+        const dueMessage = getReturnMessage();
+        setMessage(dueMessage);
         setMode('due');
+        const method = getReminderMethod();
+        if (method !== 'inapp' && getNotificationPermission() === 'granted') {
+          try {
+            new Notification('FueVolt', { body: dueMessage, icon: '/icon-192.png' });
+          } catch {
+            // Notification construction can fail in some restricted contexts.
+          }
+        }
       } else {
         setMode('active');
       }

@@ -229,7 +229,9 @@ function AppContent() {
         )}
         {view === 'trip' && <TripPlannerPage />}
         {view === 'calculator' && <EVvsFuelPage />}
-        {view === 'notifications' && <NotificationsPage />}
+        {view === 'notifications' && (
+          <NotificationsPage onCheckNow={() => handlePrimaryNavigation('fuel', '/fuel-prices')} />
+        )}
         {view === 'articles' && (
           <ArticlesPage
             onArticle={(slug) => {

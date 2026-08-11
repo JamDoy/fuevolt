@@ -7,6 +7,9 @@ const KEYS = {
   dismissed: 'fuevolt_reminder_dismissed',
   dismissedDate: 'fuevolt_reminder_dismissed_date',
   lastMessageIndex: 'fuevolt_reminder_last_message',
+  method: 'fuevolt_reminder_method',
+  messageStyle: 'fuevolt_reminder_message_style',
+  allOff: 'fuevolt_all_notifications_off',
 };
 
 export const DEFAULT_REMINDER_DAYS = 14;
@@ -106,7 +109,15 @@ const RETURN_MESSAGES = [
   "Your fill-up reminder — prices have been moving lately.",
 ];
 
+const STYLE_MESSAGES = {
+  informative: 'Fuel prices have changed in your area',
+  minimal: 'Fuel reminder',
+};
+
 export function getReturnMessage() {
+  const style = getMessageStyle();
+  if (STYLE_MESSAGES[style]) return STYLE_MESSAGES[style];
+
   const lastIndex = parseInt(readLS(KEYS.lastMessageIndex), 10);
   let index = Math.floor(Math.random() * RETURN_MESSAGES.length);
   if (RETURN_MESSAGES.length > 1 && index === lastIndex) {
@@ -114,4 +125,50 @@ export function getReturnMessage() {
   }
   writeLS(KEYS.lastMessageIndex, String(index));
   return RETURN_MESSAGES[index];
+}
+
+// 'inapp' | 'push' | 'both'. Defaults to 'both' once notification permission
+// has already been granted (mirrors what the user already allowed), else 'inapp'.
+export function getReminderMethod() {
+  const stored = readLS(KEYS.method);
+  if (stored) return stored;
+  const granted = typeof Notification !== 'undefined' && Notification.permission === 'granted';
+  return granted ? 'both' : 'inapp';
+}
+
+export function setReminderMethod(method) {
+  writeLS(KEYS.method, method);
+}
+
+export function getMessageStyle() {
+  return readLS(KEYS.messageStyle) || 'friendly';
+}
+
+export function setMessageStyle(style) {
+  writeLS(KEYS.messageStyle, style);
+}
+
+export function getAllNotificationsOff() {
+  return readLS(KEYS.allOff) === 'true';
+}
+
+export function setAllNotificationsOff(off) {
+  writeLS(KEYS.allOff, off ? 'true' : 'false');
+}
+
+export function isNotificationSupported() {
+  return typeof Notification !== 'undefined';
+}
+
+export function getNotificationPermission() {
+  return isNotificationSupported() ? Notification.permission : 'unsupported';
+}
+
+export async function requestNotificationPermission() {
+  if (!isNotificationSupported()) return 'unsupported';
+  try {
+    return await Notification.requestPermission();
+  } catch {
+    return 'denied';
+  }
 }
