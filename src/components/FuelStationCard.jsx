@@ -50,7 +50,7 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
     <div
       ref={cardRef}
       onClick={onClick}
-      className="rounded-2xl p-5 cursor-pointer"
+      className="rounded-2xl p-4 cursor-pointer"
       style={{
         background: theme.cardBg,
         border: isSelected ? `1px solid ${theme.cardBorderActive}` : `1px solid ${theme.cardBorder}`,
@@ -68,14 +68,14 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
                 #{rank + 1}
               </span>
             )}
-            <p className="text-sm font-bold truncate" style={{ color: theme.text }}>{station.name}</p>
+            <p className="text-base font-bold truncate" style={{ color: theme.text }}>{station.name}</p>
           </div>
           {station.brand && station.brand !== station.name && (
             <p className="text-xs mt-1 truncate" style={{ color: theme.textMuted }}>{station.brand}</p>
           )}
-          <p className="text-lg font-bold mt-3" style={{ color: theme.text }}>
+          <p className="text-sm font-semibold mt-2" style={{ color: theme.textMuted }}>
             {station.distance} km
-            <span className="text-xs font-medium ml-1" style={{ color: theme.textMuted }}>away</span>
+            <span className="text-xs font-medium ml-1">away</span>
           </p>
         </div>
 

@@ -29,7 +29,6 @@ export default function FuelPricePage({
   preferredFuelType,
   initialSearch,
   onStationDetail,
-  onSwitchToEV,
   initialSuburb,
 }) {
   const [stations, setStations] = useState([]);
@@ -44,13 +43,27 @@ export default function FuelPricePage({
   const [searchLabel, setSearchLabel] = useState(initialSuburb?.name || '');
   const [searchRadius, setSearchRadius] = useState(10);
   const [hasSearched, setHasSearched] = useState(false);
+  const [cardsExpanded, setCardsExpanded] = useState(() => {
+    try {
+      return sessionStorage.getItem('fuevolt_cards_expanded') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const { theme } = useTheme();
   const autoLocation = useAutoLocation();
+  const extraCardsRef = useRef(null);
 
   const doSearch = async (lat, lng, type, radius = 10, label = '') => {
     setLoading(true);
     setHasSearched(true);
     setError(null);
+    setCardsExpanded(false);
+    try {
+      sessionStorage.removeItem('fuevolt_cards_expanded');
+    } catch {
+      // sessionStorage may be unavailable in restricted browser modes.
+    }
     if (label) setSearchLabel(label);
     try {
       const data = await fetchFuelPrices({
@@ -147,6 +160,24 @@ export default function FuelPricePage({
     }
   };
 
+  const toggleCardsExpanded = () => {
+    setCardsExpanded((prev) => {
+      const next = !prev;
+      try {
+        sessionStorage.setItem('fuevolt_cards_expanded', String(next));
+      } catch {
+        // sessionStorage may be unavailable in restricted browser modes.
+      }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (cardsExpanded && extraCardsRef.current) {
+      extraCardsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [cardsExpanded]);
+
   const orderedFuelTypes = [...FUEL_TYPES].sort((a, b) => {
     if (a.id === preferredFuelType) return -1;
     if (b.id === preferredFuelType) return 1;
@@ -168,6 +199,10 @@ export default function FuelPricePage({
     if (b.price == null) return -1;
     return a.price - b.price;
   });
+
+  const VISIBLE_CARD_COUNT = 4;
+  const primaryStations = sortedStations.slice(0, VISIBLE_CARD_COUNT);
+  const extraStations = sortedStations.slice(VISIBLE_CARD_COUNT);
 
   const cityContent = initialSuburb?.slug ? FUEL_CITY_CONTENT[initialSuburb.slug] : null;
 
@@ -226,15 +261,14 @@ export default function FuelPricePage({
           <button
             key={ft.id}
             onClick={() => handleFuelTypeChange(ft.id)}
-            className="px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer"
+            className="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer min-h-9"
             style={{
               transition: 'all 0.25s ease',
               border: 'none',
               ...(fuelType === ft.id
                 ? {
-                    background: `linear-gradient(135deg, ${theme.green}, ${theme.greenDark})`,
+                    background: theme.green,
                     color: '#FFFFFF',
-                    boxShadow: `0 0 12px ${theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(34,197,94, 0.25)'}`,
                   }
                 : {
                     background: theme.chipBg,
@@ -282,12 +316,10 @@ export default function FuelPricePage({
               <button
                 key={s.id}
                 onClick={() => setSortBy(s.id)}
-                className="min-h-11 px-4 py-2.5 rounded-full text-sm font-semibold cursor-pointer"
+                className="min-h-9 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer"
                 style={{
-                  background: sortBy === s.id
-                    ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`
-                    : theme.chipBg,
-                  color: sortBy === s.id ? '#0D2B5E' : theme.chipText,
+                  background: sortBy === s.id ? '#0D2B5E' : theme.chipBg,
+                  color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
                   border: 'none',
                   transition: 'all 0.2s ease',
                 }}
@@ -421,19 +453,72 @@ export default function FuelPricePage({
 
       {/* Station Cards */}
       {!loading && sortedStations.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {sortedStations.map((station, i) => (
-            <FuelStationCard
-              key={station.id}
-              station={station}
-              rank={i}
-              isSelected={selectedStation?.id === station.id}
-              onClick={() => setSelectedStation(station)}
-              onDetail={() => openStationDetail(station)}
-              sortBy={sortBy}
-              averagePrice={avgPrice}
-            />
-          ))}
+        <div style={{ marginTop: '12px' }}>
+          <div style={{ position: 'relative' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {primaryStations.map((station, i) => (
+                <FuelStationCard
+                  key={station.id}
+                  station={station}
+                  rank={i}
+                  isSelected={selectedStation?.id === station.id}
+                  onClick={() => setSelectedStation(station)}
+                  onDetail={() => openStationDetail(station)}
+                  sortBy={sortBy}
+                  averagePrice={avgPrice}
+                />
+              ))}
+            </div>
+            {!cardsExpanded && extraStations.length > 0 && (
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '48px',
+                  background: `linear-gradient(to bottom, rgba(${theme.mode === 'dark' ? '10,22,40' : '249,250,251'},0) 0%, rgba(${theme.mode === 'dark' ? '10,22,40' : '249,250,251'},0.85) 60%, rgba(${theme.mode === 'dark' ? '10,22,40' : '249,250,251'},1) 100%)`,
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+          </div>
+
+          {extraStations.length > 0 && (
+            <>
+              <div
+                ref={extraCardsRef}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3"
+                style={{
+                  maxHeight: cardsExpanded ? '6000px' : '0px',
+                  opacity: cardsExpanded ? 1 : 0,
+                  overflow: 'hidden',
+                  transition: 'max-height 400ms ease, opacity 300ms ease',
+                }}
+              >
+                {extraStations.map((station, i) => (
+                  <FuelStationCard
+                    key={station.id}
+                    station={station}
+                    rank={VISIBLE_CARD_COUNT + i}
+                    isSelected={selectedStation?.id === station.id}
+                    onClick={() => setSelectedStation(station)}
+                    onDetail={() => openStationDetail(station)}
+                    sortBy={sortBy}
+                    averagePrice={avgPrice}
+                  />
+                ))}
+              </div>
+
+              <ExpandHandle
+                expanded={cardsExpanded}
+                hiddenCount={extraStations.length}
+                onClick={toggleCardsExpanded}
+                theme={theme}
+              />
+            </>
+          )}
         </div>
       )}
 
@@ -443,34 +528,6 @@ export default function FuelPricePage({
           cheapest={cheapest.price * 100}
           average={avgPrice * 100}
         />
-      )}
-
-      {/* EV Cross-Promotion Banner */}
-      {!loading && stations.length > 0 && (
-        <div
-          className="rounded-2xl p-5 cursor-pointer"
-          onClick={onSwitchToEV}
-          style={{
-            background: theme.mode === 'dark' ? 'rgba(34, 197, 94,0.06)' : 'rgba(34,197,94,0.04)',
-            border: `1px solid ${theme.mode === 'dark' ? 'rgba(34, 197, 94,0.2)' : 'rgba(34,197,94,0.15)'}`,
-            transition: 'all 0.25s ease',
-          }}
-        >
-          <div className="flex items-center gap-4">
-            <span className="text-3xl">⚡</span>
-            <div className="flex-1">
-              <p className="text-sm font-semibold" style={{ color: theme.green }}>
-                Switch to Electric?
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>
-                There are EV charging stations near this area. Save up to 60% on fuel costs by going electric.
-              </p>
-            </div>
-            <span className="text-sm font-semibold" style={{ color: theme.green }}>
-              Find Chargers →
-            </span>
-          </div>
-        </div>
       )}
 
       {/* Fuel fill-up reminder — only after results have actually loaded */}
@@ -601,6 +658,41 @@ function CountUpPrice({ value }) {
   }, [value]);
 
   return display.toFixed(1);
+}
+
+function ExpandHandle({ expanded, hiddenCount, onClick, theme }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={expanded}
+      className="w-full flex flex-col items-center gap-1.5 cursor-pointer"
+      style={{
+        background: 'none',
+        border: 'none',
+        padding: '12px 0 8px',
+        minHeight: '44px',
+      }}
+    >
+      <span style={{ width: '40px', height: '4px', borderRadius: '9999px', background: theme.mode === 'dark' ? 'rgba(255,255,255,0.2)' : '#D1D5DB' }} />
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={theme.green}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 300ms ease' }}
+      >
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+      <span className="text-sm sm:text-[13px] font-semibold" style={{ color: theme.green, letterSpacing: '0.01em' }}>
+        {expanded ? 'Show less' : `Show ${hiddenCount} more station${hiddenCount === 1 ? '' : 's'}`}
+      </span>
+    </button>
+  );
 }
 
 function PriceContextBadge({ context, theme }) {

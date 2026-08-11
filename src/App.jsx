@@ -218,7 +218,6 @@ function AppContent() {
             preferredFuelType={fuelPreference}
             initialSearch={initialSearch}
             onStationDetail={handleStationDetail}
-            onSwitchToEV={() => handlePrimaryNavigation('ev', '/ev-charging')}
             initialSuburb={initialSuburb}
           />
         )}
