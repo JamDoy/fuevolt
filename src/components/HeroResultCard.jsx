@@ -8,6 +8,9 @@ const BADGE_STYLES = {
 };
 
 const OVERLAP_RATIO = 0.65;
+// Tailwind's space-y-5 gap the page uses between sections — the negative
+// margin has to cancel this out first before it starts creating overlap.
+const SECTION_GAP = 20;
 
 export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail, searchSectionRef }) {
   const cardRef = useRef(null);
@@ -17,13 +20,13 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
 
   useLayoutEffect(() => {
     const measure = () => {
-      if (!cardRef.current) return;
-      setOverlap(Math.round(cardRef.current.offsetHeight * OVERLAP_RATIO));
+      if (!searchSectionRef.current) return;
+      setOverlap(Math.round(searchSectionRef.current.offsetHeight * OVERLAP_RATIO));
     };
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, [cheapest.id, cheapest.name]);
+  }, [cheapest.id, searchSectionRef]);
 
   useEffect(() => {
     const searchSection = searchSectionRef.current;
@@ -49,8 +52,8 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
   }, [cheapest.id, searchSectionRef]);
 
   const handleSearchAgain = () => {
-    if (cardRef.current) {
-      const top = cardRef.current.getBoundingClientRect().bottom + window.scrollY + 20;
+    if (searchSectionRef.current) {
+      const top = searchSectionRef.current.getBoundingClientRect().top + window.scrollY - 16;
       window.scrollTo({ top, behavior: 'smooth' });
     }
     window.setTimeout(() => {
@@ -68,7 +71,7 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
       ref={cardRef}
       className="hero-result-card relative z-10 mx-auto w-[92%] sm:w-3/5 px-5 py-5 sm:px-8 sm:py-7"
       style={{
-        marginTop: `-${overlap}px`,
+        marginBottom: `-${overlap + SECTION_GAP}px`,
         maxWidth: '680px',
         background: 'rgba(10, 22, 40, 0.88)',
         backdropFilter: 'blur(16px)',
@@ -152,7 +155,7 @@ export function HeroResultCardSkeleton({ theme }) {
     <div
       className="relative z-10 mx-auto w-[92%] sm:w-3/5 px-5 py-5 sm:px-8 sm:py-7"
       style={{
-        marginTop: '-140px',
+        marginBottom: '-160px',
         maxWidth: '680px',
         background: 'rgba(10, 22, 40, 0.88)',
         backdropFilter: 'blur(16px)',

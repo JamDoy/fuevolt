@@ -244,102 +244,48 @@ export default function FuelPricePage({
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
-      <div ref={searchSectionRef} className="search-section" style={{ transition: 'filter 180ms ease' }}>
-        {/* Hero */}
-        <div className="text-center mb-2">
-          <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
-            &#x26FD; {initialSuburb ? `Fuel Prices in ${initialSuburb.name}` : 'Compare Fuel Prices'}
-          </h1>
-          <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
-            Find the cheapest fuel near you across Australia
-          </p>
-          {cityContent?.intro && (
-            <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
-              {cityContent.intro}
-            </p>
-          )}
-        </div>
-
-        {/* Fuel Type Selector */}
-        <div className="flex flex-wrap gap-2 justify-center mt-5">
-          {orderedFuelTypes.map((ft) => (
-            <button
-              key={ft.id}
-              onClick={() => handleFuelTypeChange(ft.id)}
-              className="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer min-h-9"
-              style={{
-                transition: 'all 0.25s ease',
-                border: 'none',
-                ...(fuelType === ft.id
-                  ? {
-                      background: theme.green,
-                      color: '#FFFFFF',
-                    }
-                  : {
-                      background: theme.chipBg,
-                      color: theme.chipText,
-                    }),
-              }}
-            >
-              {ft.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Search */}
-        <div className="mt-5">
-          <SearchBar
-            onSearch={handleSearch}
-            onUseLocation={handleUseLocation}
-            loading={loading}
-            placeholder="Search suburb, city or postcode..."
-            inputId="fuel-location-search"
-          />
-        </div>
-
-        {/* Screen-reader announcement of search state */}
-        <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-          {loading
-            ? `Searching for fuel prices near ${searchLabel || locationName || 'your area'}...`
-            : hasSearched
-              ? `${stations.length} station${stations.length === 1 ? '' : 's'} found${cheapest ? `. Cheapest is ${cheapest.name} at ${(cheapest.price * 100).toFixed(1)} cents per litre` : ''}.`
-              : ''}
+      {/* Hero */}
+      <div className="text-center mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
+          &#x26FD; {initialSuburb ? `Fuel Prices in ${initialSuburb.name}` : 'Compare Fuel Prices'}
+        </h1>
+        <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
+          Find the cheapest fuel near you across Australia
         </p>
-
-        {/* Location + Sort Controls */}
-        {stations.length > 0 && !loading && (
-          <div className="flex flex-wrap items-center justify-between gap-3 mt-5">
-            {locationName && (
-              <p className="text-sm font-medium" style={{ color: theme.text }}>
-                Showing results near <span style={{ color: theme.gold }}>{locationName}</span>
-              </p>
-            )}
-            <div className="flex gap-2 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
-              {[
-                { id: 'price', label: 'Cheapest' },
-                { id: 'distance', label: 'Nearest' },
-                { id: 'driveTime', label: 'Drive Time' },
-              ].map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setSortBy(s.id)}
-                  className="min-h-9 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer"
-                  style={{
-                    background: sortBy === s.id ? '#0D2B5E' : theme.chipBg,
-                    color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
-                    border: 'none',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          </div>
+        {cityContent?.intro && (
+          <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
+            {cityContent.intro}
+          </p>
         )}
       </div>
 
-      {/* Cheapest Result Hero Card */}
+      {/* Fuel Type Selector */}
+      <div className="flex flex-wrap gap-2 justify-center">
+        {orderedFuelTypes.map((ft) => (
+          <button
+            key={ft.id}
+            onClick={() => handleFuelTypeChange(ft.id)}
+            className="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer min-h-9"
+            style={{
+              transition: 'all 0.25s ease',
+              border: 'none',
+              ...(fuelType === ft.id
+                ? {
+                    background: theme.green,
+                    color: '#FFFFFF',
+                  }
+                : {
+                    background: theme.chipBg,
+                    color: theme.chipText,
+                  }),
+            }}
+          >
+            {ft.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Cheapest Result Hero Card — overlaps the search bar below it */}
       {stations.length > 0 && !loading && cheapest && (
         <HeroResultCard
           key={`${cheapest.id}-${resultsVersion}`}
@@ -351,6 +297,58 @@ export default function FuelPricePage({
         />
       )}
       {loading && hasSearched && <HeroResultCardSkeleton theme={theme} />}
+
+      {/* Search — the element the hero card overlaps and blurs */}
+      <div ref={searchSectionRef} className="search-section relative z-0" style={{ transition: 'filter 180ms ease' }}>
+        <SearchBar
+          onSearch={handleSearch}
+          onUseLocation={handleUseLocation}
+          loading={loading}
+          placeholder="Search suburb, city or postcode..."
+          inputId="fuel-location-search"
+        />
+      </div>
+
+      {/* Screen-reader announcement of search state */}
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {loading
+          ? `Searching for fuel prices near ${searchLabel || locationName || 'your area'}...`
+          : hasSearched
+            ? `${stations.length} station${stations.length === 1 ? '' : 's'} found${cheapest ? `. Cheapest is ${cheapest.name} at ${(cheapest.price * 100).toFixed(1)} cents per litre` : ''}.`
+            : ''}
+      </p>
+
+      {/* Location + Sort Controls */}
+      {stations.length > 0 && !loading && (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {locationName && (
+            <p className="text-sm font-medium" style={{ color: theme.text }}>
+              Showing results near <span style={{ color: theme.gold }}>{locationName}</span>
+            </p>
+          )}
+          <div className="flex gap-2 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
+            {[
+              { id: 'price', label: 'Cheapest' },
+              { id: 'distance', label: 'Nearest' },
+              { id: 'driveTime', label: 'Drive Time' },
+            ].map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setSortBy(s.id)}
+                className="min-h-9 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer"
+                style={{
+                  background: sortBy === s.id ? '#0D2B5E' : theme.chipBg,
+                  color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
+                  border: 'none',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Price Summary */}
       {stations.length > 0 && !loading && (
