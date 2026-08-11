@@ -8,11 +8,12 @@ import ErrorCard from '../components/ErrorCard';
 import SavingsCalculator from '../components/SavingsCalculator';
 import AdUnit from '../components/AdUnit';
 import FuelReminderCard from '../components/FuelReminderCard';
+import HeroResultCard, { HeroResultCardSkeleton } from '../components/HeroResultCard';
 import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
 import { injectFuelStationSchema, POPULAR_SUBURBS } from '../utils/seo';
-import { getPriceContext, getPriceFreshness } from '../utils/priceFreshness';
+import { getPriceFreshness } from '../utils/priceFreshness';
 import { FUEL_CITY_CONTENT } from '../data/cityContent';
 
 const FUEL_TYPES = [
@@ -50,9 +51,11 @@ export default function FuelPricePage({
       return false;
     }
   });
+  const [resultsVersion, setResultsVersion] = useState(0);
   const { theme } = useTheme();
   const autoLocation = useAutoLocation();
   const extraCardsRef = useRef(null);
+  const searchSectionRef = useRef(null);
 
   const doSearch = async (lat, lng, type, radius = 10, label = '') => {
     setLoading(true);
@@ -75,6 +78,7 @@ export default function FuelPricePage({
       setStations(data);
       setMapCenter([lat, lng]);
       setSearchCoords({ lat, lng });
+      setResultsVersion((v) => v + 1);
       geocodeStationAddresses(data, (updated) => setStations(updated));
 
       // Inject structured data for SEO
@@ -240,135 +244,113 @@ export default function FuelPricePage({
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
-      {/* Hero */}
-      <div className="text-center mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
-          &#x26FD; {initialSuburb ? `Fuel Prices in ${initialSuburb.name}` : 'Compare Fuel Prices'}
-        </h1>
-        <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
-          Find the cheapest fuel near you across Australia
-        </p>
-        {cityContent?.intro && (
-          <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
-            {cityContent.intro}
+      <div ref={searchSectionRef} className="search-section" style={{ transition: 'filter 180ms ease' }}>
+        {/* Hero */}
+        <div className="text-center mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
+            &#x26FD; {initialSuburb ? `Fuel Prices in ${initialSuburb.name}` : 'Compare Fuel Prices'}
+          </h1>
+          <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
+            Find the cheapest fuel near you across Australia
           </p>
+          {cityContent?.intro && (
+            <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
+              {cityContent.intro}
+            </p>
+          )}
+        </div>
+
+        {/* Fuel Type Selector */}
+        <div className="flex flex-wrap gap-2 justify-center mt-5">
+          {orderedFuelTypes.map((ft) => (
+            <button
+              key={ft.id}
+              onClick={() => handleFuelTypeChange(ft.id)}
+              className="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer min-h-9"
+              style={{
+                transition: 'all 0.25s ease',
+                border: 'none',
+                ...(fuelType === ft.id
+                  ? {
+                      background: theme.green,
+                      color: '#FFFFFF',
+                    }
+                  : {
+                      background: theme.chipBg,
+                      color: theme.chipText,
+                    }),
+              }}
+            >
+              {ft.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Search */}
+        <div className="mt-5">
+          <SearchBar
+            onSearch={handleSearch}
+            onUseLocation={handleUseLocation}
+            loading={loading}
+            placeholder="Search suburb, city or postcode..."
+            inputId="fuel-location-search"
+          />
+        </div>
+
+        {/* Screen-reader announcement of search state */}
+        <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {loading
+            ? `Searching for fuel prices near ${searchLabel || locationName || 'your area'}...`
+            : hasSearched
+              ? `${stations.length} station${stations.length === 1 ? '' : 's'} found${cheapest ? `. Cheapest is ${cheapest.name} at ${(cheapest.price * 100).toFixed(1)} cents per litre` : ''}.`
+              : ''}
+        </p>
+
+        {/* Location + Sort Controls */}
+        {stations.length > 0 && !loading && (
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-5">
+            {locationName && (
+              <p className="text-sm font-medium" style={{ color: theme.text }}>
+                Showing results near <span style={{ color: theme.gold }}>{locationName}</span>
+              </p>
+            )}
+            <div className="flex gap-2 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
+              {[
+                { id: 'price', label: 'Cheapest' },
+                { id: 'distance', label: 'Nearest' },
+                { id: 'driveTime', label: 'Drive Time' },
+              ].map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setSortBy(s.id)}
+                  className="min-h-9 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer"
+                  style={{
+                    background: sortBy === s.id ? '#0D2B5E' : theme.chipBg,
+                    color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
+                    border: 'none',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Fuel Type Selector */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        {orderedFuelTypes.map((ft) => (
-          <button
-            key={ft.id}
-            onClick={() => handleFuelTypeChange(ft.id)}
-            className="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer min-h-9"
-            style={{
-              transition: 'all 0.25s ease',
-              border: 'none',
-              ...(fuelType === ft.id
-                ? {
-                    background: theme.green,
-                    color: '#FFFFFF',
-                  }
-                : {
-                    background: theme.chipBg,
-                    color: theme.chipText,
-                  }),
-            }}
-          >
-            {ft.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Search */}
-      <SearchBar
-        onSearch={handleSearch}
-        onUseLocation={handleUseLocation}
-        loading={loading}
-        placeholder="Search suburb, city or postcode..."
-        inputId="fuel-location-search"
-      />
-
-      {/* Screen-reader announcement of search state */}
-      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-        {loading
-          ? `Searching for fuel prices near ${searchLabel || locationName || 'your area'}...`
-          : hasSearched
-            ? `${stations.length} station${stations.length === 1 ? '' : 's'} found${cheapest ? `. Cheapest is ${cheapest.name} at ${(cheapest.price * 100).toFixed(1)} cents per litre` : ''}.`
-            : ''}
-      </p>
-
-      {/* Location + Sort Controls */}
-      {stations.length > 0 && !loading && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          {locationName && (
-            <p className="text-sm font-medium" style={{ color: theme.text }}>
-              Showing results near <span style={{ color: theme.gold }}>{locationName}</span>
-            </p>
-          )}
-          <div className="flex gap-2 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
-            {[
-              { id: 'price', label: 'Cheapest' },
-              { id: 'distance', label: 'Nearest' },
-              { id: 'driveTime', label: 'Drive Time' },
-            ].map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setSortBy(s.id)}
-                className="min-h-9 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer"
-                style={{
-                  background: sortBy === s.id ? '#0D2B5E' : theme.chipBg,
-                  color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
-                  border: 'none',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Cheapest Station Highlight */}
+      {/* Cheapest Result Hero Card */}
       {stations.length > 0 && !loading && cheapest && (
-        <div
-          key={cheapest.id}
-          className="rounded-2xl p-5 cursor-pointer"
-          onClick={() => openStationDetail(cheapest)}
-          style={{
-            background: theme.mode === 'dark' ? 'rgba(34, 197, 94,0.08)' : 'rgba(34,197,94,0.04)',
-            border: `2px solid ${theme.mode === 'dark' ? 'rgba(34, 197, 94,0.4)' : 'rgba(34,197,94,0.3)'}`,
-            boxShadow: theme.mode === 'dark' ? '0 0 16px rgba(34, 197, 94,0.1)' : '0 4px 12px rgba(34,197,94,0.08)',
-            transition: 'all 0.25s ease',
-            animation: 'cheapestFoundPulse 900ms ease-out',
-          }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: theme.green }}>Cheapest Near You</p>
-              <h3 className="text-base sm:text-lg font-bold" style={{ color: theme.text }}>{cheapest.name}</h3>
-              <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{cheapest.brand} &bull; {cheapest.distance} km away</p>
-            </div>
-            <div className="text-right">
-              <p className="text-3xl sm:text-4xl font-bold" style={{ color: theme.gold }}>
-                <CountUpPrice value={cheapest.price * 100} />
-                <span className="text-sm ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
-              </p>
-              <div className="mt-1 flex flex-wrap justify-end gap-1.5">
-                <PriceContextBadge context={getPriceContext(cheapest.price, avgPrice)} theme={theme} />
-                {cheapestFreshness?.isOutdated && <OutdatedBadge />}
-              </div>
-              {cheapestFreshness?.checkedLabel && (
-                <p className="text-[11px] mt-1" style={{ color: theme.textMuted }}>{cheapestFreshness.checkedLabel}</p>
-              )}
-              <p className="text-[11px]" style={{ color: theme.textMuted }}>{cheapestFreshness?.label}</p>
-              <p className="text-xs mt-1 font-medium" style={{ color: theme.green }}>View Details &rarr;</p>
-            </div>
-          </div>
-        </div>
+        <HeroResultCard
+          key={`${cheapest.id}-${resultsVersion}`}
+          cheapest={cheapest}
+          avgPrice={avgPrice}
+          freshness={cheapestFreshness}
+          onDetail={() => openStationDetail(cheapest)}
+          searchSectionRef={searchSectionRef}
+        />
       )}
+      {loading && hasSearched && <HeroResultCardSkeleton theme={theme} />}
 
       {/* Price Summary */}
       {stations.length > 0 && !loading && (
@@ -622,42 +604,39 @@ export default function FuelPricePage({
       <AdUnit />
 
       <style>{`
-        @keyframes cheapestFoundPulse {
-          0% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
-          35% { box-shadow: 0 0 28px rgba(245, 158, 11, 0.6); transform: scale(1.015); }
-          100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
+        @keyframes heroCardEntry {
+          0% { opacity: 0; transform: scale(0.94); filter: blur(4px); }
+          100% { opacity: 1; transform: scale(1); filter: blur(0px); }
         }
+        @keyframes heroGlowPulse {
+          0% {
+            box-shadow:
+              0 0 0 1px rgba(34,197,94,0),
+              0 0 0px rgba(34,197,94,0),
+              0 20px 60px rgba(0,0,0,0.5);
+          }
+          60% {
+            box-shadow:
+              0 0 0 1px rgba(34,197,94,0.4),
+              0 0 60px rgba(34,197,94,0.4),
+              0 0 100px rgba(34,197,94,0.2),
+              0 0 120px rgba(245,158,11,0.15),
+              0 20px 60px rgba(0,0,0,0.5);
+          }
+          100% {
+            box-shadow:
+              0 0 0 1px rgba(34,197,94,0.2),
+              0 0 24px rgba(34,197,94,0.25),
+              0 0 48px rgba(34,197,94,0.12),
+              0 0 80px rgba(245,158,11,0.08),
+              0 20px 60px rgba(0,0,0,0.5);
+          }
+        }
+        .hero-view-details:hover { text-decoration: underline; }
+        .hero-search-again:hover { color: rgba(255,255,255,0.6) !important; }
       `}</style>
     </div>
   );
-}
-
-function CountUpPrice({ value }) {
-  const [display, setDisplay] = useState(0);
-  const displayRef = useRef(0);
-
-  useEffect(() => {
-    const from = displayRef.current;
-    const to = value;
-    if (!Number.isFinite(to) || from === to) return undefined;
-
-    const duration = 700;
-    const start = performance.now();
-    let frame;
-
-    const tick = (now) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - (1 - progress) ** 3;
-      const next = from + (to - from) * eased;
-      displayRef.current = next;
-      setDisplay(next);
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [value]);
-
-  return display.toFixed(1);
 }
 
 function ExpandHandle({ expanded, hiddenCount, onClick, theme }) {
@@ -695,26 +674,3 @@ function ExpandHandle({ expanded, hiddenCount, onClick, theme }) {
   );
 }
 
-function PriceContextBadge({ context, theme }) {
-  if (!context) return null;
-  const styles = {
-    below: { label: 'Below average', background: 'rgba(34,197,94,0.14)', color: theme.green },
-    about: { label: 'About average', background: 'rgba(245, 158, 11,0.14)', color: theme.gold },
-    above: { label: 'Above average', background: 'rgba(231,76,60,0.14)', color: '#E74C3C' },
-  };
-  const style = styles[context];
-
-  return (
-    <span className="px-2 py-1 rounded-full text-[11px] font-bold" style={{ background: style.background, color: style.color }}>
-      {style.label}
-    </span>
-  );
-}
-
-function OutdatedBadge() {
-  return (
-    <span className="px-2 py-1 rounded-full text-[11px] font-bold" style={{ background: 'rgba(231,76,60,0.14)', color: '#E74C3C' }}>
-      Data check is over 2 hours old
-    </span>
-  );
-}
