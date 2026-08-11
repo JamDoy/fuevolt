@@ -4,10 +4,10 @@ description: "A detailed cost comparison of petrol, diesel and electric vehicles
 category: "Comparison"
 readTime: "7 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-08-11"
 ---
 
-"Should my next car be electric?" is a question almost every Australian driver is now asking, and the honest answer is: it depends on you. A tradie towing a trailer 40,000 km a year and a retiree doing school runs around the suburbs will reach very different conclusions — and both can be right. This is the kind of comparison I built FueVolt's cost tools to help with.
+"Should my next car be electric?" is a question almost every Australian driver is now asking, and the honest answer is: it depends on you. A tradie towing a trailer 40,000 km a year and a retiree doing school runs around the suburbs will reach very different conclusions — and both can be right. This is the kind of comparison FueVolt's cost tools were built to help with.
 
 Each powertrain has distinct running costs, and the cheapest option depends on how you drive, where you live and how long you keep the vehicle. If you want to compare specific models, the government's [Green Vehicle Guide](https://www.greenvehicleguide.gov.au/) lists fuel use, running costs and emissions side by side.
 

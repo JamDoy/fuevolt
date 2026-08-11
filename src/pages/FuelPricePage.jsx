@@ -553,7 +553,7 @@ export default function FuelPricePage({
           </p>
           <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Coverage Across Australia</h3>
           <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
-            FueVolt covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, and Wollongong, as well as regional and rural areas throughout these states.
+            FueVolt covers fuel stations across New South Wales, Victoria, Queensland, Western Australia and Tasmania. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, Wollongong and Hobart, as well as regional and rural areas throughout these states.
           </p>
         </div>
       )}

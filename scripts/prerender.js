@@ -110,7 +110,7 @@ const EV_CITIES = [
 const FAQ_ENTRIES = [
   { q: 'Where does FueVolt get its fuel prices?', a: 'FueVolt pulls real-time fuel prices directly from official Australian government sources. Prices are updated throughout the day as fuel stations report changes.' },
   { q: 'How often are fuel prices updated?', a: 'Fuel prices are updated in real-time as they change throughout the day. Each state has different update frequencies — some update multiple times daily as stations report changes, while others update daily.' },
-  { q: 'Which states does FueVolt cover for fuel prices?', a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. We are working to add South Australia, Tasmania, the Northern Territory, and the ACT as government data sources become available.' },
+  { q: 'Which states does FueVolt cover for fuel prices?', a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, Western Australia and Tasmania (Tasmania is covered via the same government network as NSW). We are working to add South Australia, the Northern Territory, and the ACT as government data sources become available.' },
   { q: 'What fuel types can I compare?', a: 'FueVolt lets you compare prices for E10 (ethanol blend), Unleaded 91, Premium 95, Premium 98, Diesel, and LPG. Not all fuel types are available at every station.' },
   { q: 'Why does a station show "Not currently available" for some fuel types?', a: 'This means a price has not been reported for that fuel type at that station. The station may not sell that fuel type, or the price has not been reported yet.' },
   { q: 'Are the fuel prices accurate?', a: 'FueVolt displays prices exactly as reported by official government sources. There can be occasional delays between when a station changes its price and when the data updates, so verify the pump price before purchasing.' },
@@ -540,7 +540,7 @@ writePage('/fuel-prices', generatePage({
   description: 'Compare real-time E10, U91, U95, U98, diesel and LPG prices from official Australian government sources. Find the cheapest fuel station near you.',
   h1: 'Compare Fuel Prices Across Australia',
   content: `
-        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location. FueVolt compares real-time fuel prices from official government sources across NSW, VIC, QLD, and WA.</p>
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location. FueVolt compares real-time fuel prices from official government sources across NSW, VIC, QLD, WA and TAS.</p>
         <h2 style="font-size:1.3rem;margin-bottom:12px">Fuel Prices by City</h2>
         <ul style="padding-left:20px;line-height:2.2">${FUEL_CITIES.map(c => `<li><a href="/fuel-prices/${c.slug}">${c.name} Fuel Prices</a></li>`).join('')}</ul>`,
 }));

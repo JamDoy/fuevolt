@@ -4,10 +4,10 @@ description: "Learn why petrol prices rise and fall in regular cycles across Aus
 category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-08-11"
 ---
 
-Picture this: you drive past your local servo on a Sunday and it is 165.9 a litre. You drive past the same servo on Wednesday and it has jumped to 199.9 overnight. You did nothing wrong — you just watched a fuel price cycle in action. Not knowing when or where to fill up is the frustration that led me to build FueVolt.
+Picture this: you drive past your local servo on a Sunday and it is 165.9 a litre. You drive past the same servo on Wednesday and it has jumped to 199.9 overnight. You did nothing wrong — you just watched a fuel price cycle in action. Not knowing when or where to fill up is the frustration that led to FueVolt being built.
 
 These cycles are a well-documented pattern in most major Australian cities, and understanding them can genuinely save you money. The [Australian Competition and Consumer Commission (ACCC) tracks petrol price cycles in the five largest cities](https://www.accc.gov.au/consumers/petrol-and-fuel/petrol-price-cycles-in-the-5-largest-cities) and publishes where each city sits in its cycle — a habit worth getting into before you fill up.
 

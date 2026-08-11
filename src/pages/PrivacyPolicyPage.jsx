@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
       <Section title="3. Data Sources" theme={theme}>
         <p>FueVolt aggregates publicly available data from the following sources:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
-          <li><strong>NSW Government</strong> — Fuel prices via the NSW Motor API (api.nsw.gov.au)</li>
+          <li><strong>NSW Government</strong> — Fuel prices via NSW FuelCheck (api.onegov.nsw.gov.au), which also covers Tasmania</li>
           <li><strong>QLD Government</strong> — Fuel prices via the QLD Fuel Pricing Direct API (fuelpricesqld.com.au)</li>
           <li><strong>VIC Government</strong> — Fuel prices via the Fair Fuel Open Data API / Servo Saver (service.vic.gov.au)</li>
           <li><strong>WA Government</strong> — Fuel prices via FuelWatch (fuelwatch.wa.gov.au)</li>

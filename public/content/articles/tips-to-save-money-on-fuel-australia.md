@@ -4,16 +4,16 @@ description: "Practical, tested strategies to reduce your fuel bill, from price 
 category: "Tips"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-08-11"
 ---
 
-A full tank in a mid-size car can cost north of $90 these days, and when you are filling up every week that adds up to a serious chunk of the household budget. I started FueVolt because I was tired of guessing which servo had the best price — but the tool is only half the story. How and when you drive matters just as much.
+A full tank in a mid-size car can cost north of $90 these days, and when you are filling up every week that adds up to a serious chunk of the household budget. FueVolt started because we were tired of guessing which servo had the best price — but the tool is only half the story. How and when you drive matters just as much.
 
 Here are ten strategies that can realistically save you hundreds of dollars a year without changing your car or your lifestyle dramatically. Several of them line up with the [fuel-saving advice published by the Department of Infrastructure, Transport, Regional Development, Communications and the Arts](https://www.infrastructure.gov.au/infrastructure-transport-vehicles/vehicles/national-fuel-security-plan/fuel-saving-tips).
 
 ## 1. Use a Price Comparison Service
 
-The simplest saving is knowing where cheap fuel is before you fill up. Services like FueVolt retrieve government-reported price data from NSW, VIC, QLD and WA, showing you reported prices at stations near your location or along your route. The price difference between the cheapest and most expensive station in the same suburb can be 20 cents per litre or more — that is $12 on a 60-litre tank.
+The simplest saving is knowing where cheap fuel is before you fill up. Services like FueVolt retrieve government-reported price data from NSW, VIC, QLD, WA and Tasmania, showing you reported prices at stations near your location or along your route. The price difference between the cheapest and most expensive station in the same suburb can be 20 cents per litre or more — that is $12 on a 60-litre tank.
 
 ## 2. Buy at the Bottom of the Price Cycle
 

@@ -30,7 +30,7 @@ export default function TermsPage() {
       <Section title="3. Data Accuracy & Disclaimer" theme={theme}>
         <p><strong>Fuel prices</strong> are sourced from official Australian state and territory government APIs where available, including:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
-          <li>New South Wales — NSW Government Motor API (api.nsw.gov.au)</li>
+          <li>New South Wales (and Tasmania) — NSW Government FuelCheck (api.onegov.nsw.gov.au)</li>
           <li>Queensland — QLD Fuel Pricing Direct API (fuelpricesqld.com.au)</li>
           <li>Victoria — Fair Fuel Open Data API / Servo Saver (service.vic.gov.au)</li>
           <li>Western Australia — FuelWatch (fuelwatch.wa.gov.au)</li>

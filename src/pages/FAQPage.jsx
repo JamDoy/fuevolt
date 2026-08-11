@@ -16,7 +16,7 @@ const FAQ_ITEMS = [
       },
       {
         q: 'Which states does FueVolt cover for fuel prices?',
-        a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, and Western Australia. These four states have publicly accessible government fuel pricing data. We are working to add South Australia, Tasmania, the Northern Territory, and the ACT as government data sources become available.',
+        a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, Western Australia and Tasmania (Tasmania is covered via the same government network as NSW). We are working to add South Australia, the Northern Territory, and the ACT as government data sources become available.',
       },
       {
         q: 'What fuel types can I compare?',

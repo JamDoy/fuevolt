@@ -51,7 +51,7 @@ export default function AboutPage({ onContact }) {
       <section className="mb-8">
         <h2 className="text-lg font-semibold mb-3" style={{ color: theme.gold }}>Why Drivers Can Check the Data</h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          FueVolt links its coverage to the original public authorities so drivers can review the source and reporting rules themselves. Current fuel-price coverage includes New South Wales, Victoria, Queensland and Western Australia.
+          FueVolt links its coverage to the original public authorities so drivers can review the source and reporting rules themselves. Current fuel-price coverage includes New South Wales, Victoria, Queensland, Western Australia and Tasmania (covered via the same government network as NSW).
         </p>
         <ul className="space-y-2 text-sm">
           {DATA_SOURCES.map((source) => (

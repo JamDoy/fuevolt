@@ -4,10 +4,10 @@ description: "A complete guide to every fuel type available at Australian servic
 category: "Fuel Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-08-11"
 ---
 
-Pull into almost any Australian servo and you face a row of coloured nozzles: E10, U91, U95, U98, diesel and sometimes LPG. Six labels, six different prices, and no obvious explanation of which one your car actually wants. It is exactly the kind of everyday fuel confusion I want FueVolt to clear up.
+Pull into almost any Australian servo and you face a row of coloured nozzles: E10, U91, U95, U98, diesel and sometimes LPG. Six labels, six different prices, and no obvious explanation of which one your car actually wants. It is exactly the kind of everyday fuel confusion FueVolt exists to clear up.
 
 Each nozzle represents a fuel with distinct properties, price points and engine compatibility. Picking the right one matters for your engine's health and your wallet, and it is not as complicated as the labels make it look. In Australia, the properties of each fuel are set in law under the [Fuel Quality Standards Act 2000](https://www.dcceew.gov.au/climate-change/emissions-reduction/regulating-fuel-quality), administered by the Department of Climate Change, Energy, the Environment and Water — so a litre of U95 at one servo has to meet the same standard as U95 anywhere else.
 

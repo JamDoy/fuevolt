@@ -4,7 +4,7 @@ description: "How to plan fuel stops on long Australian road trips, avoid overpr
 category: "Tips"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-08-11"
 ---
 
 There is a particular kind of stress that comes with watching your fuel gauge drop on a long stretch of highway, unsure whether the next roadhouse is 20 kilometres away or 200. Anyone who has driven the Stuart Highway or crossed the Nullarbor knows the feeling. A bit of planning turns that anxiety into a non-issue — and saves you real money along the way.
@@ -43,7 +43,7 @@ For diesel vehicles, regional diesel prices vary significantly. Some country tow
 
 ## Use Multiple Price Comparison Tools
 
-Government fuel price APIs cover NSW, VIC, QLD and WA comprehensively. For SA, NT and Tasmania, data is less complete. Cross-reference multiple sources when planning stops in states without government price data.
+Government fuel price APIs cover NSW, VIC, QLD, WA and Tasmania comprehensively. For SA and NT, data is less complete. Cross-reference multiple sources when planning stops in states without government price data.
 
 ## Pack Food and Water
 

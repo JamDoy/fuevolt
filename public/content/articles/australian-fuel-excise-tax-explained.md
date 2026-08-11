@@ -4,7 +4,7 @@ description: "How much tax is included in every litre of fuel you buy in Austral
 category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-08-06"
 ---
 
 Look closely at a fuel receipt and one part of the total may surprise you: a substantial amount never reaches the servo at all — it goes to the federal government as fuel excise. Once you understand that slice, the price on the board makes a lot more sense, and you stop expecting it to fall below a certain floor.
@@ -13,13 +13,17 @@ Fuel excise is a flat, per-litre tax, and the rate is set and indexed by the [Au
 
 ## What Is Fuel Excise?
 
-Fuel excise is a flat-rate tax applied to every litre of petrol, diesel and LPG sold in Australia. As of 2026 (prices indicative — check FueVolt for live prices), the excise rate is approximately 50 cents per litre for petrol and diesel. LPG attracts a lower rate of around 15 cents per litre. On top of the excise, GST (10 per cent) is charged on the total price including the excise — effectively a tax on a tax.
+Fuel excise is a flat-rate tax applied to every litre of petrol, diesel and LPG sold in Australia. From 3 August 2026 (rates change periodically — check the [ATO's current excise duty rates](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/excise-on-fuel-and-petroleum-products/excise-duty-rates-for-fuel-and-petroleum-products) rather than relying on a fixed figure), the excise rate is 53.7 cents per litre for petrol and diesel. LPG (autogas) attracts a lower rate, around 17 cents per litre at the standard rate. On top of the excise, GST (10 per cent) is charged on the total price including the excise — effectively a tax on a tax.
 
-For a litre of petrol priced at 170 cents, the breakdown is roughly: 50 cents excise, about 15 cents GST, 70 to 80 cents for the crude oil and refining cost, and 25 to 35 cents for the retailer's margin, transport and distribution.
+For a litre of petrol priced at 170 cents, the breakdown is roughly: 54 cents excise, about 15 cents GST, 65 to 75 cents for the crude oil and refining cost, and 25 to 35 cents for the retailer's margin, transport and distribution.
 
 ## How Is It Set?
 
-The fuel excise rate is set by the federal government and indexed to the Consumer Price Index (CPI) twice a year, in February and August. The ATO publishes [how excise duty on fuel is calculated and applied](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/excise-on-fuel-and-petroleum-products/calculating-excise-duty-payable-on-fuel). This means the excise increases automatically with inflation, typically by 1 to 2 cents per litre each year. The government does not need to pass new legislation for these increases — they happen automatically.
+The fuel excise rate is set by the federal government and, in normal times, indexed to the Consumer Price Index (CPI) twice a year, in February and August. The ATO publishes [how excise duty on fuel is calculated and applied](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/excise-on-fuel-and-petroleum-products/calculating-excise-duty-payable-on-fuel). Under routine indexation, the excise increases automatically with inflation, typically by 1 to 2 cents per litre each year, without new legislation. Outside routine indexation, the government can also legislate a temporary cut or freeze — as happened for several months in 2026 (see below) — which suspends normal CPI indexation until the relief period ends.
+
+## The 2026 Excise Relief
+
+In response to cost-of-living pressure, the federal government cut fuel excise on petrol and diesel roughly in half — from about 52.6 cents to 26.3 cents per litre — from 1 April 2026. The rate was partially restored to 36.6 cents per litre from 1 July 2026, before returning fully to the indexed rate of 53.7 cents per litre from 3 August 2026. LPG received a proportional cut over the same period, dropping to around 6.7 cents per litre during the relief before returning to its standard rate. If you filled up between April and early August 2026, the excise component of your fuel bill was noticeably lower than it is now.
 
 ## What Does It Fund?
 
@@ -45,4 +49,4 @@ Australia's fuel excise is moderate by global standards. Countries like Germany,
 
 Because fuel excise is a fixed amount per litre rather than a percentage, it has a greater proportional impact when crude oil prices are low. When crude drops and the base cost of fuel falls, the excise becomes a larger share of the total price, putting a floor on how cheap fuel can get.
 
-Understanding the tax component helps set realistic expectations about fuel prices. Even if global oil prices collapsed, Australian pump prices would not drop below about 70 to 80 cents per litre due to excise plus GST alone.
+Understanding the tax component helps set realistic expectations about fuel prices. Even if global oil prices collapsed, Australian pump prices would not drop below about 75 to 85 cents per litre due to excise plus GST alone — though that floor moves whenever the excise rate itself changes, as it did during the 2026 relief period.
