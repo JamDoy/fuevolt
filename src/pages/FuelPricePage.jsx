@@ -55,7 +55,6 @@ export default function FuelPricePage({
   const { theme } = useTheme();
   const autoLocation = useAutoLocation();
   const extraCardsRef = useRef(null);
-  const searchSectionRef = useRef(null);
 
   const doSearch = async (lat, lng, type, radius = 10, label = '') => {
     setLoading(true);
@@ -280,7 +279,7 @@ export default function FuelPricePage({
         ))}
       </div>
 
-      {/* Cheapest Result Hero Card — overlaps the search bar below it */}
+      {/* Cheapest Result Hero Card — full-page blur takeover, shrinks to a compact bar on dismiss */}
       {stations.length > 0 && !loading && cheapest && (
         <HeroResultCard
           key={`${cheapest.id}-${resultsVersion}`}
@@ -288,21 +287,18 @@ export default function FuelPricePage({
           avgPrice={avgPrice}
           freshness={cheapestFreshness}
           onDetail={() => openStationDetail(cheapest)}
-          searchSectionRef={searchSectionRef}
         />
       )}
       {loading && hasSearched && <HeroResultCardSkeleton theme={theme} />}
 
-      {/* Search — the element the hero card overlaps and blurs */}
-      <div ref={searchSectionRef} className="search-section relative z-0" style={{ transition: 'filter 180ms ease' }}>
-        <SearchBar
-          onSearch={handleSearch}
-          onUseLocation={handleUseLocation}
-          loading={loading}
-          placeholder="Search suburb, city or postcode..."
-          inputId="fuel-location-search"
-        />
-      </div>
+      {/* Search */}
+      <SearchBar
+        onSearch={handleSearch}
+        onUseLocation={handleUseLocation}
+        loading={loading}
+        placeholder="Search suburb, city or postcode..."
+        inputId="fuel-location-search"
+      />
 
       {/* Screen-reader announcement of search state */}
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
@@ -627,6 +623,14 @@ export default function FuelPricePage({
               0 0 80px rgba(245,158,11,0.08),
               0 20px 60px rgba(0,0,0,0.5);
           }
+        }
+        @keyframes heroCompactIn {
+          0% { opacity: 0; transform: translateY(-6px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroDotPulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.85); }
         }
         .hero-view-details:hover { text-decoration: underline; }
         .hero-search-again:hover { color: rgba(255,255,255,0.6) !important; }
