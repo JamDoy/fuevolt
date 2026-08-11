@@ -7,6 +7,7 @@ import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import SavingsCalculator from '../components/SavingsCalculator';
 import AdUnit from '../components/AdUnit';
+import FuelReminderCard from '../components/FuelReminderCard';
 import { fetchFuelPrices, geocodeLocation, getUserLocation, geocodeStationAddresses } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
@@ -471,6 +472,9 @@ export default function FuelPricePage({
           </div>
         </div>
       )}
+
+      {/* Fuel fill-up reminder — only after results have actually loaded */}
+      {!loading && stations.length > 0 && <FuelReminderCard />}
 
       {/* Empty state */}
       {!loading && !error && stations.length === 0 && !hasSearched && (

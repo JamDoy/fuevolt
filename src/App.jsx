@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import Header from './components/Header';
 import LandingPage from './pages/LandingPage';
@@ -16,6 +16,7 @@ import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
 import ContactPage from './pages/ContactPage';
 import FuelPreferencePrompt from './components/FuelPreferencePrompt';
+import FuelReminderSettings from './components/FuelReminderSettings';
 import MobileBottomNav from './components/MobileBottomNav';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import { updatePageMeta, buildCityMeta, POPULAR_SUBURBS } from './utils/seo';
@@ -69,7 +70,15 @@ function AppContent() {
   const [detailStation, setDetailStation] = useState(parsed.station || null);
   const [initialSuburb, setInitialSuburb] = useState(parsed.suburb);
   const [articleSlug, setArticleSlug] = useState(parsed.articleSlug || null);
+  const [showReminderSettings, setShowReminderSettings] = useState(false);
+  const reminderSettingsRef = useRef(null);
   const { theme } = useTheme();
+
+  useEffect(() => {
+    if (showReminderSettings) {
+      reminderSettingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [showReminderSettings]);
 
   const navigate = useCallback((newView, path, routeState = {}, extra) => {
     setView(newView);
@@ -283,7 +292,16 @@ function AppContent() {
           >
             Terms of Service
           </button>
+          <button
+            onClick={() => setShowReminderSettings((s) => !s)}
+            className="text-[10px] cursor-pointer"
+            style={{ color: theme.footerSubtext, background: 'none', border: 'none' }}
+          >
+            &#9200; Fuel Reminder Settings
+          </button>
         </div>
+
+        {showReminderSettings && <FuelReminderSettings innerRef={reminderSettingsRef} />}
 
         {/* SEO: Popular suburb links */}
         <div className="mt-4 max-w-4xl mx-auto">
