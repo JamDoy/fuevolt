@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import FilterChips from '../components/FilterChips';
@@ -9,6 +9,7 @@ import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import EVCostEstimator from '../components/EVCostEstimator';
 import AdUnit from '../components/AdUnit';
+import ExpandHandle from '../components/ExpandHandle';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { reverseGeocode } from '../utils/tomtom';
@@ -36,14 +37,28 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
   const [searchLabel, setSearchLabel] = useState(initialSuburb?.name || '');
   const [searchRadius, setSearchRadius] = useState(10);
   const [hasSearched, setHasSearched] = useState(false);
+  const [cardsExpanded, setCardsExpanded] = useState(() => {
+    try {
+      return sessionStorage.getItem('fuevolt_cards_expanded') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
   const autoLocation = useAutoLocation();
+  const extraCardsRef = useRef(null);
 
   const doSearch = async (lat, lng, radius = 10, label = '') => {
     setLoading(true);
     setHasSearched(true);
     setError(null);
+    setCardsExpanded(false);
+    try {
+      sessionStorage.removeItem('fuevolt_cards_expanded');
+    } catch {
+      // sessionStorage may be unavailable in restricted browser modes.
+    }
     if (label) setSearchLabel(label);
     try {
       const data = await fetchEVStations({ latitude: lat, longitude: lng, distance: radius });
@@ -124,6 +139,24 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
 
+  const toggleCardsExpanded = () => {
+    setCardsExpanded((prev) => {
+      const next = !prev;
+      try {
+        sessionStorage.setItem('fuevolt_cards_expanded', String(next));
+      } catch {
+        // sessionStorage may be unavailable in restricted browser modes.
+      }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (cardsExpanded && extraCardsRef.current) {
+      extraCardsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [cardsExpanded]);
+
   const getMaxPower = (station) => {
     if (!station.Connections) return 0;
     return Math.max(...station.Connections.map((c) => c.PowerKW || 0));
@@ -150,6 +183,10 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
     }
     return true;
   });
+
+  const VISIBLE_CARD_COUNT = 4;
+  const primaryStations = filtered.slice(0, VISIBLE_CARD_COUNT);
+  const extraStations = filtered.slice(VISIBLE_CARD_COUNT);
 
   // Stats
   const totalPoints = filtered.reduce((sum, s) => sum + (s.NumberOfPoints || 1), 0);
@@ -314,19 +351,70 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
 
       {/* Station Cards */}
       {!loading && filtered.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filtered.map((station) => (
-            <EVStationCard
-              key={station.ID}
-              station={station}
-              isSelected={selectedStation?.ID === station.ID}
-              onClick={() => {
-                setSelectedStation(station);
-                setDetailStation(station);
-              }}
+        <div style={{ marginTop: '12px' }}>
+          <div style={{ position: 'relative' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {primaryStations.map((station) => (
+                <EVStationCard
+                  key={station.ID}
+                  station={station}
+                  isSelected={selectedStation?.ID === station.ID}
+                  onClick={() => {
+                    setSelectedStation(station);
+                    setDetailStation(station);
+                  }}
+                />
+              ))}
+            </div>
+            {!cardsExpanded && extraStations.length > 0 && (
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '48px',
+                  background: `linear-gradient(to bottom, rgba(${theme.mode === 'dark' ? '10,22,40' : '249,250,251'},0) 0%, rgba(${theme.mode === 'dark' ? '10,22,40' : '249,250,251'},0.85) 60%, rgba(${theme.mode === 'dark' ? '10,22,40' : '249,250,251'},1) 100%)`,
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+          </div>
 
-            />
-          ))}
+          {extraStations.length > 0 && (
+            <>
+              <div
+                ref={extraCardsRef}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3"
+                style={{
+                  maxHeight: cardsExpanded ? '6000px' : '0px',
+                  opacity: cardsExpanded ? 1 : 0,
+                  overflow: 'hidden',
+                  transition: 'max-height 400ms ease, opacity 300ms ease',
+                }}
+              >
+                {extraStations.map((station) => (
+                  <EVStationCard
+                    key={station.ID}
+                    station={station}
+                    isSelected={selectedStation?.ID === station.ID}
+                    onClick={() => {
+                      setSelectedStation(station);
+                      setDetailStation(station);
+                    }}
+                  />
+                ))}
+              </div>
+
+              <ExpandHandle
+                expanded={cardsExpanded}
+                hiddenCount={extraStations.length}
+                onClick={toggleCardsExpanded}
+                theme={theme}
+              />
+            </>
+          )}
         </div>
       )}
 

@@ -67,7 +67,7 @@ export default function SearchBar({
               setFocused(true);
               setRecentSearches(getRecentSearches());
               event.target.style.borderColor = theme.inputFocusBorder;
-              event.target.style.boxShadow = `0 0 12px ${theme.mode === 'dark' ? 'rgba(245, 158, 11,0.15)' : 'rgba(245,158,11,0.12)'}`;
+              event.target.style.boxShadow = '0 0 0 3px rgba(34,197,94,0.3)';
             }}
             onBlur={(event) => {
               window.setTimeout(() => setFocused(false), 120);

@@ -73,7 +73,15 @@ export default function LocationInput({ value, onChange, onSelect, placeholder, 
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        onFocus={() => { if (suggestions.length > 0) setShowDropdown(true); }}
+        onFocus={(event) => {
+          if (suggestions.length > 0) setShowDropdown(true);
+          event.target.style.borderColor = theme.green;
+          event.target.style.boxShadow = '0 0 0 3px rgba(34,197,94,0.3)';
+        }}
+        onBlur={(event) => {
+          event.target.style.borderColor = theme.inputBorder;
+          event.target.style.boxShadow = 'none';
+        }}
         placeholder={placeholder}
         className="w-full px-4 py-2.5 rounded-xl text-sm"
         style={{
@@ -81,6 +89,7 @@ export default function LocationInput({ value, onChange, onSelect, placeholder, 
           border: `1px solid ${theme.inputBorder}`,
           color: theme.inputText,
           outline: 'none',
+          transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
         }}
       />
       {showDropdown && suggestions.length > 0 && (
