@@ -252,11 +252,6 @@ export default function FuelPricePage({
         <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Find the cheapest fuel near you across Australia
         </p>
-        {cityContent?.intro && (
-          <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
-            {cityContent.intro}
-          </p>
-        )}
       </div>
 
       {/* Fuel Type Selector */}
@@ -554,6 +549,9 @@ export default function FuelPricePage({
           style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
         >
           <h2 className="text-base font-bold mb-3" style={{ color: theme.gold }}>Fuel Prices in {initialSuburb.name}</h2>
+          {cityContent.intro && (
+            <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.intro}</p>
+          )}
           {cityContent.suburbs && (
             <>
               <h3 className="text-sm font-semibold mb-2" style={{ color: theme.text }}>Suburbs &amp; Areas Covered</h3>

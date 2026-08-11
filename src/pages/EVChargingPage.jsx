@@ -182,11 +182,6 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
         <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Search thousands of EV charging points across Australia
         </p>
-        {cityContent?.intro && (
-          <p className="text-xs mt-2 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
-            {cityContent.intro}
-          </p>
-        )}
       </div>
 
       {/* Search */}
@@ -395,6 +390,9 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
           style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
         >
           <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>EV Charging in {initialSuburb.name}</h2>
+          {cityContent.intro && (
+            <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.intro}</p>
+          )}
           {cityContent.coverage && (
             <>
               <h3 className="text-sm font-semibold mb-2" style={{ color: theme.text }}>Charging Coverage in {initialSuburb.name}</h3>
