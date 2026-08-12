@@ -120,7 +120,7 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
   const cardStyle = { background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, borderRadius: '16px' };
 
   return (
-    <div className="max-w-4xl mx-auto pb-24 sm:pb-6" style={{ animation: 'evFadeSlideIn 0.35s ease' }}>
+    <div className="max-w-4xl mx-auto pb-36 sm:pb-6" style={{ animation: 'evFadeSlideIn 0.35s ease' }}>
       {/* [1] Hero */}
       <Section index={0}>
         <div
@@ -389,8 +389,8 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
 
       {!heroVisible && (
         <div
-          className="sm:hidden fixed left-0 right-0 bottom-0 z-40"
-          style={{ height: '72px', background: theme.cardBg, borderTop: `1px solid ${theme.cardBorder}`, padding: '12px 16px', boxShadow: '0 -4px 16px rgba(0,0,0,0.25)', paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+          className="sm:hidden fixed left-0 right-0 z-40"
+          style={{ bottom: '68px', height: '64px', background: theme.cardBg, borderTop: `1px solid ${theme.cardBorder}`, padding: '10px 16px', boxShadow: '0 -4px 16px rgba(0,0,0,0.25)' }}
         >
           <button
             type="button"

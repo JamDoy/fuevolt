@@ -22,7 +22,7 @@ function NavIcon({ type }) {
 
 export default function MobileBottomNav({ view, onNavigate }) {
   const { theme } = useTheme();
-  const activeView = view === 'station-detail' ? 'fuel' : view === 'article-detail' ? 'articles' : view === 'landing' ? 'fuel' : view;
+  const activeView = view === 'station-detail' ? 'fuel' : view === 'ev-station-detail' ? 'ev' : view === 'article-detail' ? 'articles' : view === 'landing' ? 'fuel' : view;
 
   return (
     <nav

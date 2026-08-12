@@ -251,7 +251,7 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-24 sm:pb-6" style={{ animation: 'fadeSlideIn 0.35s ease' }}>
+    <div className="max-w-4xl mx-auto pb-36 sm:pb-6" style={{ animation: 'fadeSlideIn 0.35s ease' }}>
       {/* [1] Hero Header */}
       <Section index={0}>
         <div
@@ -641,14 +641,14 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
       {/* Sticky mobile Navigate bar once hero has scrolled out of view */}
       {!heroVisible && (
         <div
-          className="sm:hidden fixed left-0 right-0 bottom-0 z-40"
+          className="sm:hidden fixed left-0 right-0 z-40"
           style={{
-            height: '72px',
+            bottom: '68px',
+            height: '64px',
             background: theme.cardBg,
             borderTop: `1px solid ${theme.cardBorder}`,
-            padding: '12px 16px',
+            padding: '10px 16px',
             boxShadow: '0 -4px 16px rgba(0,0,0,0.25)',
-            paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
           }}
         >
           <button
