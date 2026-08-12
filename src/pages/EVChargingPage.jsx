@@ -4,7 +4,6 @@ import SearchBar from '../components/SearchBar';
 import FilterChips from '../components/FilterChips';
 import StationMap from '../components/StationMap';
 import EVStationCard from '../components/EVStationCard';
-import EVDetailPanel from '../components/EVDetailPanel';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import EVCostEstimator from '../components/EVCostEstimator';
@@ -23,14 +22,13 @@ const SPEED_FILTERS = [
   { id: 'ultra', label: '50kW+ (Ultra-Rapid)', min: 50 },
 ];
 
-export default function EVChargingPage({ initialSuburb, initialSearch }) {
+export default function EVChargingPage({ initialSuburb, initialSearch, onStationDetail }) {
   const cityContent = initialSuburb?.slug ? EV_CITY_CONTENT[initialSuburb.slug] : null;
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [mapCenter, setMapCenter] = useState(null);
   const [selectedStation, setSelectedStation] = useState(null);
-  const [detailStation, setDetailStation] = useState(null);
   const [connectorFilters, setConnectorFilters] = useState([]);
   const [speedFilters, setSpeedFilters] = useState([]);
   const [locationName, setLocationName] = useState(initialSuburb?.name || '');
@@ -203,6 +201,26 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
     setSpeedFilters([]);
   };
 
+  const distanceRankedStations = [...filtered].sort(
+    (a, b) => (a.AddressInfo?.Distance ?? Infinity) - (b.AddressInfo?.Distance ?? Infinity)
+  );
+
+  const openStationDetail = (station) => {
+    const rankIndex = distanceRankedStations.findIndex((s) => s.ID === station.ID);
+    const nearby = distanceRankedStations
+      .filter((s) => s.ID !== station.ID && (s.AddressInfo?.Distance ?? Infinity) <= 5)
+      .slice(0, 3);
+
+    setSelectedStation(station);
+    onStationDetail?.({
+      ...station,
+      resultRank: rankIndex >= 0 ? rankIndex + 1 : null,
+      resultTotal: distanceRankedStations.length,
+      resultSuburb: locationName || searchLabel || initialSuburb?.name || '',
+      resultAlternatives: nearby,
+    });
+  };
+
   const retryWithWiderRadius = () => {
     if (!mapCenter) return;
     setSearchRadius(30);
@@ -308,10 +326,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
         stations={filtered}
         center={mapCenter}
         selectedStation={selectedStation}
-        onStationSelect={(s) => {
-          setSelectedStation(s);
-          setDetailStation(s);
-        }}
+        onStationSelect={openStationDetail}
         type="ev"
         userLocation={autoLocation}
         onSearchArea={(lat, lng) => doSearch(lat, lng, searchRadius, 'this map area')}
@@ -359,10 +374,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
                   key={station.ID}
                   station={station}
                   isSelected={selectedStation?.ID === station.ID}
-                  onClick={() => {
-                    setSelectedStation(station);
-                    setDetailStation(station);
-                  }}
+                  onClick={() => openStationDetail(station)}
                 />
               ))}
             </div>
@@ -399,10 +411,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
                     key={station.ID}
                     station={station}
                     isSelected={selectedStation?.ID === station.ID}
-                    onClick={() => {
-                      setSelectedStation(station);
-                      setDetailStation(station);
-                    }}
+                    onClick={() => openStationDetail(station)}
                   />
                 ))}
               </div>
@@ -465,11 +474,6 @@ export default function EVChargingPage({ initialSuburb, initialSearch }) {
         </div>
       )}
 
-      {/* Detail Panel */}
-      <EVDetailPanel
-        station={detailStation}
-        onClose={() => setDetailStation(null)}
-      />
 
       {/* Informational content for SEO and AdSense */}
       {cityContent ? (

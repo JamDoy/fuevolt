@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage';
 import EVChargingPage from './pages/EVChargingPage';
 import FuelPricePage from './pages/FuelPricePage';
 import FuelStationDetailPage from './pages/FuelStationDetailPage';
+import EVStationDetailPage from './pages/EVStationDetailPage';
 import TripPlannerPage from './pages/TripPlannerPage';
 import EVvsFuelPage from './pages/EVvsFuelPage';
 import NotificationsPage from './pages/NotificationsPage';
@@ -26,6 +27,9 @@ function parseRoute() {
   const historyState = window.history.state;
   if (historyState?.fuevoltView === 'station-detail' && historyState.station) {
     return { view: 'station-detail', suburb: null, station: historyState.station };
+  }
+  if (historyState?.fuevoltView === 'ev-station-detail' && historyState.station) {
+    return { view: 'ev-station-detail', suburb: null, station: historyState.station };
   }
 
   const path = window.location.pathname;
@@ -165,6 +169,18 @@ function AppContent() {
     window.scrollTo(0, 0);
   };
 
+  const handleEVStationDetail = (station) => {
+    try {
+      sessionStorage.setItem('fuevolt_results_scroll', String(window.scrollY));
+    } catch {
+      // sessionStorage may be unavailable in restricted browser modes.
+    }
+    setDetailStation(station);
+    setView('ev-station-detail');
+    setRoute(window.location.pathname, { fuevoltView: 'ev-station-detail', station });
+    window.scrollTo(0, 0);
+  };
+
   const handleLandingSearch = (search) => {
     const targetView = fuelPreference === 'EV' ? 'ev' : 'fuel';
     setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
@@ -228,6 +244,7 @@ function AppContent() {
             key={`ev-${initialSuburb?.slug || 'search'}-${initialSearch?.key || ''}`}
             initialSuburb={initialSuburb}
             initialSearch={initialSearch}
+            onStationDetail={handleEVStationDetail}
           />
         )}
         {view === 'fuel' && (
@@ -245,6 +262,13 @@ function AppContent() {
             station={detailStation}
             onBack={handleBack}
             onStationDetail={handleStationDetail}
+          />
+        )}
+        {view === 'ev-station-detail' && detailStation && (
+          <EVStationDetailPage
+            station={detailStation}
+            onBack={handleBack}
+            onStationDetail={handleEVStationDetail}
           />
         )}
         {view === 'trip' && <TripPlannerPage />}
