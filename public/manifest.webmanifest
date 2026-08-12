@@ -1,12 +1,16 @@
 {
   "name": "FueVolt — Fuel Prices & EV Charging",
   "short_name": "FueVolt",
-  "description": "Compare fuel prices and find EV charging stations across Australia.",
+  "description": "Find the cheapest fuel and EV charging stations across Australia. Live government data. Free.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#071B3D",
+  "orientation": "portrait-primary",
+  "background_color": "#0D2B5E",
   "theme_color": "#0D2B5E",
+  "lang": "en-AU",
+  "dir": "ltr",
+  "categories": ["travel", "utilities", "navigation"],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -19,6 +23,36 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Find Cheapest Fuel",
+      "short_name": "Find Fuel",
+      "description": "Search for cheapest fuel near you",
+      "url": "/fuel-prices",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "EV Charging Stations",
+      "short_name": "EV Charging",
+      "description": "Find EV charging stations near you",
+      "url": "/ev-charging",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Plan a Road Trip",
+      "short_name": "Trip Planner",
+      "description": "Plan your route with fuel stops",
+      "url": "/trip-planner",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
 }
