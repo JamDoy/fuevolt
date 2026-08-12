@@ -23,6 +23,27 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
 }
 
+/* Radar-ping pulse behind the cheapest-station map pin */
+.cheapest-pin-pulse {
+  position: absolute;
+  left: 50%;
+  top: 17px;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  margin-top: -17px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.55);
+  animation: cheapestPinPulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cheapestPinPulse {
+  0% { transform: scale(0.55); opacity: 0.7; }
+  70% { transform: scale(1.9); opacity: 0; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
 body {
   margin: 0;
   padding: 0;

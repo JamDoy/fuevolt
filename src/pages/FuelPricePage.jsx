@@ -397,6 +397,7 @@ export default function FuelPricePage({
         type="fuel"
         userLocation={autoLocation}
         onSearchArea={(lat, lng) => doSearch(lat, lng, fuelType, searchRadius, 'this map area')}
+        cheapestStationId={cheapest?.id}
       />
 
       {/* Error */}

@@ -13,20 +13,61 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-// Fuel bowser icon (fuel pump silhouette)
+// Fuel bowser pin — gradient teardrop with a white badge circle and a
+// clean pump glyph, plus a soft drop shadow so it reads as a real icon
+// rather than a flat blob.
 const fuelIcon = new L.DivIcon({
   className: 'custom-marker',
-  html: `<svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#F59E0B" stroke="#B8860B" stroke-width="1"/>
-    <rect x="10" y="7" width="10" height="14" rx="2" fill="#0D2B5E"/>
-    <rect x="12" y="9" width="6" height="5" rx="1" fill="#F59E0B"/>
-    <rect x="14" y="16" width="2" height="3" fill="#F59E0B"/>
-    <path d="M22 10h2v8h-2z" fill="#0D2B5E"/>
-    <circle cx="23" cy="10" r="2" fill="#0D2B5E"/>
+  html: `<svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35));">
+    <defs>
+      <linearGradient id="fuelPinGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FDE68A"/>
+        <stop offset="55%" stop-color="#F59E0B"/>
+        <stop offset="100%" stop-color="#B45309"/>
+      </linearGradient>
+    </defs>
+    <path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="url(#fuelPinGrad)" stroke="#B45309" stroke-width="0.75"/>
+    <circle cx="16" cy="14" r="8.5" fill="#FFFFFF"/>
+    <g stroke="#0D2B5E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <rect x="11.5" y="10" width="6" height="9" rx="1.2"/>
+      <line x1="11.5" y1="13.2" x2="17.5" y2="13.2"/>
+      <path d="M17.5 12.2h1.6a1.4 1.4 0 0 1 1.4 1.4v3.4a1 1 0 0 0 1 1"/>
+    </g>
   </svg>`,
   iconSize: [32, 42],
   iconAnchor: [16, 42],
   popupAnchor: [0, -42],
+});
+
+// Cheapest-station pin — larger, green, with a star badge and a pulsing
+// radar ring (CSS animation defined globally in index.css) so it draws
+// the eye immediately among a cluster of stations.
+const cheapestFuelIcon = new L.DivIcon({
+  className: 'custom-marker',
+  html: `<div style="position:relative;width:38px;height:50px;">
+    <div class="cheapest-pin-pulse"></div>
+    <svg width="38" height="50" viewBox="0 0 38 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative;filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));">
+      <defs>
+        <linearGradient id="cheapestPinGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4ADE80"/>
+          <stop offset="55%" stop-color="#22C55E"/>
+          <stop offset="100%" stop-color="#14532D"/>
+        </linearGradient>
+      </defs>
+      <path d="M19 0C9.82 0 2.38 7.44 2.38 16.62c0 12.47 16.62 33.28 16.62 33.28s16.62-20.81 16.62-33.28C35.62 7.44 28.18 0 19 0z" fill="url(#cheapestPinGrad)" stroke="#14532D" stroke-width="0.75"/>
+      <circle cx="19" cy="16.6" r="10.1" fill="#FFFFFF"/>
+      <g stroke="#14532D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <rect x="13.7" y="12" width="7.1" height="10.7" rx="1.4"/>
+        <line x1="13.7" y1="15.8" x2="20.8" y2="15.8"/>
+        <path d="M20.8 14.6h1.9a1.7 1.7 0 0 1 1.7 1.7v4a1.2 1.2 0 0 0 1.2 1.2"/>
+      </g>
+      <circle cx="30" cy="8" r="7" fill="#F59E0B" stroke="#FFFFFF" stroke-width="1.5"/>
+      <path d="M30 4l1.15 2.33 2.57.37-1.86 1.81.44 2.56L30 9.85l-2.3 1.22.44-2.56-1.86-1.81 2.57-.37z" fill="#FFFFFF"/>
+    </svg>
+  </div>`,
+  iconSize: [38, 50],
+  iconAnchor: [19, 50],
+  popupAnchor: [0, -50],
 });
 
 // Green lightning bolt icon for EV chargers
@@ -142,6 +183,7 @@ export default function StationMap({
   routePoints = null,
   userLocation = null,
   onSearchArea = null,
+  cheapestStationId = null,
 }) {
   const { theme } = useTheme();
   const defaultCenter = [-33.8688, 151.2093];
@@ -161,8 +203,9 @@ export default function StationMap({
   }, [mapRef, onSearchArea]);
 
   const getIcon = (station) => {
-    if (type === 'fuel') return fuelIcon;
-    return evBoltIcon;
+    if (type !== 'fuel') return evBoltIcon;
+    if (cheapestStationId != null && station.id === cheapestStationId) return cheapestFuelIcon;
+    return fuelIcon;
   };
 
   return (
@@ -223,17 +266,25 @@ export default function StationMap({
 
             if (!lat || !lng) return null;
 
+            const isCheapest = type === 'fuel' && cheapestStationId != null && station.id === cheapestStationId;
+
             return (
               <Marker
                 key={type === 'ev' ? station.ID : station.id}
                 position={[lat, lng]}
                 icon={getIcon(station)}
+                zIndexOffset={isCheapest ? 900 : 0}
                 eventHandlers={{
                   click: () => onStationSelect(station),
                 }}
               >
                 <Popup>
                   <div style={{ color: '#1a1a1a' }}>
+                    {isCheapest && (
+                      <div style={{ color: '#14532D', fontWeight: 'bold', fontSize: '11px', marginBottom: '2px' }}>
+                        &#9733; CHEAPEST NEARBY
+                      </div>
+                    )}
                     <strong style={{ color: '#0D2B5E' }}>
                       {type === 'ev' ? station.AddressInfo?.Title : station.name}
                     </strong>
