@@ -232,8 +232,24 @@ export default function FuelPricePage({
       }, null)
     : POPULAR_SUBURBS.fuel[0];
 
+  const priceRankedStations = [...pricedStations].sort((a, b) => a.price - b.price);
+
   const openStationDetail = (station) => {
-    onStationDetail?.({ ...station, resultAveragePrice: avgPrice });
+    const rankIndex = priceRankedStations.findIndex((s) => s.id === station.id);
+    const nearby = priceRankedStations
+      .filter((s) => s.id !== station.id && parseFloat(s.distance) <= 5)
+      .sort((a, b) => a.price - b.price)
+      .slice(0, 3);
+
+    onStationDetail?.({
+      ...station,
+      resultAveragePrice: avgPrice,
+      resultRank: rankIndex >= 0 ? rankIndex + 1 : null,
+      resultTotal: priceRankedStations.length,
+      resultSuburb: locationName || searchLabel || initialSuburb?.name || '',
+      resultFuelType: fuelType,
+      resultAlternatives: nearby,
+    });
   };
 
   const retryWithWiderRadius = () => {

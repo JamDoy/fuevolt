@@ -44,6 +44,15 @@ select:focus {
   100% { transform: scale(1.9); opacity: 0; }
 }
 
+@keyframes sparklineDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes sparkDotPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+
 body {
   margin: 0;
   padding: 0;

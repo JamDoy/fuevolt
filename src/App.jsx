@@ -97,6 +97,20 @@ function AppContent() {
       setDetailStation(p.station || null);
       setArticleSlug(p.articleSlug || null);
       updatePageMeta(p.view, buildCityMeta(p.view, p.suburb));
+
+      if ((p.view === 'fuel' || p.view === 'ev') && !p.station) {
+        let savedScroll = null;
+        try {
+          savedScroll = sessionStorage.getItem('fuevolt_results_scroll');
+          sessionStorage.removeItem('fuevolt_results_scroll');
+        } catch {
+          // sessionStorage may be unavailable in restricted browser modes.
+        }
+        if (savedScroll != null) {
+          requestAnimationFrame(() => window.scrollTo(0, parseInt(savedScroll, 10) || 0));
+          return;
+        }
+      }
       window.scrollTo(0, 0);
     };
     window.addEventListener('popstate', handlePop);
@@ -140,6 +154,11 @@ function AppContent() {
   };
 
   const handleStationDetail = (station) => {
+    try {
+      sessionStorage.setItem('fuevolt_results_scroll', String(window.scrollY));
+    } catch {
+      // sessionStorage may be unavailable in restricted browser modes.
+    }
     setDetailStation(station);
     setView('station-detail');
     setRoute(window.location.pathname, { fuevoltView: 'station-detail', station });
@@ -225,6 +244,7 @@ function AppContent() {
           <FuelStationDetailPage
             station={detailStation}
             onBack={handleBack}
+            onStationDetail={handleStationDetail}
           />
         )}
         {view === 'trip' && <TripPlannerPage />}
