@@ -17,6 +17,42 @@ const CONTENT_DIR = path.resolve('public/content/articles');
 const BASE_URL = 'https://www.fuevolt.com';
 const ADSENSE_PUB_ID = 'ca-pub-7549230738737699';
 
+// Real fuel-price / EV-charger snapshots, refreshed daily by
+// scripts/fetch-city-stats.mjs (see .github/workflows/refresh-city-stats.yml)
+// and committed to the repo. A city is simply absent here if its last fetch
+// failed or no government feed covers it — never backfilled with a guess.
+const CITY_STATS_PATH = path.resolve('src/data/cityStats.json');
+const CITY_STATS = fs.existsSync(CITY_STATS_PATH)
+  ? JSON.parse(fs.readFileSync(CITY_STATS_PATH, 'utf-8'))
+  : { generatedAt: null, fuel: {}, ev: {} };
+
+function statsAsOfLabel() {
+  if (!CITY_STATS.generatedAt) return '';
+  return new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Sydney' }).format(new Date(CITY_STATS.generatedAt));
+}
+
+function fuelStatsBlock(slug, cityName) {
+  const s = CITY_STATS.fuel[slug];
+  if (!s) return '';
+  return `<aside style="padding:16px;border:1px solid #22C55E;border-radius:12px;margin:16px 0;background:#F0FDF4">
+          <h2 style="font-size:1.05rem;margin-bottom:8px">Live Snapshot: Unleaded 91 in ${escHtml(cityName)}</h2>
+          <p style="font-size:0.9rem;color:#4B5563">As of ${statsAsOfLabel()}, FueVolt found <strong>${s.stationCount} stations</strong> reporting Unleaded 91 prices within ${s.radiusKm}km of central ${escHtml(cityName)}, ranging from <strong>${(s.minPrice * 100).toFixed(1)}¢/L</strong> to <strong>${(s.maxPrice * 100).toFixed(1)}¢/L</strong> (average <strong>${(s.avgPrice * 100).toFixed(1)}¢/L</strong>). This snapshot refreshes daily from the same official government feed used by FueVolt's live search — see current prices and other fuel types with the search tool above.</p>
+        </aside>`;
+}
+
+function evStatsBlock(slug, cityName) {
+  const s = CITY_STATS.ev[slug];
+  if (!s) return '';
+  const connectorParts = Object.entries(s.connectors)
+    .filter(([, count]) => count > 0)
+    .map(([type, count]) => `${count} with ${type}`)
+    .join(', ');
+  return `<aside style="padding:16px;border:1px solid #22C55E;border-radius:12px;margin:16px 0;background:#F0FDF4">
+          <h2 style="font-size:1.05rem;margin-bottom:8px">Live Snapshot: EV Charging in ${escHtml(cityName)}</h2>
+          <p style="font-size:0.9rem;color:#4B5563">As of ${statsAsOfLabel()}, FueVolt tracks <strong>${s.stationCount} charging locations</strong> within ${s.radiusKm}km of central ${escHtml(cityName)}, including <strong>${s.fastCount} fast or ultra-rapid (50kW+)</strong> chargers${connectorParts ? ` — ${escHtml(connectorParts)}` : ''}. This snapshot refreshes daily from Open Charge Map, the same data source used by FueVolt's live charger search.</p>
+        </aside>`;
+}
+
 // FueVolt fuel-drop + bolt mark, matching src/components/FueVoltLogo.jsx,
 // inlined here since this script generates static HTML outside React.
 const FUEVOLT_ICON_SVG = `<svg width="36" height="47" viewBox="0 0 120 156" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -366,6 +402,7 @@ for (const city of FUEL_CITIES) {
   const urlPath = `/fuel-prices/${city.slug}`;
   const content = `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">${escHtml(intro)}</p>
+        ${fuelStatsBlock(city.slug, city.name)}
         ${suburbs ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Suburbs &amp; Areas Covered</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(suburbs)}</p>` : ''}
         ${trends ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Price Trends in ${escHtml(city.name)}</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(trends)}</p>` : ''}
         ${tips ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Tips to Save on Fuel in ${escHtml(city.name)}</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(tips)}</p>` : ''}
@@ -400,6 +437,7 @@ for (const city of EV_CITIES) {
   const urlPath = `/ev-charging/${city.slug}`;
   const content = `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">${escHtml(intro)}</p>
+        ${evStatsBlock(city.slug, city.name)}
         ${coverage ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Charging Coverage in ${escHtml(city.name)}</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(coverage)}</p>` : ''}
         ${tips ? `<h2 style="font-size:1.3rem;margin:20px 0 12px">Charging Tips for ${escHtml(city.name)}</h2><p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">${escHtml(tips)}</p>` : ''}
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:16px">Filter ${escHtml(city.name)} chargers by connector (Type 2, CCS2, CHAdeMO, Tesla) or speed — see our <a href="/guides/ev-charging-connector-types-australia">guide to EV connector types</a> for which one fits your car.</p>

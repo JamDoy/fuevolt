@@ -1,0 +1,44 @@
+name: Refresh City Stats
+
+# Fetches a real, live snapshot of fuel prices and EV charger counts for
+# each city page and commits it to src/data/cityStats.json. Runs on a
+# schedule rather than on every deploy because the NSW fuel API shares a
+# 2,500 calls/month quota with the live app's own search feature.
+#
+# Committing to main triggers the existing deploy workflow, so the site
+# redeploys automatically with the fresh data once this completes.
+
+on:
+  schedule:
+    - cron: '0 19 * * *' # ~5am AEST (Sydney, UTC+10/+11)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Fetch live city stats
+        run: node scripts/fetch-city-stats.mjs
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- src/data/cityStats.json; then
+            echo "No change in city stats — skipping commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/cityStats.json
+          git commit -m "chore: refresh live city stats snapshot"
+          git push

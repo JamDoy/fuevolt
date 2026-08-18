@@ -1,0 +1,205 @@
+{
+  "generatedAt": "2026-08-18T11:44:38.470Z",
+  "fuel": {
+    "melbourne": {
+      "fuelType": "U91",
+      "stationCount": 288,
+      "minPrice": 1.779,
+      "maxPrice": 2.399,
+      "avgPrice": 1.972,
+      "radiusKm": 15
+    },
+    "brisbane": {
+      "fuelType": "U91",
+      "stationCount": 209,
+      "minPrice": 1.855,
+      "maxPrice": 2.129,
+      "avgPrice": 1.987,
+      "radiusKm": 15
+    },
+    "perth": {
+      "fuelType": "U91",
+      "stationCount": 186,
+      "minPrice": 1.827,
+      "maxPrice": 2.039,
+      "avgPrice": 1.915,
+      "radiusKm": 15
+    },
+    "gold-coast": {
+      "fuelType": "U91",
+      "stationCount": 91,
+      "minPrice": 1.889,
+      "maxPrice": 2.099,
+      "avgPrice": 1.955,
+      "radiusKm": 15
+    },
+    "geelong": {
+      "fuelType": "U91",
+      "stationCount": 58,
+      "minPrice": 1.912,
+      "maxPrice": 2.119,
+      "avgPrice": 1.972,
+      "radiusKm": 15
+    },
+    "townsville": {
+      "fuelType": "U91",
+      "stationCount": 54,
+      "minPrice": 1.965,
+      "maxPrice": 2.459,
+      "avgPrice": 2.044,
+      "radiusKm": 15
+    },
+    "cairns": {
+      "fuelType": "U91",
+      "stationCount": 40,
+      "minPrice": 1.975,
+      "maxPrice": 2.119,
+      "avgPrice": 2.022,
+      "radiusKm": 15
+    },
+    "toowoomba": {
+      "fuelType": "U91",
+      "stationCount": 47,
+      "minPrice": 1.941,
+      "maxPrice": 2.099,
+      "avgPrice": 1.999,
+      "radiusKm": 15
+    },
+    "ballarat": {
+      "fuelType": "U91",
+      "stationCount": 44,
+      "minPrice": 1.873,
+      "maxPrice": 2.309,
+      "avgPrice": 1.973,
+      "radiusKm": 15
+    },
+    "bendigo": {
+      "fuelType": "U91",
+      "stationCount": 29,
+      "minPrice": 1.923,
+      "maxPrice": 2.099,
+      "avgPrice": 2.002,
+      "radiusKm": 15
+    },
+    "sunshine-coast": {
+      "fuelType": "U91",
+      "stationCount": 45,
+      "minPrice": 1.935,
+      "maxPrice": 2.51,
+      "avgPrice": 2.028,
+      "radiusKm": 15
+    }
+  },
+  "ev": {
+    "sydney": {
+      "stationCount": 40,
+      "fastCount": 25,
+      "connectors": {
+        "Type 2": 6,
+        "CCS2": 31,
+        "CHAdeMO": 21,
+        "Tesla": 3
+      },
+      "radiusKm": 15
+    },
+    "melbourne": {
+      "stationCount": 45,
+      "fastCount": 30,
+      "connectors": {
+        "Type 2": 16,
+        "CCS2": 33,
+        "CHAdeMO": 19,
+        "Tesla": 0
+      },
+      "radiusKm": 15
+    },
+    "brisbane": {
+      "stationCount": 27,
+      "fastCount": 18,
+      "connectors": {
+        "Type 2": 5,
+        "CCS2": 17,
+        "CHAdeMO": 14,
+        "Tesla": 0
+      },
+      "radiusKm": 15
+    },
+    "perth": {
+      "stationCount": 96,
+      "fastCount": 24,
+      "connectors": {
+        "Type 2": 49,
+        "CCS2": 27,
+        "CHAdeMO": 10,
+        "Tesla": 3
+      },
+      "radiusKm": 15
+    },
+    "adelaide": {
+      "stationCount": 47,
+      "fastCount": 13,
+      "connectors": {
+        "Type 2": 15,
+        "CCS2": 31,
+        "CHAdeMO": 27,
+        "Tesla": 0
+      },
+      "radiusKm": 15
+    },
+    "gold-coast": {
+      "stationCount": 14,
+      "fastCount": 13,
+      "connectors": {
+        "Type 2": 1,
+        "CCS2": 13,
+        "CHAdeMO": 10,
+        "Tesla": 0
+      },
+      "radiusKm": 15
+    },
+    "canberra": {
+      "stationCount": 43,
+      "fastCount": 31,
+      "connectors": {
+        "Type 2": 12,
+        "CCS2": 33,
+        "CHAdeMO": 14,
+        "Tesla": 0
+      },
+      "radiusKm": 15
+    },
+    "hobart": {
+      "stationCount": 11,
+      "fastCount": 5,
+      "connectors": {
+        "Type 2": 5,
+        "CCS2": 5,
+        "CHAdeMO": 4,
+        "Tesla": 0
+      },
+      "radiusKm": 15
+    },
+    "darwin": {
+      "stationCount": 3,
+      "fastCount": 2,
+      "connectors": {
+        "Type 2": 1,
+        "CCS2": 2,
+        "CHAdeMO": 2,
+        "Tesla": 0
+      },
+      "radiusKm": 15
+    },
+    "newcastle": {
+      "stationCount": 6,
+      "fastCount": 2,
+      "connectors": {
+        "Type 2": 5,
+        "CCS2": 2,
+        "CHAdeMO": 1,
+        "Tesla": 0
+      },
+      "radiusKm": 15
+    }
+  }
+}
