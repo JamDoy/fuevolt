@@ -80,8 +80,15 @@ const FILL_UP_ADVICE = {
   },
 };
 
-function detectRegion(address) {
-  const a = (address || '').toUpperCase();
+const ID_PREFIX_REGION = { qld: 'QLD', nsw: 'NSW', vic: 'VIC', wa: 'WA' };
+
+function detectRegion(station) {
+  const prefix = String(station?.id || '').split('-')[0];
+  if (ID_PREFIX_REGION[prefix]) return ID_PREFIX_REGION[prefix];
+
+  // Fallback (e.g. OSM-sourced stations) — the source id doesn't encode a
+  // state, but their address string does, so parse it as a last resort.
+  const a = (station?.address || '').toUpperCase();
   if (/\bQLD\b/.test(a)) return 'QLD';
   if (/\bNSW\b/.test(a)) return 'NSW';
   if (/\bVIC\b/.test(a)) return 'VIC';
@@ -186,7 +193,7 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
   const suburbName = station.resultSuburb || '';
   const fuelTypeLabel = FUEL_LABELS[station.resultFuelType || station.fuelType] || station.fuelType || 'fuel';
 
-  const region = detectRegion(station.address);
+  const region = detectRegion(station);
   const advice = FILL_UP_ADVICE[region];
   const todayIdx = (new Date().getDay() + 6) % 7;
 
