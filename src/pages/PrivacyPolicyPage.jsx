@@ -20,12 +20,10 @@ export default function PrivacyPolicyPage() {
         <p>When you save fuel stations or EV chargers as favourites, those favourites are stored locally on your device using localStorage. They are not transmitted to our servers.</p>
 
         <h4 className="font-semibold mt-3 mb-1">Usage Data</h4>
-        <p>We may collect anonymous usage statistics such as pages viewed, search queries, and interactions to improve our service. This data cannot be used to personally identify you.</p>
+        <p>We use Google Analytics to collect usage statistics such as pages viewed, approximate location derived from your IP address, device and browser type, and interactions, to help us understand how FueVolt is used and improve it. We do not knowingly collect information that directly identifies you (such as your name or email address) through this analytics data.</p>
 
         <h4 className="font-semibold mt-3 mb-1">Advertising Data</h4>
         <p>We use Google advertising services, which may collect device identifiers, IP addresses, and usage data to serve ads. Please refer to <a href="https://policies.google.com/privacy" className="underline" style={{ color: theme.accent }}>Google's Privacy Policy</a> for details on their data practices.</p>
-
-
       </Section>
 
       <Section title="3. Data Sources" theme={theme}>
@@ -66,6 +64,7 @@ export default function PrivacyPolicyPage() {
       <Section title="6. Third-Party Services" theme={theme}>
         <p>We use the following third-party services:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
+          <li><strong>Google Analytics</strong> — Usage analytics (subject to Google's Privacy Policy)</li>
           <li><strong>Google advertising services</strong> — Advertising (subject to Google's Privacy Policy)</li>
           <li><strong>OpenStreetMap / Nominatim</strong> — Mapping and geocoding (subject to OSM's Privacy Policy)</li>
           <li><strong>Open Charge Map</strong> — EV station data (subject to OCM's terms)</li>
@@ -78,7 +77,7 @@ export default function PrivacyPolicyPage() {
       </Section>
 
       <Section title="8. Your Rights" theme={theme}>
-        <p>Since we do not collect personal data or require user accounts, there is no account data to access, modify, or delete. You can clear locally cached data by clearing FueVolt's site storage in your browser or device settings.</p>
+        <p>FueVolt does not require a user account, and does not itself hold an account or profile for you. You can clear locally cached data — favourites, preferences, and cached search results — by clearing FueVolt's site storage in your browser or device settings. For data collected by our third-party analytics and advertising providers, see their respective privacy policies linked above for how to exercise your rights with them, including any available opt-outs.</p>
       </Section>
 
       <Section title="9. Changes to This Policy" theme={theme}>

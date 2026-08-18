@@ -11,11 +11,13 @@ import fs from 'fs';
 import path from 'path';
 import { marked } from 'marked';
 import { FUEL_CITY_CONTENT, EV_CITY_CONTENT } from '../src/data/cityContent.js';
+import { FAQ_FLAT } from '../src/data/siteFaq.js';
 
 const DIST = path.resolve('dist');
 const CONTENT_DIR = path.resolve('public/content/articles');
 const BASE_URL = 'https://www.fuevolt.com';
 const ADSENSE_PUB_ID = 'ca-pub-7549230738737699';
+const BUILD_DATE_LABEL = new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Sydney' }).format(new Date());
 
 // Real fuel-price / EV-charger snapshots, refreshed daily by
 // scripts/fetch-city-stats.mjs (see .github/workflows/refresh-city-stats.yml)
@@ -143,27 +145,7 @@ const EV_CITIES = [
 ];
 
 // ── FAQ data (19 entries) ───────────────────────────────────────────────
-const FAQ_ENTRIES = [
-  { q: 'Where does FueVolt get its fuel prices?', a: 'FueVolt pulls real-time fuel prices directly from official Australian government sources. Prices are updated throughout the day as fuel stations report changes.' },
-  { q: 'How often are fuel prices updated?', a: 'Fuel prices are updated in real-time as they change throughout the day. Each state has different update frequencies — some update multiple times daily as stations report changes, while others update daily.' },
-  { q: 'Which states does FueVolt cover for fuel prices?', a: 'FueVolt currently covers fuel stations across New South Wales, Victoria, Queensland, Western Australia and Tasmania (Tasmania is covered via the same government network as NSW). We are working to add South Australia, the Northern Territory, and the ACT as government data sources become available.' },
-  { q: 'What fuel types can I compare?', a: 'FueVolt lets you compare prices for E10 (ethanol blend), Unleaded 91, Premium 95, Premium 98, Diesel, and LPG. Not all fuel types are available at every station.' },
-  { q: 'Why does a station show "Not currently available" for some fuel types?', a: 'This means a price has not been reported for that fuel type at that station. The station may not sell that fuel type, or the price has not been reported yet.' },
-  { q: 'Are the fuel prices accurate?', a: 'FueVolt displays prices exactly as reported by official government sources. There can be occasional delays between when a station changes its price and when the data updates, so verify the pump price before purchasing.' },
-  { q: 'Where does EV charging station data come from?', a: 'FueVolt displays charging station records from third-party charging datasets, including connector types, power output, and operator information when those details are available.' },
-  { q: 'What connector types can I filter by?', a: 'FueVolt supports filtering by Type 2, CCS2, CHAdeMO, and Tesla connectors. You can also filter by charging speed.' },
-  { q: 'Is the EV charging data available across all of Australia?', a: 'EV charging station data covers locations across Australia, including regional and remote areas. Coverage and record completeness vary, with the strongest coverage generally in metropolitan areas and along major highways.' },
-  { q: 'How does the trip planner work?', a: 'Enter your start and end destinations, and FueVolt calculates a route. The planner shows total distance, estimated drive time, and searches for fuel stations or EV chargers along the route.' },
-  { q: 'How does the EV battery forecast work?', a: 'The EV battery forecast uses the route distance plus your entered battery capacity, current charge level, and energy consumption rate to estimate energy use and remaining charge. Suggested stops are based on your entered range and nearby charger data. It does not model temperature, terrain, speed, towing, or driving style.' },
-  { q: 'Can I use the trip planner for both fuel and electric vehicles?', a: 'Yes. Fuel mode searches for petrol stations along the route. Electric Vehicle mode searches for charging stations and provides estimated battery usage and suggested stops based on the range you enter.' },
-  { q: 'Is FueVolt affiliated with any fuel company or EV charging network?', a: 'No. FueVolt is an independent service and is not affiliated with a fuel company, petrol station chain, or EV charging network.' },
-  { q: 'Does FueVolt work on mobile phones?', a: 'Yes. FueVolt is a Progressive Web App (PWA) designed to work on devices with a web browser. On mobile, you can add FueVolt to your home screen for quick access.' },
-  { q: 'Does FueVolt track my location?', a: 'FueVolt only accesses your location if you grant permission, and it is used to find nearby fuel stations and EV chargers. You can search by suburb or postcode instead of sharing your location.' },
-  { q: 'How can I contact FueVolt?', a: 'You can reach us through our Contact page. We welcome feedback, feature suggestions, and bug reports.' },
-  { q: 'What is the fuel price cycle?', a: 'In many Australian cities, fuel prices rise sharply and then gradually fall over the following days or weeks. Comparing current station prices can help you avoid paying more than nearby alternatives, but cycle timing varies and cannot be predicted with certainty.' },
-  { q: 'Can I save favourite stations?', a: 'Yes. Tap the star icon on a fuel station or EV charger card to save it as a favourite. Favourites are stored locally in the same browser on your device, and the star remains highlighted when you revisit that station.' },
-  { q: 'How does the EV vs Fuel calculator work?', a: 'The basic calculator uses your weekly fuel spend and a disclosed indicative assumption. The advanced calculator uses your weekly distance, vehicle type, fuel price, electricity prices, and home-versus-public charging split. Results are estimates; default prices are indicative rather than live.' },
-];
+const FAQ_ENTRIES = FAQ_FLAT;
 
 // ── AdSense in-article ad unit ──────────────────────────────────────────
 const AD_UNIT_HTML = `
@@ -539,14 +521,19 @@ writePage('/privacy', generatePage({
   description: 'FueVolt Privacy Policy — how we handle your data, location information, and what third-party services we use.',
   h1: 'Privacy Policy',
   content: `
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Last updated:</strong> June 2026</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">FueVolt ("we", "us", "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect your information when you use our website and services.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Last updated:</strong> ${BUILD_DATE_LABEL}</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">FueVolt ("we", "us", "our") is an Australian fuel price comparison and EV charging station finder. This Privacy Policy explains how we collect, use, and protect your information when you use FueVolt.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Information We Collect</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Location Data:</strong> Only when you grant permission. Used solely to find nearby fuel stations and EV chargers. Never stored, sold, or shared.</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Usage Data:</strong> Anonymous analytics to improve the service. No personal accounts or login required.</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Local Storage:</strong> Favourites, preferences, and geofence alerts stored locally on your device only.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Location Data:</strong> When you use "Use My Location" or GPS-based features, we access your device's location to find nearby fuel stations and EV chargers. This data is processed on your device and is not stored on our servers.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Favourites &amp; Preferences:</strong> Saved fuel stations or EV chargers are stored locally on your device using localStorage. They are not transmitted to our servers.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Usage Data:</strong> We use Google Analytics to collect usage statistics such as pages viewed, approximate location derived from your IP address, device and browser type, and interactions. We do not knowingly collect information that directly identifies you through this data.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px"><strong>Advertising Data:</strong> We use Google advertising services, which may collect device identifiers, IP addresses, and usage data to serve ads. See <a href="https://policies.google.com/privacy">Google's Privacy Policy</a> for details.</p>
+        <h2 style="font-size:1.2rem;margin:20px 0 8px">Data Sources</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt aggregates publicly available data from NSW Government FuelCheck, the QLD Fuel Pricing Direct API, Victoria's Fair Fuel Open Data API, WA FuelWatch, OpenStreetMap, Open Charge Map, Nominatim, and TomTom. Fuel prices are sourced directly from official government APIs where available; where reliable government price data is unavailable, FueVolt does not generate replacement prices.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Third-Party Services</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt uses third-party APIs and services to provide its functionality. For full details, please review the complete Privacy Policy on this page.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">We use Google Analytics and Google advertising services (subject to Google's Privacy Policy), OpenStreetMap/Nominatim and Open Charge Map (subject to their respective terms), and TomTom for routing, geocoding and traffic data (subject to TomTom's Privacy Policy).</p>
+        <h2 style="font-size:1.2rem;margin:20px 0 8px">Your Rights</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt does not require a user account and does not itself hold an account or profile for you. You can clear locally cached data by clearing FueVolt's site storage in your browser or device settings. For data collected by our third-party analytics and advertising providers, see their privacy policies for how to exercise your rights, including any available opt-outs.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Contact</h2>
         <p style="font-size:0.9rem;color:#4B5563">For privacy enquiries, please use our <a href="/contact">contact form</a>.</p>`,
 }));
@@ -559,13 +546,18 @@ writePage('/terms', generatePage({
   description: 'Terms of Service for using FueVolt — Australian fuel price comparison and EV charging station finder.',
   h1: 'Terms of Service',
   content: `
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Last updated:</strong> June 2026</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">By using FueVolt ("the Service"), you agree to these Terms of Service. FueVolt is a fuel price comparison and EV charging station finder for Australian drivers.</p>
-        <h2 style="font-size:1.2rem;margin:20px 0 8px">Use of Service</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt provides fuel price data from official Australian government sources and EV charging station data. Prices and station information are provided as-is and may not reflect real-time conditions at every station.</p>
-        <h2 style="font-size:1.2rem;margin:20px 0 8px">Accuracy Disclaimer</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">While we strive for accuracy, fuel prices can change at any time. Always verify the price at the pump. FueVolt is not liable for discrepancies between displayed prices and actual prices.</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">For full Terms of Service, please review the complete terms on this page.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Last updated:</strong> ${BUILD_DATE_LABEL}</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">By accessing or using FueVolt ("the Service"), you agree to be bound by these Terms of Service. FueVolt is a fuel price comparison and EV charging station finder for Australian drivers, aggregating data from government fuel price APIs and third-party mapping and charging datasets.</p>
+        <h2 style="font-size:1.2rem;margin:20px 0 8px">Data Accuracy &amp; Disclaimer</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">Fuel prices are sourced from official Australian state government APIs where available (NSW, QLD, VIC, WA — Tasmania via the NSW network). Station locations are sourced from OpenStreetMap; EV charging data from Open Charge Map. Prices may not reflect the current pump price at the time of your visit, and station details may be incomplete or outdated. FueVolt does not guarantee the accuracy, completeness, or timeliness of any information displayed — always verify prices and availability at the station before making a purchasing decision. Where reliable government price data is unavailable, FueVolt does not generate replacement prices.</p>
+        <h2 style="font-size:1.2rem;margin:20px 0 8px">Acceptable Use</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">You agree not to use the Service for any unlawful purpose, reverse-engineer or decompile the Service, use automated tools to scrape data from the Service, or interfere with the Service's functionality.</p>
+        <h2 style="font-size:1.2rem;margin:20px 0 8px">Advertising</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt may display advertisements served by Google. Ad content is determined by Google and is not controlled by FueVolt.</p>
+        <h2 style="font-size:1.2rem;margin:20px 0 8px">Limitation of Liability</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">To the maximum extent permitted by Australian law, FueVolt is provided "as is" without warranties of any kind, and we are not liable for loss or damage arising from your use of the Service or reliance on the information it displays.</p>
+        <h2 style="font-size:1.2rem;margin:20px 0 8px">Governing Law</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">These Terms are governed by the laws of Australia.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Contact</h2>
         <p style="font-size:0.9rem;color:#4B5563">For enquiries, please use our <a href="/contact">contact form</a>.</p>`,
 }));
