@@ -17,7 +17,7 @@ export default function AboutPage({ onContact }) {
       <section className="mb-8">
         <h2 className="text-lg font-semibold mb-3" style={{ color: theme.gold }}>Why FueVolt Exists</h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-          FueVolt was started in 2026 by a small team of Brisbane-based drivers frustrated by not knowing which nearby servo had the cheapest fuel. Checking several sources before every fill was inconvenient, so we built one place where Australian drivers could compare reported prices, find EV chargers and plan a trip.
+          Finding the cheapest nearby fuel usually means checking several different sources, each with its own app or website. FueVolt brings official government price data, EV charging locations and trip-planning tools together in one place, so comparing options takes a minute rather than several separate lookups.
         </p>
         <p className="text-sm leading-relaxed" style={{ color: theme.textSecondary }}>
           The aim is practical: make transport costs easier to understand without favouring a fuel retailer or charging network. FueVolt remains independently operated and is supported by advertising revenue.

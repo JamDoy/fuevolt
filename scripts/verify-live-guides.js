@@ -41,7 +41,7 @@ async function verify() {
 
     if (canonical !== expectedCanonical) errors.push(`${article.slug}: wrong canonical`);
     if (!title?.startsWith(article.title)) errors.push(`${article.slug}: wrong title`);
-    if (!html.includes('By the FueVolt Team') || !html.includes('About FueVolt')) {
+    if (!html.includes('By FueVolt') || !html.includes('About FueVolt')) {
       errors.push(`${article.slug}: author content missing`);
     }
     if (!html.includes('<article') || html.length < 5000) {

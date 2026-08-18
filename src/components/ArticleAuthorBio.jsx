@@ -11,7 +11,7 @@ export default function ArticleAuthorBio({ theme }) {
       <div>
         <h2 className="text-sm font-bold mb-1" style={{ color: theme.heading }}>About FueVolt</h2>
         <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
-          FueVolt is built by a small Australian team focused on making it easy to find the cheapest fuel and nearest EV chargers. We built FueVolt after getting frustrated with not knowing where to find the cheapest fuel, with the aim of helping other Australian drivers save money.
+          FueVolt compares official government fuel prices and EV charging locations across Australia, so finding the cheapest option takes one search instead of several.
         </p>
       </div>
     </section>

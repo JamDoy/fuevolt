@@ -37,7 +37,7 @@ Every 50 kilograms of extra weight in your car increases fuel consumption by abo
 
 ## 7. Drive Smoothly
 
-Aggressive acceleration and hard braking waste fuel. Smooth, gradual acceleration uses the engine's most efficient operating range. Anticipate traffic flow and coast to red lights rather than braking hard at the last moment. Studies show that smooth driving can improve fuel economy by 15 to 20 per cent in urban conditions.
+Aggressive acceleration and hard braking waste fuel. Smooth, gradual acceleration uses the engine's most efficient operating range. Anticipate traffic flow and coast to red lights rather than braking hard at the last moment — this is one of the most effective free ways to cut urban fuel consumption.
 
 ## 8. Use Cruise Control on Highways
 

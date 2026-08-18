@@ -13,9 +13,9 @@ The battery is the most expensive component in an electric vehicle, often 30 to 
 
 ## How Long Do EV Batteries Last?
 
-Most EV manufacturers warrant their batteries for 8 years or 160,000 kilometres, guaranteeing at least 70 per cent of original capacity. The government's [electric vehicle facts page](https://www.energy.gov.au/electric-vehicles/electric-vehicle-basics/electric-vehicle-facts) cites analysis of more than 22,700 EVs that put the average expected battery lifespan at around 13 years or more. Real-world data shows that many batteries retain 85 to 90 per cent capacity after 200,000 kilometres. A Tesla Model S study found average degradation of about 12 per cent after 300,000 kilometres.
+Most EV manufacturers warrant their batteries for 8 years or 160,000 kilometres, guaranteeing at least 70 per cent of original capacity. The government's [electric vehicle facts page](https://www.energy.gov.au/electric-vehicles/electric-vehicle-basics/electric-vehicle-facts) cites analysis of more than 22,700 EVs that put the average expected battery lifespan at around 13 years or more.
 
-This means an EV with a 500 km rated range would still deliver 425 to 450 km after years of use — more than enough for daily driving.
+This means an EV with a 500 km rated range is still covered to deliver at least 350 km at the end of a typical 8-year warranty period — more than enough for daily driving.
 
 ## Understanding Battery Degradation
 

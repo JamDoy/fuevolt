@@ -331,7 +331,7 @@ for (const article of articles) {
   const urlPath = `/guides/${article.slug}`;
   const updated = formatArticleDate(articleFile.meta.dateModified);
   const content = `
-        <p style="font-size:0.85rem;color:#6B7280;margin-bottom:4px">By the FueVolt Team · ${escHtml(article.category)} · ${escHtml(article.readTime)}</p>
+        <p style="font-size:0.85rem;color:#6B7280;margin-bottom:4px">By FueVolt · ${escHtml(article.category)} · ${escHtml(article.readTime)}</p>
         ${updated ? `<p style="font-size:0.85rem;color:#6B7280;margin-bottom:16px">Last updated: ${escHtml(updated)}</p>` : ''}
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:24px">${escHtml(article.description)}</p>
         <aside style="padding:16px;border:1px solid #F59E0B;border-radius:12px;margin-bottom:24px;background:#FFF9E8">
@@ -342,9 +342,9 @@ for (const article of articles) {
         <article style="line-height:1.8;font-size:0.95rem">${articleHtml}</article>
         <section style="display:flex;gap:12px;padding:16px;border:1px solid #E5E7EB;border-radius:12px;margin-top:32px">
           <div style="flex:none;width:36px;height:47px" aria-hidden="true">${FUEVOLT_ICON_SVG}</div>
-          <div><h2 style="font-size:1rem;margin-bottom:4px">About FueVolt</h2><p style="font-size:0.85rem;color:#4B5563">FueVolt is built by a small Australian team focused on making it easy to find the cheapest fuel and nearest EV chargers. We built FueVolt after getting frustrated with not knowing where to find the cheapest fuel, with the aim of helping other Australian drivers save money.</p></div>
+          <div><h2 style="font-size:1rem;margin-bottom:4px">About FueVolt</h2><p style="font-size:0.85rem;color:#4B5563">FueVolt compares official government fuel prices and EV charging locations across Australia, so finding the cheapest option takes one search instead of several.</p></div>
         </section>
-        <p style="font-size:0.8rem;color:#6B7280;margin-top:16px">This guide was written and reviewed by the FueVolt team. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.</p>
+        <p style="font-size:0.8rem;color:#6B7280;margin-top:16px">This guide reflects information available at the time of publishing. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.</p>
         <p style="margin-top:24px"><a href="/guides">← Back to all guides</a></p>`;
   const breadcrumbs = breadcrumbSchema([
     { name: 'Home', path: '/' },
@@ -472,7 +472,7 @@ writePage('/about', generatePage({
   h1: 'About FueVolt',
   content: `
         <h2 style="font-size:1.3rem;margin-bottom:12px">Why FueVolt Exists</h2>
-        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:12px">FueVolt was started in 2026 by a small team of Brisbane-based drivers frustrated by not knowing which nearby servo had the cheapest fuel. Checking several sources before every fill was inconvenient, so we built one place where Australian drivers could compare reported prices, find EV chargers and plan a trip.</p>
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:12px">Finding the cheapest nearby fuel usually means checking several different sources, each with its own app or website. FueVolt brings official government price data, EV charging locations and trip-planning tools together in one place, so comparing options takes a minute rather than several separate lookups.</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:20px">The aim is practical: make transport costs easier to understand without favouring a fuel retailer or charging network. FueVolt is independently operated and supported by advertising revenue.</p>
         <h2 style="font-size:1.3rem;margin-bottom:12px">What FueVolt Does</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Government-reported fuel prices:</strong> FueVolt retrieves petrol, diesel and LPG reports from official state sources, and separates the time government data was checked from the time a retailer last reported a price change.</p>

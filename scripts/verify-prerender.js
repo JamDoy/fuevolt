@@ -78,7 +78,7 @@ for (const article of articles) {
   if (!html.includes(`<h1`) || !stripHtml(html).includes(article.title)) {
     fail(`${article.slug}: guide H1/title text is missing`);
   }
-  if (!html.includes('By the FueVolt Team') || !html.includes('About FueVolt')) {
+  if (!html.includes('By FueVolt') || !html.includes('About FueVolt')) {
     fail(`${article.slug}: author attribution is missing`);
   }
   if (!html.includes('id="schema-article"') || !html.includes('"@type":"Article"')) {

@@ -81,7 +81,7 @@ export default function LiveFueVoltData({ slug, theme }) {
               <div key={stat.fuelType} className="rounded-lg px-3 py-2" style={{ background: theme.bg }}>
                 <p className="text-[11px] font-semibold" style={{ color: theme.textMuted }}>{stat.fuelType}</p>
                 <p className="text-sm font-bold" style={{ color: theme.accent }}>
-                  {(stat.average * 100).toFixed(1)}¢/L average
+                  {stat.average.toFixed(1)}¢/L average
                 </p>
                 <p className="text-[11px]" style={{ color: theme.textMuted }}>
                   {stat.stationCount} nearby station{stat.stationCount === 1 ? '' : 's'}

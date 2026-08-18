@@ -182,7 +182,7 @@ export default function ArticleDetailPage({ slug, onBack }) {
       </h1>
 
       <div className="text-xs mb-6 space-y-1" style={{ color: theme.textMuted }}>
-        <p>By the FueVolt Team{article.meta.readTime ? ` · ${article.meta.readTime}` : ''}</p>
+        <p>By FueVolt{article.meta.readTime ? ` · ${article.meta.readTime}` : ''}</p>
         {formatArticleDate(article.meta.dateModified) && (
           <p>Last updated: {formatArticleDate(article.meta.dateModified)}</p>
         )}
@@ -226,7 +226,7 @@ export default function ArticleDetailPage({ slug, onBack }) {
       <ArticleAuthorBio theme={theme} />
 
       <p className="text-[11px] leading-relaxed mt-4" style={{ color: theme.textMuted }}>
-        This guide was written and reviewed by the FueVolt team. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.
+        This guide reflects information available at the time of publishing. Fuel prices, vehicle specifications and regulations change — always verify current information with your state government or vehicle manufacturer.
       </p>
 
       <div className="mt-8 pt-4" style={{ borderTop: `1px solid ${theme.cardBorder}` }}>
