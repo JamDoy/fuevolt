@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-18T11:44:38.470Z",
+  "generatedAt": "2026-08-18T19:27:20.687Z",
   "fuel": {
     "melbourne": {
       "fuelType": "U91",
@@ -21,8 +21,8 @@
       "fuelType": "U91",
       "stationCount": 186,
       "minPrice": 1.827,
-      "maxPrice": 2.039,
-      "avgPrice": 1.915,
+      "maxPrice": 2.199,
+      "avgPrice": 2.073,
       "radiusKm": 15
     },
     "gold-coast": {
@@ -30,7 +30,7 @@
       "stationCount": 91,
       "minPrice": 1.889,
       "maxPrice": 2.099,
-      "avgPrice": 1.955,
+      "avgPrice": 1.956,
       "radiusKm": 15
     },
     "geelong": {
