@@ -77,16 +77,12 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
     }, EXIT_MS);
   };
 
-  const expand = () => {
-    setPhase('expanded');
-  };
-
   if (phase === 'compact') {
     return (
       <button
         ref={compactRef}
         type="button"
-        onClick={expand}
+        onClick={onDetail}
         className="compact-hero-card mx-auto w-[92%] sm:w-3/5 flex items-center justify-between gap-3 cursor-pointer"
         style={{
           maxWidth: '680px',
@@ -135,7 +131,7 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
             pointerEvents: 'none',
           }}
         >
-          Tap anywhere to close
+          Tap outside to close
         </p>
       )}
 
@@ -149,7 +145,8 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
           aria-modal="true"
           aria-label={`Cheapest fuel: ${cheapest.name}`}
           tabIndex={-1}
-          className={`hero-result-card relative w-[92%] sm:w-3/5 ${exiting ? 'flex items-center justify-between gap-3 px-5' : 'px-5 py-5 sm:px-8 sm:py-7'}`}
+          onClick={exiting ? undefined : onDetail}
+          className={`hero-result-card relative w-[92%] sm:w-3/5 ${exiting ? 'flex items-center justify-between gap-3 px-5' : 'px-5 py-5 sm:px-8 sm:py-7 cursor-pointer'}`}
           style={{
             pointerEvents: 'auto',
             maxWidth: '680px',
@@ -215,7 +212,10 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
                 </p>
                 <button
                   type="button"
-                  onClick={onDetail}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onDetail();
+                  }}
                   className="hero-view-details text-[13px] font-semibold cursor-pointer"
                   style={{ color: '#22C55E', background: 'none', border: 'none' }}
                 >
@@ -223,7 +223,10 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
                 </button>
                 <button
                   type="button"
-                  onClick={startExit}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    startExit();
+                  }}
                   className="hero-search-again text-xs font-medium cursor-pointer"
                   style={{ color: 'rgba(255,255,255,0.35)', background: 'none', border: 'none' }}
                 >
