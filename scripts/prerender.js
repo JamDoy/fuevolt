@@ -542,7 +542,14 @@ writePage('/fuel-prices', generatePage({
   content: `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location. FueVolt compares real-time fuel prices from official government sources across NSW, VIC, QLD, WA and TAS.</p>
         <h2 style="font-size:1.3rem;margin-bottom:12px">Fuel Prices by City</h2>
-        <ul style="padding-left:20px;line-height:2.2">${FUEL_CITIES.map(c => `<li><a href="/fuel-prices/${c.slug}">${c.name} Fuel Prices</a></li>`).join('')}</ul>`,
+        <ul style="padding-left:20px;line-height:2.2">${FUEL_CITIES.map(c => `<li><a href="/fuel-prices/${c.slug}">${c.name} Fuel Prices</a></li>`).join('')}</ul>
+        <h2 style="font-size:1.3rem;margin:24px 0 12px">How FueVolt Fuel Price Comparison Works</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">FueVolt compares real-time fuel prices from official Australian government sources. Prices are updated throughout the day as fuel stations report changes, giving you the most accurate data available.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Search by suburb, postcode, or use your current location to find the cheapest E10, Unleaded 91, Premium 95, Premium 98, Diesel, and LPG near you. Results can be sorted by price (lowest first) or by drive time, so you can find the best value considering both fuel cost and travel distance.</p>
+        <h3 style="font-size:1.05rem;margin:16px 0 8px">Understanding Fuel Price Cycles</h3>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Fuel prices in Australian capital cities follow predictable cycles, typically rising sharply over one to two days and then gradually falling over several weeks. The best time to fill up is at the bottom of the cycle when prices are lowest. FueVolt helps you spot these patterns by showing current prices from hundreds of stations in your area, making it easy to identify when prices are at their cheapest.</p>
+        <h3 style="font-size:1.05rem;margin:16px 0 8px">Coverage Across Australia</h3>
+        <p style="font-size:0.9rem;color:#4B5563">FueVolt covers fuel stations across New South Wales, Victoria, Queensland, Western Australia and Tasmania. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, Wollongong and Hobart, as well as regional and rural areas throughout these states.</p>`,
 }));
 sitemapUrls.push('/fuel-prices');
 
@@ -555,7 +562,15 @@ writePage('/ev-charging', generatePage({
   content: `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Find EV charging stations near you. Filter by connector type and charging speed. Coverage and record completeness vary by location.</p>
         <h2 style="font-size:1.3rem;margin-bottom:12px">EV Chargers by City</h2>
-        <ul style="padding-left:20px;line-height:2.2">${EV_CITIES.map(c => `<li><a href="/ev-charging/${c.slug}">${c.name} EV Chargers</a></li>`).join('')}</ul>`,
+        <ul style="padding-left:20px;line-height:2.2">${EV_CITIES.map(c => `<li><a href="/ev-charging/${c.slug}">${c.name} EV Chargers</a></li>`).join('')}</ul>
+        <h2 style="font-size:1.3rem;margin:24px 0 12px">About EV Charging in Australia</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Australia's electric vehicle charging network is growing rapidly, with thousands of public charging stations now available across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.</p>
+        <h3 style="font-size:1.05rem;margin:16px 0 8px">Connector Types Explained</h3>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Type 2 (Mennekes)</strong> is the standard AC charging connector used by most EVs in Australia. It supports charging speeds from 7kW to 22kW and is the most common plug type at public and home chargers. <strong>CCS2 (Combined Charging System)</strong> is the dominant DC fast charging standard in Australia, supporting speeds from 50kW to 350kW. Most new EVs sold in Australia use CCS2 for fast charging. <strong>CHAdeMO</strong> is an older DC fast charging standard used by some Japanese EVs like the Nissan Leaf and Mitsubishi Outlander PHEV. <strong>Tesla</strong> Superchargers use a proprietary connector but many newer Tesla vehicles also support CCS2.</p>
+        <h3 style="font-size:1.05rem;margin:16px 0 8px">Charging Speed Levels</h3>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Slow charging (up to 7kW)</strong> is typically used for overnight home charging and takes 8-12 hours for a full charge. <strong>Fast charging (7-50kW)</strong> is commonly found at shopping centres and workplaces, taking 1-4 hours. <strong>Ultra-rapid charging (50kW+)</strong> is available at highway rest stops and dedicated charging hubs — a 350kW charger can add 200km of range in just 10-15 minutes.</p>
+        <h3 style="font-size:1.05rem;margin:16px 0 8px">Charging Cost Estimates</h3>
+        <p style="font-size:0.9rem;color:#4B5563">Public DC fast charging in Australia typically costs between $0.40 and $0.60 per kWh. Home charging on a standard electricity tariff costs around $0.25-$0.35 per kWh, making it significantly cheaper. An average EV travelling 300km per week costs roughly $15-$20 in electricity compared to $50-$70 in petrol for an equivalent fuel vehicle. Use our <a href="/ev-vs-fuel">EV vs Fuel calculator</a> to get a personalised savings estimate based on your driving habits.</p>`,
 }));
 sitemapUrls.push('/ev-charging');
 
@@ -568,9 +583,13 @@ writePage('/ev-vs-fuel', generatePage({
   content: `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Compare the running costs of petrol/diesel vehicles against electric vehicles. Enter your weekly fuel spend or driving distance to see potential savings.</p>
         <h2 style="font-size:1.3rem;margin-bottom:12px">How It Works</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Basic Mode:</strong> Enter your weekly fuel spend and see an instant estimate of EV savings.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Basic Mode:</strong> Enter your weekly fuel spend and see an instant estimate of EV savings, based on typical Australian fuel and electricity prices.</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Advanced Mode:</strong> Enter your weekly driving distance, vehicle type (small car, sedan, SUV, ute), fuel type, electricity cost per kWh, and home vs public charging percentage for a more accurate estimate.</p>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">The calculator shows estimated weekly savings, annual savings, and CO2 reduction. Note: these are estimates based on average consumption figures and may vary based on your specific vehicle and driving conditions.</p>`,
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">The calculator shows estimated weekly savings, annual savings, and CO2 reduction. Note: these are estimates based on average consumption figures and may vary based on your specific vehicle and driving conditions.</p>
+        <h2 style="font-size:1.3rem;margin:24px 0 12px">Methodology &amp; Assumptions</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Basic mode estimates EV running costs at approximately 40% of equivalent fuel costs, based on average Australian fuel and electricity prices. Advanced mode uses Australian-average fuel consumption figures for each vehicle type, with diesel estimated at 85% of petrol consumption, and EV consumption figures based on comparable electric vehicles in each class (for example, a mid-size sedan is modelled on cars like the Tesla Model 3 or BYD Seal).</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">CO2 savings are calculated using the Australian Government figure of 2.31kg of CO2 emitted per litre of petrol burned. Default electricity price assumptions are $0.30/kWh for home charging (the Australian household average) and $0.45/kWh for public charging — both can be adjusted in Advanced mode to match your own rates.</p>
+        <p style="font-size:0.9rem;color:#4B5563">These figures are estimates only and provide a general guide — your actual savings will depend on your specific vehicle, driving habits, electricity tariff, and local fuel prices, which change frequently. For live fuel prices in your area, see <a href="/fuel-prices">FueVolt's fuel price comparison</a>.</p>`,
 }));
 sitemapUrls.push('/ev-vs-fuel');
 
@@ -588,7 +607,13 @@ writePage('/trip-planner', generatePage({
           <li><strong>EV Mode:</strong> Find charging stations with battery forecast and recommended charging stops</li>
           <li><strong>Battery Forecast:</strong> See estimated battery level at each waypoint based on your EV's range</li>
           <li><strong>Drive Time:</strong> Real-time drive time estimates including traffic conditions</li>
-        </ul>`,
+        </ul>
+        <h2 style="font-size:1.3rem;margin:24px 0 12px">How the Trip Planner Works</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Enter a starting point and destination anywhere in Australia, and FueVolt calculates a route between them using live traffic data, showing total distance and estimated drive time. Switch between Fuel mode and EV mode depending on what you're driving.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">In Fuel mode, FueVolt searches for petrol stations along your route and shows current prices from official government sources, so you can plan where to fill up for the best price rather than paying whatever the first servo you pass is charging.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">In EV mode, enter your vehicle's battery capacity, current charge level, and energy consumption rate. FueVolt estimates how much charge you'll use over the route and suggests charging stops based on your remaining range and nearby charger locations — helpful for longer trips where range anxiety is a real concern. The forecast is an estimate based on the figures you enter; it does not account for terrain, temperature, towing, or driving style, so it's worth leaving a margin of charge in hand.</p>
+        <h3 style="font-size:1.05rem;margin:16px 0 8px">Tips for Australian Road Trips</h3>
+        <p style="font-size:0.9rem;color:#4B5563">Regional and remote parts of Australia can have long gaps between fuel stations and EV chargers, so it's worth planning stops in advance rather than relying on finding one along the way. Fuel prices are often higher in regional and highway-side locations than in metro areas, so where practical, fill up before you leave a capital city. For EV drivers, ultra-rapid chargers are concentrated on major highways and near larger towns — see FueVolt's <a href="/ev-charging">EV charging station finder</a> to check coverage along your specific route before you set off.</p>`,
 }));
 sitemapUrls.push('/trip-planner');
 
@@ -599,7 +624,12 @@ writePage('/alerts', generatePage({
   description: 'Set alerts for fuel stations and EV chargers. Get notified when you are near a saved station.',
   h1: 'Alerts &amp; Notifications',
   content: `
-        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Set up proximity alerts for your favourite fuel stations and EV chargers. FueVolt can notify you when you are near a saved station.</p>`,
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Set up proximity alerts for your favourite fuel stations and EV chargers. FueVolt can notify you when you are near a saved station, so you don't have to keep checking the app manually while you're out driving.</p>
+        <h2 style="font-size:1.3rem;margin:24px 0 12px">How Alerts Work</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Save a fuel station or EV charger as a favourite by tapping the star icon on its card, then set a proximity radius. When you're within that distance of a saved station, FueVolt sends a notification — useful for reminding you to fill up at a specific cheap station on your regular route, rather than one you happen to pass.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">This is particularly useful if you've found a consistently cheap independent station that isn't right on your usual route — a proximity alert means you won't forget it's nearby.</p>
+        <h2 style="font-size:1.3rem;margin:24px 0 12px">Privacy</h2>
+        <p style="font-size:0.9rem;color:#4B5563">Favourites and alert settings are stored locally in your browser on your own device, not on FueVolt's servers. Location is only used to check proximity to your saved stations and is never stored or shared. See our <a href="/privacy">Privacy Policy</a> for full details.</p>`,
 }));
 sitemapUrls.push('/alerts');
 
