@@ -1,44 +1,44 @@
 {
-  "generatedAt": "2026-08-18T19:27:20.687Z",
+  "generatedAt": "2026-08-19T19:24:59.905Z",
   "fuel": {
     "melbourne": {
       "fuelType": "U91",
-      "stationCount": 288,
+      "stationCount": 290,
       "minPrice": 1.779,
       "maxPrice": 2.399,
-      "avgPrice": 1.972,
+      "avgPrice": 1.955,
       "radiusKm": 15
     },
     "brisbane": {
       "fuelType": "U91",
       "stationCount": 209,
       "minPrice": 1.855,
-      "maxPrice": 2.129,
-      "avgPrice": 1.987,
+      "maxPrice": 2.199,
+      "avgPrice": 1.988,
       "radiusKm": 15
     },
     "perth": {
       "fuelType": "U91",
       "stationCount": 186,
       "minPrice": 1.827,
-      "maxPrice": 2.199,
-      "avgPrice": 2.073,
+      "maxPrice": 2.159,
+      "avgPrice": 2.054,
       "radiusKm": 15
     },
     "gold-coast": {
       "fuelType": "U91",
       "stationCount": 91,
       "minPrice": 1.889,
-      "maxPrice": 2.099,
-      "avgPrice": 1.956,
+      "maxPrice": 2.199,
+      "avgPrice": 2.017,
       "radiusKm": 15
     },
     "geelong": {
       "fuelType": "U91",
       "stationCount": 58,
       "minPrice": 1.912,
-      "maxPrice": 2.119,
-      "avgPrice": 1.972,
+      "maxPrice": 2.799,
+      "avgPrice": 1.992,
       "radiusKm": 15
     },
     "townsville": {
@@ -46,7 +46,7 @@
       "stationCount": 54,
       "minPrice": 1.965,
       "maxPrice": 2.459,
-      "avgPrice": 2.044,
+      "avgPrice": 2.051,
       "radiusKm": 15
     },
     "cairns": {
@@ -54,7 +54,7 @@
       "stationCount": 40,
       "minPrice": 1.975,
       "maxPrice": 2.119,
-      "avgPrice": 2.022,
+      "avgPrice": 2.032,
       "radiusKm": 15
     },
     "toowoomba": {
@@ -62,15 +62,15 @@
       "stationCount": 47,
       "minPrice": 1.941,
       "maxPrice": 2.099,
-      "avgPrice": 1.999,
+      "avgPrice": 2.003,
       "radiusKm": 15
     },
     "ballarat": {
       "fuelType": "U91",
       "stationCount": 44,
-      "minPrice": 1.873,
+      "minPrice": 1.859,
       "maxPrice": 2.309,
-      "avgPrice": 1.973,
+      "avgPrice": 1.983,
       "radiusKm": 15
     },
     "bendigo": {
@@ -78,15 +78,15 @@
       "stationCount": 29,
       "minPrice": 1.923,
       "maxPrice": 2.099,
-      "avgPrice": 2.002,
+      "avgPrice": 2.008,
       "radiusKm": 15
     },
     "sunshine-coast": {
       "fuelType": "U91",
       "stationCount": 45,
-      "minPrice": 1.935,
+      "minPrice": 1.915,
       "maxPrice": 2.51,
-      "avgPrice": 2.028,
+      "avgPrice": 2.024,
       "radiusKm": 15
     }
   },
