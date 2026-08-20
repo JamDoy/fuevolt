@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-20T11:21:38.520Z",
+  "generatedAt": "2026-08-20T19:30:53.069Z",
   "fuel": {
     "sydney": {
       "fuelType": "U91",
       "stationCount": 31,
       "minPrice": 1.889,
       "maxPrice": 2.109,
-      "avgPrice": 1.995,
+      "avgPrice": 1.998,
       "radiusKm": 15
     },
     "melbourne": {
@@ -29,8 +29,8 @@
       "fuelType": "U91",
       "stationCount": 186,
       "minPrice": 1.827,
-      "maxPrice": 2.159,
-      "avgPrice": 2.054,
+      "maxPrice": 2.149,
+      "avgPrice": 2.037,
       "radiusKm": 15
     },
     "gold-coast": {
@@ -54,7 +54,7 @@
       "stationCount": 14,
       "minPrice": 1.895,
       "maxPrice": 2.039,
-      "avgPrice": 1.981,
+      "avgPrice": 1.987,
       "radiusKm": 15
     },
     "wollongong": {
@@ -102,7 +102,7 @@
       "stationCount": 48,
       "minPrice": 1.941,
       "maxPrice": 2.099,
-      "avgPrice": 2.009,
+      "avgPrice": 2.014,
       "radiusKm": 15
     },
     "ballarat": {
@@ -134,7 +134,7 @@
       "stationCount": 46,
       "minPrice": 1.915,
       "maxPrice": 2.51,
-      "avgPrice": 2.03,
+      "avgPrice": 2.031,
       "radiusKm": 15
     },
     "parramatta": {
@@ -142,7 +142,7 @@
       "stationCount": 44,
       "minPrice": 1.873,
       "maxPrice": 2.069,
-      "avgPrice": 1.977,
+      "avgPrice": 1.98,
       "radiusKm": 15
     }
   },
