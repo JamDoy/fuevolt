@@ -130,10 +130,12 @@ const NSW_API_SECRET = 'jrcoqUqm4WoxNMgW';
 
 async function getNSWToken() {
   const credentials = Buffer.from(`${NSW_API_KEY}:${NSW_API_SECRET}`).toString('base64');
+  // Confirmed: the token endpoint returns 200 with an empty body for POST —
+  // it requires GET, unlike the documented client_credentials flow this was
+  // originally built against.
   const response = await fetch(`${NSW_API_BASE}/oauth/client_credential/accesstoken?grant_type=client_credentials`, {
-    method: 'POST',
-    headers: { Authorization: `Basic ${credentials}`, 'Content-Length': '0' },
-    body: '',
+    method: 'GET',
+    headers: { Authorization: `Basic ${credentials}` },
   });
   if (!response.ok) return null;
   const text = await response.text();
