@@ -69,6 +69,7 @@ export default function PrivacyPolicyPage() {
           <li><strong>OpenStreetMap / Nominatim</strong> — Mapping and geocoding (subject to OSM's Privacy Policy)</li>
           <li><strong>Open Charge Map</strong> — EV station data (subject to OCM's terms)</li>
           <li><strong>TomTom</strong> — Routing, geocoding, traffic, and station search services (subject to TomTom's Privacy Policy)</li>
+          <li><strong>DiscoverCars</strong> — Affiliate car rental links on the Trip Planner page; if you click through and book, DiscoverCars processes that booking directly and FueVolt may earn a commission (subject to DiscoverCars' Privacy Policy)</li>
         </ul>
       </Section>
 

@@ -72,7 +72,11 @@ export default function TermsPage() {
         <p>FueVolt may display advertisements served by Google. Ad content is determined by Google and is not controlled by FueVolt. We are not responsible for the content of third-party advertisements.</p>
       </Section>
 
-      <Section title="7. Limitation of Liability" theme={theme}>
+      <Section title="7. Affiliate Links" theme={theme}>
+        <p>The Trip Planner page includes an affiliate link to DiscoverCars, a car rental comparison service. If you book through this link, FueVolt may earn a commission at no extra cost to you. FueVolt is not a party to any booking made through DiscoverCars and is not responsible for the accuracy of DiscoverCars' pricing, availability, or service.</p>
+      </Section>
+
+      <Section title="8. Limitation of Liability" theme={theme}>
         <p>To the maximum extent permitted by Australian law:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>FueVolt is provided "as is" without warranties of any kind</li>
@@ -82,15 +86,15 @@ export default function TermsPage() {
         </ul>
       </Section>
 
-      <Section title="8. Modifications" theme={theme}>
+      <Section title="9. Modifications" theme={theme}>
         <p>We reserve the right to modify these Terms at any time. Changes take effect immediately upon posting. Your continued use of the Service after changes constitutes acceptance of the modified Terms.</p>
       </Section>
 
-      <Section title="9. Governing Law" theme={theme}>
+      <Section title="10. Governing Law" theme={theme}>
         <p>These Terms are governed by the laws of Australia. Any disputes shall be subject to the exclusive jurisdiction of the courts of Australia.</p>
       </Section>
 
-      <Section title="10. Contact" theme={theme}>
+      <Section title="11. Contact" theme={theme}>
         <p>For questions about these Terms, please use our <a href="/contact" className="underline" style={{ color: theme.accent }}>Contact page</a>.</p>
       </Section>
     </div>
