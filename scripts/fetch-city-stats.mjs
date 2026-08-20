@@ -123,10 +123,10 @@ async function fetchQLD(lat, lng) {
   return prices;
 }
 
-// ── NSW Fuel API (also covers TAS) ──────────────────────────────────────
+// ── NSW Fuel API (also covers TAS) — Fuel Check Portal Api product ─────
 const NSW_API_BASE = 'https://api.onegov.nsw.gov.au';
-const NSW_API_KEY = 'dwAE4MpeaMhNhZFsnzZesHKiQmG3e87z';
-const NSW_API_SECRET = 'jrcoqUqm4WoxNMgW';
+const NSW_API_KEY = 'X7DpwSdP5B4ZImMCielDuQnfAV9GqsiV';
+const NSW_API_SECRET = 'ZiqBdeXrUjMkRuiR';
 
 async function getNSWToken() {
   const credentials = Buffer.from(`${NSW_API_KEY}:${NSW_API_SECRET}`).toString('base64');
@@ -152,6 +152,8 @@ async function fetchNSW(lat, lng) {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
       apikey: NSW_API_KEY,
+      transactionID: crypto.randomUUID(),
+      requestTimeStamp: new Date().toISOString(),
     },
     body: JSON.stringify({
       fueltype: 'U91',

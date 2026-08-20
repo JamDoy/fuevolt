@@ -232,10 +232,10 @@ async function fetchQLDFuelPrices(latitude, longitude, fuelType, radius) {
   }
 }
 
-// NSW Fuel API (also covers TAS) — registered Motor API (2,500 calls/month)
+// NSW Fuel API (also covers TAS) — Fuel Check Portal Api product (2,500 calls/month)
 const NSW_API_BASE = 'https://api.onegov.nsw.gov.au';
-const NSW_API_KEY = 'dwAE4MpeaMhNhZFsnzZesHKiQmG3e87z';
-const NSW_API_SECRET = 'jrcoqUqm4WoxNMgW';
+const NSW_API_KEY = 'X7DpwSdP5B4ZImMCielDuQnfAV9GqsiV';
+const NSW_API_SECRET = 'ZiqBdeXrUjMkRuiR';
 
 async function getNSWToken() {
   try {
@@ -271,6 +271,10 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'apikey': NSW_API_KEY,
+        // Required by this endpoint — confirmed via "Missing header values:
+        // transactionID, requestTimeStamp" until both are present.
+        'transactionID': crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        'requestTimeStamp': new Date().toISOString(),
       },
       body: JSON.stringify({
         fueltype: nswCode,
@@ -298,7 +302,10 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius) {
         id: `nsw-${p.stationcode}-${i}`,
         name: station.name || (station.brand ? `${station.brand} Station` : 'Fuel Station'),
         brand: station.brand || 'Independent',
-        address: [station.address, station.suburb, `${station.state || 'NSW'} ${station.postcode || ''}`].filter(Boolean).join(', ').trim(),
+        // station.address already comes fully formatted from this API
+        // (street, suburb, state, postcode) — only synthesise one if it's
+        // ever missing, rather than appending a redundant state suffix.
+        address: station.address || [station.suburb, station.state || 'NSW', station.postcode].filter(Boolean).join(' '),
         latitude: station.location?.latitude || latitude,
         longitude: station.location?.longitude || longitude,
         price: p.price / 100,
