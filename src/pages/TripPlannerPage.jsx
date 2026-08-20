@@ -421,6 +421,57 @@ export default function TripPlannerPage() {
         />
       )}
 
+      {/* Car rental — DiscoverCars affiliate */}
+      {(route || evRoute) && !loading && (
+        <div
+          className="rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"
+          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
+        >
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wide mb-1" style={{ color: theme.textMuted }}>
+              Sponsored
+            </p>
+            <p className="text-sm font-semibold" style={{ color: theme.text }}>Need a rental car for this trip?</p>
+            <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>
+              Compare rental car prices across major providers with DiscoverCars. FueVolt may earn a commission if you book through this link, at no extra cost to you.
+            </p>
+          </div>
+          <a
+            href="https://www.discovercars.com/?a_aid=FueVolt"
+            target="_blank"
+            rel="sponsored noopener noreferrer"
+            className="px-4 py-2 rounded-lg font-semibold text-sm flex-shrink-0"
+            style={{ background: theme.gold, color: '#0D2B5E', textDecoration: 'none' }}
+          >
+            Compare Rentals
+          </a>
+          <a
+            href="https://www.discovercars.com/?a_aid=FueVolt&a_bid=f29909e9"
+            target="_blank"
+            rel="sponsored noopener noreferrer"
+            className="w-full"
+            style={{ maxWidth: '728px' }}
+          >
+            <img
+              src="https://discover-car-hire.postaffiliatepro.com/accounts/default1/bunyh71e/f29909e9.jpg"
+              alt="DiscoverCars.com"
+              title="DiscoverCars.com"
+              width="728"
+              height="90"
+              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '8px' }}
+            />
+          </a>
+          <img
+            src="https://discover-car-hire.postaffiliatepro.com/scripts/iunyh71e?a_aid=FueVolt&a_bid=f29909e9"
+            width="1"
+            height="1"
+            alt=""
+            style={{ border: 0, position: 'absolute', width: '1px', height: '1px' }}
+            aria-hidden="true"
+          />
+        </div>
+      )}
+
       {/* Fuel stops along route */}
       {fuelStops.length > 0 && mode === 'car' && !loading && (
         <div>
@@ -459,33 +510,6 @@ export default function TripPlannerPage() {
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Car rental — DiscoverCars affiliate */}
-      {(route || evRoute) && !loading && (
-        <div
-          className="rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"
-          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
-        >
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wide mb-1" style={{ color: theme.textMuted }}>
-              Sponsored
-            </p>
-            <p className="text-sm font-semibold" style={{ color: theme.text }}>Need a rental car for this trip?</p>
-            <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>
-              Compare rental car prices across major providers with DiscoverCars. FueVolt may earn a commission if you book through this link, at no extra cost to you.
-            </p>
-          </div>
-          <a
-            href="https://www.discovercars.com/?a_aid=FueVolt"
-            target="_blank"
-            rel="sponsored noopener noreferrer"
-            className="px-4 py-2 rounded-lg font-semibold text-sm flex-shrink-0"
-            style={{ background: theme.gold, color: '#0D2B5E', textDecoration: 'none' }}
-          >
-            Compare Rentals
-          </a>
         </div>
       )}
 
