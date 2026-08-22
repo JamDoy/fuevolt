@@ -16,7 +16,6 @@ import { FAQ_FLAT } from '../src/data/siteFaq.js';
 const DIST = path.resolve('dist');
 const CONTENT_DIR = path.resolve('public/content/articles');
 const BASE_URL = 'https://www.fuevolt.com';
-const ADSENSE_PUB_ID = 'ca-pub-7549230738737699';
 const BUILD_DATE_LABEL = new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Sydney' }).format(new Date());
 
 // Real fuel-price / EV-charger snapshots, refreshed daily by
@@ -146,27 +145,6 @@ const EV_CITIES = [
 
 // ── FAQ data (19 entries) ───────────────────────────────────────────────
 const FAQ_ENTRIES = FAQ_FLAT;
-
-// ── AdSense in-article ad unit ──────────────────────────────────────────
-const AD_UNIT_HTML = `
-<div style="margin:24px 0;text-align:center;min-height:90px">
-<ins class="adsbygoogle" style="display:block;text-align:center" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="${ADSENSE_PUB_ID}" data-ad-slot="auto"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>`;
-
-function insertAdsInArticle(html) {
-  // Insert an ad after every 2nd <h2> section
-  const sections = html.split(/<h2/i);
-  if (sections.length <= 2) return html;
-  const result = [sections[0]];
-  for (let i = 1; i < sections.length; i++) {
-    result.push('<h2' + sections[i]);
-    if (i % 2 === 0 && i < sections.length - 1) {
-      result.push(AD_UNIT_HTML);
-    }
-  }
-  return result.join('');
-}
 
 // ── Helper: generate page HTML ──────────────────────────────────────────
 function formatArticleDate(value) {
@@ -307,8 +285,7 @@ for (const article of articles) {
     console.warn(`  ⚠ No markdown found for ${article.slug}`);
     continue;
   }
-  let articleHtml = markdownToHtml(articleFile.markdown);
-  articleHtml = insertAdsInArticle(articleHtml);
+  const articleHtml = markdownToHtml(articleFile.markdown);
 
   const urlPath = `/guides/${article.slug}`;
   const updated = formatArticleDate(articleFile.meta.dateModified);

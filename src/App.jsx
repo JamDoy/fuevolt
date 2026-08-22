@@ -19,6 +19,7 @@ import ContactPage from './pages/ContactPage';
 import FuelPreferencePrompt from './components/FuelPreferencePrompt';
 import FuelReminderSettings from './components/FuelReminderSettings';
 import MobileBottomNav from './components/MobileBottomNav';
+import SideRailAds from './components/SideRailAds';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import { updatePageMeta, buildCityMeta, POPULAR_SUBURBS } from './utils/seo';
 import { getFuelPreference, saveFuelPreference } from './utils/sessionPreferences';
@@ -214,6 +215,7 @@ function AppContent() {
   return (
     <div className="min-h-screen pb-20 md:pb-0">
       <a href="#main-content" className="skip-link">Skip to main content</a>
+      <SideRailAds />
       <Header
         showBack={view !== 'landing'}
         onBack={handleBack}

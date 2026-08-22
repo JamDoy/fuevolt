@@ -7,7 +7,6 @@ import EVStationCard from '../components/EVStationCard';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import EVCostEstimator from '../components/EVCostEstimator';
-import AdUnit from '../components/AdUnit';
 import ExpandHandle from '../components/ExpandHandle';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
@@ -524,8 +523,6 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
           </p>
         </div>
       )}
-
-      <AdUnit />
     </div>
   );
 }

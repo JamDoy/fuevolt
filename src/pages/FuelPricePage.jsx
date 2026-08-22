@@ -6,7 +6,6 @@ import FuelStationCard from '../components/FuelStationCard';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import SavingsCalculator from '../components/SavingsCalculator';
-import AdUnit from '../components/AdUnit';
 import FuelReminderCard from '../components/FuelReminderCard';
 import HeroResultCard, { HeroResultCardSkeleton } from '../components/HeroResultCard';
 import ExpandHandle from '../components/ExpandHandle';
@@ -610,8 +609,6 @@ export default function FuelPricePage({
           </p>
         </div>
       )}
-
-      <AdUnit />
 
       <style>{`
         @keyframes heroCardEntry {

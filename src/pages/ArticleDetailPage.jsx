@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import ArticleAuthorBio from '../components/ArticleAuthorBio';
 import LiveFueVoltData from '../components/LiveFueVoltData';
-import AdUnit from '../components/AdUnit';
 import { injectArticleSchema, removeArticleSchema, updatePageMeta } from '../utils/seo';
 
 function parseFrontmatter(text) {
@@ -192,14 +191,9 @@ export default function ArticleDetailPage({ slug, onBack }) {
 
       <article className="space-y-4">
         {(() => {
-          let h2Count = 0;
           const nodes = [];
           blocks.forEach((block) => {
             if (block.type === 'h2') {
-              h2Count++;
-              if (h2Count > 1 && h2Count % 2 === 1) {
-                nodes.push(<AdUnit key={`ad-${block.key}`} />);
-              }
               nodes.push(
                 <h2 key={block.key} className="text-lg font-semibold mt-6 mb-2" style={{ color: theme.heading }}>
                   {block.text}
