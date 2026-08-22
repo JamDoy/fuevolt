@@ -7,6 +7,10 @@ RewriteRule ^ https://www.fuevolt.com%{REQUEST_URI} [L,R=301]
   RewriteEngine On
   RewriteBase /
 
+  # Ezoic-managed ads.txt — takes priority over any local ads.txt file so it
+  # must come before the "serve existing files directly" rule below.
+  RewriteRule ^ads\.txt$ https://srv.adstxtmanager.com/19390/fuevolt.com [R=301,L]
+
   # Serve existing files directly (CSS, JS, images, etc.)
   RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
