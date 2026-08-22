@@ -10,7 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { marked } from 'marked';
-import { FUEL_CITY_CONTENT, EV_CITY_CONTENT } from '../src/data/cityContent.js';
+import { FUEL_CITY_CONTENT, EV_CITY_CONTENT, INDEXED_CITY_SLUGS } from '../src/data/cityContent.js';
 import { FAQ_FLAT } from '../src/data/siteFaq.js';
 
 const DIST = path.resolve('dist');
@@ -198,11 +198,16 @@ function articleSchema(article, meta, urlPath) {
   };
 }
 
-function generatePage({ urlPath, title, description, h1, content, ogType = 'website', headHtml = '' }) {
+function generatePage({ urlPath, title, description, h1, content, ogType = 'website', headHtml = '', noindex = false }) {
   let html = template;
 
   // Replace <title>
   html = html.replace(/<title>[^<]*<\/title>/, `<title>${escHtml(title)}</title>`);
+
+  html = html.replace(
+    /<meta name="robots"[^>]*>/,
+    `<meta name="robots" content="${noindex ? 'noindex, follow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'}" />`
+  );
 
   // Replace or add canonical
   if (html.includes('<link rel="canonical"')) {
@@ -353,6 +358,7 @@ console.log('Pre-rendering guides index...');
 // ── Generate fuel city pages ────────────────────────────────────────────
 console.log('Pre-rendering fuel city pages...');
 for (const city of FUEL_CITIES) {
+  const noindex = !INDEXED_CITY_SLUGS.includes(city.slug);
   const cityData = FUEL_CITY_CONTENT[city.slug] || {};
   const intro = cityData.intro || `Compare real-time fuel prices in ${city.name} and surrounding areas.`;
   const suburbs = cityData.suburbs || '';
@@ -381,14 +387,16 @@ for (const city of FUEL_CITIES) {
     h1: `Fuel Prices in ${escHtml(city.name)}`,
     content,
     headHtml: schemaScript('breadcrumb', breadcrumbs),
+    noindex,
   });
   writePage(urlPath, html);
-  sitemapUrls.push(urlPath);
+  if (!noindex) sitemapUrls.push(urlPath);
 }
 
 // ── Generate EV city pages ──────────────────────────────────────────────
 console.log('Pre-rendering EV charging city pages...');
 for (const city of EV_CITIES) {
+  const noindex = !INDEXED_CITY_SLUGS.includes(city.slug);
   const cityData = EV_CITY_CONTENT[city.slug] || {};
   const intro = cityData.intro || `Find EV charging stations in ${city.name} and surrounding areas.`;
   const coverage = cityData.coverage || '';
@@ -415,9 +423,10 @@ for (const city of EV_CITIES) {
     h1: `EV Charging Stations in ${escHtml(city.name)}`,
     content,
     headHtml: schemaScript('breadcrumb', breadcrumbs),
+    noindex,
   });
   writePage(urlPath, html);
-  sitemapUrls.push(urlPath);
+  if (!noindex) sitemapUrls.push(urlPath);
 }
 
 // ── Generate static pages ───────────────────────────────────────────────

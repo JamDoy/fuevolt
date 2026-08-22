@@ -186,3 +186,10 @@ export const EV_CITY_CONTENT = {
     tips: 'If you\'re driving between Sydney and Newcastle, fast chargers along the Pacific Highway corridor make the trip straightforward — check availability on FueVolt before you leave. For a Hunter Valley day trip, confirm charger locations near your destination winery in advance, as coverage is less dense than in Newcastle itself.',
   },
 };
+
+// The five mainland state capitals are the highest-population cities in both the
+// fuel and EV-charging sets, so they stay indexed. The rest of the templated city
+// pages (built from the same intro/suburbs/trends/tips structure above) stay live
+// and fully functional but are marked noindex — keeps them useful for direct
+// navigation without tripping ad networks' near-duplicate-content limits.
+export const INDEXED_CITY_SLUGS = ['sydney', 'melbourne', 'brisbane', 'perth', 'adelaide'];

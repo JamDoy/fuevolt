@@ -1,3 +1,5 @@
+import { INDEXED_CITY_SLUGS } from '../data/cityContent';
+
 const BASE_URL = 'https://www.fuevolt.com';
 
 const PAGE_META = {
@@ -70,11 +72,13 @@ const PAGE_META = {
 
 export function buildCityMeta(kind, suburb) {
   if (!suburb) return undefined;
+  const noindex = !INDEXED_CITY_SLUGS.includes(suburb.slug);
   if (kind === 'fuel') {
     return {
       title: `Fuel Prices in ${suburb.name} — Cheapest Petrol Today | FueVolt`,
       description: `Compare petrol, diesel and LPG prices near ${suburb.name}. Live data from government APIs. Find the cheapest fuel station today.`,
       url: `${BASE_URL}/fuel-prices/${suburb.slug}`,
+      noindex,
     };
   }
   if (kind === 'ev') {
@@ -82,6 +86,7 @@ export function buildCityMeta(kind, suburb) {
       title: `EV Charging Stations in ${suburb.name} — Find Chargers | FueVolt`,
       description: `Find EV charging stations near ${suburb.name}. Filter by connector type and charging speed.`,
       url: `${BASE_URL}/ev-charging/${suburb.slug}`,
+      noindex,
     };
   }
   return undefined;
@@ -105,6 +110,9 @@ export function updatePageMeta(view, extra) {
   setMeta('twitter:card', 'summary_large_image', 'name');
   setMeta('twitter:title', title, 'name');
   setMeta('twitter:description', description, 'name');
+  setMeta('robots', extra?.noindex
+    ? 'noindex, follow'
+    : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
 
   let canonical = document.querySelector('link[rel="canonical"]');
   if (!canonical) {
