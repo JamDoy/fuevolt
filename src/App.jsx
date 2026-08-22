@@ -85,6 +85,21 @@ function AppContent() {
     }
   }, [showReminderSettings]);
 
+  // FueVolt navigates client-side (pushState, no full reload) — Ezoic's ad
+  // placeholders only auto-refresh on a real page load, so each subsequent
+  // route change needs an explicit showAds() call. The first render is
+  // skipped since EzoicAd's own mount effect already requests each slot.
+  const isFirstRouteRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRouteRender.current) {
+      isFirstRouteRender.current = false;
+      return;
+    }
+    window.ezstandalone = window.ezstandalone || {};
+    window.ezstandalone.cmd = window.ezstandalone.cmd || [];
+    window.ezstandalone.cmd.push(() => window.ezstandalone.showAds());
+  }, [view, initialSuburb, articleSlug]);
+
   const navigate = useCallback((newView, path, routeState = {}, extra) => {
     setView(newView);
     setRoute(path || '/', { fuevoltView: newView, ...routeState });
