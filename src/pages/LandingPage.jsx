@@ -49,18 +49,15 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
     <div className="min-h-[calc(100vh-80px)] flex flex-col items-center px-4 pb-12">
       <section className="w-full max-w-4xl min-h-[calc(100svh-8rem)] md:min-h-0 flex flex-col justify-center md:pt-12 md:pb-8 animate-fade-in">
         <div className="text-center mb-5 md:mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <FueVoltIcon size={28} />
-            <span className="text-xl font-bold tracking-tight logo-charge" style={{ color: theme.text }}>
+          <div className="flex items-center justify-center gap-2.5 mb-3">
+            <FueVoltIcon size={40} />
+            <span className="text-3xl sm:text-4xl font-bold tracking-tight logo-charge" style={{ color: theme.text }}>
               Fue<span className="logo-charge-volt" style={{ background: 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #B45309 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Volt</span>
             </span>
           </div>
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight mb-3" style={{ color: theme.text }}>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight mb-3" style={{ color: theme.text }}>
             finds the cheapest fuel & nearest charge
           </h1>
-          <p className="hidden sm:block text-sm mt-3 max-w-md mx-auto" style={{ color: theme.textMuted }}>
-            Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location
-          </p>
         </div>
         <SearchBar
           onSearch={onSearch}
@@ -287,7 +284,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
         onClick={() => onSelect('trip')}
         onMouseEnter={() => setHovered('trip')}
         onMouseLeave={() => setHovered(null)}
-        className="w-full max-w-4xl rounded-2xl p-6 cursor-pointer animate-slide-up"
+        className="w-full max-w-4xl mt-6 rounded-2xl p-6 cursor-pointer animate-slide-up"
         style={{
           background: theme.cardBg,
           border: hovered === 'trip'
