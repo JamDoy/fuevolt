@@ -262,7 +262,7 @@ export default function FuelPricePage({
       {/* Hero */}
       <div className="text-center mb-2">
         <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
-          &#x26FD; {initialSuburb ? `Fuel Prices in ${initialSuburb.name}` : 'Compare Fuel Prices'}
+          {initialSuburb ? `Fuel Prices in ${initialSuburb.name}` : 'Compare Fuel Prices'}
         </h1>
         <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Find the cheapest fuel near you across Australia

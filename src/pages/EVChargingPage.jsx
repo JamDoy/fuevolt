@@ -231,7 +231,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       {/* Hero Section — Green EV Identity */}
       <div className="text-center mb-2">
         <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.green }}>
-          &#x26A1; {initialSuburb ? `EV Charging Stations in ${initialSuburb.name}` : 'EV Charging Stations'}
+          {initialSuburb ? `EV Charging Stations in ${initialSuburb.name}` : 'EV Charging Stations'}
         </h1>
         <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
           Search thousands of EV charging points across Australia
@@ -245,7 +245,6 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
         loading={loading}
         placeholder="Search suburb, city or postcode..."
         inputId="ev-location-search"
-        accentColor={theme.green}
       />
 
       {/* Screen-reader announcement of search state */}
