@@ -49,10 +49,10 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
     <div className="min-h-[calc(100vh-80px)] flex flex-col items-center px-4 pb-12">
       <section className="w-full max-w-4xl min-h-[calc(100svh-8rem)] md:min-h-0 flex flex-col justify-center md:pt-12 md:pb-8 animate-fade-in">
         <div className="text-center mb-5 md:mb-8">
-          <div className="flex items-center justify-center gap-1.5 mb-1">
-            <FueVoltIcon size={18} />
-            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: theme.textMuted }}>
-              FueVolt
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <FueVoltIcon size={28} />
+            <span className="text-xl font-bold tracking-tight" style={{ color: theme.text }}>
+              Fue<span style={{ background: 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #B45309 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Volt</span>
             </span>
           </div>
           <p className="text-xs font-medium mb-2" style={{ color: theme.textMuted }}>

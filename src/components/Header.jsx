@@ -55,9 +55,8 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
         </div>
 
         {/* Center: Desktop Tabs */}
-        {showBack && (
-          <nav className="hidden md:flex items-center gap-2">
-            {TABS.map((tab) => (
+        <nav className="hidden md:flex items-center gap-2">
+          {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => onViewChange(tab.id)}
@@ -74,11 +73,10 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                 }}
               >
                 <span className="mr-1.5">{tab.icon}</span>
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        )}
+              {tab.label}
+            </button>
+          ))}
+        </nav>
 
         {/* Right: Theme toggle + Mobile menu */}
         <div className="flex items-center gap-2">
@@ -114,26 +112,24 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
           </button>
 
           {/* Mobile menu button */}
-          {showBack && (
-            <button
-              className="md:hidden text-white p-2 cursor-pointer"
-              style={{ background: 'none', border: 'none' }}
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
-                {menuOpen ? (
-                  <path d="M6 6l12 12M6 18L18 6" />
-                ) : (
-                  <path d="M3 6h18M3 12h18M3 18h18" />
-                )}
-              </svg>
-            </button>
-          )}
+          <button
+            className="md:hidden text-white p-2 cursor-pointer"
+            style={{ background: 'none', border: 'none' }}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+              {menuOpen ? (
+                <path d="M6 6l12 12M6 18L18 6" />
+              ) : (
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              )}
+            </svg>
+          </button>
         </div>
       </div>
 
       {/* Mobile dropdown */}
-      {menuOpen && showBack && (
+      {menuOpen && (
         <div className="md:hidden mt-3 flex flex-col gap-2">
           {TABS.map((tab) => (
             <button
