@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-08-22T19:21:40.942Z",
+  "generatedAt": "2026-08-23T19:21:33.092Z",
   "fuel": {
     "sydney": {
       "fuelType": "U91",
       "stationCount": 31,
       "minPrice": 1.899,
-      "maxPrice": 2.109,
-      "avgPrice": 2.023,
+      "maxPrice": 2.149,
+      "avgPrice": 2.033,
       "radiusKm": 15
     },
     "melbourne": {
       "fuelType": "U91",
-      "stationCount": 289,
-      "minPrice": 1.812,
+      "stationCount": 290,
+      "minPrice": 1.825,
       "maxPrice": 2.399,
-      "avgPrice": 1.994,
+      "avgPrice": 2.011,
       "radiusKm": 15
     },
     "brisbane": {
@@ -22,7 +22,7 @@
       "stationCount": 210,
       "minPrice": 1.855,
       "maxPrice": 2.149,
-      "avgPrice": 2.008,
+      "avgPrice": 2.017,
       "radiusKm": 15
     },
     "perth": {
@@ -30,7 +30,7 @@
       "stationCount": 186,
       "minPrice": 1.847,
       "maxPrice": 2.119,
-      "avgPrice": 2.017,
+      "avgPrice": 2.003,
       "radiusKm": 15
     },
     "gold-coast": {
@@ -38,23 +38,23 @@
       "stationCount": 91,
       "minPrice": 1.905,
       "maxPrice": 2.099,
-      "avgPrice": 1.987,
+      "avgPrice": 1.994,
       "radiusKm": 15
     },
     "canberra": {
       "fuelType": "U91",
       "stationCount": 7,
-      "minPrice": 2.079,
-      "maxPrice": 2.119,
-      "avgPrice": 2.108,
+      "minPrice": 2.089,
+      "maxPrice": 2.129,
+      "avgPrice": 2.118,
       "radiusKm": 15
     },
     "newcastle": {
       "fuelType": "U91",
       "stationCount": 14,
       "minPrice": 1.879,
-      "maxPrice": 2.089,
-      "avgPrice": 2.008,
+      "maxPrice": 2.099,
+      "avgPrice": 2.02,
       "radiusKm": 15
     },
     "wollongong": {
@@ -62,23 +62,23 @@
       "stationCount": 19,
       "minPrice": 1.945,
       "maxPrice": 2.099,
-      "avgPrice": 2.011,
+      "avgPrice": 2.016,
       "radiusKm": 15
     },
     "hobart": {
       "fuelType": "U91",
       "stationCount": 20,
-      "minPrice": 1.937,
+      "minPrice": 1.938,
       "maxPrice": 2.209,
-      "avgPrice": 2.046,
+      "avgPrice": 2.047,
       "radiusKm": 15
     },
     "geelong": {
       "fuelType": "U91",
       "stationCount": 58,
-      "minPrice": 1.912,
-      "maxPrice": 2.119,
-      "avgPrice": 1.991,
+      "minPrice": 1.952,
+      "maxPrice": 2.799,
+      "avgPrice": 2.014,
       "radiusKm": 15
     },
     "townsville": {
@@ -86,15 +86,15 @@
       "stationCount": 54,
       "minPrice": 1.985,
       "maxPrice": 2.459,
-      "avgPrice": 2.062,
+      "avgPrice": 2.066,
       "radiusKm": 15
     },
     "cairns": {
       "fuelType": "U91",
       "stationCount": 40,
       "minPrice": 1.975,
-      "maxPrice": 2.139,
-      "avgPrice": 2.048,
+      "maxPrice": 2.159,
+      "avgPrice": 2.053,
       "radiusKm": 15
     },
     "toowoomba": {
@@ -102,7 +102,7 @@
       "stationCount": 48,
       "minPrice": 1.995,
       "maxPrice": 2.129,
-      "avgPrice": 2.037,
+      "avgPrice": 2.042,
       "radiusKm": 15
     },
     "ballarat": {
@@ -110,7 +110,7 @@
       "stationCount": 44,
       "minPrice": 1.873,
       "maxPrice": 2.309,
-      "avgPrice": 2.002,
+      "avgPrice": 2.004,
       "radiusKm": 15
     },
     "bendigo": {
@@ -118,7 +118,7 @@
       "stationCount": 29,
       "minPrice": 1.923,
       "maxPrice": 2.099,
-      "avgPrice": 2.014,
+      "avgPrice": 2.016,
       "radiusKm": 15
     },
     "launceston": {
@@ -126,7 +126,7 @@
       "stationCount": 19,
       "minPrice": 2.039,
       "maxPrice": 2.159,
-      "avgPrice": 2.084,
+      "avgPrice": 2.087,
       "radiusKm": 15
     },
     "sunshine-coast": {
@@ -134,15 +134,15 @@
       "stationCount": 45,
       "minPrice": 1.949,
       "maxPrice": 2.51,
-      "avgPrice": 2.044,
+      "avgPrice": 2.05,
       "radiusKm": 15
     },
     "parramatta": {
       "fuelType": "U91",
       "stationCount": 44,
       "minPrice": 1.893,
-      "maxPrice": 2.099,
-      "avgPrice": 2.003,
+      "maxPrice": 2.109,
+      "avgPrice": 2.008,
       "radiusKm": 15
     }
   },
