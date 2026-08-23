@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import LatestNews from '../components/LatestNews';
 import SearchBar from '../components/SearchBar';
+import { FueVoltIcon } from '../components/FueVoltLogo';
 
 const FEATURED_ARTICLES = [
   { slug: 'fuel-types-explained', title: 'Fuel Types Explained: E10, U91, U95, U98, Diesel', category: 'Fuel Guide', readTime: '6 min' },
@@ -47,17 +48,26 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
   return (
     <div className="min-h-[calc(100vh-80px)] flex flex-col items-center px-4 pb-12">
       <section className="w-full max-w-4xl min-h-[calc(100svh-8rem)] md:min-h-0 flex flex-col justify-center md:pt-12 md:pb-8 animate-fade-in">
-        <div className="hidden md:block text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-3">
+        <div className="text-center mb-5 md:mb-8">
+          <div className="flex items-center justify-center gap-1.5 mb-1">
+            <FueVoltIcon size={18} />
+            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: theme.textMuted }}>
+              FueVolt
+            </span>
+          </div>
+          <p className="text-xs font-medium mb-2" style={{ color: theme.textMuted }}>
+            Fuel smarter. Charge smarter.
+          </p>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight mb-3">
             <span style={{ color: theme.text }}>Find the </span>
             <span style={{ color: theme.gold }}>cheapest fuel</span>
             <span style={{ color: theme.text }}> & </span>
             <span style={{ color: theme.green }}>charge</span>
           </h1>
-          <p className="text-base sm:text-lg max-w-lg mx-auto" style={{ color: theme.textSecondary }}>
+          <p className="text-sm sm:text-base md:text-lg max-w-lg mx-auto" style={{ color: theme.textSecondary }}>
             Compare real-time fuel prices and locate EV charging stations across Australia
           </p>
-          <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: theme.textMuted }}>
+          <p className="hidden sm:block text-sm mt-3 max-w-md mx-auto" style={{ color: theme.textMuted }}>
             Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location
           </p>
         </div>
