@@ -3,12 +3,12 @@ import { useTheme } from '../contexts/ThemeContext';
 import { FueVoltIcon } from './FueVoltLogo';
 
 const TABS = [
-  { id: 'fuel', label: 'Fuel Prices', icon: '\u26FD' },
-  { id: 'ev', label: 'EV Charging', icon: '\u26A1' },
-  { id: 'trip', label: 'Trip Planner', icon: '\uD83D\uDDFA' },
-  { id: 'calculator', label: 'EV v Fuel', icon: '\uD83D\uDCA1' },
-  { id: 'articles', label: 'Guides', icon: '\uD83D\uDCDA' },
-  { id: 'notifications', label: 'Alerts', icon: '\uD83D\uDD14' },
+  { id: 'fuel', label: 'Fuel Prices' },
+  { id: 'ev', label: 'EV Charging' },
+  { id: 'trip', label: 'Trip Planner' },
+  { id: 'calculator', label: 'EV v Fuel' },
+  { id: 'articles', label: 'Guides' },
+  { id: 'notifications', label: 'Alerts' },
 ];
 
 export default function Header({ showBack, onBack, view, onViewChange }) {
@@ -72,10 +72,9 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                     : { background: 'rgba(255,255,255,0.1)', color: '#FFFFFF' }),
                 }}
               >
-                <span className="mr-1.5">{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
+                {tab.label}
+              </button>
+            ))}
         </nav>
 
         {/* Right: Theme toggle + Mobile menu */}
@@ -153,7 +152,6 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                     }),
               }}
             >
-              <span className="mr-2">{tab.icon}</span>
               {tab.label}
             </button>
           ))}
