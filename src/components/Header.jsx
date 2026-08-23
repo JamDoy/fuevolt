@@ -23,9 +23,9 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
         borderBottom: '1px solid rgba(255,255,255,0.06)',
       }}
     >
-      <div className="max-w-6xl mx-auto flex items-center justify-between">
+      <div className="max-w-6xl mx-auto grid grid-cols-[1fr_auto_1fr] items-center">
         {/* Left: Back + Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 justify-self-start">
           {showBack && (
             <button
               onClick={onBack}
@@ -78,7 +78,7 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
         </nav>
 
         {/* Right: Theme toggle + Mobile menu */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-self-end">
           {/* Theme toggle */}
           <button
             onClick={toggle}
