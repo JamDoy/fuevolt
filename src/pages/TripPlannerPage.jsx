@@ -159,7 +159,7 @@ export default function TripPlannerPage() {
               transition: 'all 0.25s ease',
             }}
           >
-            {m.id === 'car' ? '\u26FD' : '\u26A1'} {m.label}
+            {m.label}
           </button>
         ))}
       </div>
