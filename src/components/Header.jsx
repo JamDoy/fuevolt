@@ -64,11 +64,7 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                 style={{
                   transition: 'all 0.25s ease',
                   ...(view === tab.id
-                    ? (tab.id === 'ev'
-                        ? { background: 'linear-gradient(135deg, #22C55E, #14532D)', color: '#FFFFFF', boxShadow: '0 0 12px rgba(34, 197, 94, 0.3)' }
-                        : tab.id === 'calculator'
-                        ? { background: 'linear-gradient(135deg, #B45309, #22C55E)', color: '#FFFFFF', boxShadow: '0 0 12px rgba(34, 197, 94,0.2)' }
-                        : { background: 'linear-gradient(135deg, #B45309, #F59E0B)', color: '#0D2B5E', boxShadow: '0 0 12px rgba(245, 158, 11, 0.3)' })
+                    ? { background: 'linear-gradient(135deg, #B45309, #F59E0B)', color: '#0D2B5E', boxShadow: '0 0 12px rgba(245, 158, 11, 0.3)' }
                     : { background: 'rgba(255,255,255,0.1)', color: '#FFFFFF' }),
                 }}
               >
@@ -141,11 +137,7 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
               style={{
                 transition: 'all 0.25s ease',
                 ...(view === tab.id
-                  ? (tab.id === 'ev'
-                      ? { background: 'linear-gradient(135deg, #22C55E, #14532D)', color: '#FFFFFF' }
-                      : tab.id === 'calculator'
-                      ? { background: 'linear-gradient(135deg, #B45309, #22C55E)', color: '#FFFFFF' }
-                      : { background: 'linear-gradient(135deg, #B45309, #F59E0B)', color: '#0D2B5E' })
+                  ? { background: 'linear-gradient(135deg, #B45309, #F59E0B)', color: '#0D2B5E' }
                   : {
                       background: 'rgba(255,255,255,0.08)',
                       color: '#FFFFFF',

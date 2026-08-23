@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Always reserve space for the vertical scrollbar so navigating between a
+   short page (no scrollbar) and a tall one (scrollbar appears) doesn't
+   shift the centered layout sideways. scrollbar-gutter is the modern fix;
+   overflow-y: scroll is the fallback for browsers that don't support it. */
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
 @theme {
   --color-navy-900: #0A1628;
   --color-navy-800: #0D2B5E;
