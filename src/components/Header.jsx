@@ -47,7 +47,7 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
             className="flex items-center gap-2 cursor-pointer"
             style={{ background: 'none', border: 'none' }}
           >
-            <FueVoltIcon size={28} className="logo-charge-icon" />
+            <FueVoltIcon size={28} />
             <span className="text-xl font-bold tracking-tight logo-charge" style={{ color: '#FFFFFF' }}>
               Fue<span className="logo-charge-volt" style={{ background: 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #B45309 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Volt</span>
             </span>
