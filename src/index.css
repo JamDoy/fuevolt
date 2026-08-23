@@ -205,6 +205,16 @@ body {
   animation: icon-charge 1.2s ease-out 0.3s both;
 }
 
+/* Hides the scrollbar on horizontally-scrolling rows (news carousel) while
+   keeping touch/trackpad/drag scrolling fully functional. */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Theme transition helper */
 .theme-transition,
 .theme-transition * {
