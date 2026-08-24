@@ -181,6 +181,7 @@ export default function StationMap({
   onStationDetail,
   type = 'ev',
   routePoints = null,
+  altRoutePoints = null,
   userLocation = null,
   onSearchArea = null,
   cheapestStationId = null,
@@ -246,6 +247,14 @@ export default function StationMap({
             >
               <Popup>Your location</Popup>
             </Marker>
+          )}
+
+          {/* Cheapest-fuel detour route — drawn under the direct route */}
+          {altRoutePoints && altRoutePoints.length > 1 && (
+            <Polyline
+              positions={altRoutePoints}
+              pathOptions={{ color: '#F59E0B', weight: 4, opacity: 0.75, dashArray: '8 6' }}
+            />
           )}
 
           {/* Route line */}

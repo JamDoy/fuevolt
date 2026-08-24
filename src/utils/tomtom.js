@@ -208,6 +208,40 @@ export async function calculateRoute(startLat, startLng, endLat, endLng, options
   };
 }
 
+// Route via one or more intermediate stops (e.g. cheap-fuel detour stations),
+// rather than a direct start-to-end line. TomTom's calculateRoute endpoint
+// accepts any number of colon-separated waypoints.
+export async function calculateRouteWithStops(startLat, startLng, stops, endLat, endLng) {
+  const waypoints = [
+    `${startLat},${startLng}`,
+    ...stops.map((s) => `${s.latitude},${s.longitude}`),
+    `${endLat},${endLng}`,
+  ].join(':');
+
+  const params = new URLSearchParams({
+    key: TOMTOM_KEY,
+    routeType: 'fastest',
+    traffic: 'true',
+    travelMode: 'car',
+    instructionsType: 'text',
+  });
+
+  const res = await fetch(`${BASE}/routing/1/calculateRoute/${waypoints}/json?${params}`);
+  if (!res.ok) throw new Error('Route calculation failed');
+  const data = await res.json();
+  const route = data.routes?.[0];
+  if (!route) throw new Error('No route found');
+
+  const points = (route.legs || []).flatMap((leg) => leg.points?.map((p) => [p.latitude, p.longitude]) || []);
+
+  return {
+    distanceKm: (route.summary.lengthInMeters / 1000).toFixed(1),
+    travelTimeMin: Math.ceil(route.summary.travelTimeInSeconds / 60),
+    trafficDelayMin: Math.ceil((route.summary.trafficDelayInSeconds || 0) / 60),
+    points,
+  };
+}
+
 // --- EV Routing (Extended Routing API) ---
 export async function calculateEVRoute(startLat, startLng, endLat, endLng, evOptions = {}) {
   const battery = evOptions.batteryCapacityKWh || 60;

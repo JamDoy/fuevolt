@@ -3,9 +3,9 @@ import { useTheme } from '../contexts/ThemeContext';
 import StationMap from '../components/StationMap';
 import ShimmerCard from '../components/ShimmerCard';
 import LocationInput from '../components/LocationInput';
-import { geocodeLocation } from '../utils/api';
+import { geocodeLocation, fetchFuelPrices } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
-import { calculateRoute, calculateEVRoute, searchAlongRoute } from '../utils/tomtom';
+import { calculateRoute, calculateRouteWithStops, calculateEVRoute, searchAlongRoute } from '../utils/tomtom';
 
 export default function TripPlannerPage() {
   const { theme } = useTheme();
@@ -25,6 +25,12 @@ export default function TripPlannerPage() {
   const [currentCharge, setCurrentCharge] = useState('80');
   const [consumption, setConsumption] = useState('15');
   const [vehicleRange, setVehicleRange] = useState('400');
+  const [tankSizeL, setTankSizeL] = useState('50');
+  const [detourKm, setDetourKm] = useState('5');
+  const [cheapFuelPlan, setCheapFuelPlan] = useState([]);
+  const [cheapRoute, setCheapRoute] = useState(null);
+  const [fuelSavings, setFuelSavings] = useState(0);
+  const [priceDataIncomplete, setPriceDataIncomplete] = useState(false);
   const autoLocation = useAutoLocation();
 
   // Default map to user's location if permission already granted
@@ -46,6 +52,10 @@ export default function TripPlannerPage() {
     setFuelStops([]);
     setEvStops([]);
     setChargingPlan([]);
+    setCheapFuelPlan([]);
+    setCheapRoute(null);
+    setFuelSavings(0);
+    setPriceDataIncomplete(false);
 
     try {
       const [startGeo, endGeo] = await Promise.all([
@@ -94,6 +104,28 @@ export default function TripPlannerPage() {
         if (routeData.points && routeData.points.length > 1) {
           const stations = await searchAlongRoute(routeData.points, '7311', 25);
           setFuelStops(stations);
+
+          // Plan stops at the cheapest reachable stations, given tank range
+          const numRange = Number(vehicleRange) || 400;
+          const numTank = Number(tankSizeL) || 50;
+          const numDetour = Number(detourKm) || 5;
+          const distKm = parseFloat(routeData.distanceKm);
+          if (distKm > numRange) {
+            const { stops, savings, incomplete } = await buildCheapFuelPlan(
+              routeData.points, numRange, numDetour, numTank
+            );
+            setCheapFuelPlan(stops);
+            setFuelSavings(savings);
+            setPriceDataIncomplete(incomplete);
+
+            if (stops.length > 0) {
+              const cheapRouteData = await calculateRouteWithStops(
+                startGeo.latitude, startGeo.longitude,
+                stops, endGeo.latitude, endGeo.longitude
+              );
+              setCheapRoute(cheapRouteData);
+            }
+          }
         }
       }
     } catch (err) {
@@ -101,7 +133,7 @@ export default function TripPlannerPage() {
     } finally {
       setLoading(false);
     }
-  }, [startQuery, endQuery, mode, batteryKWh, currentCharge, consumption, vehicleRange]);
+  }, [startQuery, endQuery, mode, batteryKWh, currentCharge, consumption, vehicleRange, tankSizeL, detourKm]);
 
   const routePoints = route?.points || evRoute?.points || null;
 
@@ -230,18 +262,46 @@ export default function TripPlannerPage() {
           </div>
         )}
 
-        {/* Fuel vehicle range input */}
+        {/* Fuel vehicle inputs */}
         {mode === 'car' && (
-          <div className="flex items-center gap-3">
-            <label className="text-xs font-semibold whitespace-nowrap" style={{ color: theme.textSecondary }}>Tank Range (km)</label>
-            <input
-              type="number"
-              value={vehicleRange}
-              onChange={(e) => setVehicleRange(e.target.value)}
-              className="w-24 px-3 py-2 rounded-lg text-sm"
-              style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
-            />
-            <span className="text-[11px]" style={{ color: theme.textMuted }}>Used to suggest fuel stops on long trips</span>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-[11px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Tank Range (km)</label>
+              <input
+                type="number"
+                value={vehicleRange}
+                onChange={(e) => setVehicleRange(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg text-sm"
+                style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Tank Size (L)</label>
+              <input
+                type="number"
+                value={tankSizeL}
+                onChange={(e) => setTankSizeL(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg text-sm"
+                style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
+              />
+              <p className="text-[10px] mt-0.5" style={{ color: theme.textMuted }}>Not sure? 50L is a typical average</p>
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold mb-1" style={{ color: theme.textSecondary }}>Max Detour (km)</label>
+              <input
+                type="number"
+                min="1"
+                max="5"
+                step="1"
+                value={detourKm}
+                onChange={(e) => setDetourKm(Math.min(5, Math.max(1, Number(e.target.value) || 1)).toString())}
+                className="w-full px-3 py-2 rounded-lg text-sm"
+                style={{ background: theme.inputBg, border: `1px solid ${theme.inputBorder}`, color: theme.inputText, outline: 'none' }}
+              />
+            </div>
+            <p className="text-[11px] col-span-3" style={{ color: theme.textMuted }}>
+              Used to plan fuel stops on long trips and find the cheapest station within your allowed detour at each stop
+            </p>
           </div>
         )}
 
@@ -405,6 +465,68 @@ export default function TripPlannerPage() {
         </div>
       )}
 
+      {/* Cheapest-fuel route plan */}
+      {cheapFuelPlan.length > 0 && !loading && (
+        <div>
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+            <h3 className="text-sm font-semibold" style={{ color: theme.gold }}>
+              Cheapest Fuel Route — Recommended Stops
+            </h3>
+            {fuelSavings > 0 && (
+              <span
+                className="px-3 py-1 rounded-full text-xs font-bold"
+                style={{ background: 'rgba(34,197,94,0.12)', color: theme.green, border: '1px solid rgba(34,197,94,0.25)' }}
+              >
+                Potential savings: ${fuelSavings.toFixed(2)}
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            {cheapFuelPlan.map((stop, i) => (
+              <div
+                key={stop.index}
+                className="rounded-xl p-4 flex items-start gap-3"
+                style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
+              >
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold"
+                  style={{ background: theme.gold, color: '#0D2B5E' }}
+                >
+                  {i + 1}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold" style={{ color: theme.gold }}>{stop.name}</p>
+                  <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>{stop.address}</p>
+                  <p className="text-xs mt-1" style={{ color: theme.textMuted }}>
+                    ~{stop.distanceAlongRoute} km into trip
+                  </p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  {stop.priceAvailable ? (
+                    <p className="text-lg font-bold" style={{ color: theme.green }}>
+                      {(stop.price * 100).toFixed(1)}<span className="text-[11px]">&cent;/L</span>
+                    </p>
+                  ) : (
+                    <p className="text-[11px] font-medium" style={{ color: theme.textMuted }}>Price unavailable</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {priceDataIncomplete && (
+            <p className="text-[11px] mt-3" style={{ color: theme.textMuted }}>
+              Live fuel pricing is only available in NSW, QLD, VIC and WA. One or more recommended stops fall outside this coverage, so those results show location only — savings are calculated only from stops with confirmed live pricing.
+            </p>
+          )}
+
+          <p className="text-[11px] mt-2" style={{ color: theme.textMuted }}>
+            Dashed gold line on the map: cheapest-fuel route (recommended stops above). Solid green line: your direct route.
+          </p>
+        </div>
+      )}
+
       {/* Map */}
       {(route || evRoute) && !loading && (
         <StationMap
@@ -414,6 +536,7 @@ export default function TripPlannerPage() {
           onStationSelect={() => {}}
           type="fuel"
           routePoints={routePoints}
+          altRoutePoints={cheapRoute?.points || null}
           showTraffic={true}
         />
       )}
@@ -524,6 +647,76 @@ export default function TripPlannerPage() {
       )}
     </div>
   );
+}
+
+// Walks the route in tank-range-sized segments and, at each point a refuel
+// is needed, picks the CHEAPEST real-priced station within `detourKm` of
+// that point (not just the nearest) — using the same government price feeds
+// as the main Fuel Prices page. Falls back to the nearest station of any
+// kind (unpriced) if no live pricing is available near that stop, and flags
+// that with `incomplete`. Savings are estimated per stop as the difference
+// between the chosen price and the average of all priced candidates found
+// nearby, times the tank size.
+async function buildCheapFuelPlan(routePoints, rangeKm, detourKm, tankSizeL) {
+  if (!routePoints.length) return { stops: [], savings: 0, incomplete: false };
+
+  const stops = [];
+  let remainingRange = rangeKm;
+  let distanceCovered = 0;
+  let savings = 0;
+  let incomplete = false;
+  const lowThreshold = rangeKm * 0.15;
+  let stopIdx = 0;
+
+  for (let i = 1; i < routePoints.length && stopIdx < 5; i++) {
+    const segDist = haversine(routePoints[i - 1], routePoints[i]);
+    distanceCovered += segDist;
+    remainingRange -= segDist;
+
+    if (remainingRange < lowThreshold) {
+      const [lat, lng] = routePoints[i];
+      let candidates = [];
+      try {
+        candidates = await fetchFuelPrices({ latitude: lat, longitude: lng, fuelType: 'U91', radius: detourKm });
+      } catch {
+        candidates = [];
+      }
+
+      const priced = candidates.filter((c) => c.price != null);
+      let chosen = null;
+      let avgNearby = null;
+
+      if (priced.length > 0) {
+        chosen = priced.reduce((min, c) => (c.price < min.price ? c : min), priced[0]);
+        avgNearby = priced.reduce((sum, c) => sum + c.price, 0) / priced.length;
+      } else if (candidates.length > 0) {
+        chosen = candidates.reduce((nearest, c) => {
+          const d = haversine([lat, lng], [c.latitude, c.longitude]);
+          return !nearest || d < nearest._d ? { ...c, _d: d } : nearest;
+        }, null);
+        incomplete = true;
+      }
+
+      if (chosen) {
+        stops.push({
+          ...chosen,
+          index: stopIdx,
+          distanceAlongRoute: Math.round(distanceCovered),
+          priceAvailable: chosen.price != null,
+          avgNearby,
+        });
+        if (chosen.price != null && avgNearby != null) {
+          savings += Math.max(0, (avgNearby - chosen.price)) * tankSizeL;
+        }
+        stopIdx++;
+        remainingRange = rangeKm; // assume a full refill at each stop
+      } else {
+        incomplete = true;
+      }
+    }
+  }
+
+  return { stops, savings, incomplete };
 }
 
 function buildChargingPlan(routePoints, chargers, currentRangeKm, fullRangeKm, totalDistKm) {

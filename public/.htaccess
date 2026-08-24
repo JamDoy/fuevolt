@@ -15,6 +15,14 @@ RewriteRule ^ https://www.fuevolt.com%{REQUEST_URI} [L,R=301]
   RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
+  # Redirect trailing-slash URLs to their non-trailing-slash canonical form
+  # (root "/" excluded). Every page's <link rel="canonical"> already omits
+  # the trailing slash, but without this redirect both /path and /path/
+  # served 200 with identical content — Google indexed them as duplicates
+  # and picked its own canonical instead of trusting the declared one.
+  RewriteCond %{REQUEST_URI} ^/.+/$
+  RewriteRule ^(.+)/$ /$1 [L,R=301]
+
   # Serve pre-rendered directories — if /path/index.html exists, serve it
   # This handles /guides/fuel-types-explained → /guides/fuel-types-explained/index.html
   RewriteCond %{REQUEST_FILENAME} -d

@@ -1,16 +1,15 @@
 name: Refresh City Stats
 
 # Fetches a real, live snapshot of fuel prices and EV charger counts for
-# each city page and commits it to src/data/cityStats.json. Runs on a
-# schedule rather than on every deploy because the NSW fuel API shares a
-# 2,500 calls/month quota with the live app's own search feature.
+# each city page and commits it to src/data/cityStats.json.
 #
-# Committing to main triggers the existing deploy workflow, so the site
-# redeploys automatically with the fresh data once this completes.
+# Disabled (schedule removed): the templated city pages this data fed
+# were removed from the site (see the "remove templated city pages"
+# commit), so cityStats.json no longer has a consumer. Left as
+# workflow_dispatch-only rather than deleted, in case city pages come
+# back in some form later.
 
 on:
-  schedule:
-    - cron: '0 19 * * *' # ~5am AEST (Sydney, UTC+10/+11)
   workflow_dispatch:
 
 permissions:
