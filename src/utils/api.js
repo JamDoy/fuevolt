@@ -507,6 +507,52 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
   });
 }
 
+// Samples several points along a route polyline and fetches real government
+// fuel prices at each (falling back to location-only OSM data where no
+// state feed covers it, same as fetchFuelPrices always has) — used to power
+// both the "stations along this route" list and the cheapest-stop picker in
+// Trip Planner, so every station shown has real pricing where available
+// instead of just a bare location from TomTom's place database.
+export async function fetchFuelPricesAlongRoute(routePoints, fuelType = 'U91', maxResults = 30) {
+  if (!routePoints || routePoints.length < 2) return [];
+
+  const totalPoints = routePoints.length;
+  const sampleCount = Math.min(8, Math.ceil(totalPoints / 30));
+  const step = Math.max(1, Math.floor(totalPoints / (sampleCount + 1)));
+  const sampleIndices = [];
+  for (let i = step; i < totalPoints - 1; i += step) {
+    sampleIndices.push(i);
+    if (sampleIndices.length >= sampleCount) break;
+  }
+
+  const seen = new Set();
+  const allResults = [];
+
+  for (const idx of sampleIndices) {
+    const [lat, lng] = routePoints[idx];
+    try {
+      const stations = await fetchFuelPrices({ latitude: lat, longitude: lng, fuelType, radius: 10 });
+      for (const s of stations) {
+        const key = s.id || `${s.latitude},${s.longitude}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        allResults.push(s);
+      }
+    } catch {
+      // continue with the next sample point
+    }
+  }
+
+  allResults.sort((a, b) => {
+    if (a.price == null && b.price == null) return 0;
+    if (a.price == null) return 1;
+    if (b.price == null) return -1;
+    return a.price - b.price;
+  });
+
+  return allResults.slice(0, maxResults);
+}
+
 function detectState(lat, lng) {
   // Rough bounding boxes for Australian states
   if (lat > -29 && lat < -10 && lng > 138 && lng < 154) return 'QLD';

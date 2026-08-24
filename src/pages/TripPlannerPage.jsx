@@ -3,7 +3,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import StationMap from '../components/StationMap';
 import ShimmerCard from '../components/ShimmerCard';
 import LocationInput from '../components/LocationInput';
-import { geocodeLocation, fetchFuelPrices } from '../utils/api';
+import { geocodeLocation, fetchFuelPrices, fetchFuelPricesAlongRoute } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { calculateRoute, calculateRouteWithStops, calculateEVRoute, searchAlongRoute } from '../utils/tomtom';
 
@@ -100,9 +100,11 @@ export default function TripPlannerPage() {
           }
         }
       } else {
-        // Search for fuel stations along the route
+        // Search for fuel stations along the route — real government prices
+        // where available, same feeds the main Fuel Prices page uses, not
+        // just bare locations from TomTom's place database.
         if (routeData.points && routeData.points.length > 1) {
-          const stations = await searchAlongRoute(routeData.points, '7311', 25);
+          const stations = await fetchFuelPricesAlongRoute(routeData.points, 'U91', 30);
           setFuelStops(stations);
 
           // Plan stops at the cheapest reachable stations, given tank range
@@ -137,14 +139,15 @@ export default function TripPlannerPage() {
 
   const routePoints = route?.points || evRoute?.points || null;
 
-  // Convert stops to map-compatible format
+  // Convert stops to map-compatible format. EV chargers have no price
+  // concept; fuel stops now carry real government pricing where available.
   const mapStops = (mode === 'ev' ? evStops : fuelStops).map((s) => ({
     id: s.id,
     name: s.name,
     address: s.address,
     latitude: s.latitude,
     longitude: s.longitude,
-    price: 0,
+    price: mode === 'ev' ? null : (s.price ?? null),
     distance: s.distance,
   }));
 
@@ -155,7 +158,7 @@ export default function TripPlannerPage() {
     address: stop.address,
     latitude: stop.latitude,
     longitude: stop.longitude,
-    price: 0,
+    price: null,
     distance: stop.distanceAlongRoute,
   }));
 
@@ -372,6 +375,18 @@ export default function TripPlannerPage() {
         </div>
       )}
 
+      {route && !loading && (
+        <a
+          href={buildGoogleMapsUrl(startQuery, endQuery)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-sm font-semibold"
+          style={{ background: theme.chipBg, color: theme.chipText, border: `1px solid ${theme.chipBorder}`, textDecoration: 'none' }}
+        >
+          Open direct route in Google Maps &rarr;
+        </a>
+      )}
+
       {/* EV Route Summary */}
       {evRoute && !loading && (
         <div
@@ -521,9 +536,19 @@ export default function TripPlannerPage() {
             </p>
           )}
 
-          <p className="text-[11px] mt-2" style={{ color: theme.textMuted }}>
+          <p className="text-[11px] mt-2 mb-3" style={{ color: theme.textMuted }}>
             Dashed gold line on the map: cheapest-fuel route (recommended stops above). Solid green line: your direct route.
           </p>
+
+          <a
+            href={buildGoogleMapsUrl(startQuery, endQuery, cheapFuelPlan)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-sm font-semibold"
+            style={{ background: `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`, color: '#0D2B5E', textDecoration: 'none' }}
+          >
+            Open cheapest-fuel route in Google Maps &rarr;
+          </a>
         </div>
       )}
 
@@ -600,14 +625,25 @@ export default function TripPlannerPage() {
             {fuelStops.map((stop) => (
               <div
                 key={stop.id}
-                className="rounded-xl p-3"
+                className="rounded-xl p-3 flex items-start justify-between gap-2"
                 style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
               >
-                <p className="text-sm font-semibold" style={{ color: theme.gold }}>{stop.name}</p>
-                {stop.brand && (
-                  <p className="text-[11px]" style={{ color: theme.textMuted }}>{stop.brand}</p>
-                )}
-                <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold" style={{ color: theme.gold }}>{stop.name}</p>
+                  {stop.brand && (
+                    <p className="text-[11px]" style={{ color: theme.textMuted }}>{stop.brand}</p>
+                  )}
+                  <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  {stop.price != null ? (
+                    <p className="text-sm font-bold" style={{ color: theme.green }}>
+                      {(stop.price * 100).toFixed(1)}<span className="text-[10px]">&cent;/L</span>
+                    </p>
+                  ) : (
+                    <p className="text-[10px]" style={{ color: theme.textMuted }}>No price data</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -770,6 +806,22 @@ function computePointDistances(points) {
     distances.push(distances[i - 1] + haversine(points[i - 1], points[i]));
   }
   return distances;
+}
+
+// Builds a Google Maps directions URL — opens in the Maps app on mobile or
+// maps.google.com on desktop, with the route (and any stops as waypoints)
+// pre-filled and ready to navigate. No API key needed for this URL scheme.
+function buildGoogleMapsUrl(origin, destination, waypoints = []) {
+  const params = new URLSearchParams({
+    api: '1',
+    origin,
+    destination,
+    travelmode: 'driving',
+  });
+  if (waypoints.length > 0) {
+    params.set('waypoints', waypoints.map((w) => `${w.latitude},${w.longitude}`).join('|'));
+  }
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
 function haversine(p1, p2) {
