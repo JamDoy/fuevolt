@@ -131,13 +131,10 @@ export default function TripPlannerPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
-      <div className="text-center mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
+      <div className="text-center mb-1">
+        <h1 className="text-base font-semibold" style={{ color: theme.textSecondary }}>
           Trip Planner
         </h1>
-        <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
-          Plan your route with fuel stations and EV chargers along the way
-        </p>
       </div>
 
       {/* Mode toggle */}

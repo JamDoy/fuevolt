@@ -61,12 +61,9 @@ export default function EVvsFuelPage() {
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.text }}>
+        <h1 className="text-base font-semibold" style={{ color: theme.textSecondary }}>
           <span style={{ color: theme.gold }}>Fuel</span> vs <span style={{ color: theme.green }}>Electric</span> Calculator
         </h1>
-        <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
-          See how much you could save by switching to an electric vehicle
-        </p>
       </div>
 
       {/* Mode Toggle */}
@@ -158,6 +155,7 @@ export default function EVvsFuelPage() {
               theme={theme}
               isDark={isDark}
               accentColor="green"
+              featured
             />
           </div>
         </div>
@@ -392,22 +390,26 @@ export default function EVvsFuelPage() {
   );
 }
 
-function ResultCard({ label, value, subtitle, color, theme, isDark, accentColor }) {
+function ResultCard({ label, value, subtitle, color, theme, isDark, accentColor, featured = false }) {
   return (
     <div
-      className="rounded-xl p-4 text-center"
+      className={`rounded-xl text-center ${featured ? 'p-5 sm:col-span-1' : 'p-4'}`}
       style={{
-        background: isDark
-          ? `rgba(${accentColor === 'green' ? '34, 197, 94' : '245, 158, 11'},0.06)`
-          : `rgba(${accentColor === 'green' ? '34,197,94' : '245,158,11'},0.04)`,
-        border: `1px solid ${isDark
-          ? `rgba(${accentColor === 'green' ? '34, 197, 94' : '245, 158, 11'},0.2)`
-          : `rgba(${accentColor === 'green' ? '34,197,94' : '245,158,11'},0.15)`}`,
+        background: featured
+          ? (isDark ? 'linear-gradient(135deg, rgba(34, 197, 94,0.14), rgba(245, 158, 11,0.06))' : 'linear-gradient(135deg, rgba(34,197,94,0.1), rgba(245,158,11,0.05))')
+          : (isDark
+              ? `rgba(${accentColor === 'green' ? '34, 197, 94' : '245, 158, 11'},0.06)`
+              : `rgba(${accentColor === 'green' ? '34,197,94' : '245,158,11'},0.04)`),
+        border: `1px solid ${featured
+          ? (isDark ? 'rgba(34, 197, 94,0.35)' : 'rgba(34,197,94,0.25)')
+          : (isDark
+              ? `rgba(${accentColor === 'green' ? '34, 197, 94' : '245, 158, 11'},0.2)`
+              : `rgba(${accentColor === 'green' ? '34,197,94' : '245,158,11'},0.15)`)}`,
       }}
     >
       <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>{label}</p>
-      <p className="text-2xl font-bold" style={{ color }}>{value}</p>
-      <p className="text-[11px] mt-1" style={{ color: theme.textMuted }}>{subtitle}</p>
+      <p className={featured ? 'text-3xl font-bold' : 'text-2xl font-bold'} style={{ color }}>{value}</p>
+      <p className={featured ? 'text-xs font-semibold mt-1' : 'text-[11px] mt-1'} style={{ color: featured ? color : theme.textMuted }}>{subtitle}</p>
     </div>
   );
 }

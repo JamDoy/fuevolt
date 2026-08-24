@@ -12,7 +12,6 @@ import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api'
 import useAutoLocation from '../hooks/useAutoLocation';
 import { reverseGeocode } from '../utils/tomtom';
 import { injectEVStationSchema, POPULAR_SUBURBS } from '../utils/seo';
-import { EV_CITY_CONTENT } from '../data/cityContent';
 
 const CONNECTOR_FILTERS = ['Type 2', 'CCS', 'CHAdeMO', 'Tesla', 'Type 1'];
 const SPEED_FILTERS = [
@@ -22,7 +21,6 @@ const SPEED_FILTERS = [
 ];
 
 export default function EVChargingPage({ initialSuburb, initialSearch, onStationDetail }) {
-  const cityContent = initialSuburb?.slug ? EV_CITY_CONTENT[initialSuburb.slug] : null;
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -228,14 +226,11 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
-      {/* Hero Section — Green EV Identity */}
-      <div className="text-center mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.green }}>
+      {/* Compact header — search and results are the focus of the page */}
+      <div className="text-center mb-1">
+        <h1 className="text-base font-semibold" style={{ color: theme.textSecondary }}>
           {initialSuburb ? `EV Charging Stations in ${initialSuburb.name}` : 'EV Charging Stations'}
         </h1>
-        <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
-          Search thousands of EV charging points across Australia
-        </p>
       </div>
 
       {/* Search */}
@@ -474,37 +469,11 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
 
 
       {/* Informational content for SEO and AdSense */}
-      {cityContent ? (
-        <div
-          className="rounded-2xl p-6 mt-4"
-          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
-        >
-          <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>EV Charging in {initialSuburb.name}</h2>
-          {cityContent.intro && (
-            <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.intro}</p>
-          )}
-          {cityContent.coverage && (
-            <>
-              <h3 className="text-sm font-semibold mb-2" style={{ color: theme.text }}>Charging Coverage in {initialSuburb.name}</h3>
-              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.coverage}</p>
-            </>
-          )}
-          {cityContent.tips && (
-            <>
-              <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Charging Tips for {initialSuburb.name}</h3>
-              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.tips}</p>
-            </>
-          )}
-          <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
-            Filter {initialSuburb.name} chargers by connector (Type 2, CCS2, CHAdeMO, Tesla) or speed — see our <a href="/guides/ev-charging-connector-types-australia" style={{ color: theme.green }}>guide to EV connector types</a> for which one fits your car.
-          </p>
-        </div>
-      ) : (
-        <div
-          className="rounded-2xl p-6 mt-4"
-          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
-        >
-          <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>About EV Charging in Australia</h2>
+      <div
+        className="rounded-2xl p-6 mt-4"
+        style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
+      >
+        <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>About EV Charging in Australia</h2>
           <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
             Australia's electric vehicle charging network is growing rapidly, with thousands of public charging stations now available across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.
           </p>
@@ -519,9 +488,8 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
           <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Charging Cost Estimates</h3>
           <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
             Public DC fast charging in Australia typically costs between $0.40 and $0.60 per kWh. Home charging on a standard electricity tariff costs around $0.25-$0.35 per kWh, making it significantly cheaper. An average EV travelling 300km per week costs roughly $15-$20 in electricity compared to $50-$70 in petrol for an equivalent fuel vehicle. Use our EV vs Fuel calculator to get a personalised savings estimate based on your driving habits.
-          </p>
-        </div>
-      )}
+        </p>
+      </div>
     </div>
   );
 }

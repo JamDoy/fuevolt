@@ -364,50 +364,6 @@ function AppContent() {
         </div>
 
         {showReminderSettings && <FuelReminderSettings innerRef={reminderSettingsRef} />}
-
-        {/* SEO: Popular suburb links */}
-        <div className="mt-4 max-w-4xl mx-auto">
-          <p className="text-[10px] mb-1" style={{ color: theme.footerSubtext }}>Fuel prices in:</p>
-          <div className="flex flex-wrap justify-center gap-x-2 gap-y-0.5">
-            {POPULAR_SUBURBS.fuel.map((s) => (
-              <a
-                key={s.slug}
-                href={`/fuel-prices/${s.slug}`}
-                className="text-[10px] hover:underline"
-                style={{ color: theme.footerSubtext }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
-                  setInitialSearch(null);
-                  setInitialSuburb(s);
-                  setDetailStation(null);
-                  navigate('fuel', `/fuel-prices/${s.slug}`, {}, buildCityMeta('fuel', s));
-                }}
-              >
-                {s.name}
-              </a>
-            ))}
-          </div>
-          <p className="text-[10px] mt-2 mb-1" style={{ color: theme.footerSubtext }}>EV charging in:</p>
-          <div className="flex flex-wrap justify-center gap-x-2 gap-y-0.5">
-            {POPULAR_SUBURBS.ev.map((s) => (
-              <a
-                key={s.slug}
-                href={`/ev-charging/${s.slug}`}
-                className="text-[10px] hover:underline"
-                style={{ color: theme.footerSubtext }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setInitialSuburb(s);
-                  setDetailStation(null);
-                  navigate('ev', `/ev-charging/${s.slug}`, {}, buildCityMeta('ev', s));
-                }}
-              >
-                {s.name}
-              </a>
-            ))}
-          </div>
-        </div>
       </footer>
       <MobileBottomNav view={view} onNavigate={handlePrimaryNavigation} />
       <PWAInstallPrompt />

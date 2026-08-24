@@ -26,7 +26,7 @@ function markHintShown() {
   }
 }
 
-export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail }) {
+export default function HeroResultCard({ cheapest, avgPrice, savings, freshness, onDetail }) {
   // 'expanded' (full blurred takeover) | 'exiting' (shrink/fade transition) | 'compact' (in-flow bar)
   const [phase, setPhase] = useState('expanded');
   const [showHint, setShowHint] = useState(false);
@@ -95,7 +95,7 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
           animation: 'heroCompactIn 220ms ease-out forwards',
         }}
       >
-        <CompactContent cheapest={cheapest} />
+        <CompactContent cheapest={cheapest} savings={savings} />
       </button>
     );
   }
@@ -166,7 +166,7 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
           }}
         >
           {exiting ? (
-            <CompactContent cheapest={cheapest} />
+            <CompactContent cheapest={cheapest} savings={savings} />
           ) : (
             <>
               <p className="text-[11px] font-bold uppercase mb-3" style={{ color: '#22C55E', letterSpacing: '0.15em' }}>
@@ -200,6 +200,11 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
                     >
                       {badge.label}
                     </span>
+                  )}
+                  {savings && Number(savings) > 0 && (
+                    <p className="text-xs font-semibold mt-2" style={{ color: '#22C55E' }}>
+                      Save {savings}&cent;/L vs the most expensive nearby
+                    </p>
                   )}
                 </div>
               </div>
@@ -241,7 +246,7 @@ export default function HeroResultCard({ cheapest, avgPrice, freshness, onDetail
   );
 }
 
-function CompactContent({ cheapest }) {
+function CompactContent({ cheapest, savings }) {
   return (
     <>
       <span className="flex items-center gap-2 min-w-0">
@@ -251,9 +256,12 @@ function CompactContent({ cheapest }) {
         />
         <span className="text-[11px] font-bold flex-shrink-0" style={{ color: '#22C55E' }}>&#9889; Cheapest:</span>
         <span className="text-sm font-bold truncate" style={{ color: '#FFFFFF' }}>{cheapest.name}</span>
-        <span className="text-[13px] flex-shrink-0" style={{ color: 'rgba(255,255,255,0.5)' }}>&middot; {cheapest.distance} km</span>
+        <span className="text-[13px] flex-shrink-0 hidden sm:inline" style={{ color: 'rgba(255,255,255,0.5)' }}>&middot; {cheapest.distance} km</span>
       </span>
       <span className="flex items-center gap-3 flex-shrink-0">
+        {savings && Number(savings) > 0 && (
+          <span className="text-xs font-semibold hidden sm:inline" style={{ color: '#22C55E' }}>Save {savings}&cent;/L</span>
+        )}
         <span className="font-extrabold text-[22px]" style={{ color: '#F59E0B' }}>
           {(cheapest.price * 100).toFixed(1)}<span className="text-xs">&cent;/L</span>
         </span>

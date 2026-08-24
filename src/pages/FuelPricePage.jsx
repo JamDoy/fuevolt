@@ -14,7 +14,6 @@ import useAutoLocation from '../hooks/useAutoLocation';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
 import { injectFuelStationSchema, POPULAR_SUBURBS } from '../utils/seo';
 import { getPriceFreshness } from '../utils/priceFreshness';
-import { FUEL_CITY_CONTENT } from '../data/cityContent';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -207,8 +206,6 @@ export default function FuelPricePage({
   const primaryStations = sortedStations.slice(0, VISIBLE_CARD_COUNT);
   const extraStations = sortedStations.slice(VISIBLE_CARD_COUNT);
 
-  const cityContent = initialSuburb?.slug ? FUEL_CITY_CONTENT[initialSuburb.slug] : null;
-
   const cheapest = pricedStations.length > 0
     ? pricedStations.reduce((min, s) => (s.price < min.price ? s : min), pricedStations[0])
     : null;
@@ -259,62 +256,61 @@ export default function FuelPricePage({
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
-      {/* Hero */}
-      <div className="text-center mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: theme.gold }}>
+      {/* Compact header — the result below is the actual focus of the page */}
+      <div className="text-center mb-1">
+        <h1 className="text-base font-semibold" style={{ color: theme.textSecondary }}>
           {initialSuburb ? `Fuel Prices in ${initialSuburb.name}` : 'Compare Fuel Prices'}
         </h1>
-        <p className="text-sm mt-1" style={{ color: theme.textSecondary }}>
-          Find the cheapest fuel near you across Australia
-        </p>
       </div>
 
-      {/* Fuel Type Selector */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        {orderedFuelTypes.map((ft) => (
-          <button
-            key={ft.id}
-            onClick={() => handleFuelTypeChange(ft.id)}
-            className="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer min-h-9"
-            style={{
-              transition: 'all 0.25s ease',
-              border: 'none',
-              ...(fuelType === ft.id
-                ? {
-                    background: theme.green,
-                    color: '#FFFFFF',
-                  }
-                : {
-                    background: theme.chipBg,
-                    color: theme.chipText,
-                  }),
-            }}
-          >
-            {ft.label}
-          </button>
-        ))}
+      {/* Controls — search + fuel type together in one compact row */}
+      <div className="space-y-2">
+        <SearchBar
+          onSearch={handleSearch}
+          onUseLocation={handleUseLocation}
+          loading={loading}
+          placeholder="Search suburb, city or postcode..."
+          inputId="fuel-location-search"
+        />
+        <div className="flex flex-wrap gap-2 justify-center">
+          {orderedFuelTypes.map((ft) => (
+            <button
+              key={ft.id}
+              onClick={() => handleFuelTypeChange(ft.id)}
+              className="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer min-h-9"
+              style={{
+                transition: 'all 0.25s ease',
+                border: 'none',
+                ...(fuelType === ft.id
+                  ? {
+                      background: theme.green,
+                      color: '#FFFFFF',
+                    }
+                  : {
+                      background: theme.chipBg,
+                      color: theme.chipText,
+                    }),
+              }}
+            >
+              {ft.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Cheapest Result Hero Card — full-page blur takeover, shrinks to a compact bar on dismiss */}
+      {/* Cheapest Result Hero Card — the focal point of the page. Full-page blur
+          takeover on first load, shrinks to a compact bar on dismiss. */}
       {stations.length > 0 && !loading && cheapest && (
         <HeroResultCard
           key={`${cheapest.id}-${resultsVersion}`}
           cheapest={cheapest}
           avgPrice={avgPrice}
+          savings={savings}
           freshness={cheapestFreshness}
           onDetail={() => openStationDetail(cheapest)}
         />
       )}
       {loading && hasSearched && <HeroResultCardSkeleton theme={theme} />}
-
-      {/* Search */}
-      <SearchBar
-        onSearch={handleSearch}
-        onUseLocation={handleUseLocation}
-        loading={loading}
-        placeholder="Search suburb, city or postcode..."
-        inputId="fuel-location-search"
-      />
 
       {/* Screen-reader announcement of search state */}
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
@@ -329,11 +325,11 @@ export default function FuelPricePage({
       {stations.length > 0 && !loading && (
         <div className="flex flex-wrap items-center justify-between gap-3">
           {locationName && (
-            <p className="text-sm font-medium" style={{ color: theme.text }}>
-              Showing results near <span style={{ color: theme.gold }}>{locationName}</span>
+            <p className="text-xs font-medium" style={{ color: theme.textSecondary }}>
+              Near <span style={{ color: theme.gold }}>{locationName}</span>
             </p>
           )}
-          <div className="flex gap-2 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
+          <div className="flex gap-1.5 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
             {[
               { id: 'price', label: 'Cheapest' },
               { id: 'distance', label: 'Nearest' },
@@ -342,7 +338,7 @@ export default function FuelPricePage({
               <button
                 key={s.id}
                 onClick={() => setSortBy(s.id)}
-                className="min-h-9 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer"
+                className="min-h-7 px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer"
                 style={{
                   background: sortBy === s.id ? '#0D2B5E' : theme.chipBg,
                   color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
@@ -353,51 +349,6 @@ export default function FuelPricePage({
                 {s.label}
               </button>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Price Summary */}
-      {stations.length > 0 && !loading && (
-        <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          <div
-            className="rounded-2xl p-2 sm:p-4 text-center min-w-0"
-            style={{
-              background: theme.cardBg,
-              border: `1px solid ${theme.cardBorder}`,
-            }}
-          >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Average</p>
-            <p className="text-lg sm:text-2xl font-bold whitespace-nowrap" style={{ color: theme.gold }}>
-              {(avgPrice * 100).toFixed(1)}
-              <span className="text-[11px] ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
-            </p>
-          </div>
-          <div
-            className="rounded-2xl p-2 sm:p-4 text-center min-w-0"
-            style={{
-              background: theme.cardBg,
-              border: `1px solid ${theme.cardBorder}`,
-            }}
-          >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>You Could Save</p>
-            <p className="text-lg sm:text-2xl font-bold whitespace-nowrap" style={{ color: theme.green }}>
-              {savings}
-              <span className="text-[11px] ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
-            </p>
-          </div>
-          <div
-            className="rounded-2xl p-2 sm:p-4 text-center min-w-0"
-            style={{
-              background: theme.cardBg,
-              border: `1px solid ${theme.cardBorder}`,
-            }}
-          >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Most Expensive</p>
-            <p className="text-lg sm:text-2xl font-bold whitespace-nowrap" style={{ color: '#E74C3C' }}>
-              {expensive ? (expensive.price * 100).toFixed(1) : '\u2014'}
-              <span className="text-[11px] ml-0.5" style={{ color: theme.textSecondary }}>&cent;/L</span>
-            </p>
           </div>
         </div>
       )}
@@ -556,43 +507,11 @@ export default function FuelPricePage({
       )}
 
       {/* Informational content for SEO and AdSense */}
-      {cityContent ? (
-        <div
-          className="rounded-2xl p-6 mt-4"
-          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
-        >
-          <h2 className="text-base font-bold mb-3" style={{ color: theme.gold }}>Fuel Prices in {initialSuburb.name}</h2>
-          {cityContent.intro && (
-            <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.intro}</p>
-          )}
-          {cityContent.suburbs && (
-            <>
-              <h3 className="text-sm font-semibold mb-2" style={{ color: theme.text }}>Suburbs &amp; Areas Covered</h3>
-              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.suburbs}</p>
-            </>
-          )}
-          {cityContent.trends && (
-            <>
-              <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Price Trends in {initialSuburb.name}</h3>
-              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.trends}</p>
-            </>
-          )}
-          {cityContent.tips && (
-            <>
-              <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Tips to Save on Fuel in {initialSuburb.name}</h3>
-              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>{cityContent.tips}</p>
-            </>
-          )}
-          <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
-            FueVolt compares E10, Unleaded 91, Premium 95, Premium 98, Diesel and LPG in {initialSuburb.name} — see our <a href="/guides/fuel-types-explained" style={{ color: theme.gold }}>guide to fuel types</a> for which grade suits your car.
-          </p>
-        </div>
-      ) : (
-        <div
-          className="rounded-2xl p-6 mt-4"
-          style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
-        >
-          <h2 className="text-base font-bold mb-3" style={{ color: theme.gold }}>How FueVolt Fuel Price Comparison Works</h2>
+      <div
+        className="rounded-2xl p-6 mt-4"
+        style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}
+      >
+        <h2 className="text-base font-bold mb-3" style={{ color: theme.gold }}>How FueVolt Fuel Price Comparison Works</h2>
           <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
             FueVolt compares real-time fuel prices from official Australian government sources. Prices are updated throughout the day as fuel stations report changes, giving you the most accurate data available.
           </p>
@@ -606,9 +525,8 @@ export default function FuelPricePage({
           <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Coverage Across Australia</h3>
           <p className="text-xs leading-relaxed" style={{ color: theme.textSecondary }}>
             FueVolt covers fuel stations across New South Wales, Victoria, Queensland, Western Australia and Tasmania. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, Wollongong and Hobart, as well as regional and rural areas throughout these states.
-          </p>
-        </div>
-      )}
+        </p>
+      </div>
 
       <style>{`
         @keyframes heroCardEntry {
