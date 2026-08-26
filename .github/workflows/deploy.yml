@@ -49,6 +49,24 @@ jobs:
           git archive origin/deploy | tar -x -C "$RUNNER_TEMP/deploy-output"
           node scripts/verify-prerender.js "$RUNNER_TEMP/deploy-output"
 
+      # Written here — after the public build artifact and deploy branch are
+      # already published — so this credential never appears in either of
+      # those, only transiently on the runner for the FTP step below.
+      - name: Write NT API credentials (server-side only, never committed)
+        env:
+          NT_API_USERNAME: ${{ secrets.NT_API_USERNAME }}
+          NT_API_PASSWORD: ${{ secrets.NT_API_PASSWORD }}
+        run: |
+          mkdir -p dist/api
+          php -r '
+            $lines = [
+              "<?php",
+              "define(" . var_export("NT_API_USERNAME", true) . ", " . var_export(getenv("NT_API_USERNAME"), true) . ");",
+              "define(" . var_export("NT_API_PASSWORD", true) . ", " . var_export(getenv("NT_API_PASSWORD"), true) . ");",
+            ];
+            file_put_contents("dist/api/nt-config.php", implode(PHP_EOL, $lines) . PHP_EOL);
+          '
+
       - name: Deploy complete artifact to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

@@ -128,12 +128,12 @@ function formatCacheAge(timestamp) {
 
 // Fuel type mapping for various APIs
 const FUEL_TYPE_MAP = {
-  'E10': { nsw: 'E10', wa: null, qld: 12, vic: 'E10' },
-  'U91': { nsw: 'U91', wa: '1', qld: 2, vic: 'U91' },
-  'U95': { nsw: 'P95', wa: '2', qld: 5, vic: 'P95' },
-  'U98': { nsw: 'P98', wa: '6', qld: 8, vic: 'P98' },
-  'Diesel': { nsw: 'DL', wa: '4', qld: 3, vic: 'DSL' },
-  'LPG': { nsw: 'LPG', wa: '5', qld: 4, vic: 'LPG' },
+  'E10': { nsw: 'E10', wa: null, qld: 12, vic: 'E10', nt: 'E10' },
+  'U91': { nsw: 'U91', wa: '1', qld: 2, vic: 'U91', nt: 'U91' },
+  'U95': { nsw: 'P95', wa: '2', qld: 5, vic: 'P95', nt: 'P95' },
+  'U98': { nsw: 'P98', wa: '6', qld: 8, vic: 'P98', nt: 'P98' },
+  'Diesel': { nsw: 'DL', wa: '4', qld: 3, vic: 'DSL', nt: 'DL' },
+  'LPG': { nsw: 'LPG', wa: '5', qld: 4, vic: 'LPG', nt: 'LPG' },
 };
 
 // QLD Fuel Pricing Direct API
@@ -321,6 +321,32 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius) {
   }
 }
 
+// NT MyFuel API — proxied through public/api/nt-fuel.php rather than called
+// directly from the browser. Unlike the other states' simple API keys, NT's
+// credential is a real account username/password with a lockout risk on
+// repeated bad attempts, so it's kept server-side entirely (never shipped in
+// the client bundle) — see PROJECT_STATUS.md for the full write-up.
+async function fetchNTFuelPrices(latitude, longitude, fuelType, radius) {
+  try {
+    const params = new URLSearchParams({
+      lat: latitude.toString(),
+      lng: longitude.toString(),
+      fuelType,
+      radius: radius.toString(),
+    });
+    // Same native-app origin handling as fetchWAFuelPrices — a relative path
+    // doesn't resolve correctly from a Capacitor native context.
+    const proxyOrigin = Capacitor.isNativePlatform() ? 'https://www.fuevolt.com' : '';
+    const response = await fetch(`${proxyOrigin}/api/nt-fuel.php?${params}`);
+    if (!response.ok) return null;
+    const stations = await response.json();
+    if (!Array.isArray(stations)) return null;
+    return stations;
+  } catch {
+    return null;
+  }
+}
+
 // VIC Fair Fuel Open Data API (Service Victoria / Servo Saver)
 const VIC_API_BASE = 'https://api.fuel.service.vic.gov.au/open-data/v1';
 const VIC_CONSUMER_ID = '306d44cdce3e09a9a61135cbe7e5eff1';
@@ -486,6 +512,8 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
     results = await fetchWAFuelPrices(latitude, longitude, fuelType, radius);
   } else if (state === 'NSW' || state === 'TAS') {
     results = await fetchNSWFuelPrices(latitude, longitude, fuelType, radius);
+  } else if (state === 'NT') {
+    results = await fetchNTFuelPrices(latitude, longitude, fuelType, radius);
   }
 
   // Fallback: fetch real station locations from OpenStreetMap (no pricing for these states)
