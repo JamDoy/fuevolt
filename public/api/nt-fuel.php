@@ -18,10 +18,15 @@ function respondWithError($status, $message) {
     exit;
 }
 
-// Deliberately not named anything with "config"/"secret"/"credential" in it —
-// a file called nt-config.php uploaded fine but was silently unreachable
-// (served the SPA fallback instead of executing), almost certainly a host
-// security rule blocking direct access to config-named files.
+// Named nt-vars.php rather than nt-config.php for historical reasons only —
+// the original name wasn't actually the problem. The real issue: the FTP
+// deploy action's "Upload: new file" path for a path that's never existed
+// on the server before appears unreliable on this host — it reports success
+// but the file never lands, and its own state-tracking then believes the
+// (nonexistent) file is already in sync, so it never retries. "File replace"
+// for an already-existing path has been reliable every time, hence a
+// placeholder version of this file now being manually seeded once via
+// Hostinger's file manager, so future deploys always take the replace path.
 $configFile = __DIR__ . '/nt-vars.php';
 if (!file_exists($configFile)) {
     respondWithError(500, 'NT API not configured on this environment');
