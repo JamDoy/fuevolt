@@ -7,5 +7,5 @@ dist
 # NT MyFuel API credentials — written at deploy time from GitHub Secrets,
 # never committed (see .github/workflows/deploy.yml). Runtime cache files
 # for the same proxy also excluded, since they can hold a live bearer token.
-public/api/nt-config.php
+public/api/nt-vars.php
 public/api/cache/*.json

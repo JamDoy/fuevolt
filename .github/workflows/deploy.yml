@@ -79,10 +79,10 @@ jobs:
             echo '<?php'
             echo "define('NT_API_USERNAME', '${esc_user}');"
             echo "define('NT_API_PASSWORD', '${esc_pass}');"
-          } > dist/api/nt-config.php
+          } > dist/api/nt-vars.php
 
-          echo "Wrote dist/api/nt-config.php ($(wc -c < dist/api/nt-config.php) bytes)"
-          test -s dist/api/nt-config.php
+          echo "Wrote dist/api/nt-vars.php ($(wc -c < dist/api/nt-vars.php) bytes)"
+          test -s dist/api/nt-vars.php
 
       - name: Deploy complete artifact to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5

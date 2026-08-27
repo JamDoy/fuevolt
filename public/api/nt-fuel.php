@@ -18,7 +18,11 @@ function respondWithError($status, $message) {
     exit;
 }
 
-$configFile = __DIR__ . '/nt-config.php';
+// Deliberately not named anything with "config"/"secret"/"credential" in it —
+// a file called nt-config.php uploaded fine but was silently unreachable
+// (served the SPA fallback instead of executing), almost certainly a host
+// security rule blocking direct access to config-named files.
+$configFile = __DIR__ . '/nt-vars.php';
 if (!file_exists($configFile)) {
     respondWithError(500, 'NT API not configured on this environment');
 }
