@@ -174,42 +174,39 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
                 &#9889; CHEAPEST NEAR YOU
               </p>
 
-              <div className="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
-                <div className="min-w-0">
-                  <h3 className="text-[28px] sm:text-[34px] font-extrabold text-white" style={{ letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-                    {cheapest.name}
-                  </h3>
-                  <p className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                    {cheapest.brand} &middot; {cheapest.distance} km away
+              <div>
+                <h3 className="text-[28px] sm:text-[34px] font-extrabold text-white break-words" style={{ letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                  {cheapest.name}
+                </h3>
+                <p className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  {cheapest.brand} &middot; {cheapest.distance} km away
+                </p>
+                {cheapest.address && (
+                  <p className="text-[13px] mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    {cheapest.address}
                   </p>
-                  {cheapest.address && (
-                    <p className="text-[13px] mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                      {cheapest.address}
-                    </p>
-                  )}
-                </div>
+                )}
+              </div>
 
-                <div className="text-right flex-shrink-0">
-                  <p className="leading-none text-[56px] sm:text-[68px]" style={{ letterSpacing: '-0.03em' }}>
-                    <DigitalPrice context={context} color={!context ? '#F59E0B' : undefined}>
-                      {(cheapest.price * 100).toFixed(1)}
-                    </DigitalPrice>
-                    <span className="text-lg font-semibold align-top ml-1" style={{ color: '#F59E0B' }}>&cent;/L</span>
+              <div className="text-center mt-4">
+                <p className="leading-none text-[44px] sm:text-[52px]" style={{ letterSpacing: '-0.03em' }}>
+                  <DigitalPrice context={context} color={!context ? '#F59E0B' : undefined} glow>
+                    {(cheapest.price * 100).toFixed(1)}
+                  </DigitalPrice>
+                </p>
+                {badge && (
+                  <span
+                    className="inline-block mt-2 px-2.5 py-1 rounded-full text-xs font-semibold"
+                    style={{ background: badge.background, border: `1px solid ${badge.border}`, color: badge.color }}
+                  >
+                    {badge.label}
+                  </span>
+                )}
+                {savings && Number(savings) > 0 && (
+                  <p className="text-xs font-semibold mt-2" style={{ color: '#22C55E' }}>
+                    Save {savings}&cent;/L vs the most expensive nearby
                   </p>
-                  {badge && (
-                    <span
-                      className="inline-block mt-2 px-2.5 py-1 rounded-full text-xs font-semibold"
-                      style={{ background: badge.background, border: `1px solid ${badge.border}`, color: badge.color }}
-                    >
-                      {badge.label}
-                    </span>
-                  )}
-                  {savings && Number(savings) > 0 && (
-                    <p className="text-xs font-semibold mt-2" style={{ color: '#22C55E' }}>
-                      Save {savings}&cent;/L vs the most expensive nearby
-                    </p>
-                  )}
-                </div>
+                )}
               </div>
 
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '20px 0 16px' }} />

@@ -7,10 +7,13 @@ const CONTEXT_COLORS = {
   above: '#EF4444',
 };
 
-export default function DigitalPrice({ children, context, color, className = '', style = {} }) {
+export default function DigitalPrice({ children, context, color, glow = false, className = '', style = {} }) {
   const resolvedColor = color || CONTEXT_COLORS[context] || 'inherit';
   return (
-    <span className={`price-digital ${className}`} style={{ color: resolvedColor, ...style }}>
+    <span
+      className={`price-digital ${glow ? 'price-digital-glow' : ''} ${className}`}
+      style={{ color: resolvedColor, ...style }}
+    >
       {children}
     </span>
   );

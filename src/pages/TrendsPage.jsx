@@ -146,7 +146,7 @@ export default function TrendsPage({ onStationDetail }) {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-sm font-bold" style={{ color: theme.heading }}>{station.name}</h2>
+                    <h2 className="text-sm font-bold break-words" style={{ color: theme.heading }}>{station.name}</h2>
                     <p className="text-xs" style={{ color: theme.textMuted }}>{station.brand} &middot; {station.address}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
