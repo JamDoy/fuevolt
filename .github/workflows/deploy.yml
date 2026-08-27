@@ -49,16 +49,11 @@ jobs:
           git archive origin/deploy | tar -x -C "$RUNNER_TEMP/deploy-output"
           node scripts/verify-prerender.js "$RUNNER_TEMP/deploy-output"
 
-      # NT's credential file (public_html/api/nt-vars.php) is deliberately
-      # NOT managed by this pipeline at all — several attempts to generate
-      # and upload it via this workflow all resulted in the file being
-      # deleted or left empty on the server, seemingly because it's the only
-      # file in the deploy that's injected into dist/ after every earlier
-      # step has already captured/read that directory (rather than coming
-      # from vite build or public/ like everything else). Rather than keep
-      # fighting that, it's excluded below so nothing here can ever touch
-      # it — it's set once directly on the server via Hostinger's file
-      # manager and stays there. See PROJECT_STATUS.md for the full story.
+      # NT's credential file now lives one level ABOVE public_html on the
+      # server (see public/api/nt-fuel.php), outside this action's
+      # server-dir entirely, so it's structurally unreachable here — no
+      # exclude entry needed. It's set once directly on the server via
+      # Hostinger's file manager and stays there. See PROJECT_STATUS.md.
       - name: Deploy complete artifact to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -71,7 +66,6 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            **/api/nt-vars.php
       - name: Verify live Hostinger guide pages
         continue-on-error: true
         run: npm run verify:live

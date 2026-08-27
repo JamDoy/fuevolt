@@ -4,8 +4,10 @@ dist
 *.local
 .env
 
-# NT MyFuel API credentials — written at deploy time from GitHub Secrets,
-# never committed (see .github/workflows/deploy.yml). Runtime cache files
-# for the same proxy also excluded, since they can hold a live bearer token.
+# NT MyFuel API credentials — never committed. The live copy is created
+# manually on the server, one level above public_html (see
+# public/api/nt-fuel.php); this local entry only matters if a local copy
+# is ever created for local PHP testing. Runtime cache files for the same
+# proxy also excluded, since they can hold a live bearer token.
 public/api/nt-vars.php
 public/api/cache/*.json
