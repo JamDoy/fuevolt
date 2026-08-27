@@ -49,41 +49,16 @@ jobs:
           git archive origin/deploy | tar -x -C "$RUNNER_TEMP/deploy-output"
           node scripts/verify-prerender.js "$RUNNER_TEMP/deploy-output"
 
-      # Written here — after the public build artifact and deploy branch are
-      # already published — so this credential never appears in either of
-      # those, only transiently on the runner for the FTP step below. Pure
-      # bash/sed, deliberately no dependency on PHP being present on the
-      # *runner* (it only needs to exist on Hostinger's side) — a previous
-      # version of this step used `php -r` and silently produced no file at
-      # all, most likely because PHP isn't actually on this runner image.
-      - name: Write NT API credentials (server-side only, never committed)
-        env:
-          NT_API_USERNAME: ${{ secrets.NT_API_USERNAME }}
-          NT_API_PASSWORD: ${{ secrets.NT_API_PASSWORD }}
-        run: |
-          set -euo pipefail
-          mkdir -p dist/api
-
-          # Escapes a value for safe use inside a PHP single-quoted string:
-          # backslash first (\ -> \\), then single quote (' -> \'). Order
-          # matters — escaping quotes first would corrupt the backslashes
-          # introduced by that step if a value ever contained both.
-          php_single_quote_escape() {
-            printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e "s/'/\\\\'/g"
-          }
-
-          esc_user=$(php_single_quote_escape "$NT_API_USERNAME")
-          esc_pass=$(php_single_quote_escape "$NT_API_PASSWORD")
-
-          {
-            echo '<?php'
-            echo "define('NT_API_USERNAME', '${esc_user}');"
-            echo "define('NT_API_PASSWORD', '${esc_pass}');"
-          } > dist/api/nt-vars.php
-
-          echo "Wrote dist/api/nt-vars.php ($(wc -c < dist/api/nt-vars.php) bytes)"
-          test -s dist/api/nt-vars.php
-
+      # NT's credential file (public_html/api/nt-vars.php) is deliberately
+      # NOT managed by this pipeline at all — several attempts to generate
+      # and upload it via this workflow all resulted in the file being
+      # deleted or left empty on the server, seemingly because it's the only
+      # file in the deploy that's injected into dist/ after every earlier
+      # step has already captured/read that directory (rather than coming
+      # from vite build or public/ like everything else). Rather than keep
+      # fighting that, it's excluded below so nothing here can ever touch
+      # it — it's set once directly on the server via Hostinger's file
+      # manager and stays there. See PROJECT_STATUS.md for the full story.
       - name: Deploy complete artifact to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -92,6 +67,11 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: ./public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/api/nt-vars.php
       - name: Verify live Hostinger guide pages
         continue-on-error: true
         run: npm run verify:live
