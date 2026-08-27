@@ -7,6 +7,7 @@ import FuelPricePage from './pages/FuelPricePage';
 import FuelStationDetailPage from './pages/FuelStationDetailPage';
 import EVStationDetailPage from './pages/EVStationDetailPage';
 import TripPlannerPage from './pages/TripPlannerPage';
+import TrendsPage from './pages/TrendsPage';
 import EVvsFuelPage from './pages/EVvsFuelPage';
 import NotificationsPage from './pages/NotificationsPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
@@ -46,6 +47,7 @@ function parseRoute() {
     return { view: 'ev', suburb };
   }
   if (parts[0] === 'trip-planner') return { view: 'trip', suburb: null };
+  if (parts[0] === 'trends') return { view: 'trends', suburb: null };
   if (parts[0] === 'ev-vs-fuel') return { view: 'calculator', suburb: null };
   if (parts[0] === 'alerts') return { view: 'notifications', suburb: null };
   if (parts[0] === 'guides') {
@@ -236,7 +238,7 @@ function AppContent() {
         onBack={handleBack}
         view={view}
         onViewChange={(v) => {
-          const paths = { fuel: '/fuel-prices', ev: '/ev-charging', trip: '/trip-planner', calculator: '/ev-vs-fuel', notifications: '/alerts', articles: '/guides' };
+          const paths = { fuel: '/fuel-prices', ev: '/ev-charging', trip: '/trip-planner', trends: '/trends', calculator: '/ev-vs-fuel', notifications: '/alerts', articles: '/guides' };
           handlePrimaryNavigation(v, paths[v] || '/');
         }}
       />
@@ -289,6 +291,7 @@ function AppContent() {
           />
         )}
         {view === 'trip' && <TripPlannerPage />}
+        {view === 'trends' && <TrendsPage onStationDetail={handleStationDetail} />}
         {view === 'calculator' && <EVvsFuelPage />}
         {view === 'notifications' && (
           <NotificationsPage onCheckNow={() => handlePrimaryNavigation('fuel', '/fuel-prices')} />

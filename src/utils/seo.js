@@ -21,6 +21,11 @@ const PAGE_META = {
     description: 'Plan your road trip with live traffic, fuel stops, and EV charging stations along the way. Get drive time estimates and EV battery forecasts powered by TomTom.',
     path: '/trip-planner',
   },
+  trends: {
+    title: 'Fuel Price Trends — Track Station Prices Over Time | FueVolt',
+    description: 'Search a suburb to see how fuel prices at nearby stations have moved over time, and spot the best time to fill up.',
+    path: '/trends',
+  },
   notifications: {
     title: 'Fuel & EV Alerts — Price Drops & Nearby Stations | FueVolt',
     description: 'Set alerts for fuel price drops near your saved stations. Get notified when you are near cheap fuel or EV chargers.',

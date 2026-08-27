@@ -5,6 +5,11 @@ const WIDTH = 300;
 const HEIGHT = 80;
 const PAD = 6;
 
+function formatDDMMYY(isoDate) {
+  const [y, m, d] = isoDate.split('-');
+  return `${d}/${m}/${y.slice(2)}`;
+}
+
 function buildPath(points) {
   const prices = points.map((p) => p.price);
   const min = Math.min(...prices);
@@ -57,7 +62,11 @@ export default function Sparkline({ points, theme }) {
 
   return (
     <div className="mt-4 relative">
-      <div className="absolute top-0 right-0 text-right" style={{ zIndex: 1 }}>
+      {/* A normal-flow row above the SVG, not absolutely positioned over it —
+          the graph's own shape (a high point near either edge, for example)
+          would otherwise put the curve or its end dot right behind this
+          text no matter which corner it's pinned to. */}
+      <div className="flex justify-end">
         <p className="text-xs font-semibold">
           <span style={{ color: '#EF4444' }}>&uarr; {(high.price * 100).toFixed(1)}&cent;</span>
           {'  '}
@@ -65,7 +74,7 @@ export default function Sparkline({ points, theme }) {
         </p>
       </div>
 
-      <svg width="100%" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="none" style={{ height: `${HEIGHT}px`, display: 'block' }} className="mt-5 sm:mt-4">
+      <svg width="100%" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="none" style={{ height: `${HEIGHT}px`, display: 'block' }} className="mt-2">
         <defs>
           <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="rgba(34,197,94,0.15)" />
@@ -96,7 +105,7 @@ export default function Sparkline({ points, theme }) {
             onMouseLeave={() => setShowLowTip(false)}
             onClick={() => setShowLowTip((v) => !v)}
           >
-            <title>{`${(low.price * 100).toFixed(1)}¢ — ${low.date}`}</title>
+            <title>{`${(low.price * 100).toFixed(1)}¢ — ${formatDDMMYY(low.date)}`}</title>
           </circle>
         )}
         <circle
@@ -122,13 +131,17 @@ export default function Sparkline({ points, theme }) {
             whiteSpace: 'nowrap',
           }}
         >
-          {(low.price * 100).toFixed(1)}&cent; &middot; {low.date}
+          {(low.price * 100).toFixed(1)}&cent; &middot; {formatDDMMYY(low.date)}
         </div>
       )}
 
       <div className="flex justify-between mt-1">
-        <span className="text-[11px]" style={{ color: theme.textMuted }}>{points.length} day{points.length === 1 ? '' : 's'} tracked</span>
-        <span className="text-[11px]" style={{ color: theme.textMuted }}>Today</span>
+        <span className="text-[11px]" style={{ color: theme.textMuted }}>
+          {(points[0].price * 100).toFixed(1)}&cent; &middot; {formatDDMMYY(points[0].date)}
+        </span>
+        <span className="text-[11px]" style={{ color: theme.textMuted }}>
+          {(points[lastIdx].price * 100).toFixed(1)}&cent; &middot; {formatDDMMYY(points[lastIdx].date)}
+        </span>
       </div>
     </div>
   );

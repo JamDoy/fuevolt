@@ -500,6 +500,20 @@ writePage('/alerts', generatePage({
 }));
 sitemapUrls.push('/alerts');
 
+// Fuel price trends
+writePage('/trends', generatePage({
+  urlPath: '/trends',
+  title: 'Fuel Price Trends — Track Station Prices Over Time | FueVolt',
+  description: 'Search a suburb to see how fuel prices at nearby stations have moved over time, and spot the best time to fill up.',
+  h1: 'Fuel Price Trends',
+  content: `
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Search a suburb, city or postcode to see how prices at nearby fuel stations have moved over time, station by station.</p>
+        <h2 style="font-size:1.3rem;margin:24px 0 12px">How Trends Are Built</h2>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">FueVolt doesn't keep a central price-history database — each station's trend is built from real prices recorded on your own device the times you've checked that station before. A station you're viewing for the first time won't have a graph yet; check back on it over time to see its trend build up.</p>
+        <p style="font-size:0.9rem;color:#4B5563">This keeps trend data accurate to what was actually reported, rather than estimated or backfilled. See our <a href="/privacy">Privacy Policy</a> for details on what's stored locally versus sent anywhere else.</p>`,
+}));
+sitemapUrls.push('/trends');
+
 // ── Generate sitemap.xml ────────────────────────────────────────────────
 console.log('Generating sitemap.xml...');
 const today = new Date().toISOString().split('T')[0];

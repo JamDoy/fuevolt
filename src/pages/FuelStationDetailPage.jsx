@@ -1,12 +1,11 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
 import { fetchStationDetails, fetchAllFuelPricesForStation } from '../utils/stationDetails';
-import { recordPriceSnapshot, getPriceHistory, getPriceTrend } from '../utils/priceHistory';
+import { recordPriceSnapshot, getPriceTrend } from '../utils/priceHistory';
 import { getBrandStyle } from '../utils/brandLogos';
-import Sparkline from '../components/Sparkline';
 import TouchableMap from '../components/TouchableMap';
 import FuelReminderCard from '../components/FuelReminderCard';
 import { getPriceFreshness } from '../utils/priceFreshness';
@@ -174,10 +173,6 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
     return () => observer.disconnect();
   }, []);
 
-  const priceHistory = useMemo(
-    () => (station.fuelType ? getPriceHistory(station.id, station.fuelType) : []),
-    [station.id, station.fuelType, station.price]
-  );
   const trend = station.fuelType ? getPriceTrend(station.id, station.fuelType) : null;
 
   const avg = station.resultAveragePrice;
@@ -456,17 +451,6 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                 </p>
               )}
             </div>
-          </div>
-        </Section>
-
-        {/* [6] Price History Sparkline */}
-        <Section index={5}>
-          <div className="mt-3" style={{ ...cardStyle, padding: '20px' }}>
-            <div className="flex items-start justify-between gap-3">
-              <h2 className="text-[15px] font-bold" style={{ color: theme.heading }}>Price history</h2>
-              <p className="text-xs text-right" style={{ color: theme.textMuted }}>{station.fuelType} at {station.name}</p>
-            </div>
-            <Sparkline points={priceHistory} theme={theme} />
           </div>
         </Section>
 

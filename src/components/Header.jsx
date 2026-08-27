@@ -6,6 +6,7 @@ const TABS = [
   { id: 'fuel', label: 'Fuel Prices' },
   { id: 'ev', label: 'EV Charging' },
   { id: 'trip', label: 'Trip Planner' },
+  { id: 'trends', label: 'Trends' },
   { id: 'calculator', label: 'EV v Fuel' },
   { id: 'articles', label: 'Guides' },
   { id: 'notifications', label: 'Alerts' },
