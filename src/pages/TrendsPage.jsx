@@ -18,7 +18,7 @@ const FUEL_TYPES = [
   { id: 'LPG', label: 'LPG' },
 ];
 
-export default function TrendsPage({ onStationDetail }) {
+export default function TrendsPage({ onStationDetail, onGoHome }) {
   const { theme } = useTheme();
   const [fuelType, setFuelType] = useState('U91');
   const [stations, setStations] = useState([]);
@@ -89,6 +89,23 @@ export default function TrendsPage({ onStationDetail }) {
         Trend history builds up the more a station gets checked — a station you're
         searching for the first time won't have a graph yet.
       </p>
+
+      {onGoHome && (
+        <button
+          type="button"
+          onClick={onGoHome}
+          className="w-full flex items-center justify-between gap-3 rounded-2xl px-5 py-4 mb-5 cursor-pointer text-left"
+          style={{ background: 'linear-gradient(135deg, #1A6FDB, #0D3A8C)', border: 'none' }}
+        >
+          <span>
+            <span className="block text-sm font-bold text-white">Want the full picture, not just trends?</span>
+            <span className="block text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.75)' }}>
+              Compare live fuel prices near you on the FueVolt homepage
+            </span>
+          </span>
+          <span className="flex-shrink-0 text-sm font-bold" style={{ color: '#F59E0B' }}>Go now &rarr;</span>
+        </button>
+      )}
 
       <SearchBar
         onSearch={handleSearch}

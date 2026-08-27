@@ -291,7 +291,9 @@ function AppContent() {
           />
         )}
         {view === 'trip' && <TripPlannerPage />}
-        {view === 'trends' && <TrendsPage onStationDetail={handleStationDetail} />}
+        {view === 'trends' && (
+          <TrendsPage onStationDetail={handleStationDetail} onGoHome={() => navigate('landing', '/')} />
+        )}
         {view === 'calculator' && <EVvsFuelPage />}
         {view === 'notifications' && (
           <NotificationsPage onCheckNow={() => handlePrimaryNavigation('fuel', '/fuel-prices')} />
