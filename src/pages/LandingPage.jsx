@@ -56,7 +56,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight mb-3" style={{ color: theme.text }}>
-            finds the cheapest fuel & nearest charge
+            Find the cheapest fuel and nearest charge
           </h1>
         </div>
         <SearchBar
