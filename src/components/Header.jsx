@@ -56,17 +56,16 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
         </div>
 
         {/* Center: Desktop Tabs */}
-        <nav className="hidden md:flex items-center gap-2">
+        <nav className="hidden md:flex items-center gap-1">
           {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => onViewChange(tab.id)}
-                className="px-5 py-2 rounded-xl text-sm font-semibold cursor-pointer"
+                className="nav-tab-btn px-3 py-2 text-sm font-semibold cursor-pointer"
                 style={{
-                  transition: 'all 0.25s ease',
-                  ...(view === tab.id
-                    ? { background: 'linear-gradient(135deg, #B45309, #F59E0B)', color: '#0D2B5E', boxShadow: '0 0 12px rgba(245, 158, 11, 0.3)' }
-                    : { background: 'rgba(255,255,255,0.1)', color: '#FFFFFF' }),
+                  background: 'none',
+                  border: 'none',
+                  color: view === tab.id ? '#F59E0B' : '#FFFFFF',
                 }}
               >
                 {tab.label}
@@ -134,15 +133,12 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
                 onViewChange(tab.id);
                 setMenuOpen(false);
               }}
-              className="px-4 py-3 rounded-xl text-sm font-semibold text-left cursor-pointer"
+              className="nav-tab-btn px-4 py-3 text-sm font-semibold text-left cursor-pointer"
               style={{
-                transition: 'all 0.25s ease',
-                ...(view === tab.id
-                  ? { background: 'linear-gradient(135deg, #B45309, #F59E0B)', color: '#0D2B5E' }
-                  : {
-                      background: 'rgba(255,255,255,0.08)',
-                      color: '#FFFFFF',
-                    }),
+                background: 'none',
+                border: 'none',
+                color: view === tab.id ? '#F59E0B' : '#FFFFFF',
+                transformOrigin: 'left center',
               }}
             >
               {tab.label}

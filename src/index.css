@@ -27,6 +27,17 @@
   letter-spacing: 0.02em;
 }
 
+.nav-tab-btn {
+  transition: transform 0.2s ease, color 0.2s ease;
+  transform: scale(1);
+  transform-origin: center;
+}
+
+.nav-tab-btn:hover,
+.nav-tab-btn:focus-visible {
+  transform: scale(1.15);
+}
+
 .price-digital-glow {
   animation: priceDigitalGlow 2s ease-in-out infinite;
 }
