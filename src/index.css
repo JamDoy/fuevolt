@@ -43,8 +43,8 @@
 }
 
 @keyframes priceDigitalGlow {
-  0%, 100% { text-shadow: 0 0 6px currentColor, 0 0 14px currentColor; }
-  50% { text-shadow: 0 0 14px currentColor, 0 0 30px currentColor, 0 0 44px currentColor; }
+  0%, 100% { text-shadow: 0 0 4px currentColor, 0 0 9px currentColor; }
+  50% { text-shadow: 0 0 8px currentColor, 0 0 18px currentColor; }
 }
 
 /* Always reserve space for the vertical scrollbar so navigating between a
