@@ -296,14 +296,20 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detecte
       stationMap[s.code] = s;
     });
 
-    // ACT has no fuel-price scheme of its own — its retailers report through
-    // this same NSW FuelCheck API — so label those stations accurately
-    // rather than calling everything "NSW Government". Based on the state
-    // detected from the search coordinates, not the API's own per-station
-    // `state` field, which was confirmed live to say "NSW" even for
-    // clearly-ACT addresses (e.g. "BRADDON ACT 2612").
-    const isACT = detectedState === 'ACT';
-    const fallbackStateLabel = isACT ? 'ACT' : 'NSW';
+    // ACT and Tasmania both have no fuel-price scheme of their own — their
+    // retailers report through this same NSW FuelCheck API — so label those
+    // stations accurately rather than calling everything "NSW Government".
+    // Based on the state detected from the search coordinates, not the API's
+    // own per-station `state` field: confirmed live that field is unreliable
+    // for ACT (always says "NSW", even for addresses like "BRADDON ACT
+    // 2612") though it happens to be correct for TAS — using the same
+    // coordinate-based source for all three keeps this consistent rather
+    // than trusting a field with proven mixed reliability.
+    const fallbackStateLabel = detectedState || 'NSW';
+    const sourceLabel =
+      detectedState === 'ACT' ? 'ACT (via NSW FuelCheck)'
+      : detectedState === 'TAS' ? 'TAS Government'
+      : 'NSW Government';
 
     return data.prices.map((p, i) => {
       const station = stationMap[p.stationcode] || {};
@@ -322,7 +328,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detecte
         fuelType: nswCode,
         lastUpdated: p.lastupdated || null,
         distance: station.distance || '—',
-        source: isACT ? 'ACT (via NSW FuelCheck)' : 'NSW Government',
+        source: sourceLabel,
       };
     });
   } catch {
