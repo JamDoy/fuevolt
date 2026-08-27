@@ -51,21 +51,38 @@ jobs:
 
       # Written here — after the public build artifact and deploy branch are
       # already published — so this credential never appears in either of
-      # those, only transiently on the runner for the FTP step below.
+      # those, only transiently on the runner for the FTP step below. Pure
+      # bash/sed, deliberately no dependency on PHP being present on the
+      # *runner* (it only needs to exist on Hostinger's side) — a previous
+      # version of this step used `php -r` and silently produced no file at
+      # all, most likely because PHP isn't actually on this runner image.
       - name: Write NT API credentials (server-side only, never committed)
         env:
           NT_API_USERNAME: ${{ secrets.NT_API_USERNAME }}
           NT_API_PASSWORD: ${{ secrets.NT_API_PASSWORD }}
         run: |
+          set -euo pipefail
           mkdir -p dist/api
-          php -r '
-            $lines = [
-              "<?php",
-              "define(" . var_export("NT_API_USERNAME", true) . ", " . var_export(getenv("NT_API_USERNAME"), true) . ");",
-              "define(" . var_export("NT_API_PASSWORD", true) . ", " . var_export(getenv("NT_API_PASSWORD"), true) . ");",
-            ];
-            file_put_contents("dist/api/nt-config.php", implode(PHP_EOL, $lines) . PHP_EOL);
-          '
+
+          # Escapes a value for safe use inside a PHP single-quoted string:
+          # backslash first (\ -> \\), then single quote (' -> \'). Order
+          # matters — escaping quotes first would corrupt the backslashes
+          # introduced by that step if a value ever contained both.
+          php_single_quote_escape() {
+            printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e "s/'/\\\\'/g"
+          }
+
+          esc_user=$(php_single_quote_escape "$NT_API_USERNAME")
+          esc_pass=$(php_single_quote_escape "$NT_API_PASSWORD")
+
+          {
+            echo '<?php'
+            echo "define('NT_API_USERNAME', '${esc_user}');"
+            echo "define('NT_API_PASSWORD', '${esc_pass}');"
+          } > dist/api/nt-config.php
+
+          echo "Wrote dist/api/nt-config.php ($(wc -c < dist/api/nt-config.php) bytes)"
+          test -s dist/api/nt-config.php
 
       - name: Deploy complete artifact to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
