@@ -4,8 +4,10 @@ import SearchBar from '../components/SearchBar';
 import Sparkline from '../components/Sparkline';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
+import DigitalPrice from '../components/DigitalPrice';
 import { fetchFuelPrices, geocodeLocation, getUserLocation } from '../utils/api';
 import { getPriceHistory } from '../utils/priceHistory';
+import { getPriceContext } from '../utils/priceFreshness';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -74,6 +76,11 @@ export default function TrendsPage({ onStationDetail }) {
     }
   };
 
+  const pricedStations = stations.filter((s) => s.price != null);
+  const avgPrice = pricedStations.length > 0
+    ? pricedStations.reduce((sum, s) => sum + s.price, 0) / pricedStations.length
+    : 0;
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-1" style={{ color: theme.heading }}>Fuel Price Trends</h1>
@@ -130,6 +137,7 @@ export default function TrendsPage({ onStationDetail }) {
         <div className="mt-6 flex flex-col gap-4">
           {stations.map((station) => {
             const history = getPriceHistory(station.id, fuelType);
+            const context = getPriceContext(station.price, avgPrice);
             return (
               <div
                 key={station.id}
@@ -142,7 +150,16 @@ export default function TrendsPage({ onStationDetail }) {
                     <p className="text-xs" style={{ color: theme.textMuted }}>{station.brand} &middot; {station.address}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-lg font-extrabold" style={{ color: theme.heading }}>{station.priceDisplay}</p>
+                    <p className="text-lg">
+                      {station.price != null ? (
+                        <DigitalPrice context={context} color={!context ? theme.heading : undefined}>
+                          {(station.price * 100).toFixed(1)}
+                        </DigitalPrice>
+                      ) : (
+                        <span style={{ color: theme.textMuted }}>N/A</span>
+                      )}
+                      <span className="text-xs font-semibold ml-0.5" style={{ color: theme.textMuted }}>&cent;/L</span>
+                    </p>
                     {onStationDetail && (
                       <button
                         type="button"

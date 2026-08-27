@@ -1,5 +1,31 @@
 @import "tailwindcss";
 
+/* Seven-segment "LED price sign" font, used only for the numeric price
+   figures shown around the site — the look of a real fuel station price
+   board, so it reads as familiar at a glance. DSEG7 Classic (SIL OFL
+   licensed, see public/fonts/dseg7/DSEG-LICENSE.txt) includes the dim
+   "ghost" segments of an unlit digit, which is what gives it the
+   digital-display look rather than just a blocky monospace font. */
+@font-face {
+  font-family: 'DSEG7';
+  src: url('/fonts/dseg7/DSEG7Classic-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DSEG7';
+  src: url('/fonts/dseg7/DSEG7Classic-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.price-digital {
+  font-family: 'DSEG7', 'Inter', monospace;
+  letter-spacing: 0.02em;
+}
+
 /* Always reserve space for the vertical scrollbar so navigating between a
    short page (no scrollbar) and a tall one (scrollbar appears) doesn't
    shift the centered layout sideways. scrollbar-gutter is the modern fix;

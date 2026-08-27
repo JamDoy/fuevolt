@@ -8,6 +8,7 @@ import { recordPriceSnapshot, getPriceTrend } from '../utils/priceHistory';
 import { getBrandStyle } from '../utils/brandLogos';
 import TouchableMap from '../components/TouchableMap';
 import FuelReminderCard from '../components/FuelReminderCard';
+import DigitalPrice from '../components/DigitalPrice';
 import { getPriceFreshness } from '../utils/priceFreshness';
 
 const goldPin = new L.DivIcon({
@@ -432,8 +433,10 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                         </span>
                         {priceData ? (
                           <span className="flex items-center gap-1.5">
-                            <span className="font-extrabold text-lg" style={{ color: isSearched ? '#F59E0B' : theme.text }}>
-                              {(priceData.price * 100).toFixed(1)}&cent;/L
+                            <span className="text-lg font-semibold" style={{ color: isSearched ? '#F59E0B' : theme.text }}>
+                              <DigitalPrice color={isSearched ? '#F59E0B' : theme.text}>
+                                {(priceData.price * 100).toFixed(1)}
+                              </DigitalPrice>&cent;/L
                             </span>
                             {isSearched && <span className="text-[10px] font-semibold" style={{ color: '#22C55E' }}>(selected)</span>}
                           </span>
@@ -607,7 +610,9 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                           <p className="text-xs" style={{ color: theme.textMuted }}>{alt.distance} km away</p>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="font-extrabold text-base" style={{ color: theme.text }}>{(alt.price * 100).toFixed(1)}&cent;/L</p>
+                          <p className="text-base">
+                            <DigitalPrice color={cheaper ? '#22C55E' : '#EF4444'}>{(alt.price * 100).toFixed(1)}</DigitalPrice>&cent;/L
+                          </p>
                           <p className="text-[11px] font-semibold" style={{ color: cheaper ? '#22C55E' : '#EF4444' }}>
                             {cheaper ? `${Math.abs(diff).toFixed(1)}¢ less` : `+${diff.toFixed(1)}¢ more`}
                           </p>

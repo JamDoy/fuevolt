@@ -4,6 +4,7 @@ import { formatOpeningHours } from '../utils/brandLogos';
 import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
 import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
 import { getPriceContext, getPriceFreshness } from '../utils/priceFreshness';
+import DigitalPrice from './DigitalPrice';
 
 export default function FuelStationCard({ station, isSelected, onClick, onDetail, rank, sortBy, averagePrice }) {
   const { theme } = useTheme();
@@ -81,8 +82,10 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
 
         <div className="text-right flex-shrink-0">
           {station.price != null ? (
-            <p className="text-3xl font-black leading-none" style={{ color: theme.gold }}>
-              {(station.price * 100).toFixed(1)}
+            <p className="text-3xl leading-none">
+              <DigitalPrice context={priceContext} color={!priceContext ? theme.gold : undefined}>
+                {(station.price * 100).toFixed(1)}
+              </DigitalPrice>
               <span className="text-xs ml-0.5 font-semibold" style={{ color: theme.textSecondary }}>¢/L</span>
             </p>
           ) : (

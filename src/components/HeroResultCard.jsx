@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getPriceContext } from '../utils/priceFreshness';
+import DigitalPrice from './DigitalPrice';
 
 const BADGE_STYLES = {
   below: { label: 'Below average', background: 'rgba(34,197,94,0.15)', border: 'rgba(34,197,94,0.3)', color: '#22C55E' },
@@ -95,7 +96,7 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
           animation: 'heroCompactIn 220ms ease-out forwards',
         }}
       >
-        <CompactContent cheapest={cheapest} savings={savings} />
+        <CompactContent cheapest={cheapest} savings={savings} context={context} />
       </button>
     );
   }
@@ -166,7 +167,7 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
           }}
         >
           {exiting ? (
-            <CompactContent cheapest={cheapest} savings={savings} />
+            <CompactContent cheapest={cheapest} savings={savings} context={context} />
           ) : (
             <>
               <p className="text-[11px] font-bold uppercase mb-3" style={{ color: '#22C55E', letterSpacing: '0.15em' }}>
@@ -189,8 +190,10 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
                 </div>
 
                 <div className="text-right flex-shrink-0">
-                  <p className="leading-none font-black text-[56px] sm:text-[68px]" style={{ color: '#F59E0B', letterSpacing: '-0.03em' }}>
-                    {(cheapest.price * 100).toFixed(1)}
+                  <p className="leading-none text-[56px] sm:text-[68px]" style={{ letterSpacing: '-0.03em' }}>
+                    <DigitalPrice context={context} color={!context ? '#F59E0B' : undefined}>
+                      {(cheapest.price * 100).toFixed(1)}
+                    </DigitalPrice>
                     <span className="text-lg font-semibold align-top ml-1" style={{ color: '#F59E0B' }}>&cent;/L</span>
                   </p>
                   {badge && (
@@ -246,7 +249,7 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
   );
 }
 
-function CompactContent({ cheapest, savings }) {
+function CompactContent({ cheapest, savings, context }) {
   return (
     <>
       <span className="flex items-center gap-2 min-w-0">
@@ -262,8 +265,11 @@ function CompactContent({ cheapest, savings }) {
         {savings && Number(savings) > 0 && (
           <span className="text-xs font-semibold hidden sm:inline" style={{ color: '#22C55E' }}>Save {savings}&cent;/L</span>
         )}
-        <span className="font-extrabold text-[22px]" style={{ color: '#F59E0B' }}>
-          {(cheapest.price * 100).toFixed(1)}<span className="text-xs">&cent;/L</span>
+        <span className="text-[22px]">
+          <DigitalPrice context={context} color={!context ? '#F59E0B' : undefined}>
+            {(cheapest.price * 100).toFixed(1)}
+          </DigitalPrice>
+          <span className="text-xs">&cent;/L</span>
         </span>
         <span className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Details &rarr;</span>
       </span>
