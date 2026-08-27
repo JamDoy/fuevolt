@@ -22,8 +22,8 @@ const PAGE_META = {
     path: '/trip-planner',
   },
   trends: {
-    title: 'Fuel Price Trends — Track Station Prices Over Time | FueVolt',
-    description: 'Search a suburb to see how fuel prices at nearby stations have moved over time, and spot the best time to fill up.',
+    title: 'Fuel Price Trends & Petrol Price Cycle — FueVolt',
+    description: 'Search a suburb to see fuel price history and trends for nearby stations, and learn how the petrol price cycle works so you can find the best day to buy fuel.',
     path: '/trends',
   },
   notifications: {

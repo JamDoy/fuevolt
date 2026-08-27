@@ -203,6 +203,28 @@ export default function TrendsPage({ onStationDetail, onGoHome }) {
           </p>
         </div>
       )}
+
+      <div className="mt-10 rounded-2xl p-5" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+        <h2 className="text-lg font-bold mb-2" style={{ color: theme.heading }}>Understanding the fuel price cycle</h2>
+        <p className="text-sm mb-3" style={{ color: theme.textMuted }}>
+          Fuel prices in Australia's capital cities don't just drift up and down randomly — they follow a
+          well-documented petrol price cycle, tracked by the ACCC in Sydney, Melbourne, Brisbane, Adelaide
+          and Perth. Prices typically rise sharply over a day or two, then decline gradually over the next
+          one to two weeks before spiking again.
+        </p>
+        <p className="text-sm" style={{ color: theme.textMuted }}>
+          Knowing where a city sits in its cycle is the best way to time a fill-up. Search a suburb above to
+          see the actual fuel price history for stations near you, or read our full guide on{' '}
+          <a
+            href="/guides/how-fuel-price-cycles-work-australia"
+            className="underline font-semibold"
+            style={{ color: theme.gold }}
+          >
+            how fuel price cycles work in Australia
+          </a>{' '}
+          and the best day to buy fuel.
+        </p>
+      </div>
     </div>
   );
 }

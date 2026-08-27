@@ -33,18 +33,21 @@ function formatArticleDate(value) {
 
 function renderInlineLinks(text, linkColor) {
   const parts = [];
-  const linkPattern = /\[([^\]]+)]\((https:\/\/[^)\s]+)\)/g;
+  // Matches external https:// citations (open in a new tab) as well as
+  // internal site-relative links like (/trends) for cross-linking between
+  // guides and app pages (opens in the same tab, normal navigation).
+  const linkPattern = /\[([^\]]+)]\(((?:https:\/\/|\/)[^)\s]+)\)/g;
   let lastIndex = 0;
   let match;
 
   while ((match = linkPattern.exec(text)) !== null) {
     if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    const isExternal = match[2].startsWith('http');
     parts.push(
       <a
         key={`${match[2]}-${match.index}`}
         href={match[2]}
-        target="_blank"
-        rel="noreferrer"
+        {...(isExternal ? { target: '_blank', rel: 'noreferrer' } : {})}
         className="underline"
         style={{ color: linkColor }}
       >
