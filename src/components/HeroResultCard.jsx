@@ -203,7 +203,7 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
                   </span>
                 )}
                 {savings && Number(savings) > 0 && (
-                  <p className="text-xs font-semibold mt-2" style={{ color: '#22C55E' }}>
+                  <p className="text-xs font-semibold mt-2" style={{ color: '#FFFFFF' }}>
                     Save {savings}&cent;/L vs the most expensive nearby
                   </p>
                 )}
