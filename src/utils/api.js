@@ -259,7 +259,7 @@ async function getNSWToken() {
   }
 }
 
-async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius) {
+async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detectedState) {
   try {
     const token = await getNSWToken();
     if (!token) return null;
@@ -296,6 +296,15 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius) {
       stationMap[s.code] = s;
     });
 
+    // ACT has no fuel-price scheme of its own — its retailers report through
+    // this same NSW FuelCheck API — so label those stations accurately
+    // rather than calling everything "NSW Government". Based on the state
+    // detected from the search coordinates, not the API's own per-station
+    // `state` field, which was confirmed live to say "NSW" even for
+    // clearly-ACT addresses (e.g. "BRADDON ACT 2612").
+    const isACT = detectedState === 'ACT';
+    const fallbackStateLabel = isACT ? 'ACT' : 'NSW';
+
     return data.prices.map((p, i) => {
       const station = stationMap[p.stationcode] || {};
       return {
@@ -305,7 +314,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius) {
         // station.address already comes fully formatted from this API
         // (street, suburb, state, postcode) — only synthesise one if it's
         // ever missing, rather than appending a redundant state suffix.
-        address: station.address || [station.suburb, station.state || 'NSW', station.postcode].filter(Boolean).join(' '),
+        address: station.address || [station.suburb, fallbackStateLabel, station.postcode].filter(Boolean).join(' '),
         latitude: station.location?.latitude || latitude,
         longitude: station.location?.longitude || longitude,
         price: p.price / 100,
@@ -313,7 +322,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius) {
         fuelType: nswCode,
         lastUpdated: p.lastupdated || null,
         distance: station.distance || '—',
-        source: 'NSW Government',
+        source: isACT ? 'ACT (via NSW FuelCheck)' : 'NSW Government',
       };
     });
   } catch {
@@ -510,8 +519,11 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
     results = await fetchVICFuelPrices(latitude, longitude, fuelType, radius);
   } else if (state === 'WA') {
     results = await fetchWAFuelPrices(latitude, longitude, fuelType, radius);
-  } else if (state === 'NSW' || state === 'TAS') {
-    results = await fetchNSWFuelPrices(latitude, longitude, fuelType, radius);
+  } else if (state === 'NSW' || state === 'TAS' || state === 'ACT') {
+    // ACT has no fuel-price scheme of its own — retailers there report
+    // through NSW's FuelCheck system (opt-in since 2022), so the same
+    // fetcher/API already covers it correctly.
+    results = await fetchNSWFuelPrices(latitude, longitude, fuelType, radius, state);
   } else if (state === 'NT') {
     results = await fetchNTFuelPrices(latitude, longitude, fuelType, radius);
   }
