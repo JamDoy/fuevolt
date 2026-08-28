@@ -322,7 +322,10 @@ function AppContent() {
         <p className="text-xs" style={{ color: theme.footerText }}>
           &copy; {new Date().getFullYear()} FueVolt &mdash; Australian EV & Fuel Price Finder
         </p>
-        
+        <p className="text-[10px] mt-1" style={{ color: theme.footerSubtext }}>
+          Prices sourced from official government data where available.
+        </p>
+
         <div className="flex flex-wrap justify-center gap-4 mt-2">
           <button
             onClick={() => navigate('about', '/about')}
