@@ -40,14 +40,79 @@ function parseRoute() {
   const parts = path.split('/').filter(Boolean);
   if (parts[0] === 'fuel-prices') {
     const suburb = parts[1] ? POPULAR_SUBURBS.fuel.find((s) => s.slug === parts[1]) : null;
+    // A shared station link (?lat=&lng=&fuel=&station=) re-runs the same
+    // nearby search live rather than replaying stale shared data, then
+    // opens the matching station once results come back — so a recipient
+    // always sees a currently-accurate price, not what the sharer saw.
+    const params = new URLSearchParams(window.location.search);
+    const lat = parseFloat(params.get('lat'));
+    const lng = parseFloat(params.get('lng'));
+    if (!suburb && Number.isFinite(lat) && Number.isFinite(lng)) {
+      return {
+        view: 'fuel',
+        suburb: null,
+        initialSearch: {
+          lat,
+          lng,
+          fuelType: params.get('fuel') || undefined,
+          stationId: params.get('station') || null,
+          label: params.get('label') || '',
+          key: Date.now(),
+        },
+      };
+    }
     return { view: 'fuel', suburb };
   }
   if (parts[0] === 'ev-charging') {
     const suburb = parts[1] ? POPULAR_SUBURBS.ev.find((s) => s.slug === parts[1]) : null;
+    const evParams = new URLSearchParams(window.location.search);
+    const evLat = parseFloat(evParams.get('lat'));
+    const evLng = parseFloat(evParams.get('lng'));
+    if (!suburb && Number.isFinite(evLat) && Number.isFinite(evLng)) {
+      return {
+        view: 'ev',
+        suburb: null,
+        initialSearch: {
+          lat: evLat,
+          lng: evLng,
+          label: evParams.get('label') || '',
+          key: Date.now(),
+        },
+      };
+    }
     return { view: 'ev', suburb };
   }
-  if (parts[0] === 'trip-planner') return { view: 'trip', suburb: null };
-  if (parts[0] === 'trends') return { view: 'trends', suburb: null };
+  if (parts[0] === 'trip-planner') {
+    const tripParams = new URLSearchParams(window.location.search);
+    const start = tripParams.get('start');
+    const end = tripParams.get('end');
+    if (start && end) {
+      return {
+        view: 'trip',
+        suburb: null,
+        initialTrip: { start, end, mode: tripParams.get('mode') || 'car' },
+      };
+    }
+    return { view: 'trip', suburb: null };
+  }
+  if (parts[0] === 'trends') {
+    const trendsParams = new URLSearchParams(window.location.search);
+    const tLat = parseFloat(trendsParams.get('lat'));
+    const tLng = parseFloat(trendsParams.get('lng'));
+    if (Number.isFinite(tLat) && Number.isFinite(tLng)) {
+      return {
+        view: 'trends',
+        suburb: null,
+        initialTrendsSearch: {
+          lat: tLat,
+          lng: tLng,
+          fuelType: trendsParams.get('fuel') || undefined,
+          label: trendsParams.get('label') || '',
+        },
+      };
+    }
+    return { view: 'trends', suburb: null };
+  }
   if (parts[0] === 'ev-vs-fuel') return { view: 'calculator', suburb: null };
   if (parts[0] === 'alerts') return { view: 'notifications', suburb: null };
   if (parts[0] === 'guides') {
@@ -72,8 +137,12 @@ function AppContent() {
   const [view, setView] = useState(parsed.view);
   const [fuelPreference, setFuelPreference] = useState(storedFuelPreference);
   const [showFuelPreference, setShowFuelPreference] = useState(!storedFuelPreference);
-  const [initialFuelType, setInitialFuelType] = useState(storedFuelPreference && storedFuelPreference !== 'EV' ? storedFuelPreference : 'U91');
-  const [initialSearch, setInitialSearch] = useState(null);
+  const [initialFuelType, setInitialFuelType] = useState(
+    parsed.initialSearch?.fuelType || (storedFuelPreference && storedFuelPreference !== 'EV' ? storedFuelPreference : 'U91')
+  );
+  const [initialSearch, setInitialSearch] = useState(parsed.initialSearch || null);
+  const [initialTrendsSearch] = useState(parsed.initialTrendsSearch || null);
+  const [initialTrip] = useState(parsed.initialTrip || null);
   const [detailStation, setDetailStation] = useState(parsed.station || null);
   const [initialSuburb, setInitialSuburb] = useState(parsed.suburb);
   const [articleSlug, setArticleSlug] = useState(parsed.articleSlug || null);
@@ -273,6 +342,7 @@ function AppContent() {
             preferredFuelType={fuelPreference}
             initialSearch={initialSearch}
             onStationDetail={handleStationDetail}
+            onSharedStationOpened={() => setInitialSearch((prev) => (prev ? { ...prev, stationId: null } : prev))}
             initialSuburb={initialSuburb}
           />
         )}
@@ -290,9 +360,13 @@ function AppContent() {
             onStationDetail={handleEVStationDetail}
           />
         )}
-        {view === 'trip' && <TripPlannerPage />}
+        {view === 'trip' && <TripPlannerPage initialTrip={initialTrip} />}
         {view === 'trends' && (
-          <TrendsPage onStationDetail={handleStationDetail} onGoHome={() => navigate('landing', '/')} />
+          <TrendsPage
+            onStationDetail={handleStationDetail}
+            onGoHome={() => navigate('landing', '/')}
+            initialSearch={initialTrendsSearch}
+          />
         )}
         {view === 'calculator' && <EVvsFuelPage />}
         {view === 'notifications' && (

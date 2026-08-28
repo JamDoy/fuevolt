@@ -14,6 +14,8 @@ import useAutoLocation from '../hooks/useAutoLocation';
 import { getDriveTimes, reverseGeocode } from '../utils/tomtom';
 import { injectFuelStationSchema, POPULAR_SUBURBS } from '../utils/seo';
 import { getPriceFreshness } from '../utils/priceFreshness';
+import ShareMenu from '../components/ShareMenu';
+import { buildFuelSearchShareUrl } from '../utils/shareLinks';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -29,6 +31,7 @@ export default function FuelPricePage({
   preferredFuelType,
   initialSearch,
   onStationDetail,
+  onSharedStationOpened,
   initialSuburb,
 }) {
   const [stations, setStations] = useState([]);
@@ -138,6 +141,8 @@ export default function FuelPricePage({
     const timer = window.setTimeout(() => {
       if (initialSuburb?.lat && initialSuburb?.lng) {
         doSearch(initialSuburb.lat, initialSuburb.lng, fuelType, 10, initialSuburb.name);
+      } else if (Number.isFinite(initialSearch?.lat) && Number.isFinite(initialSearch?.lng)) {
+        doSearch(initialSearch.lat, initialSearch.lng, initialSearch.fuelType || fuelType, 10, initialSearch.label || '');
       } else if (initialSearch?.query) {
         handleSearch(initialSearch.query);
       } else if (initialSearch?.useLocation) {
@@ -146,6 +151,30 @@ export default function FuelPricePage({
     }, 0);
     return () => window.clearTimeout(timer);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A shared station link carries the station id it wants opened — once the
+  // live re-search above resolves, jump straight to that station (with its
+  // current price, not whatever it was when the link was shared).
+  const openedSharedStationRef = useRef(false);
+  useEffect(() => {
+    if (openedSharedStationRef.current) return;
+    if (!initialSearch?.stationId || stations.length === 0) return;
+    const match = stations.find((s) => s.id === initialSearch.stationId);
+    if (match) {
+      openedSharedStationRef.current = true;
+      // Drop ?station= from this results entry before pushing the detail
+      // view on top of it — otherwise "Back to results" pops back to a URL
+      // that immediately re-opens the same station again instead of showing
+      // the plain results list.
+      window.history.replaceState(window.history.state, '', '/fuel-prices');
+      // Also clear it from the App-level initialSearch state — if this page
+      // remounts later (e.g. navigating back here after the auto-open),
+      // the mount effect above would otherwise see the same stationId and
+      // immediately reopen the station again instead of showing results.
+      onSharedStationOpened?.();
+      onStationDetail(match);
+    }
+  }, [stations, initialSearch, onStationDetail]);
 
   useEffect(() => {
     if (!autoLocation || initialSuburb || mapCenter || initialSearch) return undefined;
@@ -325,9 +354,20 @@ export default function FuelPricePage({
       {stations.length > 0 && !loading && (
         <div className="flex flex-wrap items-center justify-between gap-3">
           {locationName && (
-            <p className="text-xs font-medium" style={{ color: theme.textSecondary }}>
-              Near <span style={{ color: theme.gold }}>{locationName}</span>
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs font-medium" style={{ color: theme.textSecondary }}>
+                Near <span style={{ color: theme.gold }}>{locationName}</span>
+              </p>
+              {searchCoords && (
+                <ShareMenu
+                  title="Fuel Prices"
+                  text={`Check out fuel prices near ${locationName} on FueVolt`}
+                  url={buildFuelSearchShareUrl({ lat: searchCoords.lat, lng: searchCoords.lng, fuelType, label: locationName })}
+                  buttonClassName="cursor-pointer flex-shrink-0"
+                  buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
+                />
+              )}
+            </div>
           )}
           <div className="flex gap-1.5 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
             {[

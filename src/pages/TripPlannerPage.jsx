@@ -6,13 +6,16 @@ import LocationInput from '../components/LocationInput';
 import { geocodeLocation, fetchFuelPrices, fetchFuelPricesAlongRoute } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
 import { calculateRoute, calculateRouteWithStops, calculateEVRoute, searchAlongRoute } from '../utils/tomtom';
+import ShareMenu from '../components/ShareMenu';
+import { buildTripShareUrl } from '../utils/shareLinks';
 
-export default function TripPlannerPage() {
+export default function TripPlannerPage({ initialTrip }) {
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
-  const [startQuery, setStartQuery] = useState('');
-  const [endQuery, setEndQuery] = useState('');
-  const [mode, setMode] = useState('car');
+  const [startQuery, setStartQuery] = useState(initialTrip?.start || '');
+  const [endQuery, setEndQuery] = useState(initialTrip?.end || '');
+  const [mode, setMode] = useState(initialTrip?.mode || 'car');
+  const [initialTripPending, setInitialTripPending] = useState(!!initialTrip);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [route, setRoute] = useState(null);
@@ -136,6 +139,16 @@ export default function TripPlannerPage() {
       setLoading(false);
     }
   }, [startQuery, endQuery, mode, batteryKWh, currentCharge, consumption, vehicleRange, tankSizeL, detourKm]);
+
+  // A shared trip link seeds start/end/mode above (via useState initializers)
+  // then triggers the same calculation a manual "Plan Trip" click would —
+  // recalculated live rather than replaying a stale saved route.
+  useEffect(() => {
+    if (!initialTripPending) return;
+    setInitialTripPending(false);
+    handlePlanTrip();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const routePoints = route?.points || evRoute?.points || null;
 
@@ -342,6 +355,22 @@ export default function TripPlannerPage() {
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {Array.from({ length: 4 }).map((_, i) => <ShimmerCard key={i} />)}
+        </div>
+      )}
+
+      {/* Route Summary */}
+      {route && !loading && (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs font-medium" style={{ color: theme.textSecondary }}>
+            {startQuery} &rarr; {endQuery}
+          </p>
+          <ShareMenu
+            title="Trip Planner"
+            text={`Check out this route from ${startQuery} to ${endQuery} on FueVolt`}
+            url={buildTripShareUrl({ start: startQuery, end: endQuery, mode })}
+            buttonClassName="cursor-pointer flex-shrink-0"
+            buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
+          />
         </div>
       )}
 

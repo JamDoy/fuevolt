@@ -12,6 +12,8 @@ import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api'
 import useAutoLocation from '../hooks/useAutoLocation';
 import { reverseGeocode } from '../utils/tomtom';
 import { injectEVStationSchema, POPULAR_SUBURBS } from '../utils/seo';
+import ShareMenu from '../components/ShareMenu';
+import { buildEVSearchShareUrl } from '../utils/shareLinks';
 
 const CONNECTOR_FILTERS = ['Type 2', 'CCS', 'CHAdeMO', 'Tesla', 'Type 1'];
 const SPEED_FILTERS = [
@@ -107,6 +109,8 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     const timer = window.setTimeout(() => {
       if (initialSuburb?.lat && initialSuburb?.lng) {
         doSearch(initialSuburb.lat, initialSuburb.lng, 10, initialSuburb.name);
+      } else if (Number.isFinite(initialSearch?.lat) && Number.isFinite(initialSearch?.lng)) {
+        doSearch(initialSearch.lat, initialSearch.lng, 10, initialSearch.label || '');
       } else if (initialSearch?.query) {
         handleSearch(initialSearch.query);
       } else if (initialSearch?.useLocation) {
@@ -309,9 +313,20 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
 
       {/* Location Name */}
       {locationName && !loading && stations.length > 0 && (
-        <p className="text-sm font-medium" style={{ color: theme.text }}>
-          Showing chargers near <span style={{ color: theme.green }}>{locationName}</span>
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-medium" style={{ color: theme.text }}>
+            Showing chargers near <span style={{ color: theme.green }}>{locationName}</span>
+          </p>
+          {mapCenter && (
+            <ShareMenu
+              title="EV Charging Stations"
+              text={`Check out EV charging stations near ${locationName} on FueVolt`}
+              url={buildEVSearchShareUrl({ lat: mapCenter[0], lng: mapCenter[1], label: locationName })}
+              buttonClassName="cursor-pointer flex-shrink-0"
+              buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
+            />
+          )}
+        </div>
       )}
 
       {/* Map */}

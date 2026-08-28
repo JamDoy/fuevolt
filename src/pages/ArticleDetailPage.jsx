@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import ArticleAuthorBio from '../components/ArticleAuthorBio';
 import LiveFueVoltData from '../components/LiveFueVoltData';
+import ShareMenu from '../components/ShareMenu';
 import { injectArticleSchema, removeArticleSchema, updatePageMeta } from '../utils/seo';
 
 function parseFrontmatter(text) {
@@ -162,13 +163,22 @@ export default function ArticleDetailPage({ slug, onBack }) {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <button
-        onClick={onBack}
-        className="text-xs mb-4 flex items-center gap-1 hover:underline"
-        style={{ color: theme.accent, background: 'none', border: 'none' }}
-      >
-        ← Back to articles
-      </button>
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={onBack}
+          className="text-xs flex items-center gap-1 hover:underline"
+          style={{ color: theme.accent, background: 'none', border: 'none' }}
+        >
+          ← Back to articles
+        </button>
+        <ShareMenu
+          title={article.meta.title}
+          text={article.meta.title}
+          url={`${window.location.origin}/guides/${slug}`}
+          buttonClassName="cursor-pointer flex-shrink-0"
+          buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
+        />
+      </div>
 
       {article.meta.category && (
         <span

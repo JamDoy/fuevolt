@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import Sparkline from '../components/Sparkline';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import DigitalPrice from '../components/DigitalPrice';
+import ShareMenu from '../components/ShareMenu';
 import { fetchFuelPrices, geocodeLocation, getUserLocation } from '../utils/api';
 import { getPriceHistory } from '../utils/priceHistory';
 import { getPriceContext } from '../utils/priceFreshness';
+import { buildTrendsShareUrl } from '../utils/shareLinks';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
@@ -18,9 +20,9 @@ const FUEL_TYPES = [
   { id: 'LPG', label: 'LPG' },
 ];
 
-export default function TrendsPage({ onStationDetail, onGoHome }) {
+export default function TrendsPage({ onStationDetail, onGoHome, initialSearch }) {
   const { theme } = useTheme();
-  const [fuelType, setFuelType] = useState('U91');
+  const [fuelType, setFuelType] = useState(initialSearch?.fuelType || 'U91');
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -75,6 +77,13 @@ export default function TrendsPage({ onStationDetail, onGoHome }) {
       runSearch(lastCoords.lat, lastCoords.lng, id, locationLabel);
     }
   };
+
+  useEffect(() => {
+    if (Number.isFinite(initialSearch?.lat) && Number.isFinite(initialSearch?.lng)) {
+      runSearch(initialSearch.lat, initialSearch.lng, initialSearch.fuelType || fuelType, initialSearch.label || '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const pricedStations = stations.filter((s) => s.price != null);
   const avgPrice = pricedStations.length > 0
@@ -152,6 +161,20 @@ export default function TrendsPage({ onStationDetail, onGoHome }) {
 
       {!loading && !error && stations.length > 0 && (
         <div className="mt-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-medium" style={{ color: theme.textMuted }}>
+              {locationLabel ? `Near ${locationLabel}` : 'Nearby stations'}
+            </p>
+            {lastCoords && (
+              <ShareMenu
+                title="Fuel Price Trends"
+                text={`Check out fuel price trends near ${locationLabel || 'this area'} on FueVolt`}
+                url={buildTrendsShareUrl({ lat: lastCoords.lat, lng: lastCoords.lng, fuelType, label: locationLabel })}
+                buttonClassName="cursor-pointer flex-shrink-0"
+                buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
+              />
+            )}
+          </div>
           {stations.map((station) => {
             const history = getPriceHistory(station.id, fuelType);
             const context = getPriceContext(station.price, avgPrice);

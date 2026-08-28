@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { getPriceContext } from '../utils/priceFreshness';
 import DigitalPrice from './DigitalPrice';
+import ShareMenu from './ShareMenu';
+import { buildFuelStationShareUrl } from '../utils/shareLinks';
 
 const BADGE_STYLES = {
   below: { label: 'Below average', background: 'rgba(34,197,94,0.15)', border: 'rgba(34,197,94,0.3)', color: '#22C55E' },
@@ -170,9 +172,17 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
             <CompactContent cheapest={cheapest} savings={savings} context={context} />
           ) : (
             <>
-              <p className="text-[11px] font-bold uppercase mb-3" style={{ color: '#22C55E', letterSpacing: '0.15em' }}>
-                &#9889; CHEAPEST NEAR YOU
-              </p>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[11px] font-bold uppercase" style={{ color: '#22C55E', letterSpacing: '0.15em' }}>
+                  &#9889; CHEAPEST NEAR YOU
+                </p>
+                <ShareMenu
+                  title={cheapest.name}
+                  text={`Found fuel at ${(cheapest.price * 100).toFixed(1)}¢/L at ${cheapest.name} via FueVolt${savings && Number(savings) > 0 ? ` — saving ${savings}¢/L!` : ''}`}
+                  url={buildFuelStationShareUrl(cheapest)}
+                  buttonStyle={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)' }}
+                />
+              </div>
 
               <div>
                 <h3 className="text-[28px] sm:text-[34px] font-extrabold text-white break-words" style={{ letterSpacing: '-0.02em', lineHeight: 1.1 }}>

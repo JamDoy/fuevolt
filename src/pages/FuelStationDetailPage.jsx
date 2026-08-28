@@ -9,7 +9,9 @@ import { getBrandStyle } from '../utils/brandLogos';
 import TouchableMap from '../components/TouchableMap';
 import FuelReminderCard from '../components/FuelReminderCard';
 import DigitalPrice from '../components/DigitalPrice';
-import { getPriceFreshness } from '../utils/priceFreshness';
+import ShareMenu from '../components/ShareMenu';
+import { buildFuelStationShareUrl } from '../utils/shareLinks';
+import { getPriceContext, getPriceFreshness } from '../utils/priceFreshness';
 
 const goldPin = new L.DivIcon({
   className: 'custom-marker',
@@ -122,7 +124,6 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
   const [allPrices, setAllPrices] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [loadingPrices, setLoadingPrices] = useState(true);
-  const [shareStatus, setShareStatus] = useState('');
   const [heroVisible, setHeroVisible] = useState(true);
   const heroRef = useRef(null);
   const freshness = getPriceFreshness(station.lastUpdated, station.priceDate, station.dataCheckedAt);
@@ -226,26 +227,11 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
     window.setTimeout(() => setShareStatus(''), 2000);
   };
 
-  const handleShare = async () => {
+  const shareText = (() => {
     const price = station.price != null ? `${(station.price * 100).toFixed(1)}¢/L` : 'current price';
     const savingsPart = isCheaperThanAvg ? ` — saving $${totalSavings.toFixed(2)} on a fill-up!` : '';
-    const text = `Found fuel at ${price} at ${station.name} via fuevolt.com${savingsPart}`;
-    const shareData = { title: station.name, text, url: window.location.href };
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-        setShareStatus('Shared');
-      } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(`${text} ${window.location.href}`);
-        setShareStatus('Copied to clipboard');
-      } else {
-        setShareStatus('Unable to share');
-      }
-    } catch (error) {
-      if (error?.name !== 'AbortError') setShareStatus('Unable to share');
-    }
-    window.setTimeout(() => setShareStatus(''), 2500);
-  };
+    return `Found fuel at ${price} at ${station.name} via fuevolt.com${savingsPart}`;
+  })();
 
   const cardStyle = {
     background: theme.cardBg,
@@ -274,29 +260,36 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
               Back to results
             </button>
-            <button
-              type="button"
-              onClick={handleShare}
-              aria-label="Share this station"
-              className="cursor-pointer flex-shrink-0"
-              style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)' }}
-            >
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.6" y1="10.5" x2="15.4" y2="6.5" /><line x1="8.6" y1="13.5" x2="15.4" y2="17.5" /></svg>
-            </button>
+            <ShareMenu
+              title={station.name}
+              text={shareText}
+              url={buildFuelStationShareUrl(station)}
+              buttonClassName="cursor-pointer flex-shrink-0"
+              buttonStyle={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)' }}
+            />
           </div>
 
-          <div className="flex items-center gap-3 mb-3">
-            <div
-              className="flex-shrink-0 flex items-center justify-center rounded-full"
-              style={{ width: '48px', height: '48px', background: brandStyle.bg }}
-            >
-              <span className="font-extrabold text-lg" style={{ color: brandStyle.text }}>{brandStyle.short}</span>
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div
+                className="flex-shrink-0 flex items-center justify-center rounded-full"
+                style={{ width: '48px', height: '48px', background: brandStyle.bg }}
+              >
+                <span className="font-extrabold text-lg" style={{ color: brandStyle.text }}>{brandStyle.short}</span>
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-[28px] sm:text-4xl font-extrabold text-white truncate" style={{ letterSpacing: '-0.02em' }}>
+                  {station.name}
+                </h1>
+              </div>
             </div>
-            <div className="min-w-0">
-              <h1 className="text-[28px] sm:text-4xl font-extrabold text-white truncate" style={{ letterSpacing: '-0.02em' }}>
-                {station.name}
-              </h1>
-            </div>
+            {station.price != null && (
+              <p className="text-2xl sm:text-3xl flex-shrink-0">
+                <DigitalPrice context={getPriceContext(station.price, avg)} color={avg == null ? '#F59E0B' : undefined}>
+                  {(station.price * 100).toFixed(1)}
+                </DigitalPrice>
+              </p>
+            )}
           </div>
 
           <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
@@ -331,20 +324,11 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
               </span>
             </div>
           ) : null}
-
-          {shareStatus && (
-            <p className="text-center text-xs mt-3" style={{ color: 'rgba(255,255,255,0.5)' }}>{shareStatus}</p>
-          )}
         </div>
       </Section>
 
       <div className="px-4 sm:px-0">
-        {/* [2] Live Price Status Strip */}
-        <Section index={1}>
-          <PriceStatusStrip trend={trend} freshness={freshness} theme={theme} />
-        </Section>
-
-        {/* [3] Navigate There */}
+        {/* [2] Navigate There */}
         <Section index={2}>
           <div className="mt-3" style={{ ...cardStyle, padding: '20px', boxShadow: isDark ? 'none' : '0 2px 12px rgba(0,0,0,0.06)' }}>
             <div className="grid grid-cols-3 gap-2 text-center">
@@ -454,53 +438,6 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                 </p>
               )}
             </div>
-          </div>
-        </Section>
-
-        {/* [7] Best Time to Fill Up */}
-        <Section index={6}>
-          <div
-            className="mt-3"
-            style={{
-              background: isDark
-                ? 'linear-gradient(135deg, rgba(13,43,94,0.5) 0%, rgba(34,197,94,0.08) 100%)'
-                : 'linear-gradient(135deg, rgba(13,43,94,0.04) 0%, rgba(34,197,94,0.04) 100%)',
-              border: '1px solid rgba(34,197,94,0.2)',
-              borderRadius: '16px',
-              padding: '20px',
-            }}
-          >
-            <h2 className="text-[15px] font-bold mb-2" style={{ color: theme.heading }}>
-              &#128337; Best time to fill up here
-            </h2>
-            <p className="text-sm leading-relaxed" style={{ color: theme.textSecondary }}>{advice.text}</p>
-            <div className="flex flex-wrap gap-1.5 mt-4">
-              {DAYS.map((day, i) => {
-                const isToday = i === todayIdx;
-                const isBest = advice.bestDays.includes(day);
-                return (
-                  <span
-                    key={day}
-                    className="inline-flex items-center justify-center rounded-full text-xs font-semibold"
-                    style={{
-                      height: '32px',
-                      minWidth: '36px',
-                      padding: '0 8px',
-                      background: isToday ? '#22C55E' : isBest ? '#0D2B5E' : theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : '#F9FAFB',
-                      color: isToday || isBest ? '#FFFFFF' : theme.textMuted,
-                    }}
-                  >
-                    {day}
-                  </span>
-                );
-              })}
-            </div>
-            {advice.bestDays.length > 0 && (
-              <p className="text-[11px] mt-1.5" style={{ color: theme.textMuted }}>Navy = best days &middot; Green = today</p>
-            )}
-            <p className="text-[11px] mt-3" style={{ color: theme.textMuted }}>
-              Based on historical Australian fuel price cycles. Actual prices vary.
-            </p>
           </div>
         </Section>
 
@@ -632,6 +569,55 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
             <FuelReminderCard />
           </div>
         </Section>
+
+        {/* [12] Price Timing — trend + best day to fill up, merged into one card */}
+        <Section index={11}>
+          <div
+            className="mt-3"
+            style={{
+              background: isDark
+                ? 'linear-gradient(135deg, rgba(13,43,94,0.5) 0%, rgba(34,197,94,0.08) 100%)'
+                : 'linear-gradient(135deg, rgba(13,43,94,0.04) 0%, rgba(34,197,94,0.04) 100%)',
+              border: '1px solid rgba(34,197,94,0.2)',
+              borderRadius: '16px',
+              padding: '20px',
+            }}
+          >
+            <PriceStatusStrip trend={trend} freshness={freshness} theme={theme} noMargin />
+
+            <h2 className="text-[15px] font-bold mt-4 mb-2" style={{ color: theme.heading }}>
+              &#128337; Best time to fill up here
+            </h2>
+            <p className="text-sm leading-relaxed" style={{ color: theme.textSecondary }}>{advice.text}</p>
+            <div className="flex flex-wrap gap-1.5 mt-4">
+              {DAYS.map((day, i) => {
+                const isToday = i === todayIdx;
+                const isBest = advice.bestDays.includes(day);
+                return (
+                  <span
+                    key={day}
+                    className="inline-flex items-center justify-center rounded-full text-xs font-semibold"
+                    style={{
+                      height: '32px',
+                      minWidth: '36px',
+                      padding: '0 8px',
+                      background: isToday ? '#22C55E' : isBest ? '#0D2B5E' : theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : '#F9FAFB',
+                      color: isToday || isBest ? '#FFFFFF' : theme.textMuted,
+                    }}
+                  >
+                    {day}
+                  </span>
+                );
+              })}
+            </div>
+            {advice.bestDays.length > 0 && (
+              <p className="text-[11px] mt-1.5" style={{ color: theme.textMuted }}>Navy = best days &middot; Green = today</p>
+            )}
+            <p className="text-[11px] mt-3" style={{ color: theme.textMuted }}>
+              Based on historical Australian fuel price cycles. Actual prices vary.
+            </p>
+          </div>
+        </Section>
       </div>
 
       {/* Sticky mobile Navigate bar once hero has scrolled out of view */}
@@ -686,7 +672,7 @@ function Section({ index, children }) {
   );
 }
 
-function PriceStatusStrip({ trend, freshness, theme }) {
+function PriceStatusStrip({ trend, freshness, theme, noMargin = false }) {
   const state = trend === 'down' ? 'down' : trend === 'up' ? 'up' : 'stable';
   const styles = {
     down: { color: '#22C55E', bg: 'rgba(34,197,94,0.06)', arrow: '↓', text: 'Price falling this week — great time to fill up' },
@@ -696,7 +682,7 @@ function PriceStatusStrip({ trend, freshness, theme }) {
   const s = styles[state];
   return (
     <div
-      className="mt-3 flex items-center gap-3"
+      className={`${noMargin ? '' : 'mt-3'} flex items-center gap-3`}
       style={{ background: s.bg, borderLeft: `3px solid ${s.color}`, padding: '14px 16px', borderRadius: '10px' }}
     >
       <span className={`price-trend-arrow text-lg font-bold`} style={{ color: s.color }} aria-hidden="true">{s.arrow}</span>
