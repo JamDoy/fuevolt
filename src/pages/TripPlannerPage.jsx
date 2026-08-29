@@ -361,7 +361,7 @@ export default function TripPlannerPage({ initialTrip }) {
       {/* Route Summary */}
       {route && !loading && (
         <div className="flex items-center justify-between gap-3">
-          <p className="text-xs font-medium" style={{ color: theme.textSecondary }}>
+          <p className="text-xs font-medium truncate min-w-0" style={{ color: theme.textSecondary }}>
             {startQuery} &rarr; {endQuery}
           </p>
           <ShareMenu

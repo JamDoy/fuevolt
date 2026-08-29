@@ -354,8 +354,8 @@ export default function FuelPricePage({
       {stations.length > 0 && !loading && (
         <div className="flex flex-wrap items-center justify-between gap-3">
           {locationName && (
-            <div className="flex items-center gap-2">
-              <p className="text-xs font-medium" style={{ color: theme.textSecondary }}>
+            <div className="flex items-center gap-2 min-w-0">
+              <p className="text-xs font-medium truncate min-w-0" style={{ color: theme.textSecondary }}>
                 Near <span style={{ color: theme.gold }}>{locationName}</span>
               </p>
               {searchCoords && (

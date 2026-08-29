@@ -313,6 +313,8 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detecte
 
     return data.prices.map((p) => {
       const station = stationMap[p.stationcode] || {};
+      const stationLat = station.location?.latitude || latitude;
+      const stationLng = station.location?.longitude || longitude;
       return {
         // stationcode alone is NSW FuelCheck's own stable per-station id —
         // deliberately not suffixed with the array index, which used to
@@ -325,13 +327,13 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detecte
         // (street, suburb, state, postcode) — only synthesise one if it's
         // ever missing, rather than appending a redundant state suffix.
         address: station.address || [station.suburb, fallbackStateLabel, station.postcode].filter(Boolean).join(' '),
-        latitude: station.location?.latitude || latitude,
-        longitude: station.location?.longitude || longitude,
+        latitude: stationLat,
+        longitude: stationLng,
         price: p.price / 100,
         priceDisplay: `${p.price.toFixed(1)}¢/L`,
         fuelType: nswCode,
         lastUpdated: p.lastupdated || null,
-        distance: station.distance || '—',
+        distance: getDistance(latitude, longitude, stationLat, stationLng).toFixed(1),
         source: sourceLabel,
       };
     });

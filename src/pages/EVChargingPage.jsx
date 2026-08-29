@@ -314,7 +314,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       {/* Location Name */}
       {locationName && !loading && stations.length > 0 && (
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm font-medium" style={{ color: theme.text }}>
+          <p className="text-sm font-medium truncate min-w-0" style={{ color: theme.text }}>
             Showing chargers near <span style={{ color: theme.green }}>{locationName}</span>
           </p>
           {mapCenter && (

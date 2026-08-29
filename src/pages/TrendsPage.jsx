@@ -162,7 +162,7 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
       {!loading && !error && stations.length > 0 && (
         <div className="mt-6 flex flex-col gap-4">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-medium" style={{ color: theme.textMuted }}>
+            <p className="text-xs font-medium truncate min-w-0" style={{ color: theme.textMuted }}>
               {locationLabel ? `Near ${locationLabel}` : 'Nearby stations'}
             </p>
             {lastCoords && (

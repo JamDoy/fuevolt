@@ -74,7 +74,7 @@ export default function Header({ showBack, onBack, view, onViewChange }) {
         </nav>
 
         {/* Right: Theme toggle + Mobile menu */}
-        <div className="flex items-center gap-2 justify-self-end">
+        <div className="flex items-center gap-2 justify-self-end" style={{ gridColumn: 3 }}>
           {/* Theme toggle */}
           <button
             onClick={toggle}
