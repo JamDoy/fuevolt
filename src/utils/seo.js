@@ -85,7 +85,7 @@ export function buildCityMeta(kind, suburb) {
   if (kind === 'ev') {
     return {
       title: `EV Charging Stations in ${suburb.name} — Find Chargers | FueVolt`,
-      description: `Find EV charging stations near ${suburb.name}. Filter by connector type and charging speed.`,
+      description: `Find EV charging stations near ${suburb.name}. Filter by connector type (Type 2, CCS, CHAdeMO) and charging speed to find the right charger for your EV.`,
       url: `${BASE_URL}/ev-charging/${suburb.slug}`,
     };
   }
