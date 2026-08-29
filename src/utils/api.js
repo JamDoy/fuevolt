@@ -311,10 +311,14 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detecte
       : detectedState === 'TAS' ? 'TAS Government'
       : 'NSW Government';
 
-    return data.prices.map((p, i) => {
+    return data.prices.map((p) => {
       const station = stationMap[p.stationcode] || {};
       return {
-        id: `nsw-${p.stationcode}-${i}`,
+        // stationcode alone is NSW FuelCheck's own stable per-station id —
+        // deliberately not suffixed with the array index, which used to
+        // shift whenever relative prices reordered the sort, silently
+        // breaking shared station links and saved favourites over time.
+        id: `nsw-${p.stationcode}`,
         name: station.name || (station.brand ? `${station.brand} Station` : 'Fuel Station'),
         brand: station.brand || 'Independent',
         // station.address already comes fully formatted from this API
@@ -450,7 +454,7 @@ async function fetchWAFuelPrices(latitude, longitude, fuelType, radius) {
     if (items.length === 0) return null;
 
     const stations = [];
-    items.forEach((item, i) => {
+    items.forEach((item) => {
       const price = parseFloat(item.querySelector('price')?.textContent || '0');
       const stationLat = parseFloat(item.querySelector('latitude')?.textContent || '0');
       const stationLng = parseFloat(item.querySelector('longitude')?.textContent || '0');
@@ -463,7 +467,11 @@ async function fetchWAFuelPrices(latitude, longitude, fuelType, radius) {
         const dist = getDistance(latitude, longitude, stationLat, stationLng);
         if (dist > radius) return;
         stations.push({
-          id: `wa-${waProduct}-${i}`,
+          // FuelWatch's RSS feed has no station id field at all — coordinates
+          // are the only genuinely stable identifier available (a loop index
+          // shifted whenever price-based sorting reordered results, silently
+          // breaking shared station links and saved favourites over time).
+          id: `wa-${stationLat.toFixed(5)}-${stationLng.toFixed(5)}`,
           name: name || `${brand} ${suburb}`,
           brand: brand || 'Unknown',
           address: `${address}, ${suburb} WA`,
