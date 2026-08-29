@@ -1,8 +1,6 @@
 import AdSenseAd from './AdSenseAd';
 
-// TODO: replace with the real ad unit slot ID from the AdSense dashboard
-// (Ads > By ad unit > create a "Display ad") before this will serve anything.
-const RAIL_AD_SLOT = 'YOUR_AD_SLOT_ID';
+const RAIL_AD_SLOT = '1239070178';
 
 // Side-of-page ad rails. Only shown on very wide viewports (2xl, 1536px+)
 // where the centred page content (max-w-6xl = 1152px) genuinely leaves
