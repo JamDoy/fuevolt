@@ -21,6 +21,7 @@ export default function PrivacyPolicyPage() {
 
         <h4 className="font-semibold mt-3 mb-1">Usage Data</h4>
         <p>We use Google Analytics to collect usage statistics such as pages viewed, approximate location derived from your IP address, device and browser type, and interactions, to help us understand how FueVolt is used and improve it. We do not knowingly collect information that directly identifies you (such as your name or email address) through this analytics data.</p>
+        <p className="mt-2">We also use Microsoft Clarity, which records how visitors interact with FueVolt — including mouse movements, clicks, scrolling and page navigation — and generates aggregate heatmaps, to help us identify confusing or broken parts of the site. Clarity masks sensitive input fields by default. See <a href="https://privacy.microsoft.com/privacystatement" className="underline" style={{ color: theme.accent }}>Microsoft's Privacy Statement</a> for details on their data practices.</p>
 
         <h4 className="font-semibold mt-3 mb-1">Advertising Data</h4>
         <p>We use Google advertising services, which may collect device identifiers, IP addresses, and usage data to serve ads. Please refer to <a href="https://policies.google.com/privacy" className="underline" style={{ color: theme.accent }}>Google's Privacy Policy</a> for details on their data practices.</p>
@@ -65,6 +66,7 @@ export default function PrivacyPolicyPage() {
         <p>We use the following third-party services:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li><strong>Google Analytics</strong> — Usage analytics (subject to Google's Privacy Policy)</li>
+          <li><strong>Microsoft Clarity</strong> — Session recording and heatmaps (subject to Microsoft's Privacy Statement)</li>
           <li><strong>Google advertising services</strong> — Advertising (subject to Google's Privacy Policy)</li>
           <li><strong>OpenStreetMap / Nominatim</strong> — Mapping and geocoding (subject to OSM's Privacy Policy)</li>
           <li><strong>Open Charge Map</strong> — EV station data (subject to OCM's terms)</li>
