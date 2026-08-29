@@ -7,9 +7,11 @@ RewriteRule ^ https://www.fuevolt.com%{REQUEST_URI} [L,R=301]
   RewriteEngine On
   RewriteBase /
 
-  # Ezoic-managed ads.txt — takes priority over any local ads.txt file so it
-  # must come before the "serve existing files directly" rule below.
-  RewriteRule ^ads\.txt$ https://srv.adstxtmanager.com/19390/fuevolt.com [R=301,L]
+  # Ezoic-managed ads.txt redirect disabled 29 Aug 2026 — their Incubator
+  # application wasn't approved, so this domain isn't actually authorized in
+  # their managed file. Left commented rather than deleted in case of a
+  # future reapplication; see PROJECT_STATUS.md.
+  # RewriteRule ^ads\.txt$ https://srv.adstxtmanager.com/19390/fuevolt.com [R=301,L]
 
   # Serve existing files directly (CSS, JS, images, etc.)
   RewriteCond %{REQUEST_FILENAME} -f
