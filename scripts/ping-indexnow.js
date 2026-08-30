@@ -6,7 +6,12 @@ import process from 'node:process';
 
 const ENDPOINT = 'https://www.bing.com/indexnow';
 const HOST = 'www.fuevolt.com';
-const KEY_FILE = 'cbddd89521a12210279179d839272d3d.txt';
+// Switched from the original key (cbddd895...) after it started getting
+// rejected with "UserForbiddedToAccessSite" — IndexNow appears to track
+// only the most-recently-submitted key per host, and a later manual
+// submission used this one instead. Both key files stay hosted in public/
+// so either can be reinstated if this one is ever rejected in turn.
+const KEY_FILE = '5654f1b229834d23947c338161abdab5.txt';
 const KEY_PATH = path.resolve('public', KEY_FILE);
 const SITEMAP_PATH = path.resolve('dist', 'sitemap.xml');
 const isDryRun = process.argv.includes('--dry-run');
