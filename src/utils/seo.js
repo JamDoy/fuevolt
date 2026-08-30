@@ -80,6 +80,12 @@ export function buildCityMeta(kind, suburb) {
       title: `Fuel Prices in ${suburb.name} — Cheapest Petrol Today | FueVolt`,
       description: `Compare petrol, diesel and LPG prices near ${suburb.name}. Live data from government APIs. Find the cheapest fuel station today.`,
       url: `${BASE_URL}/fuel-prices/${suburb.slug}`,
+      // These city pages share the exact same body content as the generic
+      // /fuel-prices page (only the title/meta and initial map center
+      // differ) — indexing dozens of them matches Google's own definition
+      // of a doorway-page pattern. Noindex until each city has genuinely
+      // unique content, not just a swapped name.
+      noindex: true,
     };
   }
   if (kind === 'ev') {
@@ -87,6 +93,7 @@ export function buildCityMeta(kind, suburb) {
       title: `EV Charging Stations in ${suburb.name} — Find Chargers | FueVolt`,
       description: `Find EV charging stations near ${suburb.name}. Filter by connector type (Type 2, CCS, CHAdeMO) and charging speed to find the right charger for your EV.`,
       url: `${BASE_URL}/ev-charging/${suburb.slug}`,
+      noindex: true,
     };
   }
   return undefined;
