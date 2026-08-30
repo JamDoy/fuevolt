@@ -98,8 +98,8 @@ export default function LiveFueVoltData({ slug, theme }) {
           The live snapshot is unavailable right now. Use FueVolt’s fuel search to check current prices near you.
         </p>
       )}
-      <a href="/fuel-prices/brisbane" className="inline-block text-xs mt-3 font-semibold" style={{ color: theme.accent }}>
-        View live Brisbane fuel prices
+      <a href="/fuel-prices" className="inline-block text-xs mt-3 font-semibold" style={{ color: theme.accent }}>
+        View live fuel prices near you
       </a>
     </aside>
   );

@@ -227,7 +227,7 @@ for (const article of articles) {
         <aside style="padding:16px;border:1px solid #F59E0B;border-radius:12px;margin-bottom:24px;background:#FFF9E8">
           <h2 style="font-size:1rem;margin-bottom:8px">Live FueVolt Data</h2>
           <p style="font-size:0.9rem;color:#4B5563">FueVolt loads a current Brisbane-area government fuel-price snapshot here when the page opens. The figures come from the same official price feed used by FueVolt's fuel search.</p>
-          <p style="margin-top:8px"><a href="/fuel-prices/brisbane">View live Brisbane fuel prices</a></p>
+          <p style="margin-top:8px"><a href="/fuel-prices">View live fuel prices near you</a></p>
         </aside>
         <article style="line-height:1.8;font-size:0.95rem">${articleHtml}</article>
         <section style="display:flex;gap:12px;padding:16px;border:1px solid #E5E7EB;border-radius:12px;margin-top:32px">
