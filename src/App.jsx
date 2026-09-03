@@ -390,6 +390,7 @@ function AppContent() {
         {view === 'faq' && <FAQPage onContact={() => navigate('contact', '/contact')} />}
         {view === 'contact' && <ContactPage />}
       </main>
+      <div ta-ad-container="" className="max-w-6xl mx-auto px-4 mt-8" />
       <footer className="text-center py-6 px-4 mt-8">
         <p className="text-xs" style={{ color: theme.footerText }}>
           &copy; {new Date().getFullYear()} FueVolt &mdash; Australian EV & Fuel Price Finder
