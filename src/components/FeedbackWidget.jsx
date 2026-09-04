@@ -5,16 +5,15 @@ import { FueVoltIcon } from './FueVoltLogo';
 // How long a device must wait before it can submit feedback again. Enforced
 // client-side via localStorage — this site has no accounts, so a device-
 // level cooldown (rather than a real per-user limit) is the same trade-off
-// already made for favourites/preferences elsewhere on the site.
-const COOLDOWN_DAYS = 7;
-const COOLDOWN_MS = COOLDOWN_DAYS * 24 * 60 * 60 * 1000;
+// already made for favourites/preferences elsewhere on the site. A device
+// on cooldown just sees the same "thanks" animation as a fresh submission
+// (see openWidget) rather than being told about the limit at all.
+const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 const LAST_SENT_KEY = 'fuevolt_feedback_last_sent';
 
-function getCooldownRemainingDays() {
+function isOnCooldown() {
   const lastSent = Number(localStorage.getItem(LAST_SENT_KEY));
-  if (!lastSent) return 0;
-  const remainingMs = lastSent + COOLDOWN_MS - Date.now();
-  return remainingMs > 0 ? Math.ceil(remainingMs / (24 * 60 * 60 * 1000)) : 0;
+  return !!lastSent && Date.now() - lastSent < COOLDOWN_MS;
 }
 
 // Floating feedback button + modal, shown on every page. Reuses the same
@@ -32,7 +31,6 @@ export default function FeedbackWidget() {
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [error, setError] = useState('');
   const [fadingOut, setFadingOut] = useState(false);
-  const [cooldownDays, setCooldownDays] = useState(0);
   const timersRef = useRef([]);
 
   useEffect(() => () => timersRef.current.forEach(clearTimeout), []);
@@ -53,9 +51,17 @@ export default function FeedbackWidget() {
     if (status === 'sent') reset();
   };
 
+  // Glow for a beat, then fade the "thanks" confirmation out and auto-close
+  // — no button for the user to click through.
+  const playThanksAndClose = () => {
+    setStatus('sent');
+    timersRef.current.push(setTimeout(() => setFadingOut(true), 1600));
+    timersRef.current.push(setTimeout(() => { setOpen(false); reset(); }, 2200));
+  };
+
   const openWidget = () => {
-    setCooldownDays(getCooldownRemainingDays());
     setOpen(true);
+    if (isOnCooldown()) playThanksAndClose();
   };
 
   const handleSubmit = async (e) => {
@@ -74,12 +80,8 @@ export default function FeedbackWidget() {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.success) {
-        setStatus('sent');
         localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
-        // Glow for a beat, then fade the confirmation out and auto-close —
-        // no button for the user to click through.
-        timersRef.current.push(setTimeout(() => setFadingOut(true), 1600));
-        timersRef.current.push(setTimeout(() => { setOpen(false); reset(); }, 2200));
+        playThanksAndClose();
       } else {
         setStatus('error');
         setError(data.error || 'Something went wrong. Please try again later.');
@@ -138,23 +140,6 @@ export default function FeedbackWidget() {
                   </span>
                 </div>
                 <p className="text-lg font-bold" style={{ color: theme.heading }}>Thanks for your feedback</p>
-              </div>
-            ) : cooldownDays > 0 ? (
-              <div className="text-center py-4">
-                <div className="flex justify-center mb-3">
-                  <FueVoltIcon size={40} />
-                </div>
-                <h2 className="text-lg font-semibold mb-2" style={{ color: theme.heading }}>Already got your feedback!</h2>
-                <p className="text-sm mb-4" style={{ color: theme.textSecondary }}>
-                  Thanks for sending that recently — to keep things fair for everyone, you can send more feedback in {cooldownDays} day{cooldownDays === 1 ? '' : 's'}.
-                </p>
-                <button
-                  onClick={closeWidget}
-                  className="px-4 py-2 rounded-lg font-semibold text-sm cursor-pointer"
-                  style={{ background: theme.gold, color: '#0D2B5E', border: 'none' }}
-                >
-                  Close
-                </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
