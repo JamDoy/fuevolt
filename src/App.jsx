@@ -21,6 +21,8 @@ import FuelPreferencePrompt from './components/FuelPreferencePrompt';
 import FuelReminderSettings from './components/FuelReminderSettings';
 import MobileBottomNav from './components/MobileBottomNav';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import FeedbackWidget from './components/FeedbackWidget';
+import { FEATURES } from './config/features';
 import { updatePageMeta, buildCityMeta, POPULAR_SUBURBS } from './utils/seo';
 import { getFuelPreference, saveFuelPreference } from './utils/sessionPreferences';
 
@@ -448,6 +450,7 @@ function AppContent() {
       </footer>
       <MobileBottomNav view={view} onNavigate={handlePrimaryNavigation} />
       <PWAInstallPrompt />
+      {FEATURES.feedbackWidget && <FeedbackWidget />}
       {showFuelPreference && <FuelPreferencePrompt onSelect={handleFuelPreference} />}
     </div>
   );

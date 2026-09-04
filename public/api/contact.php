@@ -30,6 +30,7 @@ if (!empty($data['company'])) {
 $name    = trim($data['name'] ?? '');
 $email   = trim($data['email'] ?? '');
 $message = trim($data['message'] ?? '');
+$source  = trim($data['source'] ?? '');
 
 if ($name === '' || $message === '') {
     http_response_code(400);
@@ -46,7 +47,8 @@ if (strlen($message) > 5000) {
 }
 
 $to      = 'contact@fuevolt.com';
-$subject = 'FueVolt feedback from ' . ($name !== '' ? $name : 'a visitor');
+$subjectPrefix = $source === 'feedback-widget' ? 'FueVolt site feedback' : 'FueVolt feedback';
+$subject = $subjectPrefix . ' from ' . ($name !== '' && $name !== 'Site feedback' ? $name : 'a visitor');
 
 $body  = "You have received new feedback via fuevolt.com\n\n";
 $body .= "Name: {$name}\n";
