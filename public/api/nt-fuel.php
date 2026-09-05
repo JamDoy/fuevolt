@@ -12,6 +12,8 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 header('Cache-Control: public, max-age=300');
 
+require __DIR__ . '/fuel-cache.php';
+
 function respondWithError($status, $message) {
     http_response_code($status);
     echo json_encode(['error' => $message]);
@@ -173,14 +175,33 @@ usort($nearbyOutlets, function ($a, $b) {
 });
 
 // --- Step 3: live prices, queried once per distinct postcode among nearby outlets ---
+// Cached per postcode (shared across every visitor, regardless of which
+// fuel type or exact search radius they asked for) since one postcode
+// lookup already returns all fuel types for every outlet in it.
 $postcodes = array_unique(array_column($nearbyOutlets, 'Postcode'));
 $fuelsByOutletId = [];
+$priceCacheDir = fuelCacheDir('nt-prices');
 
 foreach ($postcodes as $postcode) {
-    $priceData = ntRequest('POST', '/v1/getFuelPrice/postCode', [
-        'Authorization: Bearer ' . $token,
-        'Content-Type: application/json',
-    ], json_encode(['postCode' => $postcode]));
+    $cacheKey = 'postcode-' . $postcode;
+    $cached = fuelCacheGet($priceCacheDir, $cacheKey);
+    if ($cached !== null) {
+        $priceData = json_decode($cached, true);
+    } else {
+        $priceData = ntRequest('POST', '/v1/getFuelPrice/postCode', [
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/json',
+        ], json_encode(['postCode' => $postcode]));
+
+        if (is_array($priceData)) {
+            fuelCacheSet($priceCacheDir, $cacheKey, json_encode($priceData));
+        } else {
+            // Fall back to a stale cache rather than dropping this postcode
+            // outright if MyFuel NT is temporarily unavailable.
+            $stale = fuelCacheStale($priceCacheDir, $cacheKey);
+            $priceData = $stale !== null ? json_decode($stale, true) : null;
+        }
+    }
 
     if (!is_array($priceData)) continue;
     foreach ($priceData as $entry) {

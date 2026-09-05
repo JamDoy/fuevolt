@@ -288,6 +288,7 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                 <DigitalPrice context={getPriceContext(station.price, avg)} color={avg == null ? '#F59E0B' : undefined}>
                   {(station.price * 100).toFixed(1)}
                 </DigitalPrice>
+                <span className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.5)' }}>&cent;/L</span>
               </p>
             )}
           </div>

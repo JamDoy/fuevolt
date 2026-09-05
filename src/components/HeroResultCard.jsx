@@ -203,6 +203,7 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
                   <DigitalPrice context={context} color={!context ? '#F59E0B' : undefined} glow>
                     {(cheapest.price * 100).toFixed(1)}
                   </DigitalPrice>
+                  <span className="text-lg sm:text-xl align-top" style={{ color: 'rgba(255,255,255,0.6)' }}>&cent;/L</span>
                 </p>
                 {badge && (
                   <span

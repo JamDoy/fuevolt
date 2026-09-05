@@ -4,6 +4,8 @@ header('Access-Control-Allow-Methods: GET');
 header('Cache-Control: public, max-age=900');
 header('X-Content-Type-Options: nosniff');
 
+require __DIR__ . '/fuel-cache.php';
+
 $allowedProducts = ['1', '2', '4', '5', '6'];
 $product = $_GET['product'] ?? '';
 $day = $_GET['day'] ?? 'today';
@@ -21,6 +23,18 @@ if (!in_array($product, $allowedProducts, true)) {
 
 if ($day !== 'today') {
     respondWithError(400, 'Unsupported FuelWatch day');
+}
+
+// The whole state's feed for one fuel product comes back in a single
+// response — one cached copy per product serves every visitor searching
+// anywhere in WA, not just the person who triggered the fetch.
+$cacheDir = fuelCacheDir('wa');
+$cacheKey = $product . '-' . $day;
+$cached = fuelCacheGet($cacheDir, $cacheKey);
+if ($cached !== null) {
+    header('Content-Type: text/xml; charset=utf-8');
+    echo $cached;
+    exit;
 }
 
 $url = 'https://www.fuelwatch.wa.gov.au/fuelwatch/fuelWatchRSS?' . http_build_query([
@@ -44,13 +58,18 @@ $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 $curlError = curl_error($ch);
 curl_close($ch);
 
-if ($response === false || $httpCode !== 200) {
+if ($response === false || $httpCode !== 200 || stripos($response, '<rss') === false || stripos($response, '<item>') === false) {
+    // Fall back to a stale cache rather than failing outright if WA's feed
+    // is temporarily down or briefly malformed.
+    $stale = fuelCacheStale($cacheDir, $cacheKey);
+    if ($stale !== null) {
+        header('Content-Type: text/xml; charset=utf-8');
+        echo $stale;
+        exit;
+    }
     respondWithError(502, $curlError ?: 'WA FuelWatch returned HTTP ' . $httpCode);
 }
 
-if (stripos($response, '<rss') === false || stripos($response, '<item>') === false) {
-    respondWithError(502, 'WA FuelWatch returned an invalid feed');
-}
-
+fuelCacheSet($cacheDir, $cacheKey, $response);
 header('Content-Type: ' . ($contentType ?: 'text/xml; charset=utf-8'));
 echo $response;

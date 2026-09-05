@@ -82,8 +82,10 @@ export async function geocodeLocation(query) {
   }
 }
 
-// --- Fuel price cache (4 refreshes per day = every 6 hours) ---
-const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+// --- Fuel price cache (matches the 1-hour shared cache the state proxies
+// now keep server-side — see public/api/fuel-cache.php — so a device never
+// holds onto a snapshot staler than what's already available fresh) ---
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 function getCacheKey(state, fuelType, lat, lng, radius) {
   // Snap coordinates to ~11km grid so nearby searches share the cache
@@ -232,59 +234,25 @@ async function fetchQLDFuelPrices(latitude, longitude, fuelType, radius) {
   }
 }
 
-// NSW Fuel API (also covers TAS) — Fuel Check Portal Api product (2,500 calls/month)
-const NSW_API_BASE = 'https://api.onegov.nsw.gov.au';
-const NSW_API_KEY = 'X7DpwSdP5B4ZImMCielDuQnfAV9GqsiV';
-const NSW_API_SECRET = 'ZiqBdeXrUjMkRuiR';
-
-async function getNSWToken() {
-  try {
-    const credentials = btoa(`${NSW_API_KEY}:${NSW_API_SECRET}`);
-    // The token endpoint silently returns 200 with an empty body for a POST
-    // request (confirmed reproducible) — it requires GET, unlike the
-    // documented client_credentials flow this was originally built against.
-    const response = await fetch(`${NSW_API_BASE}/oauth/client_credential/accesstoken?grant_type=client_credentials`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Basic ${credentials}`,
-      },
-    });
-    if (!response.ok) return null;
-    const text = await response.text();
-    if (!text) return null;
-    const data = JSON.parse(text);
-    return data.access_token;
-  } catch {
-    return null;
-  }
-}
-
+// NSW Fuel API (also covers TAS) — Fuel Check Portal Api product (2,500
+// calls/month). Routed through public/api/nsw-fuel.php rather than called
+// directly from the browser — that endpoint caches responses server-side
+// (shared across every visitor, 1 hour) so the whole site's traffic makes
+// far fewer calls against that monthly quota than one call per search, and
+// it keeps the API key/secret and OAuth token out of the client bundle.
 async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detectedState) {
   try {
-    const token = await getNSWToken();
-    if (!token) return null;
-
     const nswCode = FUEL_TYPE_MAP[fuelType]?.nsw || 'E10';
-    const response = await fetch(`${NSW_API_BASE}/FuelPriceCheck/v2/fuel/prices/nearby`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'apikey': NSW_API_KEY,
-        // Required by this endpoint — confirmed via "Missing header values:
-        // transactionID, requestTimeStamp" until both are present.
-        'transactionID': crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        'requestTimeStamp': new Date().toISOString(),
-      },
-      body: JSON.stringify({
-        fueltype: nswCode,
-        latitude: latitude.toString(),
-        longitude: longitude.toString(),
-        radius: String(radius),
-        sortby: 'price',
-        sortascending: 'true',
-      }),
+    const params = new URLSearchParams({
+      lat: latitude.toString(),
+      lng: longitude.toString(),
+      fuelType: nswCode,
+      radius: String(radius),
     });
+    // Same native-app origin handling as fetchWAFuelPrices — a relative path
+    // doesn't resolve correctly from a Capacitor native context.
+    const proxyOrigin = Capacitor.isNativePlatform() ? 'https://www.fuevolt.com' : '';
+    const response = await fetch(`${proxyOrigin}/api/nsw-fuel.php?${params}`);
 
     if (!response.ok) return null;
     const data = await response.json();
@@ -368,22 +336,13 @@ async function fetchNTFuelPrices(latitude, longitude, fuelType, radius) {
   }
 }
 
-// VIC Fair Fuel Open Data API (Service Victoria / Servo Saver)
-const VIC_API_BASE = 'https://api.fuel.service.vic.gov.au/open-data/v1';
-const VIC_CONSUMER_ID = '306d44cdce3e09a9a61135cbe7e5eff1';
-
+// VIC Fair Fuel Open Data API (Service Victoria / Servo Saver). Routed
+// through public/api/vic-fuel.php — see fetchNSWFuelPrices above for why.
 async function fetchVICFuelPrices(latitude, longitude, fuelType, radius) {
   try {
     const vicFuelCode = FUEL_TYPE_MAP[fuelType]?.vic || 'U91';
-    const txnId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
-    const response = await fetch(`${VIC_API_BASE}/fuel/prices`, {
-      headers: {
-        'x-consumer-id': VIC_CONSUMER_ID,
-        'x-transactionid': txnId,
-        'User-Agent': 'FueVolt/1.0',
-      },
-    });
+    const proxyOrigin = Capacitor.isNativePlatform() ? 'https://www.fuevolt.com' : '';
+    const response = await fetch(`${proxyOrigin}/api/vic-fuel.php`);
 
     if (!response.ok) return null;
     const data = await response.json();

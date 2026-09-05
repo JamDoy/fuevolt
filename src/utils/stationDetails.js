@@ -1,6 +1,8 @@
 // Fetch detailed station info from OpenStreetMap Overpass API
 // This gets amenity tags, opening hours, phone etc for a specific station
 
+import { Capacitor } from '@capacitor/core';
+
 function distanceMeters(lat1, lng1, lat2, lng2) {
   const R = 6371000;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -197,40 +199,23 @@ function parseDayRange(range, dayMap) {
   return indices;
 }
 
-// Fetch all fuel types for a given station from the NSW API
-const NSW_API_BASE = 'https://api.onegov.nsw.gov.au';
-const NSW_API_KEY = 'dwAE4MpeaMhNhZFsnzZesHKiQmG3e87z';
-const NSW_API_SECRET = 'jrcoqUqm4WoxNMgW';
-
+// Fetch all fuel types for a given station — NSW and VIC are routed through
+// public/api/nsw-fuel.php / vic-fuel.php (same cached, key-free proxies
+// src/utils/api.js's main search flow uses) rather than calling the
+// government APIs — and a second, separate NSW key/token dance — directly
+// from here. This used to fire 6 uncached NSW calls (one per fuel type)
+// plus a fresh OAuth token fetch on every single station-detail page view.
 const FUEL_TYPES = ['E10', 'U91', 'U95', 'U98', 'Diesel', 'LPG'];
 const FUEL_TYPE_NSW = {
   E10: 'E10', U91: 'U91', U95: 'P95', U98: 'P98', Diesel: 'DL', LPG: 'LPG',
 };
-
-async function getNSWToken() {
-  try {
-    const credentials = btoa(`${NSW_API_KEY}:${NSW_API_SECRET}`);
-    const response = await fetch(`${NSW_API_BASE}/oauth/client_credential/accesstoken?grant_type=client_credentials`, {
-      method: 'POST',
-      headers: { 'Authorization': `Basic ${credentials}`, 'Content-Length': '0' },
-      body: '',
-    });
-    if (!response.ok) return null;
-    const data = await response.json();
-    return data.access_token;
-  } catch {
-    return null;
-  }
-}
 
 // QLD API config
 const QLD_API_BASE = 'https://fppdirectapi-prod.fuelpricesqld.com.au';
 const QLD_API_TOKEN = '3702baa0-61e3-4796-a011-45128c1e91fd';
 const QLD_FUEL_IDS = { E10: 12, U91: 2, U95: 5, U98: 8, Diesel: 3, LPG: 4 };
 
-// VIC API config
-const VIC_API_BASE = 'https://api.fuel.service.vic.gov.au/open-data/v1';
-const VIC_CONSUMER_ID = '306d44cdce3e09a9a61135cbe7e5eff1';
+// VIC fuel codes (VIC API access itself now goes through vic-fuel.php)
 const VIC_FUEL_CODES = { E10: 'E10', U91: 'U91', U95: 'P95', U98: 'P98', Diesel: 'DSL', LPG: 'LPG' };
 
 export async function fetchAllFuelPricesForStation(station) {
@@ -244,38 +229,17 @@ export async function fetchAllFuelPricesForStation(station) {
 
   if (isNSW) {
     try {
-      const token = await getNSWToken();
-      if (!token) {
-        if (station.price && station.fuelType) {
-          prices[station.fuelType] = {
-            price: station.price,
-            lastUpdated: station.lastUpdated,
-            priceDate: station.priceDate,
-            dataCheckedAt,
-          };
-        }
-        return prices;
-      }
-
+      const proxyOrigin = Capacitor.isNativePlatform() ? 'https://www.fuevolt.com' : '';
       for (const type of FUEL_TYPES) {
         try {
           const nswCode = FUEL_TYPE_NSW[type];
-          const response = await fetch(`${NSW_API_BASE}/FuelPriceCheck/v2/fuel/prices/nearby`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-              'apikey': NSW_API_KEY,
-            },
-            body: JSON.stringify({
-              fueltype: nswCode,
-              latitude: station.latitude.toString(),
-              longitude: station.longitude.toString(),
-              radius: '0.5',
-              sortby: 'price',
-              sortascending: 'true',
-            }),
+          const params = new URLSearchParams({
+            lat: station.latitude.toString(),
+            lng: station.longitude.toString(),
+            fuelType: nswCode,
+            radius: '0.5',
           });
+          const response = await fetch(`${proxyOrigin}/api/nsw-fuel.php?${params}`);
 
           if (!response.ok) continue;
           const data = await response.json();
@@ -291,8 +255,6 @@ export async function fetchAllFuelPricesForStation(station) {
               };
             }
           }
-
-          await new Promise(r => setTimeout(r, 300));
         } catch {
           continue;
         }
@@ -336,14 +298,8 @@ export async function fetchAllFuelPricesForStation(station) {
   } else if (isVIC) {
     try {
       const stationId = station.id?.replace('vic-', '');
-      const txnId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      const res = await fetch(`${VIC_API_BASE}/fuel/prices`, {
-        headers: {
-          'x-consumer-id': VIC_CONSUMER_ID,
-          'x-transactionid': txnId,
-          'User-Agent': 'FueVolt/1.0',
-        },
-      });
+      const proxyOrigin = Capacitor.isNativePlatform() ? 'https://www.fuevolt.com' : '';
+      const res = await fetch(`${proxyOrigin}/api/vic-fuel.php`);
 
       if (res.ok) {
         const data = await res.json();
