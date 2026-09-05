@@ -17,14 +17,12 @@ import ArticleDetailPage from './pages/ArticleDetailPage';
 import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
 import ContactPage from './pages/ContactPage';
-import FuelPreferencePrompt from './components/FuelPreferencePrompt';
 import FuelReminderSettings from './components/FuelReminderSettings';
 import MobileBottomNav from './components/MobileBottomNav';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import FeedbackWidget from './components/FeedbackWidget';
 import { FEATURES } from './config/features';
 import { updatePageMeta, buildCityMeta, POPULAR_SUBURBS } from './utils/seo';
-import { getFuelPreference, saveFuelPreference } from './utils/sessionPreferences';
 
 function parseRoute() {
   const historyState = window.history.state;
@@ -134,13 +132,8 @@ function setRoute(path, state = {}) {
 
 function AppContent() {
   const parsed = parseRoute();
-  const storedFuelPreference = getFuelPreference();
   const [view, setView] = useState(parsed.view);
-  const [fuelPreference, setFuelPreference] = useState(storedFuelPreference);
-  const [showFuelPreference, setShowFuelPreference] = useState(!storedFuelPreference);
-  const [initialFuelType, setInitialFuelType] = useState(
-    parsed.initialSearch?.fuelType || (storedFuelPreference && storedFuelPreference !== 'EV' ? storedFuelPreference : 'U91')
-  );
+  const [initialFuelType, setInitialFuelType] = useState(parsed.initialSearch?.fuelType || 'U91');
   const [initialSearch, setInitialSearch] = useState(parsed.initialSearch || null);
   const [initialTrendsSearch] = useState(parsed.initialTrendsSearch || null);
   const [initialTrip] = useState(parsed.initialTrip || null);
@@ -212,7 +205,7 @@ function AppContent() {
   const handleSelect = (option) => {
     setInitialSearch(null);
     if (option === 'petrol') {
-      setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
+      setInitialFuelType('U91');
       setInitialSuburb(null);
       navigate('fuel', '/fuel-prices');
     } else if (option === 'diesel') {
@@ -270,23 +263,10 @@ function AppContent() {
   };
 
   const handleLandingSearch = (search) => {
-    const targetView = fuelPreference === 'EV' ? 'ev' : 'fuel';
-    setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
+    setInitialFuelType('U91');
     setInitialSuburb(null);
     setInitialSearch({ ...search, key: Date.now() });
-    navigate(targetView, targetView === 'ev' ? '/ev-charging' : '/fuel-prices');
-  };
-
-  const handleFuelPreference = (preference) => {
-    saveFuelPreference(preference);
-    setFuelPreference(preference);
-    setShowFuelPreference(false);
-
-    const targetView = preference === 'EV' ? 'ev' : 'fuel';
-    if (preference !== 'EV') setInitialFuelType(preference);
-    setInitialSuburb(null);
-    setInitialSearch({ useLocation: true, key: Date.now() });
-    navigate(targetView, targetView === 'ev' ? '/ev-charging' : '/fuel-prices');
+    navigate('fuel', '/fuel-prices');
   };
 
   const handlePrimaryNavigation = (newView, path) => {
@@ -294,7 +274,7 @@ function AppContent() {
     setInitialSuburb(null);
     setDetailStation(null);
     if (newView === 'fuel') {
-      setInitialFuelType(fuelPreference && fuelPreference !== 'EV' ? fuelPreference : 'U91');
+      setInitialFuelType('U91');
     }
     navigate(newView, path);
   };
@@ -339,7 +319,6 @@ function AppContent() {
           <FuelPricePage
             key={`fuel-${initialFuelType}-${initialSuburb?.slug || 'search'}-${initialSearch?.key || ''}`}
             initialFuelType={initialFuelType}
-            preferredFuelType={fuelPreference}
             initialSearch={initialSearch}
             onStationDetail={handleStationDetail}
             onSharedStationOpened={() => setInitialSearch((prev) => (prev ? { ...prev, stationId: null } : prev))}
@@ -463,7 +442,6 @@ function AppContent() {
       <MobileBottomNav view={view} onNavigate={handlePrimaryNavigation} />
       <PWAInstallPrompt />
       {FEATURES.feedbackWidget && <FeedbackWidget />}
-      {showFuelPreference && <FuelPreferencePrompt onSelect={handleFuelPreference} />}
     </div>
   );
 }

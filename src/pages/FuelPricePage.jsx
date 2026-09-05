@@ -28,7 +28,6 @@ const FUEL_TYPES = [
 
 export default function FuelPricePage({
   initialFuelType = 'U91',
-  preferredFuelType,
   initialSearch,
   onStationDetail,
   onSharedStationOpened,
@@ -209,12 +208,6 @@ export default function FuelPricePage({
     }
   }, [cardsExpanded]);
 
-  const orderedFuelTypes = [...FUEL_TYPES].sort((a, b) => {
-    if (a.id === preferredFuelType) return -1;
-    if (b.id === preferredFuelType) return 1;
-    return 0;
-  });
-
   const pricedStations = stations.filter((s) => s.price != null);
 
   const sortedStations = [...stations].sort((a, b) => {
@@ -302,7 +295,7 @@ export default function FuelPricePage({
           inputId="fuel-location-search"
         />
         <div className="flex flex-wrap gap-2 justify-center">
-          {orderedFuelTypes.map((ft) => (
+          {FUEL_TYPES.map((ft) => (
             <button
               key={ft.id}
               onClick={() => handleFuelTypeChange(ft.id)}

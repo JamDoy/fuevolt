@@ -1,25 +1,4 @@
-const FUEL_PREFERENCE_KEY = 'fuevolt_fuel_preference';
 const RECENT_SEARCHES_KEY = 'fuevolt_recent_searches';
-
-export const FUEL_PREFERENCES = ['U91', 'U95', 'U98', 'Diesel', 'E10', 'EV'];
-
-export function getFuelPreference() {
-  try {
-    const preference = sessionStorage.getItem(FUEL_PREFERENCE_KEY);
-    return FUEL_PREFERENCES.includes(preference) ? preference : null;
-  } catch {
-    return null;
-  }
-}
-
-export function saveFuelPreference(preference) {
-  if (!FUEL_PREFERENCES.includes(preference)) return;
-  try {
-    sessionStorage.setItem(FUEL_PREFERENCE_KEY, preference);
-  } catch {
-    // sessionStorage may be unavailable in restricted browser modes.
-  }
-}
 
 export function getRecentSearches() {
   try {
