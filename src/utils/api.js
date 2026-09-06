@@ -1,24 +1,21 @@
 import { Capacitor } from '@capacitor/core';
 import { geocode as tomtomGeocode } from './tomtom';
 
-const OCM_API_KEY = '1ce3a80b-61c0-40e2-97ed-45e81462eac9';
-const OCM_BASE_URL = 'https://api.openchargemap.io/v3/poi/';
-
+// Routed through public/api/ev-charge.php rather than called directly from
+// the browser — that endpoint caches responses server-side (shared across
+// every visitor, 6 hours) so the whole site's traffic makes far fewer calls
+// against Open Charge Map than one call per search. See fetchNSWFuelPrices
+// above for the same pattern applied to fuel prices.
 export async function fetchEVStations({ latitude, longitude, distance = 10, maxresults = 100 }) {
   const params = new URLSearchParams({
-    output: 'json',
-    countrycode: 'AU',
-    key: OCM_API_KEY,
-    latitude: latitude.toString(),
-    longitude: longitude.toString(),
+    lat: latitude.toString(),
+    lng: longitude.toString(),
     distance: distance.toString(),
-    distanceunit: 'KM',
     maxresults: maxresults.toString(),
-    compact: 'false',
-    verbose: 'true',
   });
 
-  const response = await fetch(`${OCM_BASE_URL}?${params}`);
+  const proxyOrigin = Capacitor.isNativePlatform() ? 'https://www.fuevolt.com' : '';
+  const response = await fetch(`${proxyOrigin}/api/ev-charge.php?${params}`);
   if (!response.ok) {
     throw new Error(`Failed to fetch EV stations: ${response.status}`);
   }
