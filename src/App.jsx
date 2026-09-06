@@ -18,7 +18,6 @@ import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
 import ContactPage from './pages/ContactPage';
 import FuelReminderSettings from './components/FuelReminderSettings';
-import MobileBottomNav from './components/MobileBottomNav';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import FeedbackWidget from './components/FeedbackWidget';
 import { FEATURES } from './config/features';
@@ -280,7 +279,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen pb-20 md:pb-0">
+    <div className="min-h-screen">
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <Header
         showBack={view !== 'landing'}
@@ -439,7 +438,6 @@ function AppContent() {
 
         {showReminderSettings && <FuelReminderSettings innerRef={reminderSettingsRef} />}
       </footer>
-      <MobileBottomNav view={view} onNavigate={handlePrimaryNavigation} />
       <PWAInstallPrompt />
       {FEATURES.feedbackWidget && <FeedbackWidget />}
     </div>
