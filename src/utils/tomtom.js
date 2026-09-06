@@ -151,6 +151,52 @@ export async function searchFuelStations(lat, lng, radius = 10000) {
 }
 
 // --- EV Charging Availability ---
+// Live availability is keyed to TomTom's own charging-park ID, which only
+// exists for stations TomTom knows about via its own Search API — Open
+// Charge Map (the station list's source) has no such ID. findChargingParkId
+// bridges the two: a tight-radius nearby search for the EV category (7309,
+// same one used for Trip Planner's along-route charger search) at the OCM
+// station's own coordinates, returning TomTom's ID for that same physical
+// station when one exists. The mapping is stable (locations don't move), so
+// callers should cache the result per station rather than re-searching.
+const CHARGING_PARK_ID_CACHE = {};
+
+// A tight match radius matters here — TomTom often returns other, genuinely
+// different charging stations a few hundred metres away, and most of those
+// don't carry availability data anyway (e.g. Tesla Superchargers never do,
+// since Tesla doesn't share live status with TomTom). Only trust a match
+// close enough to be confident it's the same physical station as the one
+// being looked up, rather than surfacing a different nearby station's
+// availability under the wrong charger.
+const MATCH_DISTANCE_M = 75;
+
+export async function findChargingParkId(lat, lng, searchRadius = 150) {
+  const cacheKey = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+  if (cacheKey in CHARGING_PARK_ID_CACHE) return CHARGING_PARK_ID_CACHE[cacheKey];
+
+  const params = new URLSearchParams({
+    key: TOMTOM_KEY,
+    lat: lat.toString(),
+    lon: lng.toString(),
+    radius: searchRadius.toString(),
+    categorySet: '7309',
+    limit: '5',
+  });
+  try {
+    const res = await fetch(`${BASE}/search/2/nearbySearch/.json?${params}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const match = (data.results || [])
+      .filter((r) => r.dist <= MATCH_DISTANCE_M && r.dataSources?.chargingAvailability?.id)
+      .sort((a, b) => a.dist - b.dist)[0];
+    const id = match?.dataSources.chargingAvailability.id || null;
+    CHARGING_PARK_ID_CACHE[cacheKey] = id;
+    return id;
+  } catch {
+    return null;
+  }
+}
+
 const EV_AVAIL_CACHE = {};
 const EV_AVAIL_TTL = 2 * 60 * 1000; // 2 minutes
 

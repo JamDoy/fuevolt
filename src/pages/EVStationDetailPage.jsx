@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
 import TouchableMap from '../components/TouchableMap';
 import BrandBadge from '../components/BrandBadge';
+import { findChargingParkId, fetchEVAvailability } from '../utils/tomtom';
 
 const greenPin = new L.DivIcon({
   className: 'custom-marker',
@@ -47,6 +48,7 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
   const [currentPct, setCurrentPct] = useState(20);
   const [targetPct, setTargetPct] = useState(80);
   const [vehicleKey, setVehicleKey] = useState('medium');
+  const [liveAvailability, setLiveAvailability] = useState(null);
   const heroRef = useRef(null);
 
   useEffect(() => {
@@ -60,6 +62,19 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
   const info = station.AddressInfo || {};
   const lat = info.Latitude;
   const lng = info.Longitude;
+
+  useEffect(() => {
+    setLiveAvailability(null);
+    if (lat == null || lng == null) return undefined;
+    let cancelled = false;
+    (async () => {
+      const parkId = await findChargingParkId(lat, lng);
+      if (!parkId || cancelled) return;
+      const avail = await fetchEVAvailability(parkId);
+      if (avail && !cancelled) setLiveAvailability(avail);
+    })();
+    return () => { cancelled = true; };
+  }, [lat, lng]);
   const address = [info.AddressLine1, info.Town, info.StateOrProvince, info.Postcode].filter(Boolean).join(', ');
   const distance = info.Distance != null ? info.Distance.toFixed(1) : null;
   const connections = station.Connections || [];
@@ -170,6 +185,26 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
             </div>
           </div>
 
+          {liveAvailability && (
+            <div
+              className="mt-2 flex items-center gap-2"
+              style={{
+                background: liveAvailability.available > 0 ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.06)',
+                border: `1px solid ${liveAvailability.available > 0 ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'}`,
+                borderRadius: '16px',
+                padding: '12px 20px',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ color: liveAvailability.available > 0 ? '#22C55E' : '#EF4444', flexShrink: 0 }}>
+                <path d="m13 2-7 11h6l-1 9 7-12h-6l1-8Z" />
+              </svg>
+              <p className="text-sm font-bold" style={{ color: liveAvailability.available > 0 ? '#22C55E' : '#EF4444' }}>
+                {liveAvailability.available} of {liveAvailability.total} available now
+              </p>
+              <span className="text-[11px] ml-auto" style={{ color: 'rgba(255,255,255,0.4)' }}>Live via TomTom</span>
+            </div>
+          )}
+
           {shareStatus && <p className="text-center text-xs mt-3" style={{ color: 'rgba(255,255,255,0.5)' }}>{shareStatus}</p>}
         </div>
       </Section>
@@ -199,7 +234,9 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
               </div>
             )}
             <p className="text-[10px] text-center mt-3" style={{ color: theme.textMuted }}>
-              Live per-connector availability isn't provided by this data source — operational status only.
+              {liveAvailability
+                ? 'Live availability shown above, via TomTom.'
+                : "Live per-connector availability isn't provided by this data source — operational status only."}
             </p>
           </div>
         </Section>
