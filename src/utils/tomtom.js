@@ -337,17 +337,22 @@ export async function calculateEVRoute(startLat, startLng, endLat, endLng, evOpt
 }
 
 // --- Matrix Routing (drive time sorting) ---
+// Was pointed at the old v1 endpoint (/routing/1/matrix/json) with an
+// options shape that endpoint doesn't accept — every call has always come
+// back 400 and silently returned nulls (caught below), so every "Drive
+// Time" sort in the app has quietly done nothing since it was added.
+// Confirmed the correct v2 request/response shape live before fixing this.
 export async function getDriveTimes(originLat, originLng, destinations) {
   if (!destinations.length) return [];
 
-  // TomTom Matrix Routing v2 — batch up to 30 destinations
+  // Matrix Routing v2 — batch up to 30 destinations
   const batch = destinations.slice(0, 30);
   const destPoints = batch.map((d) => ({
     point: { latitude: d.latitude, longitude: d.longitude },
   }));
 
   try {
-    const res = await fetch(`${BASE}/routing/1/matrix/json?key=${TOMTOM_KEY}`, {
+    const res = await fetch(`${BASE}/routing/matrix/2?key=${TOMTOM_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -356,22 +361,22 @@ export async function getDriveTimes(originLat, originLng, destinations) {
         options: {
           routeType: 'fastest',
           traffic: 'live',
-          travelMode: 'car',
+          departAt: 'now',
         },
       }),
     });
     if (!res.ok) return batch.map(() => null);
     const data = await res.json();
-    const cells = data.matrix?.[0] || [];
-    return cells.map((cell) =>
-      cell?.response?.routeSummary
-        ? {
-            driveTimeMin: Math.ceil(cell.response.routeSummary.travelTimeInSeconds / 60),
-            distanceKm: (cell.response.routeSummary.lengthInMeters / 1000).toFixed(1),
-            trafficDelayMin: Math.ceil((cell.response.routeSummary.trafficDelayInSeconds || 0) / 60),
-          }
-        : null
-    );
+    const results = batch.map(() => null);
+    for (const cell of data.data || []) {
+      if (!cell.routeSummary) continue;
+      results[cell.destinationIndex] = {
+        driveTimeMin: Math.ceil(cell.routeSummary.travelTimeInSeconds / 60),
+        distanceKm: (cell.routeSummary.lengthInMeters / 1000).toFixed(1),
+        trafficDelayMin: Math.ceil((cell.routeSummary.trafficDelayInSeconds || 0) / 60),
+      };
+    }
+    return results;
   } catch {
     return batch.map(() => null);
   }
