@@ -5,7 +5,7 @@ import BrandBadge from './BrandBadge';
 import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
 import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
 
-export default function EVStationCard({ station, isSelected, onClick }) {
+export default function EVStationCard({ station, isSelected, onClick, sortBy }) {
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
   const [fav, setFav] = useState(() => isFavourite(`ev-${station.ID}`));
@@ -175,6 +175,12 @@ export default function EVStationCard({ station, isSelected, onClick }) {
           <span className="text-[11px]">{station.UsageType.Title}</span>
         )}
       </div>
+
+      {station.driveTime != null && (
+        <p className="text-xs mt-1.5" style={{ color: sortBy === 'driveTime' ? theme.gold : theme.textMuted }}>
+          {station.driveTime} min drive{station.trafficDelay > 0 ? ` (+${station.trafficDelay} min traffic)` : ''}
+        </p>
+      )}
     </div>
   );
 }

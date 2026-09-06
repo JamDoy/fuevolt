@@ -5,7 +5,7 @@ import ShimmerCard from '../components/ShimmerCard';
 import LocationInput from '../components/LocationInput';
 import { geocodeLocation, fetchFuelPrices, fetchFuelPricesAlongRoute } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
-import { calculateRoute, calculateRouteWithStops, calculateEVRoute, searchAlongRoute } from '../utils/tomtom';
+import { calculateRoute, calculateRouteWithStops, calculateEVRoute, searchAlongRoute, getTrafficIncidentsAlongRoute } from '../utils/tomtom';
 import ShareMenu from '../components/ShareMenu';
 import { buildTripShareUrl } from '../utils/shareLinks';
 
@@ -34,6 +34,7 @@ export default function TripPlannerPage({ initialTrip }) {
   const [cheapRoute, setCheapRoute] = useState(null);
   const [fuelSavings, setFuelSavings] = useState(0);
   const [priceDataIncomplete, setPriceDataIncomplete] = useState(false);
+  const [trafficIncidents, setTrafficIncidents] = useState([]);
   const autoLocation = useAutoLocation();
 
   // Default map to user's location if permission already granted
@@ -59,6 +60,7 @@ export default function TripPlannerPage({ initialTrip }) {
     setCheapRoute(null);
     setFuelSavings(0);
     setPriceDataIncomplete(false);
+    setTrafficIncidents([]);
 
     try {
       const [startGeo, endGeo] = await Promise.all([
@@ -75,6 +77,10 @@ export default function TripPlannerPage({ initialTrip }) {
         endGeo.latitude, endGeo.longitude
       );
       setRoute(routeData);
+
+      if (routeData.points && routeData.points.length > 1) {
+        getTrafficIncidentsAlongRoute(routeData.points).then(setTrafficIncidents).catch(() => {});
+      }
 
       if (mode === 'ev') {
         const numBattery = Number(batteryKWh) || 60;
@@ -400,6 +406,25 @@ export default function TripPlannerPage({ initialTrip }) {
             <p className="text-2xl font-bold" style={{ color: theme.text }}>
               {mode === 'ev' ? evStops.length : fuelStops.length}
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Traffic Incidents */}
+      {route && !loading && trafficIncidents.length > 0 && (
+        <div className="rounded-2xl p-4" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+          <h2 className="text-sm font-bold mb-3" style={{ color: theme.text }}>
+            Traffic incidents on this route
+          </h2>
+          <div className="space-y-2">
+            {trafficIncidents.map((inc) => (
+              <div key={inc.id} className="flex items-start justify-between gap-3 text-sm" style={{ color: theme.textSecondary }}>
+                <span>{inc.description}{inc.from ? ` — ${inc.from}${inc.to ? ` to ${inc.to}` : ''}` : ''}</span>
+                {inc.delay > 0 && (
+                  <span className="flex-shrink-0 font-semibold" style={{ color: '#E74C3C' }}>+{inc.delay}m</span>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}

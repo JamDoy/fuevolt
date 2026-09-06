@@ -10,7 +10,7 @@ import EVCostEstimator from '../components/EVCostEstimator';
 import ExpandHandle from '../components/ExpandHandle';
 import { fetchEVStations, geocodeLocation, getUserLocation } from '../utils/api';
 import useAutoLocation from '../hooks/useAutoLocation';
-import { reverseGeocode } from '../utils/tomtom';
+import { reverseGeocode, getDriveTimes } from '../utils/tomtom';
 import { injectEVStationSchema, POPULAR_SUBURBS } from '../utils/seo';
 import ShareMenu from '../components/ShareMenu';
 import { buildEVSearchShareUrl } from '../utils/shareLinks';
@@ -36,6 +36,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
   const [selectedStation, setSelectedStation] = useState(null);
   const [connectorFilters, setConnectorFilters] = useState([]);
   const [speedFilters, setSpeedFilters] = useState([]);
+  const [sortBy, setSortBy] = useState('distance');
   const [locationName, setLocationName] = useState(initialSuburb?.name || '');
   const [searchLabel, setSearchLabel] = useState(initialSuburb?.name || '');
   const [searchRadius, setSearchRadius] = useState(10);
@@ -73,6 +74,20 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       // Reverse geocode to show suburb name
       reverseGeocode(lat, lng).then((loc) => {
         if (loc?.suburb) setLocationName(loc.suburb);
+      }).catch(() => {});
+
+      // Fetch drive times in background — same Matrix Routing pattern the
+      // Fuel Prices page uses, just remapped to OCM's nested AddressInfo
+      // coordinates instead of the flat lat/lng fuel stations use.
+      getDriveTimes(lat, lng, data.map((s) => ({ latitude: s.AddressInfo?.Latitude, longitude: s.AddressInfo?.Longitude }))).then((times) => {
+        if (!times) return;
+        setStations((prev) =>
+          prev.map((s, i) => ({
+            ...s,
+            driveTime: times[i]?.driveTimeMin || null,
+            trafficDelay: times[i]?.trafficDelayMin || null,
+          }))
+        );
       }).catch(() => {});
 
     } catch (err) {
@@ -188,9 +203,19 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     return true;
   });
 
+  const sortedFiltered = [...filtered].sort((a, b) => {
+    if (sortBy === 'driveTime') {
+      if (a.driveTime == null && b.driveTime == null) return (a.AddressInfo?.Distance ?? 999) - (b.AddressInfo?.Distance ?? 999);
+      if (a.driveTime == null) return 1;
+      if (b.driveTime == null) return -1;
+      return a.driveTime - b.driveTime;
+    }
+    return (a.AddressInfo?.Distance ?? 999) - (b.AddressInfo?.Distance ?? 999);
+  });
+
   const VISIBLE_CARD_COUNT = 4;
-  const primaryStations = filtered.slice(0, VISIBLE_CARD_COUNT);
-  const extraStations = filtered.slice(VISIBLE_CARD_COUNT);
+  const primaryStations = sortedFiltered.slice(0, VISIBLE_CARD_COUNT);
+  const extraStations = sortedFiltered.slice(VISIBLE_CARD_COUNT);
 
   const nearestCity = mapCenter
     ? POPULAR_SUBURBS.ev.reduce((nearest, city) => {
@@ -276,21 +301,43 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
         </div>
       )}
 
-      {/* Location Name */}
+      {/* Location Name + Sort */}
       {locationName && !loading && stations.length > 0 && (
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-sm font-medium truncate min-w-0" style={{ color: theme.text }}>
-            Showing chargers near <span style={{ color: theme.green }}>{locationName}</span>
-          </p>
-          {mapCenter && (
-            <ShareMenu
-              title="EV Charging Stations"
-              text={`Check out EV charging stations near ${locationName} on FueVolt`}
-              url={buildEVSearchShareUrl({ lat: mapCenter[0], lng: mapCenter[1], label: locationName })}
-              buttonClassName="cursor-pointer flex-shrink-0"
-              buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
-            />
-          )}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <p className="text-sm font-medium truncate min-w-0" style={{ color: theme.text }}>
+              Showing chargers near <span style={{ color: theme.green }}>{locationName}</span>
+            </p>
+            {mapCenter && (
+              <ShareMenu
+                title="EV Charging Stations"
+                text={`Check out EV charging stations near ${locationName} on FueVolt`}
+                url={buildEVSearchShareUrl({ lat: mapCenter[0], lng: mapCenter[1], label: locationName })}
+                buttonClassName="cursor-pointer flex-shrink-0"
+                buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
+              />
+            )}
+          </div>
+          <div className="flex gap-1.5 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
+            {[
+              { id: 'distance', label: 'Nearest' },
+              { id: 'driveTime', label: 'Drive Time' },
+            ].map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setSortBy(s.id)}
+                className="min-h-7 px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer"
+                style={{
+                  background: sortBy === s.id ? theme.green : theme.chipBg,
+                  color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
+                  border: 'none',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -348,6 +395,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
                   station={station}
                   isSelected={selectedStation?.ID === station.ID}
                   onClick={() => openStationDetail(station)}
+                  sortBy={sortBy}
                 />
               ))}
             </div>
@@ -385,6 +433,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
                     station={station}
                     isSelected={selectedStation?.ID === station.ID}
                     onClick={() => openStationDetail(station)}
+                    sortBy={sortBy}
                   />
                 ))}
               </div>

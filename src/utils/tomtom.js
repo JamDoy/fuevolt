@@ -383,8 +383,10 @@ export async function getTrafficIncidents(lat, lng, radius = 10) {
   const bbox = `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`;
 
   try {
+    // "en-AU" is rejected by this endpoint ("Unsupported language parameter
+    // value") — en-GB is the closest supported variant.
     const res = await fetch(
-      `${BASE}/traffic/services/5/incidentDetails?key=${TOMTOM_KEY}&bbox=${bbox}&fields={incidents{type,geometry{type,coordinates},properties{id,iconCategory,magnitudeOfDelay,events{description},startTime,endTime,from,to,length,delay,roadNumbers}}}&language=en-AU&timeValidityFilter=present`
+      `${BASE}/traffic/services/5/incidentDetails?key=${TOMTOM_KEY}&bbox=${bbox}&fields={incidents{type,geometry{type,coordinates},properties{id,iconCategory,magnitudeOfDelay,events{description},startTime,endTime,from,to,length,delay,roadNumbers}}}&language=en-GB&timeValidityFilter=present`
     );
     if (!res.ok) return [];
     const data = await res.json();
@@ -401,6 +403,39 @@ export async function getTrafficIncidents(lat, lng, radius = 10) {
   } catch {
     return [];
   }
+}
+
+// Samples several points along a route (same pattern as searchAlongRoute)
+// and merges each point's nearby incidents, de-duplicated by incident id —
+// a route's own trafficDelayInSeconds tells you HOW long the delay is, this
+// tells you WHY (accident, roadworks, closure).
+export async function getTrafficIncidentsAlongRoute(routePoints, maxResults = 10) {
+  if (!routePoints || routePoints.length < 2) return [];
+
+  const totalPoints = routePoints.length;
+  const sampleCount = Math.min(6, Math.ceil(totalPoints / 40));
+  const step = Math.max(1, Math.floor(totalPoints / (sampleCount + 1)));
+  const sampleIndices = [0];
+  for (let i = step; i < totalPoints - 1; i += step) {
+    sampleIndices.push(i);
+    if (sampleIndices.length >= sampleCount + 1) break;
+  }
+  sampleIndices.push(totalPoints - 1);
+
+  const seen = new Set();
+  const allIncidents = [];
+
+  for (const idx of sampleIndices) {
+    const [lat, lng] = routePoints[idx];
+    const incidents = await getTrafficIncidents(lat, lng, 15);
+    for (const inc of incidents) {
+      if (!inc.id || seen.has(inc.id)) continue;
+      seen.add(inc.id);
+      allIncidents.push(inc);
+    }
+  }
+
+  return allIncidents.sort((a, b) => b.delay - a.delay).slice(0, maxResults);
 }
 
 // --- Geofencing ---
