@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import StatusBadge from './StatusBadge';
+import BrandBadge from './BrandBadge';
 import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
 import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
 
@@ -126,9 +127,10 @@ export default function EVStationCard({ station, isSelected, onClick }) {
       </p>
 
       {station.OperatorInfo?.Title && (
-        <p className="text-xs mb-2" style={{ color: theme.textMuted }}>
-          🔌 {station.OperatorInfo.Title}
-        </p>
+        <div className="flex items-center gap-1.5 mb-2">
+          <BrandBadge brand={station.OperatorInfo.Title} size={22} />
+          <p className="text-xs" style={{ color: theme.textMuted }}>{station.OperatorInfo.Title}</p>
+        </div>
       )}
 
       {/* Speed indicator */}

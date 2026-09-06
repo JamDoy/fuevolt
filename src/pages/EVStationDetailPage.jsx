@@ -3,8 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
-import { getBrandStyle } from '../utils/brandLogos';
 import TouchableMap from '../components/TouchableMap';
+import BrandBadge from '../components/BrandBadge';
 
 const greenPin = new L.DivIcon({
   className: 'custom-marker',
@@ -66,7 +66,6 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
   const maxPower = connections.length ? Math.max(...connections.map((c) => c.PowerKW || 0)) : 0;
   const tier = speedTier(maxPower);
   const statusConfig = STATUS_CONFIG[station.StatusType?.Title] || STATUS_UNKNOWN;
-  const operatorStyle = getBrandStyle(station.OperatorInfo?.Title);
 
   const rank = station.resultRank;
   const total = station.resultTotal;
@@ -139,9 +138,11 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
           </div>
 
           <div className="flex items-center gap-3 mb-3">
-            <div className="flex-shrink-0 flex items-center justify-center rounded-full" style={{ width: '48px', height: '48px', background: operatorStyle.bg }}>
-              <span className="font-extrabold text-lg" style={{ color: operatorStyle.text }}>{operatorStyle.short}</span>
-            </div>
+            <BrandBadge
+              brand={station.OperatorInfo?.Title}
+              size={56}
+              ringStyle={{ border: '2px solid rgba(255,255,255,0.25)', boxShadow: '0 4px 14px rgba(0,0,0,0.3)' }}
+            />
             <div className="min-w-0">
               <h1 className="text-[28px] sm:text-4xl font-extrabold text-white truncate" style={{ letterSpacing: '-0.02em' }}>{info.Title || 'EV Charger'}</h1>
             </div>

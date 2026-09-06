@@ -20,6 +20,18 @@ const BRAND_COLORS = {
   'Budget Petrol': { bg: '#FF8C00', text: '#FFFFFF', short: 'BG' },
   'Self-Serve Fuel': { bg: '#4B5563', text: '#FFFFFF', short: 'SS' },
   'EG': { bg: '#1D4ED8', text: '#FFFFFF', short: 'EG' },
+  // EV charging network operators
+  'Chargefox': { bg: '#0D9488', text: '#FFFFFF', short: 'CF' },
+  'Evie Networks': { bg: '#7C3AED', text: '#FFFFFF', short: 'EV' },
+  'Tesla': { bg: '#CC0000', text: '#FFFFFF', short: 'TS' },
+  'NRMA': { bg: '#003DA5', text: '#FFFFFF', short: 'NR' },
+  'Jolt': { bg: '#FFDD00', text: '#000000', short: 'JT' },
+  'ChargePoint': { bg: '#0072CE', text: '#FFFFFF', short: 'CP' },
+  'Exploren': { bg: '#16A34A', text: '#FFFFFF', short: 'EX' },
+  'JET Charge': { bg: '#F97316', text: '#FFFFFF', short: 'JC' },
+  'RAC': { bg: '#FDB913', text: '#000000', short: 'RC' },
+  'RACV': { bg: '#F47920', text: '#FFFFFF', short: 'RV' },
+  'RACQ': { bg: '#003DA5', text: '#FFFFFF', short: 'RQ' },
 };
 
 // Real brand logos via Brandfetch's Logo Link API — looks up each brand's own
@@ -50,6 +62,18 @@ const BRAND_DOMAINS = {
   'Woolworths Petrol': 'woolworths.com.au',
   'Coles Express': 'colesexpress.com.au',
   'EG': 'eg.com.au',
+  // EV charging network operators
+  'Chargefox': 'chargefox.com',
+  'Evie Networks': 'evie.com.au',
+  'Tesla': 'tesla.com',
+  'NRMA': 'mynrma.com.au',
+  'Jolt': 'jolt.com.au',
+  'ChargePoint': 'chargepoint.com',
+  'Exploren': 'exploren.com.au',
+  'JET Charge': 'jetcharge.com.au',
+  'RAC': 'rac.com.au',
+  'RACV': 'racv.com.au',
+  'RACQ': 'racq.com.au',
 };
 
 export function getBrandLogoUrl(brand) {
