@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
-import FilterChips from '../components/FilterChips';
+import ColorFilterChips from '../components/ColorFilterChips';
 import StationMap from '../components/StationMap';
 import EVStationCard from '../components/EVStationCard';
 import ShimmerCard from '../components/ShimmerCard';
@@ -15,11 +15,17 @@ import { injectEVStationSchema, POPULAR_SUBURBS } from '../utils/seo';
 import ShareMenu from '../components/ShareMenu';
 import { buildEVSearchShareUrl } from '../utils/shareLinks';
 
-const CONNECTOR_FILTERS = ['Type 2', 'CCS', 'CHAdeMO', 'Tesla', 'Type 1'];
+const CONNECTOR_FILTERS = [
+  { id: 'Type 2', label: 'Type 2', color: '#3B82F6', icon: 'plug' },
+  { id: 'CCS', label: 'CCS', color: '#22C55E', icon: 'plug' },
+  { id: 'CHAdeMO', label: 'CHAdeMO', color: '#A855F7', icon: 'plug' },
+  { id: 'Tesla', label: 'Tesla', color: '#CC0000', icon: 'plug' },
+  { id: 'Type 1', label: 'Type 1', color: '#F59E0B', activeText: '#422006', icon: 'plug' },
+];
 const SPEED_FILTERS = [
-  { id: 'slow', label: '≤7kW (Slow)', max: 7 },
-  { id: 'fast', label: '7-50kW (Fast)', min: 7, max: 50 },
-  { id: 'ultra', label: '50kW+ (Ultra-Rapid)', min: 50 },
+  { id: 'slow', label: '≤7kW (Slow)', max: 7, color: '#3B82F6', icon: 'bolt' },
+  { id: 'fast', label: '7-50kW (Fast)', min: 7, max: 50, color: '#22C55E', icon: 'bolt' },
+  { id: 'ultra', label: '50kW+ (Ultra-Rapid)', min: 50, color: '#F59E0B', activeText: '#422006', icon: 'bolt' },
 ];
 
 export default function EVChargingPage({ initialSuburb, initialSearch, onStationDetail }) {
@@ -258,22 +264,17 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       {/* Filters */}
       {stations.length > 0 && (
         <div className="space-y-2">
-          <FilterChips
+          <ColorFilterChips
             label="Connector:"
-            filters={CONNECTOR_FILTERS}
-            activeFilters={connectorFilters}
+            options={CONNECTOR_FILTERS}
+            activeIds={connectorFilters}
             onToggle={toggleConnector}
-            accentColor={theme.green}
           />
-          <FilterChips
+          <ColorFilterChips
             label="Speed:"
-            filters={SPEED_FILTERS.map((s) => s.label)}
-            activeFilters={speedFilters.map((id) => SPEED_FILTERS.find((s) => s.id === id)?.label)}
-            onToggle={(label) => {
-              const sf = SPEED_FILTERS.find((s) => s.label === label);
-              if (sf) toggleSpeed(sf.id);
-            }}
-            accentColor={theme.green}
+            options={SPEED_FILTERS}
+            activeIds={speedFilters}
+            onToggle={toggleSpeed}
           />
         </div>
       )}
