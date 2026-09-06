@@ -26,9 +26,9 @@ const goldPin = new L.DivIcon({
 
 const FUEL_LABELS = {
   E10: 'E10',
-  U91: 'Unleaded 91',
-  U95: 'Premium 95',
-  U98: 'Premium 98',
+  U91: 'Petrol 91',
+  U95: 'Petrol 95',
+  U98: 'Petrol 98',
   Diesel: 'Diesel',
   LPG: 'LPG',
 };

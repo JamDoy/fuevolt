@@ -13,10 +13,10 @@ import { buildTrendsShareUrl } from '../utils/shareLinks';
 
 const FUEL_TYPES = [
   { id: 'E10', label: 'E10' },
-  { id: 'U91', label: 'Unleaded 91' },
+  { id: 'U91', label: 'Petrol 91' },
+  { id: 'U95', label: 'Petrol 95' },
+  { id: 'U98', label: 'Petrol 98' },
   { id: 'Diesel', label: 'Diesel' },
-  { id: 'U95', label: 'Premium 95' },
-  { id: 'U98', label: 'Premium 98' },
   { id: 'LPG', label: 'LPG' },
 ];
 
