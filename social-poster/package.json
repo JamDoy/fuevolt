@@ -1,0 +1,14 @@
+{
+  "name": "fuevolt-social-poster",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Standalone scheduled job that posts the cheapest capital-city Unleaded 91 prices to the FueVolt Facebook page.",
+  "scripts": {
+    "start": "node index.mjs",
+    "dry-run": "DRY_RUN=true node index.mjs"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.11.1"
+  }
+}
