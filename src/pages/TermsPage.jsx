@@ -66,6 +66,7 @@ export default function TermsPage() {
           <li>TomTom — Maps, routing, traffic data used under TomTom API terms</li>
           <li>Government fuel price data — used under public access terms of the respective state/territory APIs</li>
         </ul>
+        <p className="mt-2">Fuel station brand names and logos (e.g. BP, Shell, Ampol, 7-Eleven) shown on the Service are trademarks of their respective owners, displayed solely to identify which brand operates a given station. FueVolt is an independent price comparison service and is not affiliated with, sponsored by, or endorsed by any fuel brand shown.</p>
       </Section>
 
       <Section title="6. Advertising" theme={theme}>

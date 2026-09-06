@@ -5,8 +5,8 @@ import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
 import { fetchStationDetails, fetchAllFuelPricesForStation } from '../utils/stationDetails';
 import { recordPriceSnapshot, getPriceTrend } from '../utils/priceHistory';
-import { getBrandStyle } from '../utils/brandLogos';
 import TouchableMap from '../components/TouchableMap';
+import BrandBadge from '../components/BrandBadge';
 import FuelReminderCard from '../components/FuelReminderCard';
 import DigitalPrice from '../components/DigitalPrice';
 import ShareMenu from '../components/ShareMenu';
@@ -199,7 +199,6 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
   const isLocalCheapest = alternatives.length === 0 || alternatives[0].price >= station.price;
 
   const amenities = details?.amenities || {};
-  const brandStyle = getBrandStyle(station.brand);
 
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`;
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -271,12 +270,11 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
 
           <div className="flex items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div
-                className="flex-shrink-0 flex items-center justify-center rounded-full"
-                style={{ width: '48px', height: '48px', background: brandStyle.bg }}
-              >
-                <span className="font-extrabold text-lg" style={{ color: brandStyle.text }}>{brandStyle.short}</span>
-              </div>
+              <BrandBadge
+                brand={station.brand}
+                size={56}
+                ringStyle={{ border: '2px solid rgba(255,255,255,0.25)', boxShadow: '0 4px 14px rgba(0,0,0,0.3)' }}
+              />
               <div className="min-w-0">
                 <h1 className="text-[28px] sm:text-4xl font-extrabold text-white truncate" style={{ letterSpacing: '-0.02em' }}>
                   {station.name}

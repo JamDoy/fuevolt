@@ -5,6 +5,7 @@ import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites'
 import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
 import { getPriceContext, getPriceFreshness } from '../utils/priceFreshness';
 import DigitalPrice from './DigitalPrice';
+import BrandBadge from './BrandBadge';
 
 export default function FuelStationCard({ station, isSelected, onClick, onDetail, rank, sortBy, averagePrice }) {
   const { theme } = useTheme();
@@ -63,17 +64,22 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            {rank != null && (
-              <span className="text-[11px] font-bold" style={{ color: rank === 0 ? theme.green : theme.textMuted }}>
-                #{rank + 1}
-              </span>
-            )}
-            <p className="text-base font-bold truncate" style={{ color: theme.text }}>{station.name}</p>
+          <div className="flex items-center gap-2.5">
+            <BrandBadge brand={station.brand} size={32} />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                {rank != null && (
+                  <span className="text-[11px] font-bold" style={{ color: rank === 0 ? theme.green : theme.textMuted }}>
+                    #{rank + 1}
+                  </span>
+                )}
+                <p className="text-base font-bold truncate" style={{ color: theme.text }}>{station.name}</p>
+              </div>
+              {station.brand && station.brand !== station.name && (
+                <p className="text-xs truncate" style={{ color: theme.textMuted }}>{station.brand}</p>
+              )}
+            </div>
           </div>
-          {station.brand && station.brand !== station.name && (
-            <p className="text-xs mt-1 truncate" style={{ color: theme.textMuted }}>{station.brand}</p>
-          )}
           <p className="text-sm font-semibold mt-2" style={{ color: theme.textMuted }}>
             {station.distance} km
             <span className="text-xs font-medium ml-1">away</span>

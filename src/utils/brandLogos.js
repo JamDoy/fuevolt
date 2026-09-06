@@ -22,6 +22,54 @@ const BRAND_COLORS = {
   'EG': { bg: '#1D4ED8', text: '#FFFFFF', short: 'EG' },
 };
 
+// Real brand logos via Brandfetch's Logo Link API — looks up each brand's own
+// public logo/favicon by domain, so it also covers small Australian chains
+// that have no presence on generic logo/icon sites. Displaying a station's
+// own brand mark to identify it (not to imply endorsement) is standard
+// nominative fair use, the same basis FuelWatch/Google Maps rely on for the
+// same thing — see PROJECT_STATUS.md for the fuller write-up. Falls back to
+// the colored monogram above for any brand with no listed domain, or if the
+// logo fails to load (BrandBadge component handles the fallback).
+const BRANDFETCH_CLIENT_ID = '1idslr00EBBJk21AKIj';
+
+const BRAND_DOMAINS = {
+  'BP': 'bp.com',
+  'Shell': 'shell.com',
+  'Caltex': 'caltex.com.au',
+  'Ampol': 'ampol.com.au',
+  '7-Eleven': '7eleven.com.au',
+  'United': 'unitedpetroleum.com.au',
+  'Mobil': 'mobil.com.au',
+  'Metro Petroleum': 'metropetroleum.com.au',
+  'Costco': 'costco.com.au',
+  'Liberty': 'libertyoil.com.au',
+  'Puma': 'pumaenergy.com',
+  'Viva Energy': 'vivaenergy.com.au',
+  'OTR': 'otr.com.au',
+  'Woolworths': 'woolworths.com.au',
+  'Woolworths Petrol': 'woolworths.com.au',
+  'Coles Express': 'colesexpress.com.au',
+  'EG': 'eg.com.au',
+};
+
+export function getBrandLogoUrl(brand) {
+  if (!brand) return null;
+
+  let domain = BRAND_DOMAINS[brand];
+  if (!domain) {
+    const lowerBrand = brand.toLowerCase();
+    for (const [key, value] of Object.entries(BRAND_DOMAINS)) {
+      if (lowerBrand.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerBrand)) {
+        domain = value;
+        break;
+      }
+    }
+  }
+  if (!domain) return null;
+
+  return `https://cdn.brandfetch.io/${domain}?c=${BRANDFETCH_CLIENT_ID}`;
+}
+
 export function getBrandStyle(brand) {
   if (!brand) return BRAND_COLORS['Independent'];
 
