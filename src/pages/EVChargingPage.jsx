@@ -48,7 +48,6 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     }
   });
   const { theme } = useTheme();
-  const isDark = theme.mode === 'dark';
   const autoLocation = useAutoLocation();
   const extraCardsRef = useRef(null);
 
@@ -193,9 +192,6 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
   const primaryStations = filtered.slice(0, VISIBLE_CARD_COUNT);
   const extraStations = filtered.slice(VISIBLE_CARD_COUNT);
 
-  // Stats
-  const totalPoints = filtered.reduce((sum, s) => sum + (s.NumberOfPoints || 1), 0);
-  const ultraRapidCount = filtered.filter((s) => getMaxPower(s) >= 50).length;
   const nearestCity = mapCenter
     ? POPULAR_SUBURBS.ev.reduce((nearest, city) => {
         const distance = Math.hypot(city.lat - mapCenter[0], city.lng - mapCenter[1]);
@@ -275,40 +271,8 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
             options={SPEED_FILTERS}
             activeIds={speedFilters}
             onToggle={toggleSpeed}
+            size="sm"
           />
-        </div>
-      )}
-
-      {/* EV Stats Summary */}
-      {!loading && stations.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <div
-            className="rounded-2xl p-4 text-center"
-            style={{
-              background: theme.cardBg,
-              border: `1px solid ${isDark ? 'rgba(34, 197, 94,0.3)' : 'rgba(34,197,94,0.2)'}`,
-              boxShadow: isDark ? '0 0 12px rgba(34, 197, 94,0.08) inset' : '0 2px 8px rgba(0,0,0,0.04)',
-            }}
-          >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Stations</p>
-            <p className="text-2xl font-bold" style={{ color: theme.green }}>{filtered.length}</p>
-          </div>
-          <div
-            className="rounded-2xl p-4 text-center"
-            style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
-          >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Charge Points</p>
-            <p className="text-2xl font-bold" style={{ color: theme.text }}>{totalPoints}</p>
-          </div>
-          <div
-            className="rounded-2xl p-4 text-center"
-            style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
-          >
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Ultra-Rapid</p>
-            <p className="text-2xl font-bold" style={{ color: theme.gold }}>{ultraRapidCount}</p>
-            <p className="text-[11px]" style={{ color: theme.textMuted }}>50kW+</p>
-          </div>
-
         </div>
       )}
 

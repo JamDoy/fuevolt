@@ -1,8 +1,8 @@
 import { useTheme } from '../contexts/ThemeContext';
 
-function PlugIcon() {
+function PlugIcon({ size }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="5" y="9" width="10" height="9" rx="2" />
       <line x1="8" y1="9" x2="8" y2="4" />
       <line x1="12" y1="9" x2="12" y2="4" />
@@ -11,9 +11,9 @@ function PlugIcon() {
   );
 }
 
-function BoltIcon() {
+function BoltIcon({ size }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="m13 2-7 11h6l-1 9 7-12h-6l1-8Z" />
     </svg>
   );
@@ -26,9 +26,12 @@ const ICONS = { plug: PlugIcon, bolt: BoltIcon };
 // active at once) rather than a single active value.
 export default function ColorFilterChips({ options, activeIds, onToggle, label, size = 'compact' }) {
   const { theme } = useTheme();
-  const sizeClasses = size === 'compact'
-    ? 'px-3 py-1.5 text-xs rounded-full min-h-9'
-    : 'px-4 py-2 text-sm rounded-xl min-h-10';
+  const sizeClasses = size === 'sm'
+    ? 'px-2 py-1 text-[11px] rounded-full min-h-7'
+    : size === 'compact'
+      ? 'px-3 py-1.5 text-xs rounded-full min-h-9'
+      : 'px-4 py-2 text-sm rounded-xl min-h-10';
+  const iconSize = size === 'sm' ? 11 : 14;
 
   return (
     <div className="flex flex-wrap gap-2 items-center">
@@ -52,7 +55,7 @@ export default function ColorFilterChips({ options, activeIds, onToggle, label, 
               transform: active ? 'scale(1.05)' : 'scale(1)',
             }}
           >
-            <Icon />
+            <Icon size={iconSize} />
             {opt.label}
           </button>
         );
