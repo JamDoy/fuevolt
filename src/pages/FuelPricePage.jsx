@@ -16,29 +16,7 @@ import { injectFuelStationSchema, POPULAR_SUBURBS } from '../utils/seo';
 import { getPriceFreshness } from '../utils/priceFreshness';
 import ShareMenu from '../components/ShareMenu';
 import { buildFuelSearchShareUrl } from '../utils/shareLinks';
-
-// Colors match real Australian bowser nozzle/signage conventions where one
-// exists (diesel black, 91 blue, E10 green, premium yellow) — see the pump
-// photo the colors were checked against. 98 and LPG have no single
-// standard color at the pump, so those two just carry their own distinct
-// brand-style accent (purple, orange) rather than mimicking a real signage color.
-const FUEL_TYPES = [
-  { id: 'E10', label: 'E10', color: '#22C55E' },
-  { id: 'U91', label: 'Petrol 91', color: '#3B82F6' },
-  { id: 'U95', label: 'Petrol 95', color: '#FACC15', activeText: '#422006' },
-  { id: 'U98', label: 'Petrol 98', color: '#A855F7' },
-  { id: 'Diesel', label: 'Diesel', color: '#4B5563', activeText: '#FFFFFF', mutedText: true },
-  { id: 'LPG', label: 'LPG', color: '#F97316' },
-];
-
-// Fuel-pump glyph, reused for every chip below.
-function FuelTypeIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 3h8v18H6V3Zm2 3v5h4V6H8Zm6 2h2l2 2v8a2 2 0 0 1-4 0v-5" />
-    </svg>
-  );
-}
+import FuelTypeSelector from '../components/FuelTypeSelector';
 
 export default function FuelPricePage({
   initialFuelType = 'U91',
@@ -308,29 +286,7 @@ export default function FuelPricePage({
           placeholder="Search suburb, city or postcode..."
           inputId="fuel-location-search"
         />
-        <div className="flex flex-wrap gap-2 justify-center">
-          {FUEL_TYPES.map((ft) => {
-            const active = fuelType === ft.id;
-            return (
-              <button
-                key={ft.id}
-                onClick={() => handleFuelTypeChange(ft.id)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer min-h-9 active:scale-95"
-                style={{
-                  transition: 'all 0.2s ease',
-                  border: `1px solid ${active ? ft.color : ft.color + '33'}`,
-                  background: active ? ft.color : ft.color + '14',
-                  color: active ? (ft.activeText || '#FFFFFF') : (ft.mutedText ? theme.text : ft.color),
-                  boxShadow: active ? `0 0 14px ${ft.color}66` : 'none',
-                  transform: active ? 'scale(1.05)' : 'scale(1)',
-                }}
-              >
-                <FuelTypeIcon />
-                {ft.label}
-              </button>
-            );
-          })}
-        </div>
+        <FuelTypeSelector value={fuelType} onChange={handleFuelTypeChange} className="justify-center" />
       </div>
 
       {/* Cheapest Result Hero Card — the focal point of the page. Full-page blur

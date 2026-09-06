@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import FuelTypeSelector from '../components/FuelTypeSelector';
 
 const VEHICLE_TYPES = [
   { id: 'small', label: 'Small Car', fuelConsumption: 6.5, evConsumption: 13 },
@@ -204,24 +205,15 @@ export default function EVvsFuelPage() {
             <label className="text-xs font-semibold block mb-2" style={{ color: theme.textSecondary }}>
               Fuel Type
             </label>
-            <div className="flex gap-2">
-              {['petrol', 'diesel'].map((ft) => (
-                <button
-                  key={ft}
-                  onClick={() => setFuelType(ft)}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer capitalize"
-                  style={{
-                    transition: 'all 0.2s ease',
-                    border: 'none',
-                    ...(fuelType === ft
-                      ? { background: `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`, color: '#0D2B5E' }
-                      : { background: theme.chipBg, color: theme.chipText }),
-                  }}
-                >
-                  {ft}
-                </button>
-              ))}
-            </div>
+            <FuelTypeSelector
+              value={fuelType}
+              onChange={setFuelType}
+              size="regular"
+              options={[
+                { id: 'petrol', label: 'Petrol', color: '#3B82F6' },
+                { id: 'diesel', label: 'Diesel', color: '#4B5563', activeText: '#FFFFFF', mutedText: true },
+              ]}
+            />
           </div>
 
           {/* Inputs Grid */}

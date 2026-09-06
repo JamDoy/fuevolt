@@ -10,15 +10,7 @@ import { fetchFuelPrices, geocodeLocation, getUserLocation } from '../utils/api'
 import { getPriceHistory } from '../utils/priceHistory';
 import { getPriceContext } from '../utils/priceFreshness';
 import { buildTrendsShareUrl } from '../utils/shareLinks';
-
-const FUEL_TYPES = [
-  { id: 'E10', label: 'E10' },
-  { id: 'U91', label: 'Petrol 91' },
-  { id: 'U95', label: 'Petrol 95' },
-  { id: 'U98', label: 'Petrol 98' },
-  { id: 'Diesel', label: 'Diesel' },
-  { id: 'LPG', label: 'LPG' },
-];
+import FuelTypeSelector from '../components/FuelTypeSelector';
 
 export default function TrendsPage({ onStationDetail, onGoHome, initialSearch }) {
   const { theme } = useTheme();
@@ -124,24 +116,7 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
         inputId="trends-search"
       />
 
-      <div className="flex flex-wrap gap-2 mt-4">
-        {FUEL_TYPES.map((f) => (
-          <button
-            key={f.id}
-            type="button"
-            onClick={() => handleFuelTypeChange(f.id)}
-            className="px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer"
-            style={{
-              transition: 'all 0.25s ease',
-              background: fuelType === f.id ? 'linear-gradient(135deg, #B45309, #F59E0B)' : theme.chipBg,
-              color: fuelType === f.id ? '#0D2B5E' : theme.chipText,
-              border: `1px solid ${fuelType === f.id ? 'transparent' : theme.chipBorder}`,
-            }}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+      <FuelTypeSelector value={fuelType} onChange={handleFuelTypeChange} size="regular" className="mt-4" />
 
       {loading && (
         <div className="mt-6 flex flex-col gap-3">
