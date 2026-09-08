@@ -5,6 +5,7 @@ category: "Comparison"
 readTime: "6 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-07-19"
+image: "/content/articles/images/electric-vs-hybrid-vs-plug-in-hybrid.jpg"
 ---
 
 Walk into a dealership today and you will hear "hybrid", "self-charging hybrid", "plug-in hybrid" and "EV" thrown around almost interchangeably — and it is genuinely confusing. It is easy to buy a "hybrid" expecting to plug it in, only to discover that it never plugs in at all. Getting the terminology straight before you shop saves a lot of that frustration.

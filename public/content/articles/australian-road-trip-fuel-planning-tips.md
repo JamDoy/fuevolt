@@ -5,6 +5,7 @@ category: "Tips"
 readTime: "6 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-08-11"
+image: "/content/articles/images/australian-road-trip-fuel-planning-tips.jpg"
 ---
 
 There is a particular kind of stress that comes with watching your fuel gauge drop on a long stretch of highway, unsure whether the next roadhouse is 20 kilometres away or 200. Anyone who has driven the Stuart Highway or crossed the Nullarbor knows the feeling. A bit of planning turns that anxiety into a non-issue — and saves you real money along the way.

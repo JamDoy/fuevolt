@@ -5,6 +5,7 @@ category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-08-06"
+image: "/content/articles/images/australian-fuel-excise-tax-explained.jpg"
 ---
 
 Look closely at a fuel receipt and one part of the total may surprise you: a substantial amount never reaches the servo at all — it goes to the federal government as fuel excise. Once you understand that slice, the price on the board makes a lot more sense, and you stop expecting it to fall below a certain floor.

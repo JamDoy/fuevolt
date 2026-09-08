@@ -104,6 +104,7 @@ export function updatePageMeta(view, extra) {
   const title = extra?.title || meta.title;
   const description = extra?.description || meta.description;
   const url = extra?.url || `${BASE_URL}${meta.path}`;
+  const image = extra?.image ? `${BASE_URL}${extra.image}` : `${BASE_URL}/og-image.svg`;
 
   document.title = title;
 
@@ -113,7 +114,7 @@ export function updatePageMeta(view, extra) {
   setMeta('og:url', url, 'property');
   setMeta('og:type', 'website', 'property');
   setMeta('og:site_name', 'FueVolt', 'property');
-  setMeta('og:image', `${BASE_URL}/og-image.svg`, 'property');
+  setMeta('og:image', image, 'property');
   setMeta('twitter:card', 'summary_large_image', 'name');
   setMeta('twitter:title', title, 'name');
   setMeta('twitter:description', description, 'name');
@@ -211,7 +212,7 @@ export function injectEVStationSchema(stations, location) {
   injectSchema('ev-stations', schema);
 }
 
-export function injectArticleSchema({ slug, title, description, datePublished, dateModified }) {
+export function injectArticleSchema({ slug, title, description, datePublished, dateModified, image }) {
   const url = `${BASE_URL}/guides/${slug}`;
   injectSchema('article', {
     '@context': 'https://schema.org',
@@ -219,6 +220,7 @@ export function injectArticleSchema({ slug, title, description, datePublished, d
     headline: title,
     description,
     mainEntityOfPage: url,
+    ...(image ? { image: `${BASE_URL}${image}` } : {}),
     datePublished,
     dateModified,
     author: {
@@ -230,9 +232,11 @@ export function injectArticleSchema({ slug, title, description, datePublished, d
       '@type': 'Organization',
       name: 'FueVolt',
       url: BASE_URL,
+      // favicon.svg was replaced by PNG icons earlier — this pointed at a
+      // now-404ing file.
       logo: {
         '@type': 'ImageObject',
-        url: `${BASE_URL}/favicon.svg`,
+        url: `${BASE_URL}/icon-512.png`,
       },
     },
   });

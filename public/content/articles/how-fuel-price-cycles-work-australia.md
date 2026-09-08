@@ -5,6 +5,7 @@ category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-08-11"
+image: "/content/articles/images/how-fuel-price-cycles-work-australia.jpg"
 ---
 
 Picture this: you drive past your local servo on a Sunday and it is 165.9 a litre. You drive past the same servo on Wednesday and it has jumped to 199.9 overnight. You did nothing wrong — you just watched a fuel price cycle in action. Not knowing when or where to fill up is the frustration that led to FueVolt being built.

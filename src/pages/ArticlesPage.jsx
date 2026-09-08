@@ -56,24 +56,34 @@ export default function ArticlesPage({ onArticle }) {
             <button
               key={article.id}
               onClick={() => onArticle(article.slug)}
-              className="text-left rounded-xl p-5 transition-all hover:scale-[1.02]"
+              className="text-left rounded-xl overflow-hidden transition-all hover:scale-[1.02]"
               style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
             >
-              <span
-                className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold mb-2"
-                style={{ background: catColor.bg, color: catColor.text }}
-              >
-                {article.category}
-              </span>
-              <h3 className="font-semibold text-sm leading-snug mb-2" style={{ color: theme.heading }}>
-                {article.title}
-              </h3>
-              <p className="text-xs leading-relaxed mb-3" style={{ color: theme.subtext }}>
-                {article.description}
-              </p>
-              <span className="text-[11px] font-medium" style={{ color: theme.textMuted }}>
-                {article.readTime}
-              </span>
+              {article.image && (
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  loading="lazy"
+                  className="w-full h-36 object-cover"
+                />
+              )}
+              <div className="p-5">
+                <span
+                  className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold mb-2"
+                  style={{ background: catColor.bg, color: catColor.text }}
+                >
+                  {article.category}
+                </span>
+                <h3 className="font-semibold text-sm leading-snug mb-2" style={{ color: theme.heading }}>
+                  {article.title}
+                </h3>
+                <p className="text-xs leading-relaxed mb-3" style={{ color: theme.subtext }}>
+                  {article.description}
+                </p>
+                <span className="text-[11px] font-medium" style={{ color: theme.textMuted }}>
+                  {article.readTime}
+                </span>
+              </div>
             </button>
           );
         })}

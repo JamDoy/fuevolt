@@ -5,6 +5,7 @@ category: "Tips"
 readTime: "6 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-08-11"
+image: "/content/articles/images/tips-to-save-money-on-fuel-australia.jpg"
 ---
 
 A full tank in a mid-size car can cost north of $90 these days, and when you are filling up every week that adds up to a serious chunk of the household budget. FueVolt started because we were tired of guessing which servo had the best price — but the tool is only half the story. How and when you drive matters just as much.

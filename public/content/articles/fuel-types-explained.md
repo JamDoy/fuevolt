@@ -5,6 +5,7 @@ category: "Fuel Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-08-11"
+image: "/content/articles/images/fuel-types-explained.jpg"
 ---
 
 Pull into almost any Australian servo and you face a row of coloured nozzles: E10, U91, U95, U98, diesel and sometimes LPG. Six labels, six different prices, and no obvious explanation of which one your car actually wants. It is exactly the kind of everyday fuel confusion FueVolt exists to clear up.

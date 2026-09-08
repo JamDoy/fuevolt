@@ -5,6 +5,7 @@ category: "EV Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-07-19"
+image: "/content/articles/images/ev-charging-connector-types-australia.jpg"
 ---
 
 There is a rite of passage for new EV owners: pulling up to a public charger for the first time, staring at the cable, and wondering whether it will even fit your car. With petrol, every nozzle fits every filler neck. With EVs, the plug depends on the manufacturer, the charging speed and the era the car was built — and getting caught out at the wrong connector is a genuinely common early mistake.

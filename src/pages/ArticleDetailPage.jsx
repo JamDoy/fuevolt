@@ -116,6 +116,7 @@ export default function ArticleDetailPage({ slug, onBack }) {
           title: `${parsed.meta.title} | FueVolt`,
           description: parsed.meta.description,
           url: `https://www.fuevolt.com/guides/${slug}`,
+          image: parsed.meta.image,
         });
         injectArticleSchema({
           slug,
@@ -123,6 +124,7 @@ export default function ArticleDetailPage({ slug, onBack }) {
           description: parsed.meta.description,
           datePublished: parsed.meta.datePublished,
           dateModified: parsed.meta.dateModified,
+          image: parsed.meta.image,
         });
       })
       .catch(() => {
@@ -179,6 +181,14 @@ export default function ArticleDetailPage({ slug, onBack }) {
           buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
         />
       </div>
+
+      {article.meta.image && (
+        <img
+          src={article.meta.image}
+          alt={article.meta.title}
+          className="w-full h-48 sm:h-64 object-cover rounded-xl mb-4"
+        />
+      )}
 
       {article.meta.category && (
         <span

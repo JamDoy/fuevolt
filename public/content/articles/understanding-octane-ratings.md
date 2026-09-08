@@ -5,6 +5,7 @@ category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-07-19"
+image: "/content/articles/images/understanding-octane-ratings.jpg"
 ---
 
 "Should I be putting the expensive stuff in?" is one of the most common questions drivers ask when they are standing at the bowser choosing between 91, 95 and 98. It feels like the higher number must be better — but that is not how octane actually works.

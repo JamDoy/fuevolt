@@ -5,6 +5,7 @@ category: "EV Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
 dateModified: "2026-07-19"
+image: "/content/articles/images/ev-home-charging-setup-guide-australia.jpg"
 ---
 
 One of the quiet joys of owning an EV that nobody mentions in the ads: you never have to make a special trip to fill up again. You plug in when you get home, and every morning the car is "full". For most people that is the single biggest lifestyle change — no more detours to the servo when you are already running late.
