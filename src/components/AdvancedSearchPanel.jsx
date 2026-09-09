@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import ColorFilterChips from './ColorFilterChips';
 
 const RADIUS_OPTIONS = [1, 2, 5, 10, 15, 20];
 
@@ -113,12 +114,18 @@ export default function AdvancedSearchPanel({
   brands = [],
   includeBrands = [],
   excludeBrands = [],
+  connectorOptions,
+  connectorFilters = [],
+  speedOptions,
+  speedFilters = [],
 }) {
   const { theme } = useTheme();
   const [draftSort, setDraftSort] = useState(sortBy);
   const [draftRadius, setDraftRadius] = useState(radius);
   const [draftInclude, setDraftInclude] = useState(includeBrands);
   const [draftExclude, setDraftExclude] = useState(excludeBrands);
+  const [draftConnector, setDraftConnector] = useState(connectorFilters);
+  const [draftSpeed, setDraftSpeed] = useState(speedFilters);
 
   const toggleInclude = (brand) => {
     setDraftInclude((prev) => (prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]));
@@ -130,15 +137,32 @@ export default function AdvancedSearchPanel({
     setDraftInclude((prev) => prev.filter((b) => b !== brand));
   };
 
+  const toggleConnector = (id) => {
+    setDraftConnector((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
+
+  const toggleSpeed = (id) => {
+    setDraftSpeed((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
+
   const handleReset = () => {
     setDraftSort(sortOptions[0]?.id || sortBy);
     setDraftRadius(10);
     setDraftInclude([]);
     setDraftExclude([]);
+    setDraftConnector([]);
+    setDraftSpeed([]);
   };
 
   const handleApply = () => {
-    onApply({ sortBy: draftSort, radius: draftRadius, includeBrands: draftInclude, excludeBrands: draftExclude });
+    onApply({
+      sortBy: draftSort,
+      radius: draftRadius,
+      includeBrands: draftInclude,
+      excludeBrands: draftExclude,
+      connectorFilters: draftConnector,
+      speedFilters: draftSpeed,
+    });
   };
 
   return (
@@ -175,6 +199,24 @@ export default function AdvancedSearchPanel({
           ))}
         </div>
       </div>
+
+      {/* Connector / Speed (EV Charging only) */}
+      {connectorOptions && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: theme.textMuted }}>
+            Connector type
+          </p>
+          <ColorFilterChips options={connectorOptions} activeIds={draftConnector} onToggle={toggleConnector} />
+        </div>
+      )}
+      {speedOptions && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: theme.textMuted }}>
+            Charging speed
+          </p>
+          <ColorFilterChips options={speedOptions} activeIds={draftSpeed} onToggle={toggleSpeed} size="sm" />
+        </div>
+      )}
 
       {/* Brand filters */}
       {brands.length > 0 && (

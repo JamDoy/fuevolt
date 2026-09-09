@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
-import ColorFilterChips from '../components/ColorFilterChips';
 import StationMap from '../components/StationMap';
 import EVStationCard from '../components/EVStationCard';
 import ShimmerCard from '../components/ShimmerCard';
@@ -158,16 +157,6 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     return () => window.clearTimeout(timer);
   }, [autoLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const toggleConnector = (f) =>
-    setConnectorFilters((prev) =>
-      prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
-    );
-
-  const toggleSpeed = (id) =>
-    setSpeedFilters((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-
   const toggleCardsExpanded = () => {
     setCardsExpanded((prev) => {
       const next = !prev;
@@ -191,7 +180,16 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     return Math.max(...station.Connections.map((c) => c.PowerKW || 0));
   };
 
-  const availableBrands = [...new Set(stations.map((s) => s.OperatorInfo?.Title).filter(Boolean))].sort();
+  // Open Charge Map leaves the operator field literally set to "(Unknown
+  // Operator)" for stations with no listed network — relabel that to match
+  // the Fuel page's "Independent" for stations with no listed brand.
+  const getEVBrand = (station) => {
+    const title = station.OperatorInfo?.Title;
+    if (!title || /unknown operator/i.test(title)) return 'Independent';
+    return title;
+  };
+
+  const availableBrands = [...new Set(stations.map((s) => getEVBrand(s)))].sort();
 
   const advancedSearchSummary = buildAdvancedSearchSummary({
     sortOptions: EV_SORT_OPTIONS,
@@ -202,9 +200,9 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
   });
 
   const filtered = stations.filter((s) => {
-    const brand = s.OperatorInfo?.Title;
+    const brand = getEVBrand(s);
     if (includeBrands.length > 0 && !includeBrands.includes(brand)) return false;
-    if (brand && excludeBrands.includes(brand)) return false;
+    if (excludeBrands.includes(brand)) return false;
     if (connectorFilters.length > 0) {
       const connTypes = s.Connections?.map((c) => c.ConnectionType?.Title || '') || [];
       if (!connectorFilters.some((f) => connTypes.some((t) => t.includes(f)))) {
@@ -307,25 +305,6 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
             : ''}
       </p>
 
-      {/* Filters */}
-      {stations.length > 0 && (
-        <div className="space-y-2">
-          <ColorFilterChips
-            label="Connector:"
-            options={CONNECTOR_FILTERS}
-            activeIds={connectorFilters}
-            onToggle={toggleConnector}
-          />
-          <ColorFilterChips
-            label="Speed:"
-            options={SPEED_FILTERS}
-            activeIds={speedFilters}
-            onToggle={toggleSpeed}
-            size="sm"
-          />
-        </div>
-      )}
-
       {/* Advanced Search trigger + Location Name — the trigger stays visible
           even before a search so radius/sort/brand can be set up front. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -388,10 +367,16 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
           brands={availableBrands}
           includeBrands={includeBrands}
           excludeBrands={excludeBrands}
-          onApply={({ sortBy: newSort, radius: newRadius, includeBrands: newInclude, excludeBrands: newExclude }) => {
+          connectorOptions={CONNECTOR_FILTERS}
+          connectorFilters={connectorFilters}
+          speedOptions={SPEED_FILTERS}
+          speedFilters={speedFilters}
+          onApply={({ sortBy: newSort, radius: newRadius, includeBrands: newInclude, excludeBrands: newExclude, connectorFilters: newConnector, speedFilters: newSpeed }) => {
             setSortBy(newSort);
             setIncludeBrands(newInclude);
             setExcludeBrands(newExclude);
+            setConnectorFilters(newConnector);
+            setSpeedFilters(newSpeed);
             if (newRadius !== searchRadius) {
               setSearchRadius(newRadius);
               if (mapCenter) doSearch(mapCenter[0], mapCenter[1], newRadius, locationName || searchLabel);
