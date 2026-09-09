@@ -6,6 +6,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import TouchableMap from '../components/TouchableMap';
 import BrandBadge from '../components/BrandBadge';
 import { findChargingParkId, fetchEVAvailability } from '../utils/tomtom';
+import { normalizeEVOperatorName } from '../utils/brandNames';
 
 const greenPin = new L.DivIcon({
   className: 'custom-marker',
@@ -154,7 +155,7 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
 
           <div className="flex items-center gap-3 mb-3">
             <BrandBadge
-              brand={station.OperatorInfo?.Title}
+              brand={normalizeEVOperatorName(station.OperatorInfo?.Title)}
               size={56}
               ringStyle={{ border: '2px solid rgba(255,255,255,0.25)', boxShadow: '0 4px 14px rgba(0,0,0,0.3)' }}
             />
@@ -164,7 +165,7 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
           </div>
 
           <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            {station.OperatorInfo?.Title}{station.OperatorInfo?.Title ? ' · ' : ''}{distance ? `${distance} km away` : ''}
+            {normalizeEVOperatorName(station.OperatorInfo?.Title)}{distance ? ` · ${distance} km away` : ''}
           </p>
           {address && <p className="text-[13px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>{address}</p>}
 
@@ -334,7 +335,7 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
           <div className="mt-3" style={{ ...cardStyle, padding: '20px' }}>
             <h2 className="text-[15px] font-bold mb-3" style={{ color: theme.heading }}>Charger specs</h2>
             <div className="space-y-2.5">
-              <SpecRow label="Network" value={station.OperatorInfo?.Title || 'Not specified'} theme={theme} />
+              <SpecRow label="Network" value={normalizeEVOperatorName(station.OperatorInfo?.Title)} theme={theme} />
               <SpecRow label="Max power" value={maxPower ? `${maxPower}kW` : 'Not specified'} theme={theme} />
               <SpecRow
                 label="Charging speed"

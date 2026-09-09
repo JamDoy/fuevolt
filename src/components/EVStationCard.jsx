@@ -4,6 +4,7 @@ import StatusBadge from './StatusBadge';
 import BrandBadge from './BrandBadge';
 import { isFavourite, addFavourite, removeFavourite } from '../utils/favourites';
 import { saveGeofence, removeGeofence, getSavedGeofences } from '../utils/tomtom';
+import { normalizeEVOperatorName } from '../utils/brandNames';
 
 export default function EVStationCard({ station, isSelected, onClick, sortBy }) {
   const { theme } = useTheme();
@@ -126,12 +127,10 @@ export default function EVStationCard({ station, isSelected, onClick, sortBy }) 
         {station.AddressInfo?.Postcode && ` ${station.AddressInfo.Postcode}`}
       </p>
 
-      {station.OperatorInfo?.Title && (
-        <div className="flex items-center gap-1.5 mb-2">
-          <BrandBadge brand={station.OperatorInfo.Title} size={22} />
-          <p className="text-xs" style={{ color: theme.textMuted }}>{station.OperatorInfo.Title}</p>
-        </div>
-      )}
+      <div className="flex items-center gap-1.5 mb-2">
+        <BrandBadge brand={normalizeEVOperatorName(station.OperatorInfo?.Title)} size={22} />
+        <p className="text-xs" style={{ color: theme.textMuted }}>{normalizeEVOperatorName(station.OperatorInfo?.Title)}</p>
+      </div>
 
       {/* Speed indicator */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">

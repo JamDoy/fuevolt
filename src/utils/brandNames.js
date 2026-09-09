@@ -125,6 +125,15 @@ export const BRAND_POPULARITY_ORDER = [
   'Woolworths', 'Coles Express', 'Viva Energy', 'FuelXpress', 'Prime Petroleum', 'AM/PM',
 ];
 
+// Open Charge Map leaves the operator field literally set to "(Unknown
+// Operator)" for EV charging stations with no listed network — relabel that
+// to "Independent" to match the Fuel page's convention for stations with no
+// listed brand, rather than showing that raw placeholder to users.
+export function normalizeEVOperatorName(title) {
+  if (!title || !title.trim() || /unknown operator/i.test(title)) return 'Independent';
+  return title.trim();
+}
+
 // Sorts a list of brand names most-popular-first using the survey above,
 // falling back to alphabetical order for anything not in it (small regional
 // chains and independents specific to whatever area was searched).

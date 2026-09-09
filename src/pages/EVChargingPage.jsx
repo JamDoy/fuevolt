@@ -15,6 +15,7 @@ import ShareMenu from '../components/ShareMenu';
 import { buildEVSearchShareUrl } from '../utils/shareLinks';
 import AdvancedSearchPanel from '../components/AdvancedSearchPanel';
 import { buildAdvancedSearchSummary } from '../utils/advancedSearch';
+import { normalizeEVOperatorName } from '../utils/brandNames';
 
 const EV_SORT_OPTIONS = [
   { id: 'distance', label: 'Nearest' },
@@ -180,14 +181,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     return Math.max(...station.Connections.map((c) => c.PowerKW || 0));
   };
 
-  // Open Charge Map leaves the operator field literally set to "(Unknown
-  // Operator)" for stations with no listed network — relabel that to match
-  // the Fuel page's "Independent" for stations with no listed brand.
-  const getEVBrand = (station) => {
-    const title = station.OperatorInfo?.Title;
-    if (!title || /unknown operator/i.test(title)) return 'Independent';
-    return title;
-  };
+  const getEVBrand = (station) => normalizeEVOperatorName(station.OperatorInfo?.Title);
 
   const availableBrands = [...new Set(stations.map((s) => getEVBrand(s)))].sort();
 
