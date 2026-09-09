@@ -17,6 +17,15 @@ import { getPriceFreshness } from '../utils/priceFreshness';
 import ShareMenu from '../components/ShareMenu';
 import { buildFuelSearchShareUrl } from '../utils/shareLinks';
 import FuelTypeSelector from '../components/FuelTypeSelector';
+import AdvancedSearchPanel from '../components/AdvancedSearchPanel';
+import { buildAdvancedSearchSummary } from '../utils/advancedSearch';
+import { sortBrandsByPopularity } from '../utils/brandNames';
+
+const FUEL_SORT_OPTIONS = [
+  { id: 'price', label: 'Cheapest' },
+  { id: 'distance', label: 'Nearest' },
+  { id: 'driveTime', label: 'Drive Time' },
+];
 
 export default function FuelPricePage({
   initialFuelType = 'U91',
@@ -45,6 +54,9 @@ export default function FuelPricePage({
     }
   });
   const [resultsVersion, setResultsVersion] = useState(0);
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [includeBrands, setIncludeBrands] = useState([]);
+  const [excludeBrands, setExcludeBrands] = useState([]);
   const { theme } = useTheme();
   const autoLocation = useAutoLocation();
   const extraCardsRef = useRef(null);
@@ -200,9 +212,25 @@ export default function FuelPricePage({
     }
   }, [cardsExpanded]);
 
-  const pricedStations = stations.filter((s) => s.price != null);
+  const availableBrands = sortBrandsByPopularity([...new Set(stations.map((s) => s.brand).filter(Boolean))]);
 
-  const sortedStations = [...stations].sort((a, b) => {
+  const advancedSearchSummary = buildAdvancedSearchSummary({
+    sortOptions: FUEL_SORT_OPTIONS,
+    sortBy,
+    radius: searchRadius,
+    includeBrands,
+    excludeBrands,
+  });
+
+  const brandFilteredStations = stations.filter((s) => {
+    if (includeBrands.length > 0 && !includeBrands.includes(s.brand)) return false;
+    if (excludeBrands.includes(s.brand)) return false;
+    return true;
+  });
+
+  const pricedStations = brandFilteredStations.filter((s) => s.price != null);
+
+  const sortedStations = [...brandFilteredStations].sort((a, b) => {
     if (sortBy === 'driveTime') {
       if (a.driveTime == null && b.driveTime == null) return (a.price || 999) - (b.price || 999);
       if (a.driveTime == null) return 1;
@@ -312,52 +340,83 @@ export default function FuelPricePage({
             : ''}
       </p>
 
-      {/* Location + Sort Controls */}
-      {stations.length > 0 && !loading && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          {locationName && (
-            <div className="flex items-center gap-2 min-w-0">
-              <p className="text-xs font-medium truncate min-w-0" style={{ color: theme.textSecondary }}>
-                Near <span style={{ color: theme.gold }}>{locationName}</span>
-              </p>
-              {searchCoords && (
-                <ShareMenu
-                  title="Fuel Prices"
-                  text={`Check out fuel prices near ${locationName} on FueVolt`}
-                  url={buildFuelSearchShareUrl({ lat: searchCoords.lat, lng: searchCoords.lng, fuelType, label: locationName })}
-                  buttonClassName="cursor-pointer flex-shrink-0"
-                  buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
-                />
-              )}
-            </div>
-          )}
-          <div className="flex gap-1.5 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
-            {[
-              { id: 'price', label: 'Cheapest' },
-              { id: 'distance', label: 'Nearest' },
-              { id: 'driveTime', label: 'Drive Time' },
-            ].map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setSortBy(s.id)}
-                className="min-h-7 px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer"
-                style={{
-                  background: sortBy === s.id ? '#0D2B5E' : theme.chipBg,
-                  color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
-                  border: 'none',
-                  transition: 'all 0.2s ease',
-                }}
+      {/* Advanced Search trigger + Location — the trigger stays visible even
+          before a search so radius/sort/brand can be set up front. */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => setShowAdvancedSearch((v) => !v)}
+          className="min-h-8 px-3 py-1 rounded-full text-xs font-semibold cursor-pointer flex items-center gap-1.5 flex-shrink-0 min-w-0"
+          style={{ background: theme.chipBg, color: theme.text, border: `1px solid ${showAdvancedSearch ? theme.gold : theme.chipBorder}` }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ flexShrink: 0 }}>
+            <line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" />
+            <circle cx="9" cy="6" r="2" fill={theme.gold} stroke="none" />
+            <circle cx="15" cy="12" r="2" fill={theme.gold} stroke="none" />
+            <circle cx="7" cy="18" r="2" fill={theme.gold} stroke="none" />
+          </svg>
+          <span className="flex-shrink-0">Advanced Search</span>
+          <span className="truncate" style={{ color: theme.textMuted, fontWeight: 500 }}>
+            · {advancedSearchSummary}
+          </span>
+          <svg
+            width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            style={{ flexShrink: 0, transform: showAdvancedSearch ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }}
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+        {locationName && (
+          <div className="flex items-center gap-2 min-w-0 flex-wrap sm:ml-auto">
+            <p className="text-xs font-medium truncate min-w-0" style={{ color: theme.textSecondary }}>
+              Near <span style={{ color: theme.gold }}>{locationName}</span>
+            </p>
+            {sortBy === 'distance' && (
+              <span
+                className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+                style={{ background: theme.gold + '22', color: theme.gold }}
               >
-                {s.label}
-              </button>
-            ))}
+                Nearest to you
+              </span>
+            )}
+            {searchCoords && (
+              <ShareMenu
+                title="Fuel Prices"
+                text={`Check out fuel prices near ${locationName} on FueVolt`}
+                url={buildFuelSearchShareUrl({ lat: searchCoords.lat, lng: searchCoords.lng, fuelType, label: locationName })}
+                buttonClassName="cursor-pointer flex-shrink-0"
+                buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
+              />
+            )}
           </div>
-        </div>
+        )}
+      </div>
+
+      {showAdvancedSearch && (
+        <AdvancedSearchPanel
+          accentColor={theme.gold}
+          sortOptions={FUEL_SORT_OPTIONS}
+          sortBy={sortBy}
+          radius={searchRadius}
+          brands={availableBrands}
+          includeBrands={includeBrands}
+          excludeBrands={excludeBrands}
+          onApply={({ sortBy: newSort, radius: newRadius, includeBrands: newInclude, excludeBrands: newExclude }) => {
+            setSortBy(newSort);
+            setIncludeBrands(newInclude);
+            setExcludeBrands(newExclude);
+            if (newRadius !== searchRadius) {
+              setSearchRadius(newRadius);
+              if (searchCoords) doSearch(searchCoords.lat, searchCoords.lng, fuelType, newRadius, locationName || searchLabel);
+            }
+            setShowAdvancedSearch(false);
+          }}
+        />
       )}
 
       {/* Map */}
       <StationMap
-        stations={stations}
+        stations={brandFilteredStations}
         center={mapCenter}
         selectedStation={selectedStation}
         onStationSelect={setSelectedStation}
@@ -505,6 +564,21 @@ export default function FuelPricePage({
               </a>
             )}
           </div>
+        </div>
+      )}
+
+      {!loading && !error && stations.length > 0 && sortedStations.length === 0 && (
+        <div className="rounded-2xl p-6 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
+          <h3 className="text-lg font-semibold" style={{ color: theme.text }}>No stations match those brand filters</h3>
+          <p className="text-sm mt-2" style={{ color: theme.textSecondary }}>Adjust the brand filters in Advanced Search to see nearby options.</p>
+          <button
+            type="button"
+            onClick={() => { setIncludeBrands([]); setExcludeBrands([]); }}
+            className="min-h-11 px-5 py-2 mt-4 rounded-xl text-sm font-bold cursor-pointer"
+            style={{ background: `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`, color: '#0D2B5E', border: 'none' }}
+          >
+            Clear brand filters
+          </button>
         </div>
       )}
 

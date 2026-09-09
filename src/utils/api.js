@@ -1,5 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { geocode as tomtomGeocode } from './tomtom';
+import { normalizeBrandName, extractBrandFromStationName, resolveOsmFuelBrand } from './brandNames';
 
 // Routed through public/api/ev-charge.php rather than called directly from
 // the browser — that endpoint caches responses server-side (shared across
@@ -202,7 +203,7 @@ async function fetchQLDFuelPrices(latitude, longitude, fuelType, radius) {
       const dist = getDistance(latitude, longitude, site.Lat, site.Lng);
       if (dist > radius) continue;
 
-      const brand = QLD_BRAND_MAP[site.B] || 'Independent';
+      const brand = normalizeBrandName(QLD_BRAND_MAP[site.B] || 'Independent');
       const price = priceEntry.Price / 10;
 
       stations.push({
@@ -287,7 +288,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detecte
         // breaking shared station links and saved favourites over time.
         id: `nsw-${p.stationcode}`,
         name: station.name || (station.brand ? `${station.brand} Station` : 'Fuel Station'),
-        brand: station.brand || 'Independent',
+        brand: normalizeBrandName(station.brand),
         // station.address already comes fully formatted from this API
         // (street, suburb, state, postcode) — only synthesise one if it's
         // ever missing, rather than appending a redundant state suffix.
@@ -327,7 +328,7 @@ async function fetchNTFuelPrices(latitude, longitude, fuelType, radius) {
     if (!response.ok) return null;
     const stations = await response.json();
     if (!Array.isArray(stations)) return null;
-    return stations;
+    return stations.map((s) => ({ ...s, brand: normalizeBrandName(s.brand) }));
   } catch {
     return null;
   }
@@ -360,7 +361,7 @@ async function fetchVICFuelPrices(latitude, longitude, fuelType, radius) {
       stations.push({
         id: `vic-${fs.id}`,
         name: fs.name || 'Fuel Station',
-        brand: fs.name?.split(' ').pop() || 'Independent',
+        brand: extractBrandFromStationName(fs.name),
         address: fs.address || '',
         latitude: fs.location.latitude,
         longitude: fs.location.longitude,
@@ -431,7 +432,7 @@ async function fetchWAFuelPrices(latitude, longitude, fuelType, radius) {
           // breaking shared station links and saved favourites over time).
           id: `wa-${stationLat.toFixed(5)}-${stationLng.toFixed(5)}`,
           name: name || `${brand} ${suburb}`,
-          brand: brand || 'Unknown',
+          brand: normalizeBrandName(brand),
           address: `${address}, ${suburb} WA`,
           latitude: stationLat,
           longitude: stationLng,
@@ -664,9 +665,9 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
       if (!stationLat || !stationLng) return null;
 
       const tags = el.tags || {};
-      const brand = tags.brand || tags.operator || '';
+      const brand = resolveOsmFuelBrand({ brand: tags.brand, name: tags.name, operator: tags.operator });
       const rawName = tags.name || '';
-      const name = rawName || brand || 'Fuel Station';
+      const name = rawName || tags.brand || tags.operator || 'Fuel Station';
       const houseNum = tags['addr:housenumber'] || '';
       const street = tags['addr:street'] || '';
       const suburb = tags['addr:suburb'] || tags['addr:city'] || '';
@@ -693,10 +694,10 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
       return {
         id: `osm-${el.id || i}`,
         name,
-        brand: brand || 'Independent',
+        brand,
         address,
         openingHours,
-        _hasRealName: !!(rawName || brand),
+        _hasRealName: !!(rawName || tags.brand || tags.operator),
         latitude: stationLat,
         longitude: stationLng,
         price: null,

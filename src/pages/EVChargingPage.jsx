@@ -14,6 +14,13 @@ import { reverseGeocode, getDriveTimes } from '../utils/tomtom';
 import { injectEVStationSchema, POPULAR_SUBURBS } from '../utils/seo';
 import ShareMenu from '../components/ShareMenu';
 import { buildEVSearchShareUrl } from '../utils/shareLinks';
+import AdvancedSearchPanel from '../components/AdvancedSearchPanel';
+import { buildAdvancedSearchSummary } from '../utils/advancedSearch';
+
+const EV_SORT_OPTIONS = [
+  { id: 'distance', label: 'Nearest' },
+  { id: 'driveTime', label: 'Drive Time' },
+];
 
 const CONNECTOR_FILTERS = [
   { id: 'Type 2', label: 'Type 2', color: '#3B82F6', icon: 'plug' },
@@ -48,6 +55,9 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       return false;
     }
   });
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [includeBrands, setIncludeBrands] = useState([]);
+  const [excludeBrands, setExcludeBrands] = useState([]);
   const { theme } = useTheme();
   const autoLocation = useAutoLocation();
   const extraCardsRef = useRef(null);
@@ -181,7 +191,20 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     return Math.max(...station.Connections.map((c) => c.PowerKW || 0));
   };
 
+  const availableBrands = [...new Set(stations.map((s) => s.OperatorInfo?.Title).filter(Boolean))].sort();
+
+  const advancedSearchSummary = buildAdvancedSearchSummary({
+    sortOptions: EV_SORT_OPTIONS,
+    sortBy,
+    radius: searchRadius,
+    includeBrands,
+    excludeBrands,
+  });
+
   const filtered = stations.filter((s) => {
+    const brand = s.OperatorInfo?.Title;
+    if (includeBrands.length > 0 && !includeBrands.includes(brand)) return false;
+    if (brand && excludeBrands.includes(brand)) return false;
     if (connectorFilters.length > 0) {
       const connTypes = s.Connections?.map((c) => c.ConnectionType?.Title || '') || [];
       if (!connectorFilters.some((f) => connTypes.some((t) => t.includes(f)))) {
@@ -227,6 +250,8 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
   const clearFilters = () => {
     setConnectorFilters([]);
     setSpeedFilters([]);
+    setIncludeBrands([]);
+    setExcludeBrands([]);
   };
 
   const distanceRankedStations = [...filtered].sort(
@@ -301,44 +326,79 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
         </div>
       )}
 
-      {/* Location Name + Sort */}
-      {locationName && !loading && stations.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <p className="text-sm font-medium truncate min-w-0" style={{ color: theme.text }}>
-              Showing chargers near <span style={{ color: theme.green }}>{locationName}</span>
-            </p>
-            {mapCenter && (
-              <ShareMenu
-                title="EV Charging Stations"
-                text={`Check out EV charging stations near ${locationName} on FueVolt`}
-                url={buildEVSearchShareUrl({ lat: mapCenter[0], lng: mapCenter[1], label: locationName })}
-                buttonClassName="cursor-pointer flex-shrink-0"
-                buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
-              />
-            )}
-          </div>
-          <div className="flex gap-1.5 w-full sm:w-auto sm:ml-auto overflow-x-auto pb-1">
-            {[
-              { id: 'distance', label: 'Nearest' },
-              { id: 'driveTime', label: 'Drive Time' },
-            ].map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setSortBy(s.id)}
-                className="min-h-7 px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer"
-                style={{
-                  background: sortBy === s.id ? theme.green : theme.chipBg,
-                  color: sortBy === s.id ? '#FFFFFF' : theme.chipText,
-                  border: 'none',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* Advanced Search trigger + Location Name — the trigger stays visible
+          even before a search so radius/sort/brand can be set up front. */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => setShowAdvancedSearch((v) => !v)}
+            className="min-h-8 px-3 py-1 rounded-full text-xs font-semibold cursor-pointer flex items-center gap-1.5 flex-shrink-0 min-w-0"
+            style={{ background: theme.chipBg, color: theme.text, border: `1px solid ${showAdvancedSearch ? theme.green : theme.chipBorder}` }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ flexShrink: 0 }}>
+              <line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" />
+              <circle cx="9" cy="6" r="2" fill={theme.green} stroke="none" />
+              <circle cx="15" cy="12" r="2" fill={theme.green} stroke="none" />
+              <circle cx="7" cy="18" r="2" fill={theme.green} stroke="none" />
+            </svg>
+            <span className="flex-shrink-0">Advanced Search</span>
+            <span className="truncate" style={{ color: theme.textMuted, fontWeight: 500 }}>
+              · {advancedSearchSummary}
+            </span>
+            <svg
+              width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              style={{ flexShrink: 0, transform: showAdvancedSearch ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }}
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          {locationName && (
+            <div className="flex items-center gap-2 min-w-0 flex-wrap sm:ml-auto">
+              <p className="text-sm font-medium truncate min-w-0" style={{ color: theme.text }}>
+                Showing chargers near <span style={{ color: theme.green }}>{locationName}</span>
+              </p>
+              {sortBy === 'distance' && (
+                <span
+                  className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+                  style={{ background: theme.green + '22', color: theme.green }}
+                >
+                  Nearest to you
+                </span>
+              )}
+              {mapCenter && (
+                <ShareMenu
+                  title="EV Charging Stations"
+                  text={`Check out EV charging stations near ${locationName} on FueVolt`}
+                  url={buildEVSearchShareUrl({ lat: mapCenter[0], lng: mapCenter[1], label: locationName })}
+                  buttonClassName="cursor-pointer flex-shrink-0"
+                  buttonStyle={{ background: 'none', border: 'none', color: theme.textMuted }}
+                />
+              )}
+            </div>
+          )}
+      </div>
+
+      {showAdvancedSearch && (
+        <AdvancedSearchPanel
+          accentColor={theme.green}
+          accentTextColor="#FFFFFF"
+          sortOptions={EV_SORT_OPTIONS}
+          sortBy={sortBy}
+          radius={searchRadius}
+          brands={availableBrands}
+          includeBrands={includeBrands}
+          excludeBrands={excludeBrands}
+          onApply={({ sortBy: newSort, radius: newRadius, includeBrands: newInclude, excludeBrands: newExclude }) => {
+            setSortBy(newSort);
+            setIncludeBrands(newInclude);
+            setExcludeBrands(newExclude);
+            if (newRadius !== searchRadius) {
+              setSearchRadius(newRadius);
+              if (mapCenter) doSearch(mapCenter[0], mapCenter[1], newRadius, locationName || searchLabel);
+            }
+            setShowAdvancedSearch(false);
+          }}
+        />
       )}
 
       {/* Map */}
@@ -356,7 +416,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       {!loading && stations.length > 0 && (
         <p className="text-xs" style={{ color: theme.textSecondary }}>
           Showing {filtered.length} of {stations.length} stations
-          {connectorFilters.length > 0 || speedFilters.length > 0 ? ' (filtered)' : ''}
+          {connectorFilters.length > 0 || speedFilters.length > 0 || includeBrands.length > 0 || excludeBrands.length > 0 ? ' (filtered)' : ''}
         </p>
       )}
 
