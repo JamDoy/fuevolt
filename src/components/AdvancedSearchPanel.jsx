@@ -27,7 +27,7 @@ function Chip({ active, activeColor, onClick, children }) {
 // what's picked, opening a checkbox list underneath. Plain absolute
 // positioning (no portal) is fine here since the panel this lives in is
 // rendered inline in the page flow, not inside any overflow-hidden ancestor.
-function BrandMultiSelect({ label, options, selected, onToggle, accentColor }) {
+function MultiSelectDropdown({ label, options, selected, onToggle, accentColor, emptyLabel = 'Any brand' }) {
   const { theme } = useTheme();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef(null);
@@ -43,7 +43,7 @@ function BrandMultiSelect({ label, options, selected, onToggle, accentColor }) {
   }, [open]);
 
   const summary =
-    selected.length === 0 ? 'Any brand' : selected.length === 1 ? selected[0] : `${selected[0]} +${selected.length - 1}`;
+    selected.length === 0 ? emptyLabel : selected.length === 1 ? selected[0] : `${selected[0]} +${selected.length - 1}`;
 
   return (
     <div ref={wrapRef} className="relative">
@@ -118,6 +118,9 @@ export default function AdvancedSearchPanel({
   connectorFilters = [],
   speedOptions,
   speedFilters = [],
+  maxPrice,
+  accessOptions,
+  accessTypes = [],
 }) {
   const { theme } = useTheme();
   const [draftSort, setDraftSort] = useState(sortBy);
@@ -126,6 +129,8 @@ export default function AdvancedSearchPanel({
   const [draftExclude, setDraftExclude] = useState(excludeBrands);
   const [draftConnector, setDraftConnector] = useState(connectorFilters);
   const [draftSpeed, setDraftSpeed] = useState(speedFilters);
+  const [draftMaxPriceInput, setDraftMaxPriceInput] = useState(maxPrice != null ? String(maxPrice) : '');
+  const [draftAccess, setDraftAccess] = useState(accessTypes);
 
   const toggleInclude = (brand) => {
     setDraftInclude((prev) => (prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]));
@@ -145,6 +150,10 @@ export default function AdvancedSearchPanel({
     setDraftSpeed((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
+  const toggleAccess = (id) => {
+    setDraftAccess((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
+
   const handleReset = () => {
     setDraftSort(sortOptions[0]?.id || sortBy);
     setDraftRadius(10);
@@ -152,9 +161,13 @@ export default function AdvancedSearchPanel({
     setDraftExclude([]);
     setDraftConnector([]);
     setDraftSpeed([]);
+    setDraftMaxPriceInput('');
+    setDraftAccess([]);
   };
 
   const handleApply = () => {
+    const parsedMaxPrice = parseFloat(draftMaxPriceInput);
+    const maxPriceValue = draftMaxPriceInput.trim() === '' || Number.isNaN(parsedMaxPrice) || parsedMaxPrice <= 0 ? null : parsedMaxPrice;
     onApply({
       sortBy: draftSort,
       radius: draftRadius,
@@ -162,6 +175,8 @@ export default function AdvancedSearchPanel({
       excludeBrands: draftExclude,
       connectorFilters: draftConnector,
       speedFilters: draftSpeed,
+      maxPrice: maxPriceValue,
+      accessTypes: draftAccess,
     });
   };
 
@@ -200,6 +215,45 @@ export default function AdvancedSearchPanel({
         </div>
       </div>
 
+      {/* Max price (Fuel Prices only) — a free-form field rather than fixed
+          preset amounts, so this never needs adjusting as fuel prices rise. */}
+      {maxPrice !== undefined && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: theme.textMuted }}>
+            Max price per litre
+          </p>
+          <div
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl w-full sm:w-48"
+            style={{ background: theme.inputBg, border: `1px solid ${draftMaxPriceInput ? accentColor : theme.inputBorder}` }}
+          >
+            <span className="text-sm font-semibold" style={{ color: theme.textMuted }}>$</span>
+            <input
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0"
+              placeholder="Any price"
+              value={draftMaxPriceInput}
+              onChange={(e) => setDraftMaxPriceInput(e.target.value)}
+              className="w-full text-sm font-semibold bg-transparent outline-none"
+              style={{ color: theme.text }}
+            />
+            <span className="text-xs flex-shrink-0" style={{ color: theme.textMuted }}>/L</span>
+            {draftMaxPriceInput && (
+              <button
+                type="button"
+                onClick={() => setDraftMaxPriceInput('')}
+                aria-label="Clear max price"
+                className="cursor-pointer flex-shrink-0 leading-none"
+                style={{ background: 'none', border: 'none', color: theme.textMuted, fontSize: '16px' }}
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Connector / Speed (EV Charging only) */}
       {connectorOptions && (
         <div>
@@ -221,14 +275,14 @@ export default function AdvancedSearchPanel({
       {/* Brand filters */}
       {brands.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <BrandMultiSelect
+          <MultiSelectDropdown
             label="Only show these brands"
             options={brands}
             selected={draftInclude}
             onToggle={toggleInclude}
             accentColor={accentColor}
           />
-          <BrandMultiSelect
+          <MultiSelectDropdown
             label="Exclude these brands"
             options={brands}
             selected={draftExclude}
@@ -236,6 +290,18 @@ export default function AdvancedSearchPanel({
             accentColor="#DC2626"
           />
         </div>
+      )}
+
+      {/* Access type (EV Charging only) */}
+      {accessOptions && accessOptions.length > 0 && (
+        <MultiSelectDropdown
+          label="Access type"
+          options={accessOptions}
+          selected={draftAccess}
+          onToggle={toggleAccess}
+          accentColor={accentColor}
+          emptyLabel="Any access type"
+        />
       )}
 
       <div className="flex items-center justify-between gap-3 pt-3" style={{ borderTop: `1px solid ${theme.cardBorder}` }}>

@@ -58,6 +58,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [includeBrands, setIncludeBrands] = useState([]);
   const [excludeBrands, setExcludeBrands] = useState([]);
+  const [accessTypes, setAccessTypes] = useState([]);
   const { theme } = useTheme();
   const autoLocation = useAutoLocation();
   const extraCardsRef = useRef(null);
@@ -184,6 +185,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
   const getEVBrand = (station) => normalizeEVOperatorName(station.OperatorInfo?.Title);
 
   const availableBrands = [...new Set(stations.map((s) => getEVBrand(s)))].sort();
+  const availableAccessTypes = [...new Set(stations.map((s) => s.UsageType?.Title).filter(Boolean))].sort();
 
   const advancedSearchSummary = buildAdvancedSearchSummary({
     sortOptions: EV_SORT_OPTIONS,
@@ -191,12 +193,14 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     radius: searchRadius,
     includeBrands,
     excludeBrands,
+    accessTypes,
   });
 
   const filtered = stations.filter((s) => {
     const brand = getEVBrand(s);
     if (includeBrands.length > 0 && !includeBrands.includes(brand)) return false;
     if (excludeBrands.includes(brand)) return false;
+    if (accessTypes.length > 0 && !accessTypes.includes(s.UsageType?.Title)) return false;
     if (connectorFilters.length > 0) {
       const connTypes = s.Connections?.map((c) => c.ConnectionType?.Title || '') || [];
       if (!connectorFilters.some((f) => connTypes.some((t) => t.includes(f)))) {
@@ -244,6 +248,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
     setSpeedFilters([]);
     setIncludeBrands([]);
     setExcludeBrands([]);
+    setAccessTypes([]);
   };
 
   const distanceRankedStations = [...filtered].sort(
@@ -365,12 +370,15 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
           connectorFilters={connectorFilters}
           speedOptions={SPEED_FILTERS}
           speedFilters={speedFilters}
-          onApply={({ sortBy: newSort, radius: newRadius, includeBrands: newInclude, excludeBrands: newExclude, connectorFilters: newConnector, speedFilters: newSpeed }) => {
+          accessOptions={availableAccessTypes}
+          accessTypes={accessTypes}
+          onApply={({ sortBy: newSort, radius: newRadius, includeBrands: newInclude, excludeBrands: newExclude, connectorFilters: newConnector, speedFilters: newSpeed, accessTypes: newAccess }) => {
             setSortBy(newSort);
             setIncludeBrands(newInclude);
             setExcludeBrands(newExclude);
             setConnectorFilters(newConnector);
             setSpeedFilters(newSpeed);
+            setAccessTypes(newAccess);
             if (newRadius !== searchRadius) {
               setSearchRadius(newRadius);
               if (mapCenter) doSearch(mapCenter[0], mapCenter[1], newRadius, locationName || searchLabel);
@@ -395,7 +403,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       {!loading && stations.length > 0 && (
         <p className="text-xs" style={{ color: theme.textSecondary }}>
           Showing {filtered.length} of {stations.length} stations
-          {connectorFilters.length > 0 || speedFilters.length > 0 || includeBrands.length > 0 || excludeBrands.length > 0 ? ' (filtered)' : ''}
+          {connectorFilters.length > 0 || speedFilters.length > 0 || includeBrands.length > 0 || excludeBrands.length > 0 || accessTypes.length > 0 ? ' (filtered)' : ''}
         </p>
       )}
 
