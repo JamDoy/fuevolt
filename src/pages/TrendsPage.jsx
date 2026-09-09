@@ -2,12 +2,20 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SearchBar from '../components/SearchBar';
 import Sparkline from '../components/Sparkline';
+import TrendSummaryCard from '../components/TrendSummaryCard';
 import ShimmerCard from '../components/ShimmerCard';
 import ErrorCard from '../components/ErrorCard';
 import DigitalPrice from '../components/DigitalPrice';
 import ShareMenu from '../components/ShareMenu';
 import { fetchFuelPrices, geocodeLocation, getUserLocation } from '../utils/api';
-import { getPriceHistory } from '../utils/priceHistory';
+import {
+  getPriceHistory,
+  getAreaPriceHistory,
+  recordPriceSnapshot,
+  getNationalPriceHistory,
+  recordNationalPriceSnapshot,
+} from '../utils/priceHistory';
+import { fetchNationalAveragePrice } from '../utils/nationalPrices';
 import { getPriceContext } from '../utils/priceFreshness';
 import { buildTrendsShareUrl } from '../utils/shareLinks';
 import FuelTypeSelector from '../components/FuelTypeSelector';
@@ -21,6 +29,8 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
   const [hasSearched, setHasSearched] = useState(false);
   const [locationLabel, setLocationLabel] = useState('');
   const [lastCoords, setLastCoords] = useState(null);
+  const [nationalLoading, setNationalLoading] = useState(false);
+  const [nationalPrices, setNationalPrices] = useState({ U91: null, Diesel: null });
 
   const runSearch = async (lat, lng, type, label) => {
     setLoading(true);
@@ -31,6 +41,13 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
     try {
       const data = await fetchFuelPrices({ latitude: lat, longitude: lng, fuelType: type, radius: 10 });
       setStations(data || []);
+      // Searching Trends is itself a real price observation — recording it
+      // here (not just on the station detail page) means the area-wide
+      // trend chart below builds up from every search, not only from
+      // visitors who click into an individual station.
+      (data || []).forEach((s) => {
+        if (s.price != null) recordPriceSnapshot(s.id, type, s.price);
+      });
     } catch {
       setError('Could not load stations for this location.');
       setStations([]);
@@ -73,7 +90,27 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
   useEffect(() => {
     if (Number.isFinite(initialSearch?.lat) && Number.isFinite(initialSearch?.lng)) {
       runSearch(initialSearch.lat, initialSearch.lng, initialSearch.fuelType || fuelType, initialSearch.label || '');
+      return;
     }
+    // Default landing view (no suburb searched yet) — sample real, currently
+    // live prices from a spread of major cities to show how petrol and
+    // diesel are trending Australia-wide, and record today's reading so the
+    // trend builds up on repeat visits the same way per-suburb history does.
+    let cancelled = false;
+    setNationalLoading(true);
+    Promise.all([fetchNationalAveragePrice('U91'), fetchNationalAveragePrice('Diesel')])
+      .then(([petrol, diesel]) => {
+        if (cancelled) return;
+        if (petrol) recordNationalPriceSnapshot('U91', petrol.average);
+        if (diesel) recordNationalPriceSnapshot('Diesel', diesel.average);
+        setNationalPrices({ U91: petrol?.average ?? null, Diesel: diesel?.average ?? null });
+      })
+      .finally(() => {
+        if (!cancelled) setNationalLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -82,13 +119,15 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
     ? pricedStations.reduce((sum, s) => sum + s.price, 0) / pricedStations.length
     : 0;
 
+  const areaHistory = getAreaPriceHistory(stations, fuelType);
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-1" style={{ color: theme.heading }}>Fuel Price Trends</h1>
       <p className="text-sm mb-5" style={{ color: theme.textMuted }}>
-        Search a suburb to see how prices at nearby stations have moved over time.
-        Trend history builds up the more a station gets checked — a station you're
-        searching for the first time won't have a graph yet.
+        See how petrol and diesel prices are trending across Australia below, or search a
+        suburb to see how prices at nearby stations have moved over time. Trend history
+        builds up the more a station or area gets checked.
       </p>
 
       {onGoHome && (
@@ -150,6 +189,18 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
               />
             )}
           </div>
+
+          {/* Area-wide average trend — the headline visual for this page,
+              aggregating whatever local price history exists across every
+              station in these results rather than just one at a time. */}
+          <TrendSummaryCard
+            title={`Area average · ${fuelType}`}
+            currentPrice={avgPrice}
+            series={areaHistory}
+            theme={theme}
+            accentColor={theme.gold}
+          />
+
           {stations.map((station) => {
             const history = getPriceHistory(station.id, fuelType);
             const context = getPriceContext(station.price, avgPrice);
@@ -195,10 +246,34 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
       )}
 
       {!hasSearched && !loading && (
-        <div className="mt-10 text-center">
-          <p className="text-sm" style={{ color: theme.textMuted }}>
-            Search a location above to see fuel price trends for nearby stations.
+        <div className="mt-6 flex flex-col gap-4">
+          <p className="text-xs font-medium" style={{ color: theme.textMuted }}>
+            Australia-wide average — search a suburb above to see a local trend instead
           </p>
+          {nationalLoading && (
+            <div className="flex flex-col gap-3">
+              <ShimmerCard />
+              <ShimmerCard />
+            </div>
+          )}
+          {!nationalLoading && (
+            <>
+              <TrendSummaryCard
+                title="Australia-wide average · Petrol (U91)"
+                currentPrice={nationalPrices.U91 || 0}
+                series={getNationalPriceHistory('U91')}
+                theme={theme}
+                accentColor="#3B82F6"
+              />
+              <TrendSummaryCard
+                title="Australia-wide average · Diesel"
+                currentPrice={nationalPrices.Diesel || 0}
+                series={getNationalPriceHistory('Diesel')}
+                theme={theme}
+                accentColor="#9CA3AF"
+              />
+            </>
+          )}
         </div>
       )}
 
