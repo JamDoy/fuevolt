@@ -388,7 +388,15 @@ function AppContent() {
           &copy; {new Date().getFullYear()} FueVolt &mdash; Australian EV & Fuel Price Finder
         </p>
         <p className="text-[10px] mt-1" style={{ color: theme.footerSubtext }}>
-          Prices sourced from official government data where available.
+          Prices sourced from official government data where available — see{' '}
+          <button
+            onClick={() => navigate('about', '/about')}
+            className="underline cursor-pointer"
+            style={{ color: theme.footerSubtext, background: 'none', border: 'none', font: 'inherit', padding: 0 }}
+          >
+            data sources
+          </button>
+          . FueVolt is independently operated and is not affiliated with, endorsed by, or operated by any government agency.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 mt-2">
