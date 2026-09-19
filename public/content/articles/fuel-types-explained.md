@@ -46,6 +46,32 @@ Always follow the minimum octane rating specified by your vehicle manufacturer. 
 
 Check the fuel flap or owner's manual to confirm your car's requirements before filling up.
 
+## How the Fuels Compare on Price
+
+Grades are not priced in equal steps. In a snapshot of Brisbane-area stations in September 2026, the cheapest E10 was 213.5 cents a litre, the cheapest U91 was 215.5, the cheapest U95 was 234.5 and the cheapest U98 was 237.5. The cheapest diesel was 264.9, about 49 cents above the cheapest U91.
+
+Two things stand out. First, the jump from U91 to U95 (about 19 cents) was far bigger than the jump from U95 to U98 (about 3 cents). Second, E10 was only about 2 cents cheaper than U91 at the cheapest stations, and about 3 cents cheaper on average across the area. Because ethanol carries slightly less energy than petrol, an E10-compatible car may use a little more fuel per kilometre, so a small price gap can shrink to almost nothing in real terms.
+
+That is one snapshot, and prices change daily, so the useful habit is to compare grades on the day you fill up. The [fuel prices page](/fuel-prices) lets you switch fuel type and see the cheapest stations for each.
+
+## Can You Mix Fuels?
+
+Different grades of petrol are safe to mix. If you put U91 in a tank that is half full of U95, the result is simply a blend in between. Petrol and diesel, however, must never be mixed, and neither must be used in the wrong type of engine.
+
+## What If You Put the Wrong Fuel In?
+
+Putting diesel in a petrol car, or petrol in a diesel car, is a common and expensive mistake. If you realise at the bowser, do not start the engine. If you notice after driving off, pull over safely and switch it off as soon as you can. Turning the ignition on can prime the fuel pump and circulate the wrong fuel through the system. Call roadside assistance and have the tank drained before the car is driven again. Either mistake can damage the fuel system and engine, and the damage grows the further you drive.
+
+Using E10 in a car that is not compatible is less dramatic, but you should switch to the correct fuel at the next fill and check your owner's manual. Some older cars, motorcycles and small engines are not suited to ethanol blends.
+
+## AdBlue Is Not Fuel
+
+Many newer diesel vehicles need AdBlue, a separate exhaust treatment fluid that lives in its own tank, usually with a blue cap near the fuel filler or under the bonnet. It is not a fuel additive. Never pour it into the fuel tank, and never put diesel in the AdBlue tank. AdBlue is sold at many service stations and auto shops.
+
+## Not Every Station Sells Everything
+
+Stations do not all stock every fuel. LPG in particular is sold at a limited number of sites, and premium diesel and U98 are less common at smaller stations. FueVolt shows the fuels each station reports to the state government price schemes, so if you rely on LPG or another less common fuel, check that a station lists it before you detour.
+
 ## Related guides and tools
 
 - [Compare live fuel prices near you](/fuel-prices)

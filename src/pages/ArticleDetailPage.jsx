@@ -6,10 +6,10 @@ import ShareMenu from '../components/ShareMenu';
 import { injectArticleSchema, removeArticleSchema, updatePageMeta } from '../utils/seo';
 
 function parseFrontmatter(text) {
-  const match = text.match(/^---\n([\s\S]*?)\n---\n\n?([\s\S]*)$/);
+  const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n(?:\r?\n)?([\s\S]*)$/);
   if (!match) return { meta: {}, body: text };
   const meta = {};
-  match[1].split('\n').forEach((line) => {
+  match[1].split(/\r?\n/).forEach((line) => {
     const idx = line.indexOf(':');
     if (idx > 0) {
       const key = line.slice(0, idx).trim();
@@ -37,25 +37,29 @@ function renderInlineLinks(text, linkColor) {
   // Matches external https:// citations (open in a new tab) as well as
   // internal site-relative links like (/trends) for cross-linking between
   // guides and app pages (opens in the same tab, normal navigation).
-  const linkPattern = /\[([^\]]+)]\(((?:https:\/\/|\/)[^)\s]+)\)/g;
+  const inlinePattern = /\*\*([^*]+)\*\*|\[([^\]]+)]\(((?:https:\/\/|\/)[^)\s]+)\)/g;
   let lastIndex = 0;
   let match;
 
-  while ((match = linkPattern.exec(text)) !== null) {
+  while ((match = inlinePattern.exec(text)) !== null) {
     if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
-    const isExternal = match[2].startsWith('http');
-    parts.push(
-      <a
-        key={`${match[2]}-${match.index}`}
-        href={match[2]}
-        {...(isExternal ? { target: '_blank', rel: 'noreferrer' } : {})}
-        className="underline"
-        style={{ color: linkColor }}
-      >
-        {match[1]}
-      </a>
-    );
-    lastIndex = linkPattern.lastIndex;
+    if (match[1] !== undefined) {
+      parts.push(<strong key={`b-${match.index}`}>{match[1]}</strong>);
+    } else {
+      const isExternal = match[3].startsWith('http');
+      parts.push(
+        <a
+          key={`${match[3]}-${match.index}`}
+          href={match[3]}
+          {...(isExternal ? { target: '_blank', rel: 'noreferrer' } : {})}
+          className="underline"
+          style={{ color: linkColor }}
+        >
+          {match[2]}
+        </a>
+      );
+    }
+    lastIndex = inlinePattern.lastIndex;
   }
 
   if (lastIndex < text.length) parts.push(text.slice(lastIndex));
@@ -65,8 +69,9 @@ function renderInlineLinks(text, linkColor) {
 function renderMarkdown(md) {
   const blocks = [];
   let key = 0;
-  const lines = md.split('\n');
+  const lines = md.split(/\r?\n/);
   let currentParagraph = [];
+  let currentList = null;
 
   const flushParagraph = () => {
     if (currentParagraph.length > 0) {
@@ -74,22 +79,43 @@ function renderMarkdown(md) {
       currentParagraph = [];
     }
   };
+  const flushList = () => {
+    if (currentList) {
+      blocks.push({ ...currentList, key: key++ });
+      currentList = null;
+    }
+  };
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+    const bullet = line.match(/^\s*[-*]\s+(.*)$/);
+    const numbered = line.match(/^\s*\d+\.\s+(.*)$/);
     if (line.startsWith('## ')) {
       flushParagraph();
+      flushList();
       blocks.push({ type: 'h2', text: line.slice(3), key: key++ });
     } else if (line.startsWith('### ')) {
       flushParagraph();
+      flushList();
       blocks.push({ type: 'h3', text: line.slice(4), key: key++ });
     } else if (line.trim() === '') {
       flushParagraph();
+      flushList();
+    } else if (bullet || numbered) {
+      flushParagraph();
+      const type = bullet ? 'ul' : 'ol';
+      if (!currentList || currentList.type !== type) {
+        flushList();
+        currentList = { type, items: [] };
+      }
+      currentList.items.push((bullet || numbered)[1]);
     } else {
+      flushList();
       currentParagraph.push(line);
     }
   }
   flushParagraph();
+  flushList();
   return blocks;
 }
 
@@ -227,6 +253,19 @@ export default function ArticleDetailPage({ slug, onBack }) {
                 <h3 key={block.key} className="text-base font-semibold mt-4 mb-1" style={{ color: theme.heading }}>
                   {block.text}
                 </h3>
+              );
+            } else if (block.type === 'ul' || block.type === 'ol') {
+              const ListTag = block.type;
+              nodes.push(
+                <ListTag
+                  key={block.key}
+                  className={`text-sm leading-relaxed pl-5 space-y-1 ${block.type === 'ul' ? 'list-disc' : 'list-decimal'}`}
+                  style={{ color: theme.text }}
+                >
+                  {block.items.map((item, idx) => (
+                    <li key={idx}>{renderInlineLinks(item, theme.accent)}</li>
+                  ))}
+                </ListTag>
               );
             } else {
               nodes.push(

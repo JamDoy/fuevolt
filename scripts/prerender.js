@@ -52,11 +52,11 @@ function readArticle(slug) {
   const filePath = path.join(CONTENT_DIR, `${slug}.md`);
   if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, 'utf-8');
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n\n?([\s\S]*)$/);
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n(?:\r?\n)?([\s\S]*)$/);
   if (!match) return { meta: {}, markdown: raw };
 
   const meta = {};
-  for (const line of match[1].split('\n')) {
+  for (const line of match[1].split(/\r?\n/)) {
     const separator = line.indexOf(':');
     if (separator < 1) continue;
     const key = line.slice(0, separator).trim();
