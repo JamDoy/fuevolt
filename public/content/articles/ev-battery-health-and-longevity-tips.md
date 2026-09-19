@@ -28,7 +28,7 @@ Cycle aging happens with each charge and discharge cycle. It is accelerated by d
 
 ## Tips to Maximise Battery Life
 
-Set your daily charge limit to 80 per cent. Most EVs allow you to set a maximum charge level. Keeping the battery between 20 and 80 per cent for daily use significantly reduces stress on the cells. Only charge to 100 per cent before long trips when you need the full range.
+Set your daily charge limit to 80 per cent. Most EVs allow you to set a maximum charge level. Keeping the battery between 20 and 80 per cent for daily use significantly reduces stress on the cells. Only charge to 100 per cent before long trips when you need the full range. (This advice suits the most common battery type — see the section on battery chemistry below for an important exception.)
 
 Minimise fast charging. DC fast charging generates heat and stresses battery cells more than slow AC charging. Using a home charger overnight is gentler on the battery. Fast charging is perfectly fine for road trips, but using it daily when home charging is available is suboptimal.
 
@@ -41,6 +41,29 @@ Use the car's battery preconditioning feature. Many EVs can precondition (warm o
 ## Battery Cooling Systems
 
 Modern EVs use liquid-cooled battery packs that maintain cells within an optimal temperature range. These active thermal management systems are far superior to the air-cooled batteries found in earlier EVs like the first-generation Nissan Leaf. When buying a used EV, check whether it has active liquid cooling — this is a significant factor in long-term battery health.
+
+## Not All Batteries Are the Same
+
+The 80 per cent guideline is written for the most common battery chemistry, nickel manganese cobalt (NMC). Some cars, including many entry-level and standard-range models, use lithium iron phosphate (LFP) cells instead. LFP is generally more tolerant of full charges, and manufacturers often recommend charging an LFP pack to 100 per cent regularly, for example once a week, so the car can keep its range estimate accurate. Check your owner's manual or the manufacturer's app for the advice that applies to your car, and follow that rather than a general rule.
+
+## Temporary Range Loss vs Real Degradation
+
+A drop in range on a cold morning or a hot highway run does not mean the battery is wearing out. Cold weather slows the chemistry inside the cells and cabin heating draws power, and both reduce range temporarily. The range returns when conditions improve. Degradation is the permanent loss of capacity that builds up over years, and the way to judge it is to compare like with like: similar temperature, speed and charge level.
+
+## What Degradation Looks Like in Practice
+
+Capacity loss is usually gradual, not sudden. Batteries tend to lose a little more in the first year or two and then settle into a slower decline, although this varies with the chemistry and how the car is used. A pack does not normally fail all at once. Instead the usable range shrinks slowly, which is why warranties are written as a percentage of original capacity, commonly 70 per cent, rather than as a failure date.
+
+## Checking Battery Health on a Used EV
+
+If you are buying a second-hand EV, ask for evidence of the battery's state of health, which compares its current usable capacity with the original. Some cars show it in a service menu, some dealers and manufacturers can produce a report, and third-party diagnostic tools can estimate it. Also check:
+
+- Whether the remaining battery warranty transfers to you
+- Whether the pack has active liquid cooling
+- How the car has been charged. A history of daily fast charging, or of sitting at 100 per cent for long periods, is worth asking about
+- Whether the car's software is up to date
+
+A low asking price can reflect a tired battery, so treat a health report as part of the purchase decision, not an optional extra.
 
 ## Replacement Costs
 

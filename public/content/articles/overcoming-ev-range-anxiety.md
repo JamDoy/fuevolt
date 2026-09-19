@@ -38,6 +38,25 @@ For trips beyond your car's single-charge range, planning is key. Use the FueVol
 
 Arrive at fast chargers with 10 to 20 per cent battery remaining for the fastest charging speed. Batteries charge quickest when nearly empty and slow down as they approach 80 per cent, so charging from 10 to 80 per cent is much faster than 80 to 100 per cent.
 
+## A Worked Example: Planning a Highway Leg
+
+Take a car rated at 400 km on the WLTP cycle. Real-world highway range is often 10 to 20 per cent lower, so plan on roughly 320 to 360 km from a full battery. If you charge from 10 to 80 per cent at each stop, you are using about 70 per cent of the pack, which gives you around 225 to 250 km between fast chargers. Leave another 10 per cent as a buffer for headwinds, hills or a charger that is out of order, and a comfortable leg is around 200 km. On a route with chargers every 100 to 200 km, that is plenty.
+
+## Towing, Roof Racks and Loads
+
+Anything that adds weight or drag cuts range. Towing a trailer or caravan reduces it substantially, and roof racks and boxes add drag even when empty. If you tow, check the manufacturer's towing rating and expect to plan shorter legs between chargers. Look at the layout of a charging site before you commit to it, since many are designed for cars without trailers.
+
+## Regional and Remote Driving
+
+Outside the main highway corridors, chargers can be far apart, and distances that suit a petrol car may not suit an EV. Plan the whole route around charger locations rather than fuel stations, and check the gaps before you leave. In some regional towns, caravan parks, pubs and community venues offer slower power that can bridge a gap if you are happy to stay a few hours, so it is worth ringing ahead. Carry a portable charging cable. FueVolt's [EV charging finder](/ev-charging) shows charger locations and equipment, but it does not show whether a bay is free or working right now, so keep a second option in mind for long gaps.
+
+## What to Do If You Are Running Low
+
+1. Slow down. Dropping from 110 km/h to around 90 km/h can noticeably extend your range.
+2. Reduce climate control and other loads, and use eco mode if your car has one.
+3. Navigate to the nearest charger of any type, including a slow AC charger. Even slow charging gets you moving again.
+4. If you are stuck, contact roadside assistance. Many providers now offer support for EVs, so check what your cover includes before a long trip.
+
 ## Day-to-Day Reality
 
 In daily life, most EV owners charge at home overnight and start every morning with a full battery. Range anxiety simply does not apply to the daily commute, school run or grocery trip. It is analogous to a mobile phone — you charge it overnight and it lasts all day.
