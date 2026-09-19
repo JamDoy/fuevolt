@@ -4,7 +4,7 @@ description: "Everything you need to know about installing a home EV charger in 
 category: "EV Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-09-19"
 image: "/content/articles/images/ev-home-charging-setup-guide-australia.jpg"
 ---
 
@@ -47,3 +47,9 @@ If you have rooftop solar, charging your EV from excess generation can substanti
 Install your charger near your car's charge port location to avoid running the cable around the vehicle. If you rent, talk to your landlord — many are open to charger installation as it adds property value. Ensure your home insurance covers the charger installation. Get quotes from at least two licensed electricians who have EV charger installation experience.
 
 Home charging turns your garage or carport into your personal fuel station, available every night at a fraction of public charging prices.
+
+## Related guides and tools
+
+- [EV vs fuel running cost calculator](/ev-vs-fuel)
+- [EV Charging Connector Types in Australia](/guides/ev-charging-connector-types-australia)
+- [EV Battery Health: How to Maximise Your Battery Life](/guides/ev-battery-health-and-longevity-tips)

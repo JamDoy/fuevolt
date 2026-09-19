@@ -4,7 +4,7 @@ description: "What RON 91, 95 and 98 actually mean, whether premium fuel improve
 category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-09-19"
 image: "/content/articles/images/understanding-octane-ratings.jpg"
 ---
 
@@ -47,3 +47,9 @@ Premium fuels sometimes contain better detergent packages that help keep fuel in
 ## Practical Advice
 
 Check your fuel flap or owner's manual. Use the minimum specified octane or higher. If your car says 91, save money and use 91. If it says 95, do not go below 95. And if it says 98, treat that as a non-negotiable requirement for the health of your engine.
+
+## Related guides and tools
+
+- [Compare live fuel prices near you](/fuel-prices)
+- [Fuel Types Explained: E10, U91, U95, U98, Diesel and LPG](/guides/fuel-types-explained)
+- [10 Proven Tips to Save Money on Fuel in Australia](/guides/tips-to-save-money-on-fuel-australia)

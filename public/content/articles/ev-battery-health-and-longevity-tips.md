@@ -4,7 +4,7 @@ description: "Practical tips to preserve your EV battery over the long term, inc
 category: "EV Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-09-19"
 image: "/content/articles/images/ev-battery-health-and-longevity-tips.jpg"
 ---
 
@@ -49,3 +49,9 @@ If a battery eventually needs replacement outside warranty, ask the manufacturer
 ## The Bottom Line
 
 Treat your EV battery like you treat your own health — consistent moderate habits are better than extreme behaviour. Charge regularly to 80 per cent, avoid extreme heat, minimise unnecessary fast charging, and your battery will serve you well for hundreds of thousands of kilometres.
+
+## Related guides and tools
+
+- [Find EV charging stations near you](/ev-charging)
+- [How to Set Up EV Home Charging in Australia](/guides/ev-home-charging-setup-guide-australia)
+- [Overcoming EV Range Anxiety](/guides/overcoming-ev-range-anxiety)

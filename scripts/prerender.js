@@ -410,14 +410,14 @@ writePage('/fuel-prices', generatePage({
   description: 'Compare real-time E10, U91, U95, U98, diesel and LPG prices from official Australian government sources. Find the cheapest fuel station near you.',
   h1: 'Compare Fuel Prices Across Australia',
   content: `
-        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location. FueVolt compares real-time fuel prices from official government sources across NSW, VIC, QLD, WA and TAS.</p>
+        <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Search by suburb, city or postcode to find fuel prices near you — or tap Use My Location. FueVolt compares live fuel prices from official government sources across NSW, VIC, QLD, WA, NT and TAS.</p>
         <h2 style="font-size:1.3rem;margin:24px 0 12px">How FueVolt Fuel Price Comparison Works</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">FueVolt compares real-time fuel prices from official Australian government sources. Prices are updated throughout the day as fuel stations report changes, giving you the most accurate data available.</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Search by suburb, postcode, or use your current location to find the cheapest E10, Unleaded 91, Premium 95, Premium 98, Diesel, and LPG near you. Results can be sorted by price (lowest first) or by drive time, so you can find the best value considering both fuel cost and travel distance.</p>
         <h3 style="font-size:1.05rem;margin:16px 0 8px">Understanding Fuel Price Cycles</h3>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Fuel prices in Australian capital cities follow predictable cycles, typically rising sharply over one to two days and then gradually falling over several weeks. The best time to fill up is at the bottom of the cycle when prices are lowest. FueVolt helps you spot these patterns by showing current prices from hundreds of stations in your area, making it easy to identify when prices are at their cheapest.</p>
         <h3 style="font-size:1.05rem;margin:16px 0 8px">Coverage Across Australia</h3>
-        <p style="font-size:0.9rem;color:#4B5563">FueVolt covers fuel stations across New South Wales, Victoria, Queensland, Western Australia and Tasmania. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, Wollongong and Hobart, as well as regional and rural areas throughout these states.</p>`,
+        <p style="font-size:0.9rem;color:#4B5563">FueVolt covers fuel stations across New South Wales, Victoria, Queensland, Western Australia, the Northern Territory and Tasmania. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, Wollongong, Darwin and Hobart, as well as regional and rural areas throughout these states and territories. South Australia is not covered yet.</p>`,
 }));
 sitemapUrls.push('/fuel-prices');
 
@@ -430,7 +430,7 @@ writePage('/ev-charging', generatePage({
   content: `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Find EV charging stations near you. Filter by connector type and charging speed. Coverage and record completeness vary by location.</p>
         <h2 style="font-size:1.3rem;margin:24px 0 12px">About EV Charging in Australia</h2>
-        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Australia's electric vehicle charging network is growing rapidly, with thousands of public charging stations now available across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.</p>
+        <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Australia's electric vehicle charging network is growing rapidly, with public charging stations now available in cities and along major highways across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.</p>
         <h3 style="font-size:1.05rem;margin:16px 0 8px">Connector Types Explained</h3>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Type 2 (Mennekes)</strong> is the standard AC charging connector used by most EVs in Australia. It supports charging speeds from 7kW to 22kW and is the most common plug type at public and home chargers. <strong>CCS2 (Combined Charging System)</strong> is the dominant DC fast charging standard in Australia, supporting speeds from 50kW to 350kW. Most new EVs sold in Australia use CCS2 for fast charging. <strong>CHAdeMO</strong> is an older DC fast charging standard used by some Japanese EVs like the Nissan Leaf and Mitsubishi Outlander PHEV. <strong>Tesla</strong> Superchargers use a proprietary connector but many newer Tesla vehicles also support CCS2.</p>
         <h3 style="font-size:1.05rem;margin:16px 0 8px">Charging Speed Levels</h3>

@@ -3,12 +3,12 @@ const BASE_URL = 'https://www.fuevolt.com';
 const PAGE_META = {
   landing: {
     title: 'FueVolt — Compare Fuel Prices & EV Charging Stations in Australia',
-    description: 'Find the cheapest petrol, diesel and LPG near you across NSW, VIC, QLD and WA. Plus EV charging stations, trip planner and fuel guides. Live government data.',
+    description: 'Find the cheapest petrol, diesel and LPG near you across NSW, VIC, QLD, WA, NT and TAS. Plus EV charging stations, trip planner and fuel guides. Live government data.',
     path: '/',
   },
   fuel: {
     title: 'Fuel Prices Near Me — Compare Petrol, Diesel & LPG | FueVolt',
-    description: 'Compare real-time E10, U91, U95, U98, diesel and LPG prices from official NSW, VIC, QLD and WA government APIs. Sorted by price, drive time, or distance.',
+    description: 'Compare live E10, U91, U95, U98, diesel and LPG prices from official state government sources across NSW, VIC, QLD, WA, NT and TAS. Sorted by price, drive time, or distance.',
     path: '/fuel-prices',
   },
   ev: {

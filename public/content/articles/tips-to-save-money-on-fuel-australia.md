@@ -4,7 +4,7 @@ description: "Practical, tested strategies to reduce your fuel bill, from price 
 category: "Tips"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-08-11"
+dateModified: "2026-09-19"
 image: "/content/articles/images/tips-to-save-money-on-fuel-australia.jpg"
 ---
 
@@ -57,3 +57,9 @@ A well-maintained engine runs more efficiently. Dirty air filters, old spark plu
 Supermarket fuel vouchers (Coles, Woolworths) typically save four cents per litre. Some credit cards offer fuel cashback. These small discounts add up across a year of regular fill-ups.
 
 Combining several of these strategies can realistically save $500 to $1,000 per year for an average Australian household.
+
+## Related guides and tools
+
+- [Compare live fuel prices near you](/fuel-prices)
+- [See how fuel prices are trending](/trends)
+- [How Fuel Price Cycles Work in Australia](/guides/how-fuel-price-cycles-work-australia)

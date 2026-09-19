@@ -4,7 +4,7 @@ description: "A complete guide to every fuel type available at Australian servic
 category: "Fuel Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-08-11"
+dateModified: "2026-09-19"
 image: "/content/articles/images/fuel-types-explained.jpg"
 ---
 
@@ -45,3 +45,9 @@ LPG is a mix of propane and butane stored under moderate pressure. It burns clea
 Always follow the minimum octane rating specified by your vehicle manufacturer. The [Green Vehicle Guide](https://www.greenvehicleguide.gov.au/) lists the recommended fuel type for most models sold in Australia if you are unsure. Using a higher octane than required will not damage your engine but usually provides no measurable benefit in a standard car. Using a lower octane than required can cause knocking, reduced power and potential engine damage over time.
 
 Check the fuel flap or owner's manual to confirm your car's requirements before filling up.
+
+## Related guides and tools
+
+- [Compare live fuel prices near you](/fuel-prices)
+- [Understanding Octane Ratings: Does Premium Fuel Make a Difference?](/guides/understanding-octane-ratings)
+- [10 Proven Tips to Save Money on Fuel in Australia](/guides/tips-to-save-money-on-fuel-australia)

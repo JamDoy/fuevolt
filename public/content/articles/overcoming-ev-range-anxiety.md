@@ -4,7 +4,7 @@ description: "How far can modern EVs really go? Tips for managing range on long 
 category: "EV Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-09-19"
 image: "/content/articles/images/overcoming-ev-range-anxiety.jpg"
 ---
 
@@ -49,3 +49,9 @@ The mental shift from "filling up when nearly empty" to "topping up regularly" i
 Keep your car plugged in at home whenever practical. Set a daily charge limit of 80 per cent to preserve long-term battery health. Only charge to 100 per cent before long trips. Familiarise yourself with the two or three nearest public fast chargers to your home as backup options. Download multiple charging network apps so you have accounts ready to go.
 
 Range anxiety is a valid concern for first-time buyers, but it is almost universally a temporary experience. After a few weeks of ownership, most drivers wonder why they worried at all.
+
+## Related guides and tools
+
+- [Find EV charging stations near you](/ev-charging)
+- [Plan a route with fuel and charging stops](/trip-planner)
+- [EV Battery Health: How to Maximise Your Battery Life](/guides/ev-battery-health-and-longevity-tips)

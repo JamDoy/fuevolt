@@ -4,7 +4,7 @@ description: "Understand the different EV charging plugs used across Australia, 
 category: "EV Guide"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-09-19"
 image: "/content/articles/images/ev-charging-connector-types-australia.jpg"
 ---
 
@@ -41,3 +41,9 @@ Before plugging in, confirm your car's connector type. Most public charging serv
 Charging speed depends on both the charger output and your car's onboard acceptance rate. As [energy.gov.au explains](https://www.energy.gov.au/electric-vehicles/owning-electric-vehicle/how-charge-your-electric-vehicle), slow AC chargers (up to 7 kW) are best for overnight top-ups, fast AC chargers (7 to 22 kW) suit a few hours at a shopping centre, and DC fast chargers (50 kW and above) are designed for highway stops where you need a quick boost.
 
 Understanding your connector type and the charger speed available helps you plan stops efficiently and avoid arriving at an incompatible station.
+
+## Related guides and tools
+
+- [Find EV charging stations near you](/ev-charging)
+- [How to Set Up EV Home Charging in Australia](/guides/ev-home-charging-setup-guide-australia)
+- [Overcoming EV Range Anxiety](/guides/overcoming-ev-range-anxiety)

@@ -4,7 +4,7 @@ description: "A detailed cost comparison of petrol, diesel and electric vehicles
 category: "Comparison"
 readTime: "7 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-08-11"
+dateModified: "2026-09-19"
 image: "/content/articles/images/petrol-vs-diesel-vs-electric-comparison.jpg"
 ---
 
@@ -49,3 +49,9 @@ Diesel makes most sense for heavy towing, long highway trips and vehicles that c
 ## The Bottom Line
 
 There is no single cheapest option for everyone. Use the FueVolt cost comparison tool to estimate your personal weekly fuel versus electric costs based on your driving habits.
+
+## Related guides and tools
+
+- [EV vs fuel running cost calculator](/ev-vs-fuel)
+- [Electric vs Hybrid vs Plug-in Hybrid](/guides/electric-vs-hybrid-vs-plug-in-hybrid)
+- [Australian Fuel Excise Tax Explained](/guides/australian-fuel-excise-tax-explained)

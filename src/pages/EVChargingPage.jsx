@@ -551,7 +551,7 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       >
         <h2 className="text-base font-bold mb-3" style={{ color: theme.green }}>About EV Charging in Australia</h2>
           <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>
-            Australia's electric vehicle charging network is growing rapidly, with thousands of public charging stations now available across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.
+            Australia's electric vehicle charging network is growing rapidly, with public charging stations now available in cities and along major highways across the country. FueVolt helps you find and compare EV chargers using data from Open Charge Map, the world's largest open database of charging locations.
           </p>
           <h3 className="text-sm font-semibold mb-2 mt-4" style={{ color: theme.text }}>Connector Types Explained</h3>
           <p className="text-xs leading-relaxed mb-3" style={{ color: theme.textSecondary }}>

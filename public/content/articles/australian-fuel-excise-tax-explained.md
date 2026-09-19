@@ -4,7 +4,7 @@ description: "How much tax is included in every litre of fuel you buy in Austral
 category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-08-06"
+dateModified: "2026-09-19"
 image: "/content/articles/images/australian-fuel-excise-tax-explained.jpg"
 ---
 
@@ -51,3 +51,9 @@ Australia's fuel excise is moderate by global standards. Countries like Germany,
 Because fuel excise is a fixed amount per litre rather than a percentage, it has a greater proportional impact when crude oil prices are low. When crude drops and the base cost of fuel falls, the excise becomes a larger share of the total price, putting a floor on how cheap fuel can get.
 
 Understanding the tax component helps set realistic expectations about fuel prices. Even if global oil prices collapsed, Australian pump prices would not drop below about 75 to 85 cents per litre due to excise plus GST alone — though that floor moves whenever the excise rate itself changes, as it did during the 2026 relief period.
+
+## Related guides and tools
+
+- [Compare live fuel prices near you](/fuel-prices)
+- [How Fuel Price Cycles Work in Australia](/guides/how-fuel-price-cycles-work-australia)
+- [10 Proven Tips to Save Money on Fuel in Australia](/guides/tips-to-save-money-on-fuel-australia)

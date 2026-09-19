@@ -4,7 +4,7 @@ description: "Compare pure electric (BEV), hybrid (HEV) and plug-in hybrid (PHEV
 category: "Comparison"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-07-19"
+dateModified: "2026-09-19"
 image: "/content/articles/images/electric-vs-hybrid-vs-plug-in-hybrid.jpg"
 ---
 
@@ -55,3 +55,9 @@ Consider a diesel only if you tow heavy loads regularly or drive very high kilom
 ## The Trend
 
 The direction of the market is clear — according to the [Electric Vehicle Council](https://electricvehiclecouncil.com.au/), EV uptake in Australia continues to climb even as the country works through charging and policy challenges. BEV sales are growing fastest, PHEV sales are steady, and hybrid technology is becoming standard across most model ranges. Whatever you choose today will serve you well, but the future is increasingly electric.
+
+## Related guides and tools
+
+- [EV vs fuel running cost calculator](/ev-vs-fuel)
+- [Petrol vs Diesel vs Electric: Which Is Cheapest to Run?](/guides/petrol-vs-diesel-vs-electric-comparison)
+- [How to Set Up EV Home Charging in Australia](/guides/ev-home-charging-setup-guide-australia)

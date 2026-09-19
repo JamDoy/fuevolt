@@ -4,7 +4,7 @@ description: "How to plan fuel stops on long Australian road trips, avoid overpr
 category: "Tips"
 readTime: "6 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-08-11"
+dateModified: "2026-09-19"
 image: "/content/articles/images/australian-road-trip-fuel-planning-tips.jpg"
 ---
 
@@ -51,3 +51,9 @@ Government fuel price APIs cover NSW, VIC, QLD, WA and Tasmania comprehensively.
 This is not strictly a fuel tip, but roadhouse meals and drinks are expensive. Packing a cooler with food and water means fewer unnecessary stops at overpriced highway service centres, keeping you focused on planned fuel stops at cheaper locations.
 
 A well-planned road trip is not just more affordable — it is more enjoyable. Less stress about fuel means more time enjoying the scenery.
+
+## Related guides and tools
+
+- [Plan a route with fuel and charging stops](/trip-planner)
+- [How Fuel Price Cycles Work in Australia](/guides/how-fuel-price-cycles-work-australia)
+- [Overcoming EV Range Anxiety](/guides/overcoming-ev-range-anxiety)

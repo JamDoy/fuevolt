@@ -242,7 +242,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
               EV Charging
             </h2>
             <p className="text-sm mb-6" style={{ color: theme.textSecondary }}>
-              Locate thousands of charging points. Filter by connector type and charging speed. Go electric with confidence.
+              Locate public charging points across Australia. Filter by connector type and charging speed. Go electric with confidence.
             </p>
 
             {/* Connector type quick-select */}

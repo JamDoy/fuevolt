@@ -4,11 +4,11 @@ description: "Learn why petrol prices rise and fall in regular cycles across Aus
 category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-08-11"
+dateModified: "2026-09-19"
 image: "/content/articles/images/how-fuel-price-cycles-work-australia.jpg"
 ---
 
-Picture this: you drive past your local servo on a Sunday and it is 165.9 a litre. You drive past the same servo on Wednesday and it has jumped to 199.9 overnight. You did nothing wrong — you just watched a fuel price cycle in action. Not knowing when or where to fill up is the frustration that led to FueVolt being built.
+Imagine driving past your local servo one Sunday and seeing petrol at a price you are happy with, then passing it again on Wednesday to find it has jumped 20 or 30 cents a litre overnight. You did nothing wrong — you just watched a fuel price cycle in action. Not knowing when or where to fill up is the frustration that led to FueVolt being built.
 
 These cycles are a well-documented pattern in most major Australian cities, and understanding them can genuinely save you money. The [Australian Competition and Consumer Commission (ACCC) tracks petrol price cycles in the five largest cities](https://www.accc.gov.au/consumers/petrol-and-fuel/petrol-price-cycles-in-the-5-largest-cities) and publishes where each city sits in its cycle — a habit worth getting into before you fill up.
 
@@ -44,3 +44,9 @@ Country towns generally do not experience the same cyclical pattern. Prices in r
 Beyond cycles, fuel prices are influenced by [several factors the ACCC identifies](https://www.accc.gov.au/consumers/petrol-and-fuel/what-affects-fuel-prices) — global crude oil prices, the Australian dollar exchange rate, refining margins and government excise. The federal fuel excise adds a fixed amount per litre and is indexed to inflation twice a year. These macro factors determine the overall price level, while cycles determine the short-term ups and downs within that level.
 
 Understanding both gives you the best chance of filling up at the right time and the right station.
+
+## Related guides and tools
+
+- [Compare live fuel prices near you](/fuel-prices)
+- [10 Proven Tips to Save Money on Fuel in Australia](/guides/tips-to-save-money-on-fuel-australia)
+- [Australian Fuel Excise Tax Explained](/guides/australian-fuel-excise-tax-explained)
