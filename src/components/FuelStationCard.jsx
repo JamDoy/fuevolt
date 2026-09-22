@@ -11,6 +11,7 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
   const { theme } = useTheme();
   const cardRef = useRef(null);
   const [visible, setVisible] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const [fav, setFav] = useState(() => isFavourite(station.id));
   const [hasGeofence, setHasGeofence] = useState(() => getSavedGeofences().some((geofence) => geofence.id === station.id));
   const hours = formatOpeningHours(station.openingHours);
@@ -52,14 +53,22 @@ export default function FuelStationCard({ station, isSelected, onClick, onDetail
     <div
       ref={cardRef}
       onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="rounded-2xl p-4 cursor-pointer"
       style={{
         background: theme.cardBg,
-        border: isSelected ? `1px solid ${theme.cardBorderActive}` : `1px solid ${theme.cardBorder}`,
-        boxShadow: isSelected ? theme.cardGlow : theme.cardGlowDefault,
+        border: isSelected
+          ? `1px solid ${theme.cardBorderActive}`
+          : `1px solid ${hovered ? theme.gold : theme.cardBorder}`,
+        boxShadow: isSelected
+          ? theme.cardGlow
+          : hovered
+            ? '0 4px 16px rgba(245,158,11,0.15)'
+            : theme.cardGlowDefault,
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        transform: visible ? (hovered ? 'translateY(-2px)' : 'translateY(0)') : 'translateY(20px)',
       }}
     >
       <div className="flex items-start justify-between gap-4">

@@ -12,6 +12,7 @@ export default function EVStationCard({ station, isSelected, onClick, sortBy }) 
   const [fav, setFav] = useState(() => isFavourite(`ev-${station.ID}`));
   const [hasGeofence, setHasGeofence] = useState(() => getSavedGeofences().some((f) => f.id === `ev-${station.ID}`));
   const [visible, setVisible] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -46,18 +47,22 @@ export default function EVStationCard({ station, isSelected, onClick, sortBy }) 
     <div
       ref={cardRef}
       onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="rounded-2xl p-4 cursor-pointer"
       style={{
         background: theme.cardBg,
         border: isSelected
           ? `2px solid ${theme.green}`
-          : `1px solid ${isDark ? 'rgba(34, 197, 94,0.15)' : theme.cardBorder}`,
+          : `1px solid ${hovered ? theme.green : (isDark ? 'rgba(34, 197, 94,0.15)' : theme.cardBorder)}`,
         boxShadow: isSelected
           ? (isDark ? '0 0 20px rgba(34, 197, 94,0.15) inset' : '0 0 12px rgba(34,197,94,0.1) inset')
-          : theme.cardGlowDefault,
+          : hovered
+            ? '0 4px 16px rgba(34,197,94,0.15)'
+            : theme.cardGlowDefault,
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        transform: visible ? (hovered ? 'translateY(-2px)' : 'translateY(0)') : 'translateY(20px)',
       }}
     >
       <div className="flex items-start justify-between mb-2">
