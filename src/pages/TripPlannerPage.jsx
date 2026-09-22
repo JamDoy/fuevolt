@@ -720,7 +720,7 @@ export default function TripPlannerPage({ initialTrip }) {
       {/* Fuel stops along route */}
       {fuelStops.length > 0 && mode === 'car' && !loading && (
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 mb-3">
             <h3 className="text-sm font-semibold" style={{ color: theme.gold }}>{fuelTypeLabel} Stations Along Route</h3>
             <p className="text-[11px]" style={{ color: theme.textMuted }}>Tap a station to select it as a stop</p>
           </div>
@@ -779,7 +779,7 @@ export default function TripPlannerPage({ initialTrip }) {
       {/* EV chargers along route */}
       {evStops.length > 0 && mode === 'ev' && !loading && (
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 mb-3">
             <h3 className="text-sm font-semibold" style={{ color: theme.green }}>EV Chargers Along Route</h3>
             <p className="text-[11px]" style={{ color: theme.textMuted }}>Tap a charger to select it as a stop</p>
           </div>
