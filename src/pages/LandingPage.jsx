@@ -47,7 +47,7 @@ export default function LandingPage({ onSelect, onArticle, onSearch, onUseLocati
 
   return (
     <div className="min-h-[calc(100vh-80px)] flex flex-col items-center px-4 pb-12">
-      <section className="w-full max-w-4xl min-h-[calc(100svh-8rem)] md:min-h-0 flex flex-col justify-center md:pt-12 md:pb-8 animate-fade-in">
+      <section className="w-full max-w-4xl flex flex-col justify-center pt-8 pb-8 md:pt-12 animate-fade-in">
         <div className="text-center mb-5 md:mb-8">
           <div className="flex items-center justify-center gap-2.5 mb-3">
             <FueVoltIcon size={40} />
