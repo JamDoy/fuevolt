@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import FuelTypeSelector from '../components/FuelTypeSelector';
+import { fetchNationalAveragePrice } from '../utils/nationalPrices';
 
 const VEHICLE_TYPES = [
   { id: 'small', label: 'Small Car', fuelConsumption: 6.5, evConsumption: 13 },
@@ -11,7 +12,11 @@ const VEHICLE_TYPES = [
   { id: 'hatch', label: 'Hatchback', fuelConsumption: 7, evConsumption: 14 },
 ];
 
-const DEFAULT_FUEL_PRICE = 1.75; // $/L
+// Starting value shown before the live national average loads (or as a
+// fallback if that fetch fails) — kept roughly current rather than left to
+// go stale, though fetchNationalAveragePrice is what actually drives the
+// displayed figure in normal use.
+const DEFAULT_FUEL_PRICE = 2.20; // $/L
 const DEFAULT_ELECTRICITY_PRICE = 0.30; // $/kWh
 const DEFAULT_PUBLIC_CHARGE_PRICE = 0.45; // $/kWh
 
@@ -32,6 +37,33 @@ export default function EVvsFuelPage() {
   const [publicChargePrice, setPublicChargePrice] = useState(String(DEFAULT_PUBLIC_CHARGE_PRICE));
   const [homeChargePercent, setHomeChargePercent] = useState('80');
   const [fuelType, setFuelType] = useState('petrol');
+  const [fuelPriceIsLiveAvg, setFuelPriceIsLiveAvg] = useState(false);
+  const [fuelPriceTouched, setFuelPriceTouched] = useState(false);
+
+  // Replace the static default fuel price with a real, current Australia-wide
+  // average as soon as it's available, so the calculator doesn't quietly
+  // rely on a hardcoded figure that goes stale over time. Only applies while
+  // the user hasn't typed their own price — once they touch the field, their
+  // own number takes over and this stops overwriting it, including on a
+  // later Petrol/Diesel switch.
+  useEffect(() => {
+    if (fuelPriceTouched) return;
+    let cancelled = false;
+    fetchNationalAveragePrice(fuelType === 'diesel' ? 'Diesel' : 'U91')
+      .then((result) => {
+        if (cancelled || !result) return;
+        setFuelPrice(result.average.toFixed(2));
+        setFuelPriceIsLiveAvg(true);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [fuelType, fuelPriceTouched]);
+
+  const handleFuelPriceChange = (val) => {
+    setFuelPrice(val);
+    setFuelPriceTouched(true);
+    setFuelPriceIsLiveAvg(false);
+  };
 
   const vehicle = VEHICLE_TYPES.find(v => v.id === vehicleType) || VEHICLE_TYPES[1];
   const fuelConsumption = fuelType === 'diesel' ? vehicle.fuelConsumption * 0.85 : vehicle.fuelConsumption;
@@ -227,9 +259,10 @@ export default function EVvsFuelPage() {
             <InputField
               label="Fuel price ($/L)"
               value={fuelPrice}
-              onChange={setFuelPrice}
+              onChange={handleFuelPriceChange}
               step={0.01}
               theme={theme}
+              hint={fuelPriceIsLiveAvg ? 'Live national average' : null}
             />
             <InputField
               label="Home electricity ($/kWh)"
@@ -406,7 +439,7 @@ function ResultCard({ label, value, subtitle, color, theme, isDark, accentColor,
   );
 }
 
-function InputField({ label, value, onChange, step = 1, theme }) {
+function InputField({ label, value, onChange, step = 1, theme, hint }) {
   return (
     <div>
       <label className="text-[11px] block mb-1" style={{ color: theme.textMuted }}>
@@ -424,6 +457,9 @@ function InputField({ label, value, onChange, step = 1, theme }) {
           border: `1px solid ${theme.cardBorder}`,
         }}
       />
+      {hint && (
+        <p className="text-[10px] mt-1" style={{ color: theme.green }}>{hint}</p>
+      )}
     </div>
   );
 }
