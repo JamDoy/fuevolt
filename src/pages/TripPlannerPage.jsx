@@ -377,6 +377,77 @@ export default function TripPlannerPage({ initialTrip }) {
         </div>
       )}
 
+      {/* Map — sits directly under the trip-input card so the route is the
+          first thing shown once a trip is planned */}
+      {(route || evRoute) && !loading && (
+        <>
+          {fuelStops.length > 0 && mode === 'car' && (
+            <p className="text-[11px] text-center -mb-1" style={{ color: theme.textMuted }}>
+              Tap a fuel station on the map to select it as a stop, then update your route.
+            </p>
+          )}
+          <StationMap
+            stations={displayStations}
+            center={mapCenter}
+            selectedStation={null}
+            onStationSelect={toggleStopSelection}
+            selectedIds={selectedStopIds}
+            selectable={mode === 'car'}
+            type="fuel"
+            userLocation={startCoords}
+            endLocation={endCoords}
+            routePoints={displayRoutePoints}
+            showTraffic={true}
+          />
+
+          {mode === 'car' && (selectedStopIds.size > 0 || customRoute) && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={handleUpdateRoute}
+                disabled={!stopsNeedUpdate || updatingRoute}
+                className="px-5 py-2.5 rounded-xl text-sm font-bold cursor-pointer flex-1"
+                style={{
+                  background: stopsNeedUpdate
+                    ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`
+                    : theme.chipBg,
+                  color: stopsNeedUpdate ? '#0D2B5E' : theme.chipText,
+                  border: 'none',
+                  opacity: updatingRoute ? 0.6 : 1,
+                  transition: 'all 0.25s ease',
+                }}
+              >
+                {updatingRoute
+                  ? 'Updating Route...'
+                  : customRoute && !stopsNeedUpdate
+                    ? `Route updated (${customRouteStops.length} stop${customRouteStops.length > 1 ? 's' : ''})`
+                    : `Update Route (${selectedStopIds.size} stop${selectedStopIds.size !== 1 ? 's' : ''} selected)`}
+              </button>
+              <button
+                onClick={handleClearStops}
+                className="px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer flex-shrink-0"
+                style={{ background: 'none', border: `1px solid ${theme.chipBorder}`, color: theme.textMuted }}
+              >
+                Clear stops
+              </button>
+            </div>
+          )}
+
+          {routeUpdateError && (
+            <div
+              className="rounded-xl p-3 text-xs"
+              style={{ background: isDark ? 'rgba(255,100,100,0.08)' : 'rgba(239,68,68,0.06)', border: `1px solid ${theme.errorBorder}`, color: '#ef4444' }}
+            >
+              {routeUpdateError}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* TinyAdz banner */}
+      {(route || evRoute) && !loading && (
+        <div ta-ad-container="" className="w-full" />
+      )}
+
       {/* Route Summary */}
       {route && !loading && (
         <div className="flex items-center justify-between gap-3">
@@ -401,7 +472,7 @@ export default function TripPlannerPage({ initialTrip }) {
             <p className="text-2xl font-bold" style={{ color: theme.gold }}>{displayRoute.distanceKm}<span className="text-xs ml-1">km</span></p>
           </div>
           <div className="rounded-2xl p-4 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
-            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Travel Time</p>
+            <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Est. Travel Time</p>
             <p className="text-2xl font-bold" style={{ color: theme.green }}>
               {displayRoute.travelTimeMin >= 60
                 ? `${Math.floor(displayRoute.travelTimeMin / 60)}h ${displayRoute.travelTimeMin % 60}m`
@@ -433,8 +504,11 @@ export default function TripPlannerPage({ initialTrip }) {
       )}
 
       {/* Major traffic incidents only — closures, accidents, dangerous
-          conditions, flooding, or a 10+ minute delay */}
-      {route && !loading && majorTrafficIncidents.length > 0 && (
+          conditions, flooding, or a 10+ minute delay. Also gated on the
+          route itself reporting a delay, so this can never contradict the
+          "Traffic Delay: None" stat card above (e.g. an incident the route
+          already routes around). */}
+      {route && !loading && displayRoute.trafficDelayMin > 0 && majorTrafficIncidents.length > 0 && (
         <div
           className="rounded-2xl p-4"
           style={{ background: isDark ? 'rgba(239,68,68,0.08)' : 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.3)' }}
@@ -558,72 +632,6 @@ export default function TripPlannerPage({ initialTrip }) {
             ))}
           </div>
         </div>
-      )}
-
-
-      {/* Map */}
-      {(route || evRoute) && !loading && (
-        <>
-          {mode === 'car' && fuelStops.length > 0 && (
-            <p className="text-[11px] text-center -mb-1" style={{ color: theme.textMuted }}>
-              Tap a fuel station on the map to select it as a stop, then update your route.
-            </p>
-          )}
-          <StationMap
-            stations={displayStations}
-            center={mapCenter}
-            selectedStation={null}
-            onStationSelect={toggleStopSelection}
-            selectedIds={selectedStopIds}
-            selectable={mode === 'car'}
-            type="fuel"
-            userLocation={startCoords}
-            endLocation={endCoords}
-            routePoints={displayRoutePoints}
-            showTraffic={true}
-          />
-
-          {mode === 'car' && (selectedStopIds.size > 0 || customRoute) && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={handleUpdateRoute}
-                disabled={!stopsNeedUpdate || updatingRoute}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold cursor-pointer flex-1"
-                style={{
-                  background: stopsNeedUpdate
-                    ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`
-                    : theme.chipBg,
-                  color: stopsNeedUpdate ? '#0D2B5E' : theme.chipText,
-                  border: 'none',
-                  opacity: updatingRoute ? 0.6 : 1,
-                  transition: 'all 0.25s ease',
-                }}
-              >
-                {updatingRoute
-                  ? 'Updating Route...'
-                  : customRoute && !stopsNeedUpdate
-                    ? `Route updated (${customRouteStops.length} stop${customRouteStops.length > 1 ? 's' : ''})`
-                    : `Update Route (${selectedStopIds.size} stop${selectedStopIds.size !== 1 ? 's' : ''} selected)`}
-              </button>
-              <button
-                onClick={handleClearStops}
-                className="px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer flex-shrink-0"
-                style={{ background: 'none', border: `1px solid ${theme.chipBorder}`, color: theme.textMuted }}
-              >
-                Clear stops
-              </button>
-            </div>
-          )}
-
-          {routeUpdateError && (
-            <div
-              className="rounded-xl p-3 text-xs"
-              style={{ background: isDark ? 'rgba(255,100,100,0.08)' : 'rgba(239,68,68,0.06)', border: `1px solid ${theme.errorBorder}`, color: '#ef4444' }}
-            >
-              {routeUpdateError}
-            </div>
-          )}
-        </>
       )}
 
       {/* Car rental — DiscoverCars affiliate */}
