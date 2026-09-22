@@ -126,6 +126,7 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [loadingPrices, setLoadingPrices] = useState(true);
   const [heroVisible, setHeroVisible] = useState(true);
+  const [shareStatus, setShareStatus] = useState('');
   const heroRef = useRef(null);
   const freshness = getPriceFreshness(station.lastUpdated, station.priceDate, station.dataCheckedAt);
   const { points: routePoints } = useRouteToDestination(
@@ -382,6 +383,7 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
               <span>&middot;</span>
               <button type="button" onClick={handleCopyAddress} className="cursor-pointer" style={{ background: 'none', border: 'none', color: theme.textMuted, fontSize: '12px' }}>Copy address</button>
             </div>
+            {shareStatus && <p className="text-center text-xs mt-2" style={{ color: theme.textMuted }}>{shareStatus}</p>}
           </div>
         </Section>
 
