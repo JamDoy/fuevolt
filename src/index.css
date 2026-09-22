@@ -38,6 +38,25 @@
   transform: scale(1.15);
 }
 
+.fuel-type-btn {
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+.fuel-type-btn.is-active {
+  transform: scale(1.05);
+}
+
+.fuel-type-btn:active {
+  transform: scale(0.95);
+}
+
+.fuel-type-btn:hover,
+.fuel-type-btn:focus-visible {
+  transform: scale(1.15);
+}
+
 .price-digital-glow {
   animation: priceDigitalGlow 2s ease-in-out infinite;
 }

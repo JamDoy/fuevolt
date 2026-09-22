@@ -290,6 +290,8 @@ export default function FuelPricePage({
       resultSuburb: locationName || searchLabel || initialSuburb?.name || '',
       resultFuelType: fuelType,
       resultAlternatives: nearby,
+      userLat: searchCoords?.lat ?? null,
+      userLng: searchCoords?.lng ?? null,
     });
   };
 

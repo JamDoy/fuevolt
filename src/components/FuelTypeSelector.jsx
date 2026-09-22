@@ -42,14 +42,13 @@ export default function FuelTypeSelector({ value, onChange, options = FUEL_TYPES
             key={ft.id}
             type="button"
             onClick={() => onChange(ft.id)}
-            className={`flex items-center gap-1.5 font-semibold cursor-pointer active:scale-95 ${sizeClasses}`}
+            className={`fuel-type-btn flex items-center gap-1.5 font-semibold cursor-pointer ${active ? 'is-active' : ''} ${sizeClasses}`}
             style={{
-              transition: 'all 0.2s ease',
+              transition: 'background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease',
               border: `1px solid ${active ? ft.color : ft.color + '33'}`,
               background: active ? ft.color : ft.color + '14',
               color: active ? (ft.activeText || '#FFFFFF') : (ft.mutedText ? theme.text : ft.color),
               boxShadow: active ? `0 0 14px ${ft.color}66` : 'none',
-              transform: active ? 'scale(1.05)' : 'scale(1)',
             }}
           >
             <FuelTypeIcon />

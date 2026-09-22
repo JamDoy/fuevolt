@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
 import { fetchStationDetails, fetchAllFuelPricesForStation } from '../utils/stationDetails';
 import { recordPriceSnapshot, getPriceTrend } from '../utils/priceHistory';
 import TouchableMap from '../components/TouchableMap';
+import { useRouteToDestination, FitRouteBounds, carStartIcon, ROUTE_COLOR } from '../utils/routeMap';
 import BrandBadge from '../components/BrandBadge';
 import FuelReminderCard from '../components/FuelReminderCard';
 import DigitalPrice from '../components/DigitalPrice';
@@ -127,6 +128,10 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
   const [heroVisible, setHeroVisible] = useState(true);
   const heroRef = useRef(null);
   const freshness = getPriceFreshness(station.lastUpdated, station.priceDate, station.dataCheckedAt);
+  const { points: routePoints } = useRouteToDestination(
+    station.userLat, station.userLng, station.latitude, station.longitude
+  );
+  const hasUserLocation = station.userLat != null && station.userLng != null;
 
   useEffect(() => {
     let cancelled = false;
@@ -501,6 +506,26 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
+                  {hasUserLocation && (
+                    <>
+                      <FitRouteBounds
+                        start={[station.userLat, station.userLng]}
+                        end={[station.latitude, station.longitude]}
+                        points={routePoints}
+                      />
+                      <Polyline
+                        positions={routePoints || [[station.userLat, station.userLng], [station.latitude, station.longitude]]}
+                        pathOptions={{ color: ROUTE_COLOR, weight: 5, opacity: 0.9 }}
+                      />
+                      <Marker position={[station.userLat, station.userLng]} icon={carStartIcon}>
+                        <Popup>
+                          <div style={{ color: '#1a1a1a' }}>
+                            <strong style={{ color: ROUTE_COLOR }}>Your location</strong>
+                          </div>
+                        </Popup>
+                      </Marker>
+                    </>
+                  )}
                   <Marker position={[station.latitude, station.longitude]} icon={goldPin}>
                     <Popup>
                       <div style={{ color: '#1a1a1a' }}>
@@ -536,8 +561,8 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                         key={alt.id}
                         role="button"
                         tabIndex={0}
-                        onClick={() => onStationDetail?.(alt)}
-                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onStationDetail?.(alt); }}
+                        onClick={() => onStationDetail?.({ ...alt, userLat: station.userLat, userLng: station.userLng })}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onStationDetail?.({ ...alt, userLat: station.userLat, userLng: station.userLng }); }}
                         className="flex items-center justify-between mb-2 cursor-pointer alt-station-row"
                         style={{ background: theme.mode === 'dark' ? 'rgba(255,255,255,0.04)' : '#F9FAFB', borderRadius: '12px', padding: '12px 14px' }}
                       >
@@ -600,7 +625,7 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                       height: '32px',
                       minWidth: '36px',
                       padding: '0 8px',
-                      background: isToday ? '#22C55E' : isBest ? '#0D2B5E' : theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : '#F9FAFB',
+                      background: isToday || isBest ? '#22C55E' : theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : '#F9FAFB',
                       color: isToday || isBest ? '#FFFFFF' : theme.textMuted,
                     }}
                   >
@@ -609,9 +634,6 @@ export default function FuelStationDetailPage({ station, onBack, onStationDetail
                 );
               })}
             </div>
-            {advice.bestDays.length > 0 && (
-              <p className="text-[11px] mt-1.5" style={{ color: theme.textMuted }}>Navy = best days &middot; Green = today</p>
-            )}
             <p className="text-[11px] mt-3" style={{ color: theme.textMuted }}>
               Based on historical Australian fuel price cycles. Actual prices vary.
             </p>

@@ -268,6 +268,8 @@ export default function EVChargingPage({ initialSuburb, initialSearch, onStation
       resultTotal: distanceRankedStations.length,
       resultSuburb: locationName || searchLabel || initialSuburb?.name || '',
       resultAlternatives: nearby,
+      userLat: mapCenter?.[0] ?? null,
+      userLng: mapCenter?.[1] ?? null,
     });
   };
 

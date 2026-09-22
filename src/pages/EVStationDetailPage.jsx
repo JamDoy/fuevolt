@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTheme } from '../contexts/ThemeContext';
@@ -7,6 +7,7 @@ import TouchableMap from '../components/TouchableMap';
 import BrandBadge from '../components/BrandBadge';
 import { findChargingParkId, fetchEVAvailability } from '../utils/tomtom';
 import { normalizeEVOperatorName } from '../utils/brandNames';
+import { useRouteToDestination, FitRouteBounds, carStartIcon, ROUTE_COLOR } from '../utils/routeMap';
 
 const greenPin = new L.DivIcon({
   className: 'custom-marker',
@@ -63,6 +64,8 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
   const info = station.AddressInfo || {};
   const lat = info.Latitude;
   const lng = info.Longitude;
+  const { points: routePoints } = useRouteToDestination(station.userLat, station.userLng, lat, lng);
+  const hasUserLocation = station.userLat != null && station.userLng != null;
 
   useEffect(() => {
     setLiveAvailability(null);
@@ -366,6 +369,22 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
                 <MapContainer center={[lat, lng]} zoom={16} style={{ height: '260px', width: '100%' }} scrollWheelZoom={false} dragging={false}>
                   {interactionController}
                   <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  {hasUserLocation && (
+                    <>
+                      <FitRouteBounds start={[station.userLat, station.userLng]} end={[lat, lng]} points={routePoints} />
+                      <Polyline
+                        positions={routePoints || [[station.userLat, station.userLng], [lat, lng]]}
+                        pathOptions={{ color: ROUTE_COLOR, weight: 5, opacity: 0.9 }}
+                      />
+                      <Marker position={[station.userLat, station.userLng]} icon={carStartIcon}>
+                        <Popup>
+                          <div style={{ color: '#1a1a1a' }}>
+                            <strong style={{ color: ROUTE_COLOR }}>Your location</strong>
+                          </div>
+                        </Popup>
+                      </Marker>
+                    </>
+                  )}
                   <Marker position={[lat, lng]} icon={greenPin}>
                     <Popup>
                       <div style={{ color: '#1a1a1a' }}>
@@ -402,8 +421,8 @@ export default function EVStationDetailPage({ station, onBack, onStationDetail }
                         key={alt.ID}
                         role="button"
                         tabIndex={0}
-                        onClick={() => onStationDetail?.(alt)}
-                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onStationDetail?.(alt); }}
+                        onClick={() => onStationDetail?.({ ...alt, userLat: station.userLat, userLng: station.userLng })}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onStationDetail?.({ ...alt, userLat: station.userLat, userLng: station.userLng }); }}
                         className="flex items-center justify-between mb-2 cursor-pointer alt-station-row"
                         style={{ background: theme.mode === 'dark' ? 'rgba(255,255,255,0.04)' : '#F9FAFB', borderRadius: '12px', padding: '12px 14px' }}
                       >
