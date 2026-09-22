@@ -29,7 +29,12 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
   const [hasSearched, setHasSearched] = useState(false);
   const [locationLabel, setLocationLabel] = useState('');
   const [lastCoords, setLastCoords] = useState(null);
-  const [nationalLoading, setNationalLoading] = useState(false);
+  // Starts true (not false) whenever there's no initial suburb search, so the
+  // very first paint already shows the shimmer instead of a brief flash of
+  // the "loaded" branch with placeholder/zero data before the effect below
+  // gets a chance to call setNationalLoading(true) itself.
+  const hasInitialSearch = Number.isFinite(initialSearch?.lat) && Number.isFinite(initialSearch?.lng);
+  const [nationalLoading, setNationalLoading] = useState(!hasInitialSearch);
   const [nationalPrices, setNationalPrices] = useState({ U91: null, Diesel: null });
 
   const runSearch = async (lat, lng, type, label) => {
@@ -252,6 +257,9 @@ export default function TrendsPage({ onStationDetail, onGoHome, initialSearch })
           </p>
           {nationalLoading && (
             <div className="flex flex-col gap-3">
+              <p className="text-xs" style={{ color: theme.textMuted }}>
+                Checking live prices across major cities Australia-wide — this can take up to 10 seconds&hellip;
+              </p>
               <ShimmerCard />
               <ShimmerCard />
             </div>
