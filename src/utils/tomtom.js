@@ -1,3 +1,5 @@
+import { distanceToPolylineKm, sampleRouteByDistance } from './routeGeometry';
+
 const TOMTOM_KEY = 'ifJYQYlpFE1PVrOY9yhoXrjxN2UPN4Kd';
 const BASE = 'https://api.tomtom.com';
 
@@ -69,58 +71,57 @@ export async function autocompleteSearch(query) {
 }
 
 // --- Search along route (fuel stations / EV chargers near route points) ---
-export async function searchAlongRoute(routePoints, category = '7311', maxResults = 20) {
+// Samples up to 40 points evenly spaced by distance along the route (not
+// array index, which clumps on winding roads), each with a wide enough
+// search radius that consecutive circles overlap along the whole route —
+// then strictly filters the combined results down to `corridorKm` of the
+// actual route path, so what's returned is genuinely "along the route"
+// rather than just near one of the sample points.
+export async function searchAlongRoute(routePoints, category = '7311', corridorKm = 1) {
   if (!routePoints || routePoints.length < 2) return [];
 
-  // Sample points along the route at regular intervals
-  const totalPoints = routePoints.length;
-  const sampleCount = Math.min(8, Math.ceil(totalPoints / 30));
-  const step = Math.max(1, Math.floor(totalPoints / (sampleCount + 1)));
-  const sampleIndices = [];
-  for (let i = step; i < totalPoints - 1; i += step) {
-    sampleIndices.push(i);
-    if (sampleIndices.length >= sampleCount) break;
-  }
-
+  const SAMPLE_RADIUS_M = 15000;
   const seen = new Set();
-  const allResults = [];
+  const candidates = [];
 
-  for (const idx of sampleIndices) {
+  const jobs = sampleRouteByDistance(routePoints, 40).map(async (idx) => {
     const [lat, lng] = routePoints[idx];
     const params = new URLSearchParams({
       key: TOMTOM_KEY,
       lat: lat.toString(),
       lon: lng.toString(),
-      radius: '10000',
+      radius: String(SAMPLE_RADIUS_M),
       categorySet: category,
-      limit: '10',
+      limit: '20',
     });
     try {
       const res = await fetch(`${BASE}/search/2/nearbySearch/.json?${params}`);
-      if (!res.ok) continue;
+      if (!res.ok) return;
       const data = await res.json();
       for (const r of (data.results || [])) {
-        if (seen.has(r.id)) continue;
+        if (seen.has(r.id) || r.position?.lat == null || r.position?.lon == null) continue;
         seen.add(r.id);
-        allResults.push({
+        candidates.push({
           id: r.id,
           name: r.poi?.name || 'Station',
           brand: r.poi?.brands?.[0]?.name || '',
           address: r.address?.freeformAddress || '',
-          latitude: r.position?.lat,
-          longitude: r.position?.lon,
+          latitude: r.position.lat,
+          longitude: r.position.lon,
           phone: r.poi?.phone || '',
           categories: r.poi?.categories || [],
-          distance: r.dist ? (r.dist / 1000).toFixed(1) : '—',
           chargingParkId: r.dataSources?.chargingAvailability?.id || null,
         });
       }
     } catch {
       // continue with next sample point
     }
-  }
+  });
+  await Promise.all(jobs);
 
-  return allResults.slice(0, maxResults);
+  return candidates
+    .filter((s) => distanceToPolylineKm([s.latitude, s.longitude], routePoints) <= corridorKm)
+    .map((s) => ({ ...s, distance: distanceToPolylineKm([s.latitude, s.longitude], routePoints).toFixed(1) }));
 }
 
 // --- Search (fuel stations via TomTom POI search) ---

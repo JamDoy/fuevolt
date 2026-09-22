@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { geocode as tomtomGeocode } from './tomtom';
 import { normalizeBrandName, extractBrandFromStationName, resolveOsmFuelBrand } from './brandNames';
+import { distanceToPolylineKm, sampleRouteByDistance } from './routeGeometry';
 
 // Routed through public/api/ev-charge.php rather than called directly from
 // the browser — that endpoint caches responses server-side (shared across
@@ -520,50 +521,89 @@ export async function fetchFuelPrices({ latitude, longitude, fuelType = 'U91', r
   });
 }
 
-// Samples several points along a route polyline and fetches real government
-// fuel prices at each (falling back to location-only OSM data where no
-// state feed covers it, same as fetchFuelPrices always has) — used to power
-// both the "stations along this route" list and the cheapest-stop picker in
-// Trip Planner, so every station shown has real pricing where available
-// instead of just a bare location from TomTom's place database.
-export async function fetchFuelPricesAlongRoute(routePoints, fuelType = 'U91', maxResults = 30) {
+// Finds every real fuel station within `corridorKm` of the actual route
+// path — not just near a handful of sample points — for Trip Planner's
+// "stations along this route" map and list.
+//
+// QLD, VIC and WA's feeds return their ENTIRE state regardless of the
+// radius passed in (confirmed by reading fetchQLDFuelPrices/VICFuelPrices/
+// WAFuelPrices above — each fetches everything and filters client-side), so
+// for those states one call each covers the whole route with no sampling
+// needed. NSW/ACT/TAS (via FuelCheck) and NT genuinely filter server-side by
+// radius, so those are covered by sampling along the route with overlapping
+// search circles, capped so a long route doesn't trigger unbounded calls.
+//
+// Either way, `distanceToPolylineKm` below is what actually enforces the
+// corridor — the searches above are deliberately a superset.
+export async function fetchFuelPricesAlongRoute(routePoints, fuelType = 'U91', corridorKm = 1) {
   if (!routePoints || routePoints.length < 2) return [];
 
-  const totalPoints = routePoints.length;
-  const sampleCount = Math.min(8, Math.ceil(totalPoints / 30));
-  const step = Math.max(1, Math.floor(totalPoints / (sampleCount + 1)));
-  const sampleIndices = [];
-  for (let i = step; i < totalPoints - 1; i += step) {
-    sampleIndices.push(i);
-    if (sampleIndices.length >= sampleCount) break;
+  const statesSeen = new Set();
+  for (const i of sampleRouteByDistance(routePoints, 20)) {
+    const s = detectState(routePoints[i][0], routePoints[i][1]);
+    if (s) statesSeen.add(s);
   }
 
   const seen = new Set();
-  const allResults = [];
-
-  for (const idx of sampleIndices) {
-    const [lat, lng] = routePoints[idx];
-    try {
-      const stations = await fetchFuelPrices({ latitude: lat, longitude: lng, fuelType, radius: 10 });
-      for (const s of stations) {
-        const key = s.id || `${s.latitude},${s.longitude}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        allResults.push(s);
-      }
-    } catch {
-      // continue with the next sample point
+  const candidates = [];
+  const addAll = (list) => {
+    if (!list) return;
+    for (const s of list) {
+      if (s.latitude == null || s.longitude == null) continue;
+      const key = s.id || `${s.latitude},${s.longitude}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      candidates.push(s);
     }
+  };
+
+  const [midLat, midLng] = routePoints[Math.floor(routePoints.length / 2)];
+  const WHOLE_STATE_RADIUS = 3000; // effectively unlimited within one state
+
+  // QLD/VIC/WA's feeds return their entire state regardless of radius, so
+  // one call each is far cheaper than sampling. If a state's whole-state
+  // fetch comes back empty (feed outage, etc.), fall back to sampling that
+  // state below via fetchFuelPrices, which has its own OSM-location
+  // fallback built in — so a station list still appears even if a
+  // particular government feed is unavailable.
+  const wholeStateFetchers = { QLD: fetchQLDFuelPrices, VIC: fetchVICFuelPrices, WA: fetchWAFuelPrices };
+  const wholeStateStates = Object.keys(wholeStateFetchers).filter((s) => statesSeen.has(s));
+  const wholeStateResults = await Promise.all(
+    wholeStateStates.map((s) => wholeStateFetchers[s](midLat, midLng, fuelType, WHOLE_STATE_RADIUS).catch(() => null))
+  );
+
+  const statesNeedingSampling = new Set(['NSW', 'ACT', 'TAS', 'NT'].filter((s) => statesSeen.has(s)));
+  wholeStateStates.forEach((s, i) => {
+    const result = wholeStateResults[i];
+    if (result && result.length > 0) addAll(result);
+    else statesNeedingSampling.add(s);
+  });
+
+  if (statesNeedingSampling.size > 0) {
+    const SAMPLE_RADIUS_KM = 15;
+    const sampleIndices = sampleRouteByDistance(routePoints, 20).filter((i) => {
+      const st = detectState(routePoints[i][0], routePoints[i][1]);
+      return st && statesNeedingSampling.has(st);
+    });
+    const sampledResults = await Promise.all(
+      sampleIndices.map((i) => {
+        const [lat, lng] = routePoints[i];
+        return fetchFuelPrices({ latitude: lat, longitude: lng, fuelType, radius: SAMPLE_RADIUS_KM }).catch(() => []);
+      })
+    );
+    sampledResults.forEach(addAll);
   }
 
-  allResults.sort((a, b) => {
+  const onCorridor = candidates.filter(
+    (s) => distanceToPolylineKm([s.latitude, s.longitude], routePoints) <= corridorKm
+  );
+
+  return onCorridor.sort((a, b) => {
     if (a.price == null && b.price == null) return 0;
     if (a.price == null) return 1;
     if (b.price == null) return -1;
     return a.price - b.price;
   });
-
-  return allResults.slice(0, maxResults);
 }
 
 function detectState(lat, lng) {
@@ -652,6 +692,11 @@ async function fetchRealFuelStations(lat, lng, radius, fuelType, state) {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `data=${encodeURIComponent(query)}`,
+      // Overpass is a single shared public server — a caller sampling many
+      // points along a route (e.g. Trip Planner's along-route search) could
+      // otherwise queue behind its own 10s server-side timeout many times
+      // over with no client-side cap at all.
+      signal: AbortSignal.timeout(12000),
     });
     if (!response.ok) return null;
     const data = await response.json();
