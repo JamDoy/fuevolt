@@ -178,7 +178,10 @@ export default function FuelPricePage({
       onSharedStationOpened?.();
       onStationDetail(match);
     }
-  }, [stations, initialSearch, onStationDetail]);
+    // Safe to omit exhaustive checks here: openedSharedStationRef latches
+    // permanently on first match, so a re-run from a new onStationDetail/
+    // onSharedStationOpened reference just bails immediately, never loops.
+  }, [stations, initialSearch, onStationDetail, onSharedStationOpened]);
 
   useEffect(() => {
     if (!autoLocation || initialSuburb || mapCenter || initialSearch) return undefined;

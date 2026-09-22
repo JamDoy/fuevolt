@@ -181,6 +181,10 @@ function MapMoveDetector({ onMoved, originalCenter }) {
 // embedded within the map rather than floating over surrounding page content.
 function SearchAreaControl({ visible, onClick, theme }) {
   const map = useMap();
+  // A DOM handle for Leaflet's imperative control API — useState here only
+  // for its lazy-initializer form (create the element once); its own DOM
+  // properties are mutated directly below, which is normal for a raw node
+  // handle like this, not React state.
   const [container] = useState(() => {
     const div = L.DomUtil.create('div', 'leaflet-control search-area-control');
     div.style.marginBottom = '18px';

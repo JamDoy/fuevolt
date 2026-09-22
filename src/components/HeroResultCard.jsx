@@ -41,6 +41,15 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
   const context = getPriceContext(cheapest.price, avgPrice);
   const badge = context ? BADGE_STYLES[context] : null;
 
+  const startExit = () => {
+    if (phase !== 'expanded') return;
+    setPhase('exiting');
+    exitTimerRef.current = window.setTimeout(() => {
+      setPhase('compact');
+      window.requestAnimationFrame(() => compactRef.current?.focus());
+    }, EXIT_MS);
+  };
+
   useEffect(() => {
     if (phase === 'compact') return undefined;
     document.body.style.overflow = 'hidden';
@@ -70,15 +79,6 @@ export default function HeroResultCard({ cheapest, avgPrice, savings, freshness,
   useEffect(() => () => {
     if (exitTimerRef.current) window.clearTimeout(exitTimerRef.current);
   }, []);
-
-  const startExit = () => {
-    if (phase !== 'expanded') return;
-    setPhase('exiting');
-    exitTimerRef.current = window.setTimeout(() => {
-      setPhase('compact');
-      window.requestAnimationFrame(() => compactRef.current?.focus());
-    }, EXIT_MS);
-  };
 
   if (phase === 'compact') {
     return (

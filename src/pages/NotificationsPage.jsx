@@ -145,13 +145,6 @@ export default function NotificationsPage({ onCheckNow }) {
   const [toast, setToast] = useState('');
   const toastTimer = useRef(null);
 
-  useEffect(() => {
-    setNotifications(getNotifications());
-    setPrefs(getNotifPrefs());
-    setGeofences(getSavedGeofences());
-    refreshReminderState();
-  }, []);
-
   const refreshReminderState = () => {
     setReminderEnabledState(isReminderEnabled());
     const daysStr = String(getReminderDays());
@@ -169,6 +162,13 @@ export default function NotificationsPage({ onCheckNow }) {
     setAllOffState(getAllNotificationsOff());
     setLastVisitState(getLastVisit());
   };
+
+  useEffect(() => {
+    setNotifications(getNotifications());
+    setPrefs(getNotifPrefs());
+    setGeofences(getSavedGeofences());
+    refreshReminderState();
+  }, []);
 
   const showToast = (msg) => {
     setToast(msg);

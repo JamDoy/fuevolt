@@ -295,21 +295,6 @@ export async function calculateEVRoute(startLat, startLng, endLat, endLng, evOpt
   const currentCharge = evOptions.currentChargeKWh || battery * 0.8;
   const consumption = evOptions.consumptionKWhPer100km || 15;
 
-  const body = {
-    origins: [{ point: { latitude: startLat, longitude: startLng } }],
-    destinations: [{ point: { latitude: endLat, longitude: endLng } }],
-    options: {
-      routeType: 'fastest',
-      traffic: 'live',
-      travelMode: 'car',
-      vehicleEngineType: 'electric',
-      constantSpeedConsumptionInkWhPerHundredkm: `${consumption}`,
-      currentChargeInkWh: currentCharge.toString(),
-      maxChargeInkWh: battery.toString(),
-      minChargeAtDestinationInkWh: (battery * 0.1).toString(),
-    },
-  };
-
   try {
     const res = await fetch(
       `${BASE}/routing/1/calculateRoute/${startLat},${startLng}:${endLat},${endLng}/json?key=${TOMTOM_KEY}&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=0,${consumption}:100,${consumption}&currentChargeInkWh=${currentCharge}&maxChargeInkWh=${battery}&traffic=true&routeType=fastest`

@@ -123,7 +123,7 @@ export default function TripPlannerPage({ initialTrip }) {
           const numRange = Number(vehicleRange) || 400;
           const rangeKm = numRange * (numCharge / 100);
           if (distKm > rangeKm) {
-            const plan = buildChargingPlan(routeData.points, chargers, rangeKm, numRange, distKm);
+            const plan = buildChargingPlan(routeData.points, chargers, rangeKm, numRange);
             setChargingPlan(plan);
           }
         }
@@ -858,14 +858,12 @@ export default function TripPlannerPage({ initialTrip }) {
 }
 
 
-function buildChargingPlan(routePoints, chargers, currentRangeKm, fullRangeKm, totalDistKm) {
+function buildChargingPlan(routePoints, chargers, currentRangeKm, fullRangeKm) {
   if (!chargers.length || !routePoints.length) return [];
 
   const plan = [];
   let remainingRange = currentRangeKm;
   let distanceCovered = 0;
-  const pointDistances = computePointDistances(routePoints);
-  const totalRouteDist = pointDistances[pointDistances.length - 1] || totalDistKm;
 
   // Find charging stops when range gets low (below 15%)
   const lowThreshold = fullRangeKm * 0.15;
@@ -901,14 +899,6 @@ function buildChargingPlan(routePoints, chargers, currentRangeKm, fullRangeKm, t
   }
 
   return plan;
-}
-
-function computePointDistances(points) {
-  const distances = [0];
-  for (let i = 1; i < points.length; i++) {
-    distances.push(distances[i - 1] + haversine(points[i - 1], points[i]));
-  }
-  return distances;
 }
 
 // Builds a Google Maps directions URL — opens in the Maps app on mobile or

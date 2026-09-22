@@ -102,7 +102,7 @@ export function ThemeProvider({ children }) {
   });
 
   useEffect(() => {
-    try { localStorage.setItem('fuevolt_theme', mode); } catch {}
+    try { localStorage.setItem('fuevolt_theme', mode); } catch { /* private browsing etc. — theme just won't persist */ }
     document.body.style.background = mode === 'dark' ? DARK.bg : LIGHT.bg;
     document.body.style.color = mode === 'dark' ? DARK.text : LIGHT.text;
   }, [mode]);
