@@ -238,6 +238,8 @@ export default function TripPlannerPage({ initialTrip }) {
   const stopsNeedUpdate = mode === 'car' && selectedStopIds.size > 0
     && (!customRoute || customRouteStops.length !== selectedStopIds.size
       || !customRouteStops.every((s) => selectedStopIds.has(s.id)));
+  // Whether the top button should act as "Update Route" instead of "Plan My Trip"
+  const hasStopSelection = mode === 'car' && (selectedStopIds.size > 0 || !!customRoute);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
@@ -340,22 +342,50 @@ export default function TripPlannerPage({ initialTrip }) {
           </div>
         )}
 
-        <button
-          onClick={handlePlanTrip}
-          disabled={loading}
-          className="w-full px-6 py-3 rounded-xl text-sm font-bold cursor-pointer"
-          style={{
-            background: mode === 'ev'
-              ? `linear-gradient(135deg, ${theme.greenDark}, ${theme.green})`
-              : `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`,
-            color: mode === 'ev' ? '#fff' : '#0D2B5E',
-            border: 'none',
-            opacity: loading ? 0.6 : 1,
-            transition: 'all 0.25s ease',
-          }}
-        >
-          {loading ? 'Calculating Route...' : 'Plan My Trip'}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={hasStopSelection ? handleUpdateRoute : handlePlanTrip}
+            disabled={hasStopSelection ? (!stopsNeedUpdate || updatingRoute) : loading}
+            className="flex-1 px-6 py-3 rounded-xl text-sm font-bold cursor-pointer"
+            style={{
+              background: hasStopSelection
+                ? (stopsNeedUpdate ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})` : theme.chipBg)
+                : (mode === 'ev' ? `linear-gradient(135deg, ${theme.greenDark}, ${theme.green})` : `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`),
+              color: hasStopSelection
+                ? (stopsNeedUpdate ? '#0D2B5E' : theme.chipText)
+                : (mode === 'ev' ? '#fff' : '#0D2B5E'),
+              border: 'none',
+              opacity: (hasStopSelection ? updatingRoute : loading) ? 0.6 : 1,
+              transition: 'all 0.25s ease',
+            }}
+          >
+            {hasStopSelection
+              ? (updatingRoute
+                ? 'Updating Route...'
+                : customRoute && !stopsNeedUpdate
+                  ? `Route updated (${customRouteStops.length} stop${customRouteStops.length > 1 ? 's' : ''})`
+                  : `Update Route (${selectedStopIds.size} stop${selectedStopIds.size !== 1 ? 's' : ''} selected)`)
+              : (loading ? 'Calculating Route...' : 'Plan My Trip')}
+          </button>
+          {hasStopSelection && (
+            <button
+              onClick={handleClearStops}
+              className="px-4 py-3 rounded-xl text-sm font-semibold cursor-pointer flex-shrink-0"
+              style={{ background: 'none', border: `1px solid ${theme.chipBorder}`, color: theme.textMuted }}
+            >
+              Clear stops
+            </button>
+          )}
+        </div>
+
+        {routeUpdateError && (
+          <div
+            className="rounded-xl p-3 text-xs"
+            style={{ background: isDark ? 'rgba(255,100,100,0.08)' : 'rgba(239,68,68,0.06)', border: `1px solid ${theme.errorBorder}`, color: '#ef4444' }}
+          >
+            {routeUpdateError}
+          </div>
+        )}
       </div>
 
       {error && (
@@ -399,47 +429,6 @@ export default function TripPlannerPage({ initialTrip }) {
             routePoints={displayRoutePoints}
             showTraffic={true}
           />
-
-          {mode === 'car' && (selectedStopIds.size > 0 || customRoute) && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={handleUpdateRoute}
-                disabled={!stopsNeedUpdate || updatingRoute}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold cursor-pointer flex-1"
-                style={{
-                  background: stopsNeedUpdate
-                    ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`
-                    : theme.chipBg,
-                  color: stopsNeedUpdate ? '#0D2B5E' : theme.chipText,
-                  border: 'none',
-                  opacity: updatingRoute ? 0.6 : 1,
-                  transition: 'all 0.25s ease',
-                }}
-              >
-                {updatingRoute
-                  ? 'Updating Route...'
-                  : customRoute && !stopsNeedUpdate
-                    ? `Route updated (${customRouteStops.length} stop${customRouteStops.length > 1 ? 's' : ''})`
-                    : `Update Route (${selectedStopIds.size} stop${selectedStopIds.size !== 1 ? 's' : ''} selected)`}
-              </button>
-              <button
-                onClick={handleClearStops}
-                className="px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer flex-shrink-0"
-                style={{ background: 'none', border: `1px solid ${theme.chipBorder}`, color: theme.textMuted }}
-              >
-                Clear stops
-              </button>
-            </div>
-          )}
-
-          {routeUpdateError && (
-            <div
-              className="rounded-xl p-3 text-xs"
-              style={{ background: isDark ? 'rgba(255,100,100,0.08)' : 'rgba(239,68,68,0.06)', border: `1px solid ${theme.errorBorder}`, color: '#ef4444' }}
-            >
-              {routeUpdateError}
-            </div>
-          )}
         </>
       )}
 
