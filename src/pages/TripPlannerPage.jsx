@@ -386,7 +386,7 @@ export default function TripPlannerPage({ initialTrip }) {
           <button
             onClick={hasStopSelection ? handleUpdateRoute : handlePlanTrip}
             disabled={hasStopSelection ? (!stopsNeedUpdate || updatingRoute) : loading}
-            className="flex-1 px-6 py-3 rounded-xl text-sm font-bold cursor-pointer"
+            className="flex-1 px-5 py-2 rounded-xl text-sm font-bold cursor-pointer"
             style={{
               background: hasStopSelection
                 ? (stopsNeedUpdate ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})` : theme.chipBg)
@@ -410,7 +410,7 @@ export default function TripPlannerPage({ initialTrip }) {
           {hasStopSelection && (
             <button
               onClick={handleClearStops}
-              className="px-4 py-3 rounded-xl text-sm font-semibold cursor-pointer flex-shrink-0"
+              className="px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer flex-shrink-0"
               style={{ background: 'none', border: `1px solid ${theme.chipBorder}`, color: theme.textMuted }}
             >
               Clear stops
@@ -572,8 +572,9 @@ export default function TripPlannerPage({ initialTrip }) {
         </a>
       )}
 
-      {/* EV Route Summary */}
-      {evRoute && !loading && (
+      {/* EV Route Summary — only in Electric Vehicle mode, so a stale
+          forecast from before switching modes doesn't linger on screen */}
+      {evRoute && mode === 'ev' && !loading && (
         <div
           className="rounded-2xl p-5"
           style={{
@@ -634,7 +635,7 @@ export default function TripPlannerPage({ initialTrip }) {
       )}
 
       {/* Charging plan for EV */}
-      {chargingPlan.length > 0 && !loading && (
+      {chargingPlan.length > 0 && mode === 'ev' && !loading && (
         <div>
           <h3 className="text-sm font-semibold mb-3" style={{ color: theme.green }}>
             Recommended Charging Stops
