@@ -234,6 +234,7 @@ export default function StationMap({
   onStationSelect,
   onStationDetail,
   type = 'ev',
+  iconType = null,
   routePoints = null,
   altRoutePoints = null,
   userLocation = null,
@@ -242,6 +243,7 @@ export default function StationMap({
   selectable = false,
   onSearchArea = null,
   cheapestStationId = null,
+  fuelTypeLabel = null,
 }) {
   const { theme } = useTheme();
   const defaultCenter = [-33.8688, 151.2093];
@@ -260,9 +262,15 @@ export default function StationMap({
     setShowSearchBtn(false);
   }, [mapRef, onSearchArea]);
 
+  // `iconType` picks the marker glyph independently of `type` (which governs
+  // how each station's fields are read — flat lat/lng vs OCM's nested
+  // AddressInfo shape). Trip Planner needs this split: its stops are always
+  // in the flat shape (type="fuel") even when they're EV chargers, but the
+  // markers should still look like the EV Charging page's ones.
+  const resolvedIconType = iconType || type;
   const getIcon = (station) => {
-    if (type !== 'fuel') return evBoltIcon;
     if (selectedIds?.has(station.id)) return selectedFuelIcon;
+    if (resolvedIconType !== 'fuel') return evBoltIcon;
     if (cheapestStationId != null && station.id === cheapestStationId) return cheapestFuelIcon;
     return fuelIcon;
   };
@@ -382,7 +390,9 @@ export default function StationMap({
                       <>
                         <br />
                         <span style={{ color: '#16a34a', fontWeight: 'bold' }}>
-                          {station.price != null ? `${(station.price * 100).toFixed(1)}¢/L` : 'No price data'}
+                          {station.price != null
+                            ? `${fuelTypeLabel ? `${fuelTypeLabel}: ` : ''}${(station.price * 100).toFixed(1)}¢/L`
+                            : fuelTypeLabel ? `${fuelTypeLabel}: No price data` : 'No price data'}
                         </span>
                         {station.driveTime && (
                           <>

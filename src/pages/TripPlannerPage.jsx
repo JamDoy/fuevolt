@@ -8,6 +8,20 @@ import useAutoLocation from '../hooks/useAutoLocation';
 import { calculateRoute, calculateRouteWithStops, calculateEVRoute, searchAlongRoute, getTrafficIncidentsAlongRoute } from '../utils/tomtom';
 import ShareMenu from '../components/ShareMenu';
 import { buildTripShareUrl } from '../utils/shareLinks';
+import FuelTypeSelector, { FUEL_TYPES } from '../components/FuelTypeSelector';
+
+// A purely illustrative Sydney → Canberra route (real town coordinates, no
+// live API call) shown in the empty state before a real trip is planned, so
+// first-time visitors see what the finished map looks like.
+const EXAMPLE_ROUTE_POINTS = [
+  [-33.8688, 151.2093], // Sydney
+  [-34.0710, 150.8142], // Campbelltown
+  [-34.4504, 150.4477], // Mittagong
+  [-34.7549, 149.7178], // Goulburn
+  [-35.2809, 149.1300], // Canberra
+];
+const EXAMPLE_START = { latitude: -33.8688, longitude: 151.2093 };
+const EXAMPLE_END = { latitude: -35.2809, longitude: 149.1300 };
 
 export default function TripPlannerPage({ initialTrip }) {
   const { theme } = useTheme();
@@ -28,6 +42,7 @@ export default function TripPlannerPage({ initialTrip }) {
   const [currentCharge, setCurrentCharge] = useState('80');
   const [consumption, setConsumption] = useState('15');
   const [vehicleRange, setVehicleRange] = useState('400');
+  const [fuelType, setFuelType] = useState('U91');
   const [trafficIncidents, setTrafficIncidents] = useState([]);
   const [startCoords, setStartCoords] = useState(null);
   const [endCoords, setEndCoords] = useState(null);
@@ -118,7 +133,7 @@ export default function TripPlannerPage({ initialTrip }) {
         // just bare locations from TomTom's place database. Returns every
         // station within 1km of the actual route path.
         if (routeData.points && routeData.points.length > 1) {
-          const stations = await fetchFuelPricesAlongRoute(routeData.points, 'U91', 1);
+          const stations = await fetchFuelPricesAlongRoute(routeData.points, fuelType, 1);
           setFuelStops(stations);
         }
       }
@@ -127,7 +142,7 @@ export default function TripPlannerPage({ initialTrip }) {
     } finally {
       setLoading(false);
     }
-  }, [startQuery, endQuery, mode, batteryKWh, currentCharge, consumption, vehicleRange]);
+  }, [startQuery, endQuery, mode, batteryKWh, currentCharge, consumption, vehicleRange, fuelType]);
 
   // A shared trip link seeds start/end/mode above (via useState initializers)
   // then triggers the same calculation a manual "Plan Trip" click would —
@@ -175,23 +190,28 @@ export default function TripPlannerPage({ initialTrip }) {
 
   const allMapStops = [...mapStops, ...chargingMarkers.filter((cm) => !mapStops.some((ms) => ms.id === cm.id))];
 
-  // Fuel-stop detour selection (car mode only) — the driver taps stations on
-  // the map to mark them as stops, then "Update Route" recalculates the
-  // route through just those stops.
+  // Stops available to pick a detour from in the current mode — fuel
+  // stations or EV chargers along the route.
+  const activeStops = mode === 'ev' ? evStops : fuelStops;
+  const fuelTypeLabel = FUEL_TYPES.find((f) => f.id === fuelType)?.label || fuelType;
+
+  // Stop detour selection — the driver taps stations/chargers on the map
+  // (or their list card) to mark them as stops, then "Update Route"
+  // recalculates the route through just those stops.
   const toggleStopSelection = useCallback((station) => {
-    if (mode !== 'car' || !station?.id) return;
+    if (!station?.id) return;
     setSelectedStopIds((prev) => {
       const next = new Set(prev);
       if (next.has(station.id)) next.delete(station.id);
       else next.add(station.id);
       return next;
     });
-  }, [mode]);
+  }, []);
 
   // Selected stations, ordered by where they actually fall along the route
   // (nearest route point index) rather than click order, so the recalculated
   // route visits them in a sensible sequence.
-  const orderedSelectedStops = fuelStops
+  const orderedSelectedStops = activeStops
     .filter((s) => selectedStopIds.has(s.id))
     .map((s) => {
       let nearestIdx = 0;
@@ -231,15 +251,27 @@ export default function TripPlannerPage({ initialTrip }) {
     setRouteUpdateError(null);
   }, []);
 
+  // Switching between Fuel Vehicle and Electric Vehicle clears any stop
+  // selection — a selected fuel station's id has no meaning against the EV
+  // charger list (and vice versa), so carrying it over left the "Update
+  // Route" button stuck showing a stale, unmatched selection.
+  const handleModeChange = useCallback((newMode) => {
+    setMode(newMode);
+    setSelectedStopIds(new Set());
+    setCustomRoute(null);
+    setCustomRouteStops([]);
+    setRouteUpdateError(null);
+  }, []);
+
   // The route actually shown/used once a detour route has been applied.
   const displayRoute = customRoute || route;
   const displayRoutePoints = customRoute?.points || routePoints;
   const displayStations = customRoute ? customRouteStops : allMapStops;
-  const stopsNeedUpdate = mode === 'car' && selectedStopIds.size > 0
+  const stopsNeedUpdate = selectedStopIds.size > 0
     && (!customRoute || customRouteStops.length !== selectedStopIds.size
       || !customRouteStops.every((s) => selectedStopIds.has(s.id)));
   // Whether the top button should act as "Update Route" instead of "Plan My Trip"
-  const hasStopSelection = mode === 'car' && (selectedStopIds.size > 0 || !!customRoute);
+  const hasStopSelection = selectedStopIds.size > 0 || !!customRoute;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
@@ -257,7 +289,7 @@ export default function TripPlannerPage({ initialTrip }) {
         ].map((m) => (
           <button
             key={m.id}
-            onClick={() => setMode(m.id)}
+            onClick={() => handleModeChange(m.id)}
             className="px-5 py-2 rounded-xl text-sm font-semibold cursor-pointer"
             style={{
               background: mode === m.id
@@ -295,6 +327,14 @@ export default function TripPlannerPage({ initialTrip }) {
             placeholder="e.g. Melbourne"
           />
         </div>
+
+        {/* Fuel type — which fuel to search for the cheapest stations along the route */}
+        {mode === 'car' && (
+          <div>
+            <label className="block text-[11px] font-semibold mb-1.5" style={{ color: theme.textSecondary }}>Fuel Type</label>
+            <FuelTypeSelector value={fuelType} onChange={setFuelType} />
+          </div>
+        )}
 
         {/* EV specific inputs */}
         {mode === 'ev' && (
@@ -411,9 +451,9 @@ export default function TripPlannerPage({ initialTrip }) {
           first thing shown once a trip is planned */}
       {(route || evRoute) && !loading && (
         <>
-          {fuelStops.length > 0 && mode === 'car' && (
-            <p className="text-[11px] text-center -mb-1" style={{ color: theme.textMuted }}>
-              Tap a fuel station on the map to select it as a stop, then update your route.
+          {activeStops.length > 0 && (
+            <p className="text-[11px] text-center -mt-3 -mb-1" style={{ color: theme.textMuted }}>
+              Tap a {mode === 'ev' ? 'charging station' : 'fuel station'} on the map to select it as a stop, then update your route.
             </p>
           )}
           <StationMap
@@ -422,8 +462,10 @@ export default function TripPlannerPage({ initialTrip }) {
             selectedStation={null}
             onStationSelect={toggleStopSelection}
             selectedIds={selectedStopIds}
-            selectable={mode === 'car'}
+            selectable={true}
             type="fuel"
+            iconType={mode === 'ev' ? 'ev' : 'fuel'}
+            fuelTypeLabel={mode === 'car' ? fuelTypeLabel : null}
             userLocation={startCoords}
             endLocation={endCoords}
             routePoints={displayRoutePoints}
@@ -488,7 +530,7 @@ export default function TripPlannerPage({ initialTrip }) {
           className="rounded-xl p-3 text-xs font-semibold text-center"
           style={{ background: 'rgba(41,121,255,0.1)', border: '1px solid rgba(41,121,255,0.3)', color: '#2979FF' }}
         >
-          Route updated to include {customRouteStops.length} selected fuel stop{customRouteStops.length > 1 ? 's' : ''}
+          Route updated to include {customRouteStops.length} selected {mode === 'ev' ? 'charging' : 'fuel'} stop{customRouteStops.length > 1 ? 's' : ''}
         </div>
       )}
 
@@ -678,7 +720,7 @@ export default function TripPlannerPage({ initialTrip }) {
       {fuelStops.length > 0 && mode === 'car' && !loading && (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold" style={{ color: theme.gold }}>Fuel Stations Along Route</h3>
+            <h3 className="text-sm font-semibold" style={{ color: theme.gold }}>{fuelTypeLabel} Stations Along Route</h3>
             <p className="text-[11px]" style={{ color: theme.textMuted }}>Tap a station to select it as a stop</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -736,32 +778,78 @@ export default function TripPlannerPage({ initialTrip }) {
       {/* EV chargers along route */}
       {evStops.length > 0 && mode === 'ev' && !loading && (
         <div>
-          <h3 className="text-sm font-semibold mb-3" style={{ color: theme.green }}>EV Chargers Along Route</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold" style={{ color: theme.green }}>EV Chargers Along Route</h3>
+            <p className="text-[11px]" style={{ color: theme.textMuted }}>Tap a charger to select it as a stop</p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {evStops.map((stop) => (
-              <div
-                key={stop.id}
-                className="rounded-xl p-3"
-                style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
-              >
-                <p className="text-sm font-semibold" style={{ color: theme.green }}>{stop.name}</p>
-                <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
-              </div>
-            ))}
+            {evStops.map((stop) => {
+              const isSelected = selectedStopIds.has(stop.id);
+              return (
+                <div
+                  key={stop.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => toggleStopSelection(stop)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleStopSelection(stop); }}
+                  className="rounded-xl p-3 flex items-start gap-2 cursor-pointer"
+                  style={{
+                    background: isSelected ? 'rgba(41,121,255,0.1)' : theme.cardBg,
+                    border: `1px solid ${isSelected ? '#2979FF' : theme.cardBorder}`,
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <span
+                    className="flex-shrink-0 mt-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold"
+                    style={{
+                      background: isSelected ? '#2979FF' : 'transparent',
+                      border: `1.5px solid ${isSelected ? '#2979FF' : theme.chipBorder}`,
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    {isSelected ? '✓' : ''}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold" style={{ color: theme.green }}>{stop.name}</p>
+                    <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Empty state */}
+      {/* Empty state \u2014 an illustrative example route so first-time visitors
+          see what a planned trip looks like before entering their own */}
       {!route && !evRoute && !loading && !error && (
-        <div className="text-center py-12">
-          <div className="text-5xl mb-4">{mode === 'ev' ? '\u26A1' : '\u26FD'}</div>
-          <h3 className="text-lg font-semibold mb-1" style={{ color: theme.text }}>
-            Plan your trip
-          </h3>
-          <p className="text-sm" style={{ color: theme.textSecondary }}>
-            Enter start and end locations to find the best route with {mode === 'ev' ? 'charging stations' : 'fuel stops'} along the way
-          </p>
+        <div className="space-y-4">
+          <div className="relative">
+            <StationMap
+              stations={[]}
+              center={[-34.5, 150.2]}
+              onStationSelect={() => {}}
+              type="fuel"
+              userLocation={EXAMPLE_START}
+              endLocation={EXAMPLE_END}
+              routePoints={EXAMPLE_ROUTE_POINTS}
+            />
+            <span
+              className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
+              style={{ background: 'rgba(13,43,94,0.85)', color: theme.gold, border: `1px solid ${theme.gold}`, zIndex: 1000 }}
+            >
+              Example trip
+            </span>
+          </div>
+          <div className="text-center py-4">
+            <div className="text-5xl mb-4">{mode === 'ev' ? '\u26A1' : '\u26FD'}</div>
+            <h3 className="text-lg font-semibold mb-1" style={{ color: theme.text }}>
+              Plan your trip
+            </h3>
+            <p className="text-sm" style={{ color: theme.textSecondary }}>
+              Enter start and end locations above to find the best route with {mode === 'ev' ? 'charging stations' : 'fuel stops'} along the way &mdash; like the example Sydney &rarr; Canberra trip shown above
+            </p>
+          </div>
         </div>
       )}
     </div>
