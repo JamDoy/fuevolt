@@ -97,6 +97,60 @@ const userCarIcon = new L.DivIcon({
   popupAnchor: [0, -17],
 });
 
+// Trip destination marker — checkered flag on a pin, for a Trip Planner's end point
+const finishFlagIcon = new L.DivIcon({
+  className: 'custom-marker',
+  html: `<svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35));">
+    <path d="M16 0C8.268 0 2 6.268 2 14c0 10.5 14 28 14 28s14-17.5 14-28C30 6.268 23.732 0 16 0z" fill="#0D2B5E" stroke="#08152e" stroke-width="0.75"/>
+    <circle cx="16" cy="14" r="8.5" fill="#FFFFFF"/>
+    <g transform="translate(11.5,8.5)">
+      <line x1="0.5" y1="0" x2="0.5" y2="11" stroke="#0D2B5E" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M1 0.5h7l-1.75 2 1.75 2H1z" fill="#0D2B5E"/>
+      <path d="M1 0.5h7l-1.75 2 1.75 2H1z" fill="url(#checkerPattern)"/>
+    </g>
+    <defs>
+      <pattern id="checkerPattern" width="2" height="2" patternUnits="userSpaceOnUse">
+        <rect width="1" height="1" fill="#FFFFFF"/>
+        <rect x="1" y="1" width="1" height="1" fill="#FFFFFF"/>
+      </pattern>
+    </defs>
+  </svg>`,
+  iconSize: [32, 42],
+  iconAnchor: [16, 42],
+  popupAnchor: [0, -42],
+});
+
+// Selected-detour-stop pin — same fuel pin shape as fuelIcon, in blue with a
+// checkmark badge, so a station the driver has chosen to stop at is
+// visually distinct from both the plain and cheapest fuel pins.
+const selectedFuelIcon = new L.DivIcon({
+  className: 'custom-marker',
+  html: `<div style="position:relative;width:34px;height:44px;">
+    <svg width="34" height="44" viewBox="0 0 34 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));">
+      <defs>
+        <linearGradient id="selectedPinGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#60A5FA"/>
+          <stop offset="55%" stop-color="#2979FF"/>
+          <stop offset="100%" stop-color="#0D2B5E"/>
+        </linearGradient>
+      </defs>
+      <path d="M17 0C9.268 0 3 6.268 3 14c0 10.5 14 29 14 29s14-18.5 14-29C31 6.268 24.732 0 17 0z" fill="url(#selectedPinGrad)" stroke="#0D2B5E" stroke-width="0.75"/>
+      <circle cx="17" cy="14.5" r="9" fill="#FFFFFF"/>
+      <g stroke="#0D2B5E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <rect x="12.3" y="10.3" width="6.3" height="9.5" rx="1.2"/>
+        <line x1="12.3" y1="13.7" x2="18.6" y2="13.7"/>
+        <path d="M18.6 12.6h1.7a1.5 1.5 0 0 1 1.5 1.5v3.6a1.1 1.1 0 0 0 1.1 1.1"/>
+      </g>
+    </svg>
+    <div style="position:absolute;top:-3px;right:-3px;width:16px;height:16px;border-radius:50%;background:#22C55E;border:2px solid #FFFFFF;display:flex;align-items:center;justify-content:center;">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+  </div>`,
+  iconSize: [34, 44],
+  iconAnchor: [17, 44],
+  popupAnchor: [0, -44],
+});
+
 
 function MapUpdater({ center, routePoints }) {
   const map = useMap();
@@ -183,6 +237,9 @@ export default function StationMap({
   routePoints = null,
   altRoutePoints = null,
   userLocation = null,
+  endLocation = null,
+  selectedIds = null,
+  selectable = false,
   onSearchArea = null,
   cheapestStationId = null,
 }) {
@@ -205,6 +262,7 @@ export default function StationMap({
 
   const getIcon = (station) => {
     if (type !== 'fuel') return evBoltIcon;
+    if (selectedIds?.has(station.id)) return selectedFuelIcon;
     if (cheapestStationId != null && station.id === cheapestStationId) return cheapestFuelIcon;
     return fuelIcon;
   };
@@ -238,7 +296,7 @@ export default function StationMap({
             <SearchAreaControl visible={showSearchBtn} onClick={handleSearchArea} theme={theme} />
           )}
 
-          {/* User location marker */}
+          {/* User / trip-start location marker */}
           {userLocation && (
             <Marker
               position={[userLocation.latitude, userLocation.longitude]}
@@ -246,6 +304,17 @@ export default function StationMap({
               zIndexOffset={1000}
             >
               <Popup>Your location</Popup>
+            </Marker>
+          )}
+
+          {/* Trip-end location marker */}
+          {endLocation && (
+            <Marker
+              position={[endLocation.latitude, endLocation.longitude]}
+              icon={finishFlagIcon}
+              zIndexOffset={1000}
+            >
+              <Popup>Destination</Popup>
             </Marker>
           )}
 
@@ -276,20 +345,26 @@ export default function StationMap({
             if (!lat || !lng) return null;
 
             const isCheapest = type === 'fuel' && cheapestStationId != null && station.id === cheapestStationId;
+            const isSelected = type === 'fuel' && selectedIds?.has(station.id);
 
             return (
               <Marker
                 key={type === 'ev' ? station.ID : station.id}
                 position={[lat, lng]}
                 icon={getIcon(station)}
-                zIndexOffset={isCheapest ? 900 : 0}
+                zIndexOffset={isSelected ? 950 : isCheapest ? 900 : 0}
                 eventHandlers={{
                   click: () => onStationSelect(station),
                 }}
               >
                 <Popup>
                   <div style={{ color: '#1a1a1a' }}>
-                    {isCheapest && (
+                    {isSelected && (
+                      <div style={{ color: '#0D2B5E', fontWeight: 'bold', fontSize: '11px', marginBottom: '2px' }}>
+                        &#10003; SELECTED AS A STOP
+                      </div>
+                    )}
+                    {isCheapest && !isSelected && (
                       <div style={{ color: '#14532D', fontWeight: 'bold', fontSize: '11px', marginBottom: '2px' }}>
                         &#9733; CHEAPEST NEARBY
                       </div>
@@ -335,6 +410,27 @@ export default function StationMap({
                               }}
                             >
                               View Details
+                            </button>
+                          </>
+                        )}
+                        {selectable && (
+                          <>
+                            <br />
+                            <button
+                              onClick={() => onStationSelect(station)}
+                              style={{
+                                marginTop: '6px',
+                                padding: '4px 10px',
+                                background: isSelected ? '#EF4444' : 'linear-gradient(135deg, #0D2B5E, #2979FF)',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontSize: '11px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              {isSelected ? 'Remove stop' : 'Select as a stop'}
                             </button>
                           </>
                         )}

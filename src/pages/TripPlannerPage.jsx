@@ -35,6 +35,13 @@ export default function TripPlannerPage({ initialTrip }) {
   const [fuelSavings, setFuelSavings] = useState(0);
   const [priceDataIncomplete, setPriceDataIncomplete] = useState(false);
   const [trafficIncidents, setTrafficIncidents] = useState([]);
+  const [startCoords, setStartCoords] = useState(null);
+  const [endCoords, setEndCoords] = useState(null);
+  const [selectedStopIds, setSelectedStopIds] = useState(() => new Set());
+  const [customRoute, setCustomRoute] = useState(null);
+  const [customRouteStops, setCustomRouteStops] = useState([]);
+  const [updatingRoute, setUpdatingRoute] = useState(false);
+  const [routeUpdateError, setRouteUpdateError] = useState(null);
   const autoLocation = useAutoLocation();
 
   // Default map to user's location if permission already granted
@@ -61,12 +68,19 @@ export default function TripPlannerPage({ initialTrip }) {
     setFuelSavings(0);
     setPriceDataIncomplete(false);
     setTrafficIncidents([]);
+    setSelectedStopIds(new Set());
+    setCustomRoute(null);
+    setCustomRouteStops([]);
+    setRouteUpdateError(null);
 
     try {
       const [startGeo, endGeo] = await Promise.all([
         geocodeLocation(startQuery),
         geocodeLocation(endQuery),
       ]);
+
+      setStartCoords({ latitude: startGeo.latitude, longitude: startGeo.longitude });
+      setEndCoords({ latitude: endGeo.latitude, longitude: endGeo.longitude });
 
       const midLat = (startGeo.latitude + endGeo.latitude) / 2;
       const midLng = (startGeo.longitude + endGeo.longitude) / 2;
@@ -182,6 +196,70 @@ export default function TripPlannerPage({ initialTrip }) {
   }));
 
   const allMapStops = [...mapStops, ...chargingMarkers.filter((cm) => !mapStops.some((ms) => ms.id === cm.id))];
+
+  // Fuel-stop detour selection (car mode only) — the driver taps stations on
+  // the map to mark them as stops, then "Update Route" recalculates the
+  // route through just those stops.
+  const toggleStopSelection = useCallback((station) => {
+    if (mode !== 'car' || !station?.id) return;
+    setSelectedStopIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(station.id)) next.delete(station.id);
+      else next.add(station.id);
+      return next;
+    });
+  }, [mode]);
+
+  // Selected stations, ordered by where they actually fall along the route
+  // (nearest route point index) rather than click order, so the recalculated
+  // route visits them in a sensible sequence.
+  const orderedSelectedStops = fuelStops
+    .filter((s) => selectedStopIds.has(s.id))
+    .map((s) => {
+      let nearestIdx = 0;
+      if (routePoints?.length) {
+        let best = Infinity;
+        routePoints.forEach((p, i) => {
+          const d = haversine(p, [s.latitude, s.longitude]);
+          if (d < best) { best = d; nearestIdx = i; }
+        });
+      }
+      return { ...s, _routeIdx: nearestIdx };
+    })
+    .sort((a, b) => a._routeIdx - b._routeIdx);
+
+  const handleUpdateRoute = useCallback(async () => {
+    if (!startCoords || !endCoords || orderedSelectedStops.length === 0) return;
+    setUpdatingRoute(true);
+    setRouteUpdateError(null);
+    try {
+      const data = await calculateRouteWithStops(
+        startCoords.latitude, startCoords.longitude,
+        orderedSelectedStops, endCoords.latitude, endCoords.longitude
+      );
+      setCustomRoute(data);
+      setCustomRouteStops(orderedSelectedStops);
+    } catch (err) {
+      setRouteUpdateError(err.message || 'Failed to update route with selected stops');
+    } finally {
+      setUpdatingRoute(false);
+    }
+  }, [startCoords, endCoords, orderedSelectedStops]);
+
+  const handleClearStops = useCallback(() => {
+    setSelectedStopIds(new Set());
+    setCustomRoute(null);
+    setCustomRouteStops([]);
+    setRouteUpdateError(null);
+  }, []);
+
+  // The route actually shown/used once a detour route has been applied.
+  const displayRoute = customRoute || route;
+  const displayRoutePoints = customRoute?.points || routePoints;
+  const displayStations = customRoute ? customRouteStops : allMapStops;
+  const stopsNeedUpdate = mode === 'car' && selectedStopIds.size > 0
+    && (!customRoute || customRouteStops.length !== selectedStopIds.size
+      || !customRouteStops.every((s) => selectedStopIds.has(s.id)));
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
@@ -385,20 +463,20 @@ export default function TripPlannerPage({ initialTrip }) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-2xl p-4 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
             <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Distance</p>
-            <p className="text-2xl font-bold" style={{ color: theme.gold }}>{route.distanceKm}<span className="text-xs ml-1">km</span></p>
+            <p className="text-2xl font-bold" style={{ color: theme.gold }}>{displayRoute.distanceKm}<span className="text-xs ml-1">km</span></p>
           </div>
           <div className="rounded-2xl p-4 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
             <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Travel Time</p>
             <p className="text-2xl font-bold" style={{ color: theme.green }}>
-              {route.travelTimeMin >= 60
-                ? `${Math.floor(route.travelTimeMin / 60)}h ${route.travelTimeMin % 60}m`
-                : `${route.travelTimeMin}m`}
+              {displayRoute.travelTimeMin >= 60
+                ? `${Math.floor(displayRoute.travelTimeMin / 60)}h ${displayRoute.travelTimeMin % 60}m`
+                : `${displayRoute.travelTimeMin}m`}
             </p>
           </div>
           <div className="rounded-2xl p-4 text-center" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
             <p className="text-xs mb-1" style={{ color: theme.textSecondary }}>Traffic Delay</p>
-            <p className="text-2xl font-bold" style={{ color: route.trafficDelayMin > 0 ? '#E74C3C' : theme.green }}>
-              {route.trafficDelayMin > 0 ? `+${route.trafficDelayMin}m` : 'None'}
+            <p className="text-2xl font-bold" style={{ color: displayRoute.trafficDelayMin > 0 ? '#E74C3C' : theme.green }}>
+              {displayRoute.trafficDelayMin > 0 ? `+${displayRoute.trafficDelayMin}m` : 'None'}
             </p>
           </div>
           <div className="rounded-2xl p-4 text-center col-span-2 sm:col-span-1" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}>
@@ -407,6 +485,15 @@ export default function TripPlannerPage({ initialTrip }) {
               {mode === 'ev' ? evStops.length : fuelStops.length}
             </p>
           </div>
+        </div>
+      )}
+
+      {customRoute && !loading && (
+        <div
+          className="rounded-xl p-3 text-xs font-semibold text-center"
+          style={{ background: 'rgba(41,121,255,0.1)', border: '1px solid rgba(41,121,255,0.3)', color: '#2979FF' }}
+        >
+          Route updated to include {customRouteStops.length} selected fuel stop{customRouteStops.length > 1 ? 's' : ''}
         </div>
       )}
 
@@ -431,13 +518,13 @@ export default function TripPlannerPage({ initialTrip }) {
 
       {route && !loading && (
         <a
-          href={buildGoogleMapsUrl(startQuery, endQuery)}
+          href={buildGoogleMapsUrl(startQuery, endQuery, customRouteStops)}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-sm font-semibold"
           style={{ background: theme.chipBg, color: theme.chipText, border: `1px solid ${theme.chipBorder}`, textDecoration: 'none' }}
         >
-          Open direct route in Google Maps &rarr;
+          {customRouteStops.length > 0 ? 'Open updated route in Google Maps' : 'Open direct route in Google Maps'} &rarr;
         </a>
       )}
 
@@ -608,16 +695,68 @@ export default function TripPlannerPage({ initialTrip }) {
 
       {/* Map */}
       {(route || evRoute) && !loading && (
-        <StationMap
-          stations={allMapStops}
-          center={mapCenter}
-          selectedStation={null}
-          onStationSelect={() => {}}
-          type="fuel"
-          routePoints={routePoints}
-          altRoutePoints={cheapRoute?.points || null}
-          showTraffic={true}
-        />
+        <>
+          {mode === 'car' && fuelStops.length > 0 && (
+            <p className="text-[11px] text-center -mb-1" style={{ color: theme.textMuted }}>
+              Tap a fuel station on the map to select it as a stop, then update your route.
+            </p>
+          )}
+          <StationMap
+            stations={displayStations}
+            center={mapCenter}
+            selectedStation={null}
+            onStationSelect={toggleStopSelection}
+            selectedIds={selectedStopIds}
+            selectable={mode === 'car'}
+            type="fuel"
+            userLocation={startCoords}
+            endLocation={endCoords}
+            routePoints={displayRoutePoints}
+            altRoutePoints={customRoute ? null : (cheapRoute?.points || null)}
+            showTraffic={true}
+          />
+
+          {mode === 'car' && (selectedStopIds.size > 0 || customRoute) && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={handleUpdateRoute}
+                disabled={!stopsNeedUpdate || updatingRoute}
+                className="px-5 py-2.5 rounded-xl text-sm font-bold cursor-pointer flex-1"
+                style={{
+                  background: stopsNeedUpdate
+                    ? `linear-gradient(135deg, ${theme.goldDark}, ${theme.gold})`
+                    : theme.chipBg,
+                  color: stopsNeedUpdate ? '#0D2B5E' : theme.chipText,
+                  border: 'none',
+                  opacity: updatingRoute ? 0.6 : 1,
+                  transition: 'all 0.25s ease',
+                }}
+              >
+                {updatingRoute
+                  ? 'Updating Route...'
+                  : customRoute && !stopsNeedUpdate
+                    ? `Route updated (${customRouteStops.length} stop${customRouteStops.length > 1 ? 's' : ''})`
+                    : `Update Route (${selectedStopIds.size} stop${selectedStopIds.size !== 1 ? 's' : ''} selected)`}
+              </button>
+              <button
+                onClick={handleClearStops}
+                className="px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer flex-shrink-0"
+                style={{ background: 'none', border: `1px solid ${theme.chipBorder}`, color: theme.textMuted }}
+              >
+                Clear stops
+              </button>
+            </div>
+          )}
+
+          {routeUpdateError && (
+            <div
+              className="rounded-xl p-3 text-xs"
+              style={{ background: isDark ? 'rgba(255,100,100,0.08)' : 'rgba(239,68,68,0.06)', border: `1px solid ${theme.errorBorder}`, color: '#ef4444' }}
+            >
+              {routeUpdateError}
+            </div>
+          )}
+        </>
       )}
 
       {/* Car rental — DiscoverCars affiliate */}
@@ -674,32 +813,58 @@ export default function TripPlannerPage({ initialTrip }) {
       {/* Fuel stops along route */}
       {fuelStops.length > 0 && mode === 'car' && !loading && (
         <div>
-          <h3 className="text-sm font-semibold mb-3" style={{ color: theme.gold }}>Fuel Stations Along Route</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold" style={{ color: theme.gold }}>Fuel Stations Along Route</h3>
+            <p className="text-[11px]" style={{ color: theme.textMuted }}>Tap a station to select it as a stop</p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {fuelStops.map((stop) => (
-              <div
-                key={stop.id}
-                className="rounded-xl p-3 flex items-start justify-between gap-2"
-                style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}` }}
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold" style={{ color: theme.gold }}>{stop.name}</p>
-                  {stop.brand && (
-                    <p className="text-[11px]" style={{ color: theme.textMuted }}>{stop.brand}</p>
-                  )}
-                  <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
+            {fuelStops.map((stop) => {
+              const isSelected = selectedStopIds.has(stop.id);
+              return (
+                <div
+                  key={stop.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => toggleStopSelection(stop)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleStopSelection(stop); }}
+                  className="rounded-xl p-3 flex items-start justify-between gap-2 cursor-pointer"
+                  style={{
+                    background: isSelected ? 'rgba(41,121,255,0.1)' : theme.cardBg,
+                    border: `1px solid ${isSelected ? '#2979FF' : theme.cardBorder}`,
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <div className="min-w-0 flex items-start gap-2">
+                    <span
+                      className="flex-shrink-0 mt-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold"
+                      style={{
+                        background: isSelected ? '#2979FF' : 'transparent',
+                        border: `1.5px solid ${isSelected ? '#2979FF' : theme.chipBorder}`,
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      {isSelected ? '✓' : ''}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold" style={{ color: theme.gold }}>{stop.name}</p>
+                      {stop.brand && (
+                        <p className="text-[11px]" style={{ color: theme.textMuted }}>{stop.brand}</p>
+                      )}
+                      <p className="text-xs mt-1" style={{ color: theme.textSecondary }}>{stop.address}</p>
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    {stop.price != null ? (
+                      <p className="text-sm font-bold" style={{ color: theme.green }}>
+                        {(stop.price * 100).toFixed(1)}<span className="text-[10px]">&cent;/L</span>
+                      </p>
+                    ) : (
+                      <p className="text-[10px]" style={{ color: theme.textMuted }}>No price data</p>
+                    )}
+                  </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  {stop.price != null ? (
-                    <p className="text-sm font-bold" style={{ color: theme.green }}>
-                      {(stop.price * 100).toFixed(1)}<span className="text-[10px]">&cent;/L</span>
-                    </p>
-                  ) : (
-                    <p className="text-[10px]" style={{ color: theme.textMuted }}>No price data</p>
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
