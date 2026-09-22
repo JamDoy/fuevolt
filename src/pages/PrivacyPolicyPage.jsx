@@ -1,12 +1,18 @@
 import { useTheme } from '../contexts/ThemeContext';
 
+// A fixed date, not new Date() — this page previously computed "today" on
+// every single page load, so the notice always claimed the policy had just
+// been updated regardless of whether anything had actually changed. Update
+// this string by hand whenever the policy content below genuinely changes.
+const LAST_UPDATED = '20 September 2026';
+
 export default function PrivacyPolicyPage() {
   const { theme } = useTheme();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8" style={{ color: theme.text }}>
       <h1 className="text-2xl font-bold mb-6" style={{ color: theme.heading }}>Privacy Policy</h1>
-      <p className="text-sm mb-4" style={{ color: theme.subtext }}>Last updated: {new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+      <p className="text-sm mb-4" style={{ color: theme.subtext }}>Last updated: {LAST_UPDATED}</p>
 
       <Section title="1. Overview" theme={theme}>
         <p>FueVolt ("we", "our", "the Service") is an Australian fuel price comparison and EV charging station finder. This Privacy Policy explains how we collect, use, and protect your information when you use FueVolt.</p>

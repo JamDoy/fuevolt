@@ -1,12 +1,18 @@
 import { useTheme } from '../contexts/ThemeContext';
 
+// A fixed date, not new Date() — this page previously computed "today" on
+// every single page load, so the notice always claimed the terms had just
+// been updated regardless of whether anything had actually changed. Update
+// this string by hand whenever the terms content below genuinely changes.
+const LAST_UPDATED = '20 September 2026';
+
 export default function TermsPage() {
   const { theme } = useTheme();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8" style={{ color: theme.text }}>
       <h1 className="text-2xl font-bold mb-6" style={{ color: theme.heading }}>Terms of Service</h1>
-      <p className="text-sm mb-4" style={{ color: theme.subtext }}>Last updated: {new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+      <p className="text-sm mb-4" style={{ color: theme.subtext }}>Last updated: {LAST_UPDATED}</p>
 
       <Section title="1. Acceptance of Terms" theme={theme}>
         <p>By accessing or using FueVolt ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.</p>
