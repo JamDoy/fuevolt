@@ -703,6 +703,7 @@ export default function TripPlannerPage({ initialTrip }) {
               title="DiscoverCars.com"
               width="728"
               height="90"
+              loading="lazy"
               style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '8px' }}
             />
           </a>

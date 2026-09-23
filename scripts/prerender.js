@@ -98,6 +98,30 @@ function schemaScript(id, data) {
   return `  <script type="application/ld+json" id="schema-${id}">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
 }
 
+// For the free browser-based tool pages (fuel-prices, ev-charging, trip
+// planner, etc.) — distinct from the sitewide Organization/WebSite schema,
+// this tells search engines each is a usable free app, not just an article.
+function webAppSchema({ name, description, urlPath }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name,
+    description,
+    url: `${BASE_URL}${urlPath}`,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'AUD',
+    },
+  };
+}
+
+function breadcrumbHtml(items) {
+  return schemaScript('breadcrumb', breadcrumbSchema(items));
+}
+
 function articleSchema(article, meta, urlPath) {
   return {
     '@context': 'https://schema.org',
@@ -276,6 +300,7 @@ console.log('Pre-rendering guides index...');
       'Expert guides on fuel types, EV charging connectors, octane ratings, saving money on fuel, road trip planning, and electric vehicle tips for Australian drivers.',
     h1: 'Guides &amp; Articles',
     content: `<p style="font-size:0.95rem;color:#4B5563;margin-bottom:24px">Expert guides on fuel types, EV charging, saving money, and driving in Australia.</p>${guideList}`,
+    headHtml: breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'Guides', path: '/guides' }]),
   });
   writePage('/guides', html);
   sitemapUrls.push('/guides');
@@ -308,6 +333,7 @@ writePage('/about', generatePage({
         </ul>
         <p style="font-size:0.85rem;color:#6B7280">Fuel retailers supply the underlying price reports under each state's rules. FueVolt does not alter a source-reported price or invent a newer update time.</p>
         <p style="margin-top:16px"><strong>Get in touch:</strong> Send feedback, corrections or questions through the <a href="/contact">contact form</a>.</p>`,
+  headHtml: breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }]),
 }));
 sitemapUrls.push('/about');
 
@@ -320,6 +346,7 @@ writePage('/contact', generatePage({
   content: `
         <p style="font-size:0.95rem;color:#4B5563;margin-bottom:16px">Have feedback, a feature request, or found an issue? We would love to hear from you. Fill in the form on this page and we will take a look.</p>
         <p style="font-size:0.9rem;color:#4B5563">Enter your name, an optional email address so we can reply, and your message. Once you submit, you will see a confirmation that your feedback has been received.</p>`,
+  headHtml: breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }]),
 }));
 sitemapUrls.push('/contact');
 
@@ -332,7 +359,7 @@ const faqHtml = FAQ_ENTRIES.map(
         </div>`
 ).join('\n');
 
-const faqSchema = JSON.stringify({
+const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: FAQ_ENTRIES.map((faq) => ({
@@ -340,7 +367,7 @@ const faqSchema = JSON.stringify({
     name: faq.q,
     acceptedAnswer: { '@type': 'Answer', text: faq.a },
   })),
-}).replace(/</g, '\\u003c');
+};
 
 writePage('/faq', generatePage({
   urlPath: '/faq',
@@ -348,7 +375,7 @@ writePage('/faq', generatePage({
   description: 'Common questions about FueVolt — fuel prices, EV charging, trip planner, and how to save money on fuel in Australia.',
   h1: 'Frequently Asked Questions',
   content: `<p style="font-size:0.95rem;color:#4B5563;margin-bottom:24px">Everything you need to know about using FueVolt to find cheap fuel and EV chargers in Australia.</p>${faqHtml}<p style="margin-top:24px">Still have questions? Use our <a href="/contact">contact form</a> to get in touch.</p>`,
-  headHtml: `  <script type="application/ld+json" id="schema-faq">${faqSchema}</script>`,
+  headHtml: `${schemaScript('faq', faqSchema)}\n${breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'FAQ', path: '/faq' }])}`,
 }));
 sitemapUrls.push('/faq');
 
@@ -374,6 +401,7 @@ writePage('/privacy', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">FueVolt does not require a user account and does not itself hold an account or profile for you. You can clear locally cached data by clearing FueVolt's site storage in your browser or device settings. For data collected by our third-party analytics and advertising providers, see their privacy policies for how to exercise your rights, including any available opt-outs.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Contact</h2>
         <p style="font-size:0.9rem;color:#4B5563">For privacy enquiries, please use our <a href="/contact">contact form</a>.</p>`,
+  headHtml: breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'Privacy Policy', path: '/privacy' }]),
 }));
 sitemapUrls.push('/privacy');
 
@@ -400,6 +428,7 @@ writePage('/terms', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:8px">These Terms are governed by the laws of Australia.</p>
         <h2 style="font-size:1.2rem;margin:20px 0 8px">Contact</h2>
         <p style="font-size:0.9rem;color:#4B5563">For enquiries, please use our <a href="/contact">contact form</a>.</p>`,
+  headHtml: breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'Terms of Service', path: '/terms' }]),
 }));
 sitemapUrls.push('/terms');
 
@@ -418,6 +447,11 @@ writePage('/fuel-prices', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Fuel prices in Australian capital cities follow predictable cycles, typically rising sharply over one to two days and then gradually falling over several weeks. The best time to fill up is at the bottom of the cycle when prices are lowest. FueVolt helps you spot these patterns by showing current prices from hundreds of stations in your area, making it easy to identify when prices are at their cheapest.</p>
         <h3 style="font-size:1.05rem;margin:16px 0 8px">Coverage Across Australia</h3>
         <p style="font-size:0.9rem;color:#4B5563">FueVolt covers fuel stations across New South Wales, Victoria, Queensland, Western Australia, the Northern Territory and Tasmania. This includes major cities like Sydney, Melbourne, Brisbane, Perth, Gold Coast, Newcastle, Canberra, Geelong, Wollongong, Darwin and Hobart, as well as regional and rural areas throughout these states and territories. South Australia is not covered yet.</p>`,
+  headHtml: `${breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'Fuel Prices', path: '/fuel-prices' }])}\n${schemaScript('webapp', webAppSchema({
+    name: 'FueVolt Fuel Price Comparison',
+    description: 'Compare real-time E10, U91, U95, U98, diesel and LPG prices from official Australian government sources.',
+    urlPath: '/fuel-prices',
+  }))}`,
 }));
 sitemapUrls.push('/fuel-prices');
 
@@ -437,6 +471,11 @@ writePage('/ev-charging', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px"><strong>Slow charging (up to 7kW)</strong> is typically used for overnight home charging and takes 8-12 hours for a full charge. <strong>Fast charging (7-50kW)</strong> is commonly found at shopping centres and workplaces, taking 1-4 hours. <strong>Ultra-rapid charging (50kW+)</strong> is available at highway rest stops and dedicated charging hubs — a 350kW charger can add 200km of range in just 10-15 minutes.</p>
         <h3 style="font-size:1.05rem;margin:16px 0 8px">Charging Cost Estimates</h3>
         <p style="font-size:0.9rem;color:#4B5563">Public DC fast charging in Australia typically costs between $0.40 and $0.60 per kWh. Home charging on a standard electricity tariff costs around $0.25-$0.35 per kWh, making it significantly cheaper. An average EV travelling 300km per week costs roughly $15-$20 in electricity compared to $50-$70 in petrol for an equivalent fuel vehicle. Use our <a href="/ev-vs-fuel">EV vs Fuel calculator</a> to get a personalised savings estimate based on your driving habits.</p>`,
+  headHtml: `${breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'EV Charging', path: '/ev-charging' }])}\n${schemaScript('webapp', webAppSchema({
+    name: 'FueVolt EV Charging Station Finder',
+    description: 'Locate EV charging stations across Australia, filtered by connector type and charging speed.',
+    urlPath: '/ev-charging',
+  }))}`,
 }));
 sitemapUrls.push('/ev-charging');
 
@@ -456,6 +495,11 @@ writePage('/ev-vs-fuel', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Basic mode estimates EV running costs at approximately 40% of equivalent fuel costs, based on average Australian fuel and electricity prices. Advanced mode uses Australian-average fuel consumption figures for each vehicle type, with diesel estimated at 85% of petrol consumption, and EV consumption figures based on comparable electric vehicles in each class (for example, a mid-size sedan is modelled on cars like the Tesla Model 3 or BYD Seal).</p>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">CO2 savings are calculated using the Australian Government figure of 2.31kg of CO2 emitted per litre of petrol burned. Default electricity price assumptions are $0.30/kWh for home charging (the Australian household average) and $0.45/kWh for public charging — both can be adjusted in Advanced mode to match your own rates.</p>
         <p style="font-size:0.9rem;color:#4B5563">These figures are estimates only and provide a general guide — your actual savings will depend on your specific vehicle, driving habits, electricity tariff, and local fuel prices, which change frequently. For live fuel prices in your area, see <a href="/fuel-prices">FueVolt's fuel price comparison</a>.</p>`,
+  headHtml: `${breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'EV v Fuel', path: '/ev-vs-fuel' }])}\n${schemaScript('webapp', webAppSchema({
+    name: 'FueVolt EV vs Fuel Calculator',
+    description: 'Calculate how much you could save by switching from petrol or diesel to an electric vehicle.',
+    urlPath: '/ev-vs-fuel',
+  }))}`,
 }));
 sitemapUrls.push('/ev-vs-fuel');
 
@@ -481,6 +525,11 @@ writePage('/trip-planner', generatePage({
         <h3 style="font-size:1.05rem;margin:16px 0 8px">Tips for Australian Road Trips</h3>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Regional and remote parts of Australia can have long gaps between fuel stations and EV chargers, so it's worth planning stops in advance rather than relying on finding one along the way. Fuel prices are often higher in regional and highway-side locations than in metro areas, so where practical, fill up before you leave a capital city. For EV drivers, ultra-rapid chargers are concentrated on major highways and near larger towns — see FueVolt's <a href="/ev-charging">EV charging station finder</a> to check coverage along your specific route before you set off.</p>
         <p style="font-size:0.8rem;color:#6B7280">Need a rental car for your trip? FueVolt is a <a href="https://www.discovercars.com/?a_aid=FueVolt" rel="sponsored noopener noreferrer" target="_blank">DiscoverCars affiliate</a> — we may earn a commission if you book through this link, at no extra cost to you.</p>`,
+  headHtml: `${breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'Trip Planner', path: '/trip-planner' }])}\n${schemaScript('webapp', webAppSchema({
+    name: 'FueVolt Trip Planner',
+    description: 'Plan a road trip with fuel stops or EV charging stops, live traffic and drive time estimates.',
+    urlPath: '/trip-planner',
+  }))}`,
 }));
 sitemapUrls.push('/trip-planner');
 
@@ -497,6 +546,7 @@ writePage('/alerts', generatePage({
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">This is particularly useful if you've found a consistently cheap independent station that isn't right on your usual route — a proximity alert means you won't forget it's nearby.</p>
         <h2 style="font-size:1.3rem;margin:24px 0 12px">Privacy</h2>
         <p style="font-size:0.9rem;color:#4B5563">Favourites and alert settings are stored locally in your browser on your own device, not on FueVolt's servers. Location is only used to check proximity to your saved stations and is never stored or shared. See our <a href="/privacy">Privacy Policy</a> for full details.</p>`,
+  headHtml: breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'Alerts', path: '/alerts' }]),
 }));
 sitemapUrls.push('/alerts');
 
@@ -514,6 +564,11 @@ writePage('/trends', generatePage({
         <h2 style="font-size:1.3rem;margin:24px 0 12px">Understanding the Fuel Price Cycle</h2>
         <p style="font-size:0.9rem;color:#4B5563;margin-bottom:12px">Fuel prices in Australia's capital cities don't just drift up and down randomly — they follow a well-documented petrol price cycle, tracked by the ACCC in Sydney, Melbourne, Brisbane, Adelaide and Perth. Prices typically rise sharply over a day or two, then decline gradually over the next one to two weeks before spiking again.</p>
         <p style="font-size:0.9rem;color:#4B5563">Knowing where a city sits in its cycle is the best way to time a fill-up. Read our full guide on <a href="/guides/how-fuel-price-cycles-work-australia">how fuel price cycles work in Australia</a> and the best day to buy fuel.</p>`,
+  headHtml: `${breadcrumbHtml([{ name: 'Home', path: '/' }, { name: 'Trends', path: '/trends' }])}\n${schemaScript('webapp', webAppSchema({
+    name: 'FueVolt Fuel Price Trends',
+    description: 'See how petrol and diesel prices are trending across Australia, and search a suburb to see local fuel price history.',
+    urlPath: '/trends',
+  }))}`,
 }));
 sitemapUrls.push('/trends');
 
