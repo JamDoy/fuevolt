@@ -106,5 +106,23 @@
     "category": "EV Guide",
     "readTime": "6 min read",
     "image": "/content/articles/images/ev-battery-health-and-longevity-tips.jpg"
+  },
+  {
+    "id": "lpg-worth-it",
+    "slug": "lpg-in-australia-is-it-still-worth-it",
+    "title": "LPG in Australia: Is Converting or Buying an LPG Car Still Worth It?",
+    "description": "How LPG (Autogas) compares to petrol on price and fuel economy, what a conversion actually costs, and why fewer cars and stations support it than a decade ago.",
+    "category": "Fuel Guide",
+    "readTime": "6 min read",
+    "image": "/content/articles/images/lpg-in-australia-is-it-still-worth-it.jpg"
+  },
+  {
+    "id": "ev-charging-networks",
+    "slug": "ev-charging-networks-australia-compared",
+    "title": "EV Charging Networks in Australia Compared: Chargefox, Evie, Ampol AmpCharge, Tesla and More",
+    "description": "A practical guide to Australia's main public EV charging networks — how they work, how to pay, and what to check before you rely on one for a trip.",
+    "category": "EV Guide",
+    "readTime": "6 min read",
+    "image": "/content/articles/images/ev-charging-networks-australia-compared.jpg"
   }
 ]
