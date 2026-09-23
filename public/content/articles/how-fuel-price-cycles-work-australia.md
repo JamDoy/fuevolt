@@ -4,8 +4,8 @@ description: "Learn why petrol prices rise and fall in regular cycles across Aus
 category: "Fuel Guide"
 readTime: "5 min read"
 datePublished: "2026-06-24"
-dateModified: "2026-09-19"
-image: "/content/articles/images/how-fuel-price-cycles-work-australia.jpg"
+dateModified: "2026-09-23"
+image: "/content/articles/images/how-fuel-price-cycles-work-australia.svg"
 ---
 
 Imagine driving past your local servo one Sunday and seeing petrol at a price you are happy with, then passing it again on Wednesday to find it has jumped 20 or 30 cents a litre overnight. You did nothing wrong — you just watched a fuel price cycle in action. Not knowing when or where to fill up is the frustration that led to FueVolt being built.

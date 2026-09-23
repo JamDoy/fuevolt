@@ -1,0 +1,74 @@
+<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A1628" />
+      <stop offset="100%" stop-color="#0D2B5E" />
+    </linearGradient>
+    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="600" fill="url(#bgGrad)" />
+
+  <!-- Title (decorative — safe to lose in an aggressive crop) -->
+  <text x="60" y="55" font-size="28" font-weight="800" fill="#FFFFFF">The petrol price cycle</text>
+
+  <!-- Everything below this point sits inside the ~400px vertical band (y 100–500)
+       that survives every crop this image is shown at across the site (guides
+       listing thumbnail, article hero, mobile and desktop). Title and footer
+       above/below that band are decorative and can clip; nothing that explains
+       the chart is allowed to. -->
+
+  <!-- Disclaimer badge — the one label that must survive every crop -->
+  <rect x="60" y="105" width="452" height="38" rx="19" fill="#F59E0B" fill-opacity="0.16" stroke="#F59E0B" stroke-opacity="0.45" />
+  <text x="86" y="130" font-size="16" font-weight="700" fill="#FDE68A">Illustrative pattern only — not real prices</text>
+
+  <!-- One cycle bracket -->
+  <path d="M 210 160 L 210 168 L 560 168 L 560 160" fill="none" stroke="#93A5C4" stroke-width="1.5" />
+  <text x="385" y="155" font-size="15" font-weight="700" fill="#C3D0E5" text-anchor="middle">One cycle ≈ 1–2 weeks</text>
+
+  <!-- Axis labels -->
+  <text x="40" y="220" font-size="15" fill="#93A5C4">Higher</text>
+  <text x="46" y="464" font-size="15" fill="#93A5C4">Lower</text>
+  <text x="1145" y="464" font-size="15" fill="#93A5C4" text-anchor="end">Time →</text>
+
+  <!-- Axis baseline -->
+  <line x1="80" y1="464" x2="1160" y2="464" stroke="#2A4066" stroke-width="1.5" />
+
+  <!-- Area fill under the zigzag -->
+  <path d="M 90 420 L 210 200 L 430 460 L 560 205 L 780 462 L 910 200 L 1150 300 L 1150 464 L 90 464 Z" fill="url(#areaGrad)" />
+
+  <!-- Zigzag line -->
+  <path d="M 90 420 L 210 200 L 430 460 L 560 205 L 780 462 L 910 200 L 1150 300"
+        fill="none" stroke="#F59E0B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" />
+
+  <!-- Peak dots (sharp price reset) -->
+  <circle cx="210" cy="200" r="7" fill="#EF4444" stroke="#0D2B5E" stroke-width="2" />
+  <circle cx="560" cy="205" r="7" fill="#EF4444" stroke="#0D2B5E" stroke-width="2" />
+  <circle cx="910" cy="200" r="7" fill="#EF4444" stroke="#0D2B5E" stroke-width="2" />
+
+  <!-- Trough dots (best time to fill up) -->
+  <circle cx="430" cy="460" r="7" fill="#22C55E" stroke="#0D2B5E" stroke-width="2" />
+  <circle cx="780" cy="462" r="7" fill="#22C55E" stroke="#0D2B5E" stroke-width="2" />
+
+  <!-- Trough highlight box -->
+  <rect x="392" y="440" width="76" height="38" rx="6" fill="#22C55E" fill-opacity="0.12" stroke="#22C55E" stroke-opacity="0.5" stroke-dasharray="4 3" />
+
+  <!-- Peak label -->
+  <text x="225" y="188" font-size="15" font-weight="700" fill="#F87171">Sharp price reset</text>
+  <text x="225" y="208" font-size="13" fill="#C3D0E5">often 20–40¢/L in a day</text>
+  <text x="225" y="226" font-size="13" fill="#C3D0E5">Avoid filling up here</text>
+
+  <!-- Decline label -->
+  <text x="248" y="330" font-size="15" font-weight="700" fill="#FFFFFF">Gradual decline</text>
+  <text x="248" y="350" font-size="13" fill="#C3D0E5">over 1–2 weeks</text>
+
+  <!-- Trough label -->
+  <text x="378" y="495" font-size="15" font-weight="700" fill="#4ADE80" text-anchor="middle">Best time to fill up</text>
+
+  <!-- Footer attribution (decorative — safe to lose in an aggressive crop) -->
+  <text x="60" y="545" font-size="14" font-weight="800" fill="#F59E0B">FueVolt</text>
+  <text x="1145" y="545" font-size="12" fill="#7B8CAD" text-anchor="end">The ACCC tracks cycles in Sydney, Melbourne, Brisbane, Adelaide and Perth</text>
+</svg>
