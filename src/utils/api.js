@@ -137,8 +137,17 @@ const FUEL_TYPE_MAP = {
   'LPG': { nsw: 'LPG', wa: '5', qld: 4, vic: 'LPG', nt: 'LPG' },
 };
 
+// Government feeds occasionally contain obvious data-entry errors (a Victorian
+// station reporting U91 at 2.0¢/L, Queensland entries at 24.8¢ and 32.1¢) that
+// would otherwise show up as "cheapest near you" and drag averages down. LPG
+// legitimately sells below $1/L, so the floor is deliberately low — it only
+// needs to catch impossible prices, not merely cheap ones.
+const MIN_PLAUSIBLE_CENTS = 50;
+const MAX_PLAUSIBLE_CENTS = 400;
+const isPlausiblePrice = (cents) => cents >= MIN_PLAUSIBLE_CENTS && cents <= MAX_PLAUSIBLE_CENTS;
+
 // QLD Fuel Pricing Direct API
-const QLD_API_BASE = 'https://fppdirectapi-prod.fuelpricesqld.com.au';
+const QLD_API_BASE ='https://fppdirectapi-prod.fuelpricesqld.com.au';
 const QLD_API_TOKEN = '3702baa0-61e3-4796-a011-45128c1e91fd';
 
 const QLD_BRAND_MAP = {
@@ -191,7 +200,7 @@ async function fetchQLDFuelPrices(latitude, longitude, fuelType, radius) {
     // Filter prices for requested fuel type and build station list
     const priceMap = {};
     pricesData.SitePrices.forEach((p) => {
-      if (p.FuelId === qldFuelId && p.Price > 0 && p.Price < 9000) {
+      if (p.FuelId === qldFuelId && p.Price > 0 && p.Price < 9000 && isPlausiblePrice(p.Price / 10)) {
         priceMap[p.SiteId] = p;
       }
     });
@@ -278,7 +287,7 @@ async function fetchNSWFuelPrices(latitude, longitude, fuelType, radius, detecte
       : detectedState === 'TAS' ? 'TAS Government'
       : 'NSW Government';
 
-    return data.prices.map((p) => {
+    return data.prices.filter((p) => isPlausiblePrice(p.price)).map((p) => {
       const station = stationMap[p.stationcode] || {};
       const stationLat = station.location?.latitude || latitude;
       const stationLng = station.location?.longitude || longitude;
@@ -329,7 +338,9 @@ async function fetchNTFuelPrices(latitude, longitude, fuelType, radius) {
     if (!response.ok) return null;
     const stations = await response.json();
     if (!Array.isArray(stations)) return null;
-    return stations.map((s) => ({ ...s, brand: normalizeBrandName(s.brand) }));
+    return stations
+      .filter((s) => s.price == null || isPlausiblePrice(s.price * 100))
+      .map((s) => ({ ...s, brand: normalizeBrandName(s.brand) }));
   } catch {
     return null;
   }
@@ -354,7 +365,7 @@ async function fetchVICFuelPrices(latitude, longitude, fuelType, radius) {
       if (!fs?.location?.latitude || !fs?.location?.longitude) continue;
 
       const fuelPrice = entry.fuelPrices?.find((fp) => fp.fuelType === vicFuelCode && fp.isAvailable);
-      if (!fuelPrice) continue;
+      if (!fuelPrice || !isPlausiblePrice(fuelPrice.price)) continue;
 
       const dist = getDistance(latitude, longitude, fs.location.latitude, fs.location.longitude);
       if (dist > radius) continue;
@@ -423,7 +434,7 @@ async function fetchWAFuelPrices(latitude, longitude, fuelType, radius) {
       const address = item.querySelector('address')?.textContent || '';
       const suburb = item.querySelector('location')?.textContent || '';
 
-      if (price > 0) {
+      if (isPlausiblePrice(price)) {
         const dist = getDistance(latitude, longitude, stationLat, stationLng);
         if (dist > radius) return;
         stations.push({
