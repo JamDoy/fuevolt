@@ -1,13 +1,22 @@
 # FueVolt Social Poster
 
-A small, standalone app that posts to the FueVolt Facebook Page twice a week
-(Monday and Thursday mornings, Sydney time) with the cheapest Unleaded 91
-price found in each Australian capital city. It runs on its own GitHub
-Actions schedule — it is not part of the main site build/deploy.
+A small, standalone app that posts to the FueVolt Facebook Page twice a week.
+It runs on its own GitHub Actions schedule — it is not part of the main site
+build/deploy. Two kinds of post:
+
+- **`capitals`** (Mondays 22:00 UTC, i.e. Tuesday morning in Sydney): the
+  cheapest Unleaded 91 *and* Diesel in each Australian capital city.
+- **`seq`** (Thursdays 22:00 UTC, i.e. Friday 8am in Brisbane): the six
+  cheapest SE Queensland areas for Unleaded 91 and for Diesel, as a "this
+  weekend" post. Areas are defined in `lib/cities.mjs`; each area's cheapest
+  station is found, areas are ranked, and a servo that is the cheapest in two
+  areas is only listed once.
 
 It has no database and keeps no history: each run fetches live prices from
 fuevolt.com's own cached government-data proxies (the same ones the website
-uses) and reports the cheapest station found *at that moment* in each city.
+uses) and reports the cheapest station found *at that moment*. Prices outside
+50¢–400¢/L are ignored as data-entry errors (the government feeds sometimes
+contain things like a station reporting 2¢/L).
 
 Sydney, Melbourne, Brisbane, Perth, Hobart, Darwin and Canberra are covered.
 **Adelaide (SA) is skipped** — fuevolt.com has no live government fuel-price
@@ -52,16 +61,23 @@ Actions → New repository secret**. Add:
 - `FB_PAGE_ACCESS_TOKEN` — the Page access token from step 4 above.
 
 That's it — the workflow at `.github/workflows/social-poster.yml` already
-reads these and runs on its own schedule (Monday and Thursday). You can also
-trigger it manually any time from the Actions tab ("Run workflow"), with an
-optional "dry run" checkbox that builds the post but doesn't publish it.
+reads these and runs on its own schedule. You can also trigger it manually
+any time from the Actions tab ("Run workflow"): choose `capitals` or `seq`,
+and leave "dry run" ticked (the default) to build the post without publishing.
+
+**If runs are failing:** open the failed run in the Actions tab — the red
+annotation at the top of its summary says why. Missing secrets and an
+expired/invalid Facebook token are the usual causes. Page tokens only last as
+long as the steps above (step 4) keep them valid, so regenerate if Facebook
+reports the token expired.
 
 ## Testing locally
 
 ```bash
 cd social-poster
 npm install
-FB_PAGE_ID=xxx FB_PAGE_ACCESS_TOKEN=yyy npm run dry-run
+npm run dry-run          # capital cities post
+DRY_RUN=true node index.mjs seq   # Brisbane / SE Queensland post
 ```
 
 `dry-run` fetches real live prices and prints the post it *would* send,
@@ -73,6 +89,7 @@ Facebook credentials set (it'll just skip the posting step).
 - Schedule: edit the `cron` line in
   [`.github/workflows/social-poster.yml`](../.github/workflows/social-poster.yml)
   (times are UTC).
-- Cities/radius: edit
+- Cities, SE Queensland areas and radii: edit
   [`lib/cities.mjs`](lib/cities.mjs).
-- Post wording: edit `buildPost()` in [`index.mjs`](index.mjs).
+- Post wording: edit `buildCapitalsPost()` / `buildSEQPost()` in
+  [`index.mjs`](index.mjs).

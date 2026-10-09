@@ -7,6 +7,19 @@ import { getDistance } from './distance.mjs';
 // for the browser-side equivalent of every fetcher below.
 const SITE_ORIGIN = process.env.SITE_ORIGIN || 'https://www.fuevolt.com';
 
+// Per-state codes for each fuel type the posts cover (mirrors FUEL_TYPE_MAP in
+// src/utils/api.js). NT's proxy takes the app's own fuel id rather than a code.
+export const FUEL_CODES = {
+  U91: { label: 'Unleaded 91', nsw: 'U91', vic: 'U91', qld: 2, wa: '1', nt: 'U91' },
+  Diesel: { label: 'Diesel', nsw: 'DL', vic: 'DSL', qld: 3, wa: '4', nt: 'Diesel' },
+};
+
+// Government feeds occasionally contain obvious data-entry errors (a Victorian
+// station reporting U91 at 2.0¢/L, Queensland entries at 24.8¢ and 32.1¢).
+// Without this check one of those becomes "the cheapest in the city" in a
+// public post. Prices are in dollars per litre here.
+export const isPlausible = (dollars) => dollars >= 0.5 && dollars <= 4;
+
 const QLD_BRAND_MAP = {
   2: 'Caltex', 5: 'BP', 7: 'Budget', 12: 'Independent', 16: 'Mobil',
   20: 'Shell', 23: 'United', 27: 'Unbranded', 51: 'Apco', 57: 'Metro Fuel',
@@ -22,13 +35,16 @@ const QLD_BRAND_MAP = {
 
 function cheapestOf(stations) {
   if (!stations || stations.length === 0) return null;
-  return stations.reduce((min, s) => (s.price != null && (min == null || s.price < min.price) ? s : min), null);
+  return stations.reduce(
+    (min, s) => (s.price != null && isPlausible(s.price) && (min == null || s.price < min.price) ? s : min),
+    null,
+  );
 }
 
 // NSW FuelCheck — also covers TAS and ACT (see src/utils/api.js comment on
 // fetchNSWFuelPrices for why those two route through the same API).
-export async function fetchCheapestNSW(lat, lng, radius, state = 'NSW') {
-  const params = new URLSearchParams({ lat: String(lat), lng: String(lng), fuelType: 'U91', radius: String(radius) });
+export async function fetchCheapestNSW(lat, lng, radius, state = 'NSW', fuelType = 'U91') {
+  const params = new URLSearchParams({ lat: String(lat), lng: String(lng), fuelType: FUEL_CODES[fuelType].nsw, radius: String(radius) });
   const res = await fetch(`${SITE_ORIGIN}/api/nsw-fuel.php?${params}`);
   if (!res.ok) return null;
   const data = await res.json();
@@ -57,7 +73,7 @@ export async function fetchCheapestNSW(lat, lng, radius, state = 'NSW') {
 }
 
 // VIC Fair Fuel Open Data — whole-state response, filtered client-side.
-export async function fetchCheapestVIC(lat, lng, radius) {
+export async function fetchCheapestVIC(lat, lng, radius, fuelType = 'U91') {
   const res = await fetch(`${SITE_ORIGIN}/api/vic-fuel.php`);
   if (!res.ok) return null;
   const data = await res.json();
@@ -67,7 +83,7 @@ export async function fetchCheapestVIC(lat, lng, radius) {
   for (const entry of data.fuelPriceDetails) {
     const fs = entry.fuelStation;
     if (!fs?.location?.latitude || !fs?.location?.longitude) continue;
-    const fuelPrice = entry.fuelPrices?.find((fp) => fp.fuelType === 'U91' && fp.isAvailable);
+    const fuelPrice = entry.fuelPrices?.find((fp) => fp.fuelType === FUEL_CODES[fuelType].vic && fp.isAvailable);
     if (!fuelPrice) continue;
     const dist = getDistance(lat, lng, fs.location.latitude, fs.location.longitude);
     if (dist > radius) continue;
@@ -83,24 +99,30 @@ export async function fetchCheapestVIC(lat, lng, radius) {
   return cheapestOf(stations);
 }
 
-// QLD Fuel Pricing Direct API — two endpoints joined client-side.
-export async function fetchCheapestQLD(lat, lng, radius) {
+// QLD Fuel Pricing Direct API — two endpoints joined client-side. Loaded once
+// and shared, since the whole state comes back regardless of location.
+export async function loadQLD() {
   const [sitesRes, pricesRes] = await Promise.all([
     fetch(`${SITE_ORIGIN}/api/qld-fuel.php?endpoint=GetFullSiteDetails&geoRegionLevel=3&geoRegionId=1`),
     fetch(`${SITE_ORIGIN}/api/qld-fuel.php?endpoint=GetSitesPrices&geoRegionLevel=3&geoRegionId=1`),
   ]);
   if (!sitesRes.ok || !pricesRes.ok) return null;
   const sitesData = await sitesRes.json();
-  const pricesData = await pricesRes.json();
-  if (!sitesData?.S || !pricesData?.SitePrices) return null;
-
+  const prices = await pricesRes.json();
+  if (!sitesData?.S || !prices?.SitePrices) return null;
   const siteMap = {};
   sitesData.S.forEach((s) => { siteMap[s.S] = s; });
+  return { siteMap, prices };
+}
+
+export async function fetchCheapestQLD(lat, lng, radius, fuelType = 'U91') {
+  const data = await loadQLD();
+  if (!data) return null;
 
   const stations = [];
-  for (const p of pricesData.SitePrices) {
-    if (p.FuelId !== 2 || !(p.Price > 0 && p.Price < 9000)) continue; // 2 = Unleaded 91
-    const site = siteMap[p.SiteId];
+  for (const p of data.prices.SitePrices) {
+    if (p.FuelId !== FUEL_CODES[fuelType].qld || !(p.Price > 0 && p.Price < 9000)) continue;
+    const site = data.siteMap[p.SiteId];
     if (!site || !site.Lat || !site.Lng) continue;
     const dist = getDistance(lat, lng, site.Lat, site.Lng);
     if (dist > radius) continue;
@@ -117,8 +139,8 @@ export async function fetchCheapestQLD(lat, lng, radius) {
 }
 
 // WA FuelWatch RSS feed — XML, parsed with fast-xml-parser.
-export async function fetchCheapestWA(lat, lng, radius) {
-  const res = await fetch(`${SITE_ORIGIN}/api/wa-fuel.php?product=1&day=today`);
+export async function fetchCheapestWA(lat, lng, radius, fuelType = 'U91') {
+  const res = await fetch(`${SITE_ORIGIN}/api/wa-fuel.php?product=${FUEL_CODES[fuelType].wa}&day=today`);
   if (!res.ok) return null;
   const xmlText = await res.text();
   const parser = new XMLParser();
@@ -148,8 +170,8 @@ export async function fetchCheapestWA(lat, lng, radius) {
 }
 
 // NT MyFuel — proxy already returns fully-formed station objects.
-export async function fetchCheapestNT(lat, lng, radius) {
-  const params = new URLSearchParams({ lat: String(lat), lng: String(lng), fuelType: 'U91', radius: String(radius) });
+export async function fetchCheapestNT(lat, lng, radius, fuelType = 'U91') {
+  const params = new URLSearchParams({ lat: String(lat), lng: String(lng), fuelType: FUEL_CODES[fuelType].nt, radius: String(radius) });
   const res = await fetch(`${SITE_ORIGIN}/api/nt-fuel.php?${params}`);
   if (!res.ok) return null;
   const stations = await res.json();
@@ -158,25 +180,25 @@ export async function fetchCheapestNT(lat, lng, radius) {
 }
 
 const FETCHERS = {
-  NSW: (city, radius) => fetchCheapestNSW(city.lat, city.lng, radius, 'NSW'),
-  TAS: (city, radius) => fetchCheapestNSW(city.lat, city.lng, radius, 'TAS'),
-  ACT: (city, radius) => fetchCheapestNSW(city.lat, city.lng, radius, 'ACT'),
-  VIC: (city, radius) => fetchCheapestVIC(city.lat, city.lng, radius),
-  QLD: (city, radius) => fetchCheapestQLD(city.lat, city.lng, radius),
-  WA: (city, radius) => fetchCheapestWA(city.lat, city.lng, radius),
-  NT: (city, radius) => fetchCheapestNT(city.lat, city.lng, radius),
+  NSW: (city, radius, ft) => fetchCheapestNSW(city.lat, city.lng, radius, 'NSW', ft),
+  TAS: (city, radius, ft) => fetchCheapestNSW(city.lat, city.lng, radius, 'TAS', ft),
+  ACT: (city, radius, ft) => fetchCheapestNSW(city.lat, city.lng, radius, 'ACT', ft),
+  VIC: (city, radius, ft) => fetchCheapestVIC(city.lat, city.lng, radius, ft),
+  QLD: (city, radius, ft) => fetchCheapestQLD(city.lat, city.lng, radius, ft),
+  WA: (city, radius, ft) => fetchCheapestWA(city.lat, city.lng, radius, ft),
+  NT: (city, radius, ft) => fetchCheapestNT(city.lat, city.lng, radius, ft),
 };
 
-export async function fetchCheapestForCity(city, radius) {
+export async function fetchCheapestForCity(city, radius, fuelType = 'U91') {
   const fetcher = FETCHERS[city.state];
   if (!fetcher) return null;
 
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      const result = await fetcher(city, radius);
+      const result = await fetcher(city, radius, fuelType);
       if (result) return result;
     } catch (err) {
-      console.error(`Attempt ${attempt} failed for ${city.label} (${city.state}):`, err.message);
+      console.error(`Attempt ${attempt} failed for ${city.label} (${city.state}, ${fuelType}):`, err.message);
     }
     if (attempt === 1) await new Promise((r) => setTimeout(r, 2000));
   }

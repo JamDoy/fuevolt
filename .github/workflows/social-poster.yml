@@ -1,15 +1,24 @@
-name: Post weekly cheapest fuel prices to Facebook
+name: Post cheapest fuel prices to Facebook
 
 on:
   schedule:
-    # Monday and Thursday, 22:00 UTC = 08:00/09:00 AEST/AEDT (Sydney) next day
-    - cron: '0 22 * * 1,4'
+    # Monday 22:00 UTC (Tuesday morning in Sydney): capital cities, petrol + diesel
+    - cron: '0 22 * * 1'
+    # Thursday 22:00 UTC (Friday 08:00 in Brisbane): Brisbane / SE Queensland weekend post
+    - cron: '0 22 * * 4'
   workflow_dispatch:
     inputs:
+      post_type:
+        description: 'Which post to build'
+        type: choice
+        options:
+          - capitals
+          - seq
+        default: capitals
       dry_run:
         description: 'Build the post but do not publish it to Facebook'
         type: boolean
-        default: false
+        default: true
 
 jobs:
   post:
@@ -17,6 +26,8 @@ jobs:
     defaults:
       run:
         working-directory: social-poster
+    env:
+      POST_TYPE: ${{ github.event.inputs.post_type || (github.event.schedule == '0 22 * * 4' && 'seq') || 'capitals' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,6 +41,20 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # Posting needs two repository secrets that only the page owner can
+      # create (see social-poster/README.md). Fail fast with a clear message
+      # instead of a confusing error half-way through.
+      - name: Check Facebook credentials are configured
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$FB_PAGE_ID" ] || [ -z "$FB_PAGE_ACCESS_TOKEN" ]; then
+            echo "::error title=Facebook secrets missing::Add FB_PAGE_ID and FB_PAGE_ACCESS_TOKEN under Settings > Secrets and variables > Actions (see social-poster/README.md)."
+            exit 1
+          fi
 
       - name: Fetch prices and post to Facebook
         env:
